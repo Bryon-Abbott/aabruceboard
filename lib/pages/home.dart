@@ -8,7 +8,7 @@ import 'package:bruceboard/utils/brucearguments.dart';
 import 'package:bruceboard/utils/players.dart';
 import 'package:bruceboard/utils/games.dart';
 import 'package:bruceboard/pages/settings_main.dart';
-import 'package:bruceboard/theme/thememanager.dart';
+import 'package:bruceboard/theme/theme_manager.dart';
 // ==========
 // Desc: Load home screen
 // ----------

@@ -1,6 +1,5 @@
 //import 'package:farklescore/pages/settings_scoring.dart';
 //import 'package:bruceboard/theme/thememanager.dart';
-import 'package:bruceboard/theme/themeconstants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
@@ -9,16 +8,16 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:bruceboard/pages/loading.dart';
 import 'package:bruceboard/pages/home.dart';
 import 'package:bruceboard/pages/about.dart';
-import 'package:bruceboard/pages/manageplayers.dart';
-import 'package:bruceboard/pages/maintainplayer.dart';
-import 'package:bruceboard/pages/managegames.dart';
-import 'package:bruceboard/pages/maintaingame.dart';
-import 'package:bruceboard/pages/gameboard.dart';
+import 'package:bruceboard/pages/manage_players.dart';
+import 'package:bruceboard/pages/maintain_player.dart';
+import 'package:bruceboard/pages/manage_games.dart';
+import 'package:bruceboard/pages/maintain_game.dart';
+import 'package:bruceboard/pages/game_board.dart';
 import 'package:bruceboard/pages/settings_main.dart';
 import 'package:bruceboard/pages/settings_scoring.dart';
 import 'package:bruceboard/utils/preferences.dart';
 import 'package:bruceboard/utils/downloadgame.dart';
-import 'package:bruceboard/theme/themeconstants.dart';
+import 'package:bruceboard/theme/theme_constants.dart';
 // ==========
 // Desc: Main module for the BruceBoard application.
 // ----------
