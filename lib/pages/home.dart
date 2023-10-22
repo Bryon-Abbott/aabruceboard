@@ -1,12 +1,15 @@
+import 'package:bruceboard/pages/player/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import 'package:adaptive_theme/adaptive_theme.dart';
 
 import 'package:bruceboard/utils/brucearguments.dart';
-import 'package:bruceboard/utils/players.dart';
+import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/utils/games.dart';
+import 'package:bruceboard/services/auth.dart';
 import 'package:bruceboard/pages/settings_main.dart';
 import 'package:bruceboard/theme/theme_manager.dart';
 // ==========
@@ -15,14 +18,15 @@ import 'package:bruceboard/theme/theme_manager.dart';
 // 2023/09/12 Bryon   Created
 // ==========
 class Home extends StatefulWidget {
-  final AdaptiveThemeMode? savedThemeMode;
-  final VoidCallback onChanged;
+  // final AdaptiveThemeMode? savedThemeMode;
+  // final VoidCallback onChanged;
 
-  const Home({
-    super.key,
-    this.savedThemeMode,
-    required this.onChanged,
-  });
+  // const Home({
+  //   super.key,
+  //   this.savedThemeMode,
+  //   required this.onChanged,
+  // });
+
 
   @override
   State<Home> createState() => _HomeState();
@@ -31,10 +35,11 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   //Map data = {};
   //Object? parameters;
-  late BruceArguments args;
-  late Players players;
-  late Games games;
+//  late BruceArguments args;
+//  late Players players;
+//  late Games games;
 //  bool settingDarkMode = false;
+
 
   @override
   void dispose() {
@@ -53,16 +58,18 @@ class _HomeState extends State<Home> {
   themeListener(){
     if(mounted){
       setState(() {
-
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    args = ModalRoute.of(context)!.settings.arguments as BruceArguments;
-    players = args.players;
-    games = args.games;
+    // args = ModalRoute.of(context)!.settings.arguments as BruceArguments;
+    // players = args.players;
+    // games = args.games;
+
+    final AuthService _auth = AuthService();
+    final bruceUser = Provider.of<aaUser?>(context);
 
     // Calculate screen size
     double screenWidth = MediaQuery.of(context).size.width;
@@ -91,14 +98,40 @@ class _HomeState extends State<Home> {
               itemBuilder: (context) => [
                 const PopupMenuItem<int>(
                   value: 0,
-                  child: Text("Settings"),
+                  child: Row(
+                    children: [
+                      Icon(Icons.logout_outlined),
+                      SizedBox(width: 8),
+                      Text("Sign Ous"),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    children: [
+                      Icon(Icons.person_outline),
+                      SizedBox(width: 8),
+                      Text("Profile"),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem<int>(
+                  value: 2,
+                  child: Row(
+                    children: [
+                      Icon(Icons.settings_outlined),
+                      SizedBox(width: 8),
+                      Text("Settings"),
+                    ],
+                  ),
                 ),
                 const PopupMenuDivider(),
                 const PopupMenuItem<int>(
-                    value: 1,
+                    value: 3,
                     child: Row(
                         children: [
-                          Icon(Icons.logout, color: Colors.white),
+                          Icon(Icons.logout),
                           SizedBox(width: 8),
                           Text("Exit"),
                         ]
@@ -117,7 +150,7 @@ class _HomeState extends State<Home> {
             child: Column(
                   children: <Widget>[
                 SizedBox(height: 80,),
-                Text('Welcome ',
+                Text('Welcome',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
@@ -133,57 +166,93 @@ class _HomeState extends State<Home> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      height: 300,
-                      width: 150,
-                      child: Image(
-                        image: AssetImage('assets/AdobeStock_55757786-vert.jpeg'),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 300,
+                        width: 150,
+                        child: Image(
+                          image: AssetImage('assets/AdobeStock_55757786-vert.jpeg'),
+                        ),
                       ),
                     ),
-                    Column(
-                      children: [
-                        TextButton.icon(
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, '/manageplayers', arguments: BruceArguments(players, games));
-                          },
-                          icon: Icon(
-                            Icons.person,
-                            size: 32,
-                            color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                    SizedBox(
+                      width: 200,
+                      child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton.icon(
+                              onPressed: (bruceUser == null) ? null : () async {
+                                Navigator.pushNamed(
+                                  //  context, '/manageplayers', arguments: BruceArguments(players, games));
+                                    context, '/manageplayers');
+                              },
+                              icon: Icon(
+                                Icons.person,
+                                size: 32,
+                                color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                              ),
+                              label: Text('Communities',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
                           ),
-                          label: Text('Players',
-                            style: Theme.of(context).textTheme.titleMedium,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton.icon(
+                              onPressed: (bruceUser == null) ? null : () async {
+                                Navigator.pushNamed(
+                                  //  context, '/manageplayers', arguments: BruceArguments(players, games));
+                                context, '/manageplayers');
+                              },
+                              icon: Icon(
+                                Icons.sports_football_outlined,
+                                size: 32,
+                                color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                              ),
+                              label: Text('Collections',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
                           ),
-                        ),
-                        TextButton.icon(
-                          onPressed: () async {
-                            Navigator.pushNamed(
-                                context, '/managegames', arguments: BruceArguments(players, games));
-                          },
-                          icon: Icon(
-                            Icons.sports_football_outlined,
-                            size: 32,
-                            color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton.icon(
+                              onPressed: (bruceUser != null) ? null : () async {
+                                Navigator.pushNamed(
+                                  //  context, '/managegames', arguments: BruceArguments(players, games));
+                                context, '/authenticate');
+                              },
+                              icon: Icon(
+                                Icons.login,
+                                size: 32,
+                                color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                              ),
+                              label: Text('Sign In',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
                           ),
-                          label: Text('Games',
-                            style: Theme.of(context).textTheme.titleMedium,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton.icon(
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/about');
+                              },
+                              icon: Icon(
+                                Icons.question_mark,
+                                size: 32,
+                                color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                              ),
+                              label: Text('About',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
                           ),
-                        ),
-                        TextButton.icon(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/about');
-                          },
-                          icon: Icon(
-                            Icons.question_mark,
-                            size: 32,
-                            color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
-                          ),
-                          label: Text('About',
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -193,6 +262,12 @@ class _HomeState extends State<Home> {
                   // data['time'],
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
+               // Spacer(),
+                const SizedBox(height: 50.0),
+                Text("User ID: '${bruceUser==null ? "????" : bruceUser.displayName}'",
+                      textAlign: TextAlign.end,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
               ]),
           ),
         ),
@@ -201,20 +276,23 @@ class _HomeState extends State<Home> {
   }
 }
 // Helper Functions
-void onMenuSelected(BuildContext context, int item) {
+void onMenuSelected(BuildContext context, int item) async {
+  final AuthService _auth = AuthService();
   switch (item) {
     case 0:
+      await _auth.signOut();
+      break;
+    case 1:
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => SettingsForm()),
+      );
+      break;
+    case 2:
       Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const SettingsMain()),
       );
-      if (kDebugMode) {
-        print("Item Selected $item");
-      }
       break;
-    case 1:
-      if (kDebugMode) {
-        print("Item Selected $item - Exit");
-      }
+    case 3:
       SystemChannels.platform.invokeMethod('SystemNavigator.pop');
       break;
   }

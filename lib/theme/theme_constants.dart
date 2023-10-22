@@ -13,7 +13,13 @@ Color BODY_COLOR_DARK = Colors.green[300] ?? Colors.green;
 ThemeData lightTheme = ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
+ // disabledColor: Colors.red,
   //primaryColor: COLOR_PRIMARY,
+  // Note: ButtonThemeData disabled is not used with MaterialWidgets.color???
+   buttonTheme: ButtonThemeData(
+     disabledColor: Colors.red,
+     buttonColor: Colors.blue,
+   ),
 
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.green,
@@ -53,13 +59,21 @@ ThemeData lightTheme = ThemeData(
       fontWeight: FontWeight.bold,
     ),
     iconTheme: IconThemeData(
-      color: Colors.white,
+//      color: Colors.white,
     )
   ),
 
+  // iconTheme: const IconThemeData(
+  //   color: Colors.green
+  // ),
+
   floatingActionButtonTheme:
     FloatingActionButtonThemeData(backgroundColor: COLOR_ACCENT),
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(
 
+    )
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
      style: ButtonStyle(
        textStyle: MaterialStateProperty.all(
