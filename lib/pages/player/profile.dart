@@ -28,10 +28,10 @@ class _SettingsFormState extends State<SettingsForm> {
   @override
   Widget build(BuildContext context) {
 
-    aaUser bruceUser = Provider.of<aaUser>(context);
+    BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<Player>(
-      stream: DatabaseService(uid: bruceUser.uid).player,
+      stream: DatabaseService(pid: bruceUser.uid).player,
       builder: (context, snapshot) {
         if(snapshot.hasData) {
           Player player = snapshot.data!;
@@ -88,16 +88,19 @@ class _SettingsFormState extends State<SettingsForm> {
 //                        style: TextStyle(color: Colors.white),
 //                      ),
                       onPressed: () async {
-                        if(_formKey.currentState!.validate()){
-                          await DatabaseService(uid: bruceUser.uid).updatePlayer(
-                            _currentFName ?? snapshot.data!.fName,
-                            _currentLName ?? snapshot.data!.lName,
-                            _currentInitials ?? snapshot.data!.initials
+                        if(_formKey.currentState!.validate()) {
+                            await DatabaseService(pid: bruceUser.uid).updatePlayer(
+                                _currentFName ?? snapshot.data!.fName,
+                                _currentLName ?? snapshot.data!.lName,
+                                _currentInitials ?? snapshot.data!.initials
+                            );
+                            await AuthService().updateDisplayName(
+                                _currentDisplayName ?? AuthService().displayName
+                            );
+                            setState(() {
+                              Navigator.pop(context);
+                            }
                           );
-                          await AuthService().updateDisplayName(
-                            _currentDisplayName ?? AuthService().displayName
-                          );
-                          Navigator.pop(context);
                         }
                       }
                     ),

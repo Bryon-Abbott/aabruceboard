@@ -1,11 +1,11 @@
 import '../services/auth.dart';
 
-class aaUser {
+class BruceUser {
 
   final AuthService _auth = AuthService();
   final String uid;
 
-  aaUser({ required this.uid });
+  BruceUser({ required this.uid });
 
   // Note: displayName is stored in the Firestore Auth system not in
   // the Firebase database.  This is similar to email and phone number.

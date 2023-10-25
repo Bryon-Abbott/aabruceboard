@@ -7,8 +7,8 @@ class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // create user obj based on firebase user
-  aaUser? _userFromFirebaseUser(User? user) {
-    return user != null ? aaUser(uid: user.uid) : null;
+  BruceUser? _userFromFirebaseUser(User? user) {
+    return user != null ? BruceUser(uid: user.uid) : null;
   }
 
   String get displayName {
@@ -26,7 +26,7 @@ class AuthService {
   }
 
   // auth change user stream
-  Stream<aaUser?> get user {
+  Stream<BruceUser?> get user {
     return _auth.authStateChanges()
       .map((User? user) => _userFromFirebaseUser(user));
       //.map(_userFromFirebaseUser);
@@ -63,7 +63,7 @@ class AuthService {
       await result.user!.updateDisplayName('Display Name');
       User user = result.user!;
       // create a new document for the user with the uid
-      await DatabaseService(uid: user.uid).updatePlayer('FNAME', 'LNAME', "FL");
+      await DatabaseService(pid: user.uid).updatePlayer('FNAME', 'LNAME', "FL");
       return _userFromFirebaseUser(user);
     } catch (error) {
       print(error.toString());

@@ -76,6 +76,8 @@ class _SignUpState extends State<SignUp> {
                         loading = false;
                         error = 'Please supply a valid email';
                       });
+                    } else {
+                      setState(() => Navigator.pop(context));
                     }
                   }
                 }

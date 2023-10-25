@@ -12,6 +12,9 @@ import 'package:bruceboard/utils/games.dart';
 import 'package:bruceboard/services/auth.dart';
 import 'package:bruceboard/pages/settings_main.dart';
 import 'package:bruceboard/theme/theme_manager.dart';
+
+//import 'package:bruceboard/models/collection.dart';
+//import '../services/database.dart';
 // ==========
 // Desc: Load home screen
 // ----------
@@ -26,7 +29,6 @@ class Home extends StatefulWidget {
   //   this.savedThemeMode,
   //   required this.onChanged,
   // });
-
 
   @override
   State<Home> createState() => _HomeState();
@@ -68,8 +70,9 @@ class _HomeState extends State<Home> {
     // players = args.players;
     // games = args.games;
 
-    final AuthService _auth = AuthService();
-    final bruceUser = Provider.of<aaUser?>(context);
+    //final AuthService _auth = AuthService();
+    final bruceUser = Provider.of<BruceUser?>(context) ?? BruceUser(uid: 'x');
+    //final DatabaseService _db = DatabaseService(uid: bruceUser.uid);
 
     // Calculate screen size
     double screenWidth = MediaQuery.of(context).size.width;
@@ -79,7 +82,16 @@ class _HomeState extends State<Home> {
     double newScreenWidth = screenWidth - padding.left - padding.right;
     //dev.log("Screen Dimensions are Height: $screenHeight, Width: $screenWidth : Height: $newScreenHeight, Width: $newScreenWidth", name: " ${this.runtimeType.toString()}:build");
 
-    return Scaffold(
+    // return MultiProvider(
+    //     providers: [
+    //       // StreamProvider<BruceUser?>.value(
+    //       //     initialData: BruceUser(uid: bruceUser.uid),
+    //       //     value: AuthService().user),
+    //       StreamProvider<List<Collection>>.value(
+    //           initialData: [],
+    //           value: DatabaseService(uid: bruceUser.uid).collections),
+    //     ],
+      return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
         leading: IconButton(
@@ -102,7 +114,7 @@ class _HomeState extends State<Home> {
                     children: [
                       Icon(Icons.logout_outlined),
                       SizedBox(width: 8),
-                      Text("Sign Ous"),
+                      Text("Sign Out"),
                     ],
                   ),
                 ),
@@ -184,7 +196,7 @@ class _HomeState extends State<Home> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton.icon(
-                              onPressed: (bruceUser == null) ? null : () async {
+                              onPressed: (bruceUser.uid == 'x') ? null : () async {
                                 Navigator.pushNamed(
                                   //  context, '/manageplayers', arguments: BruceArguments(players, games));
                                     context, '/manageplayers');
@@ -202,17 +214,17 @@ class _HomeState extends State<Home> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton.icon(
-                              onPressed: (bruceUser == null) ? null : () async {
+                              onPressed: (bruceUser.uid == 'x') ? null : () async {
                                 Navigator.pushNamed(
                                   //  context, '/manageplayers', arguments: BruceArguments(players, games));
-                                context, '/manageplayers');
+                                context, '/series-list');
                               },
                               icon: Icon(
                                 Icons.sports_football_outlined,
                                 size: 32,
                                 color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
                               ),
-                              label: Text('Collections',
+                              label: Text('Series',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),
@@ -220,7 +232,7 @@ class _HomeState extends State<Home> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton.icon(
-                              onPressed: (bruceUser != null) ? null : () async {
+                              onPressed: (bruceUser.uid != 'x') ? null : () async {
                                 Navigator.pushNamed(
                                   //  context, '/managegames', arguments: BruceArguments(players, games));
                                 context, '/authenticate');
@@ -264,7 +276,7 @@ class _HomeState extends State<Home> {
                 ),
                // Spacer(),
                 const SizedBox(height: 50.0),
-                Text("User ID: '${bruceUser==null ? "????" : bruceUser.displayName}'",
+                Text("Welcome '${bruceUser==null ? "????" : bruceUser.displayName}'",
                       textAlign: TextAlign.end,
                       style: Theme.of(context).textTheme.titleSmall,
                     ),

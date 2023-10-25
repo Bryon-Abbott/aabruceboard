@@ -1,7 +1,12 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:bruceboard/pages/auth/authenticate.dart';
+import 'package:bruceboard/pages/game/game_list.dart';
+import 'package:bruceboard/pages/game/game_maintain.dart';
+import 'package:bruceboard/pages/series/series_list.dart';
+import 'package:bruceboard/pages/series/series_maintain.dart';
 import 'package:bruceboard/pages/player/profile.dart';
 import 'package:bruceboard/services/auth.dart';
+import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/theme/theme_constants.dart';
 import 'package:bruceboard/utils/preferences.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +36,6 @@ import 'package:bruceboard/utils/downloadgame.dart';
 import 'package:bruceboard/theme/theme_constants.dart';
 
 import 'firebase_options.dart';
-// Brew Crew App - refactored to work. Bryon: 2023-10-15
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -90,47 +94,48 @@ class LoadApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return StreamProvider<aaUser?>.value(
-      initialData: aaUser(uid: 'xx'),
+    return StreamProvider<BruceUser?>.value(
+      initialData: null, // BruceUser(uid: 'x'),
       value: AuthService().user,
-      child: AdaptiveTheme(
-        light: lightTheme,
-        dark: darkTheme,
-        debugShowFloatingThemeButton: false,
-        initial: savedThemeMode ?? AdaptiveThemeMode.light,
-        builder: (theme, darkTheme) =>
-            MaterialApp(
-              title: 'Bruce Board',
+        child: AdaptiveTheme(
+          light: lightTheme,
+          dark: darkTheme,
+          debugShowFloatingThemeButton: false,
+          initial: savedThemeMode ?? AdaptiveThemeMode.light,
+          builder: (theme, lightTheme) =>
+          MaterialApp(
+            title: 'Bruce Board',
 //          theme: lightTheme,
-              theme: theme,
-              darkTheme: darkTheme,
-              debugShowCheckedModeBanner: false,
-              initialRoute: '/',
-              routes: {
-                '/': (context) => Loading(),
-                // '/home': (context) => Home(savedThemeMode: savedThemeMode, onChanged: onChanged),
-                '/home': (context) => Home(),
-                '/manageplayers': (context) => const ManagePlayers(),
-                '/maintainplayer': (context) => const MaintainPlayer(),
-                '/managegames': (context) => const ManageGames(),
-                '/maintaingame': (context) => const MaintainGame(),
-                //          '/gameboard': (context) => GameBoard(),
-                '/gameboard': (context) => GameBoard(gameStorage: DownloadGame()),
-                '/about': (context) => const About(),
-                '/authenticate': (contexct) => const Authenticate(),
-                // '/signin': (context) => const Signin(),
-                // '/signup': (context) => const Signup(),
-                '/profile': (context) => SettingsForm(),
-                '/settings': (context) => const SettingsMain(),
-                // Not sure I need this?
-                '/settings_scoring': (context) => const SettingsScoring(),
-                // Not sure I need this?
-              },
-            ),
-        //  MaterialApp(
-        //   home: Wrapper(),
-        // ),
-      ),
+            theme: theme,
+            darkTheme: darkTheme,
+            debugShowCheckedModeBanner: false,
+            initialRoute: '/',
+            routes: {
+              '/': (context) => Loading(),
+              // '/home': (context) => Home(savedThemeMode: savedThemeMode, onChanged: onChanged),
+              '/home': (context) => Home(),
+              '/manageplayers': (context) => const ManagePlayers(),
+              '/maintainplayer': (context) => const MaintainPlayer(),
+              '/managegames': (context) => const ManageGames(),
+              '/maintaingame': (context) => const MaintainGame(),
+              //          '/gameboard': (context) => GameBoard(),
+              '/gameboard': (context) => GameBoard(gameStorage: DownloadGame()),
+              '/about': (context) => const About(),
+              '/authenticate': (contexct) => const Authenticate(),
+              // '/signin': (context) => const Signin(),
+              // '/signup': (context) => const Signup(),
+              '/profile': (context) => SettingsForm(),
+              '/series-list': (context) => const SeriesList(),
+              '/series-maintain': (context) => const SeriesMaintain(),
+              // '/game-list': (context) => const GameList(),
+              // '/game-maintain': (context) => const GameMaintain(),
+              '/settings': (context) => const SettingsMain(),
+              // Not sure I need this?
+              '/settings_scoring': (context) => const SettingsScoring(),
+              // Not sure I need this?
+            },
+          ),
+        ),
     );
   }
 }
