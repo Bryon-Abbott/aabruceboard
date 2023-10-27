@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/series/series_tile.dart';
+import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/pages/community/community_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,14 +9,14 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/shared/loading.dart';
 
-class SeriesList extends StatefulWidget {
-  const SeriesList({super.key});
+class CommunityList extends StatefulWidget {
+  const CommunityList({super.key});
 
   @override
-  State<SeriesList> createState() => _SeriesListState();
+  State<CommunityList> createState() => _CommunityListState();
 }
 
-class _SeriesListState extends State<SeriesList> {
+class _CommunityListState extends State<CommunityList> {
 
   late BruceUser bruceUser;
 
@@ -25,15 +25,15 @@ class _SeriesListState extends State<SeriesList> {
 
     bruceUser = Provider.of<BruceUser>(context);
 
-    return StreamBuilder<List<Series>>(
-      stream: DatabaseService(uid: bruceUser.uid).seriesList,
+    return StreamBuilder<List<Community>>(
+      stream: DatabaseService(uid: bruceUser.uid).communityList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Series> series = snapshots.data!;
+          List<Community> community = snapshots.data!;
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Manage Series - Count: ${series.length}'),
+                title: Text('Manage Community - Count: ${community.length}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -47,25 +47,25 @@ class _SeriesListState extends State<SeriesList> {
                   IconButton(
                     onPressed: () async {
                       dynamic changes = await Navigator.pushNamed(
-                          context, '/series-maintain');
+                          context, '/community-maintain');
                       if (changes != null) {
-                        log('series_list: Games ${changes} Changes Type : ${changes.runtimeType}');
+                        log('community_list: Members ${changes} Changes Type : ${changes.runtimeType}');
                       } else {
-                        log('series_list: **null** Changes Type : ${changes.runtimeType}');
+                        log('community_list: **null** Changes Type : ${changes.runtimeType}');
                       }
                     },
                     icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
             body: ListView.builder(
-              itemCount: series.length,
+              itemCount: community.length,
               itemBuilder: (context, index) {
-                return SeriesTile(series: series[index]);
+                return CommunityTile(community: community[index]);
               },
             ),
           );
         } else {
-          log("series_list: Snapshot Error ${snapshots.error}");
+          log("community_list: Snapshot Error ${snapshots.error}");
           return Loading();
         }
       }

@@ -31,7 +31,7 @@ class _SettingsFormState extends State<SettingsForm> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<Player>(
-      stream: DatabaseService(pid: bruceUser.uid).player,
+      stream: DatabaseService(uid: bruceUser.uid).playerStream,
       builder: (context, snapshot) {
         if(snapshot.hasData) {
           Player player = snapshot.data!;
@@ -89,7 +89,7 @@ class _SettingsFormState extends State<SettingsForm> {
 //                      ),
                       onPressed: () async {
                         if(_formKey.currentState!.validate()) {
-                            await DatabaseService(pid: bruceUser.uid).updatePlayer(
+                            await DatabaseService(uid: bruceUser.uid).updatePlayer(
                                 _currentFName ?? snapshot.data!.fName,
                                 _currentLName ?? snapshot.data!.lName,
                                 _currentInitials ?? snapshot.data!.initials

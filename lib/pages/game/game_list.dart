@@ -24,17 +24,21 @@ class _GameListState extends State<GameList> {
   @override
   Widget build(BuildContext context) {
 
+    void callback() {
+      setState(() { });
+    }
+
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<Game>>(
-      stream: DatabaseService(pid: bruceUser.uid, sid: widget.series.sid).gameList,
+      stream: DatabaseService(uid: bruceUser.uid, sid: widget.series.sid).gameList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Game> game = snapshots.data!;
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: const Text('Manage Game'),
+                title: Text('Manage Games - Count: ${widget.series.noGames}/${game.length}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -47,8 +51,9 @@ class _GameListState extends State<GameList> {
                 actions: [
                   IconButton(
                     onPressed: () async {
-                      Navigator.of(context).push(
+                      await Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => GameMaintain(series: widget.series)));
+                      setState(() {}); // Set state to refresh series changes.
                     },
                     icon: const Icon(Icons.add_circle_outline),
                   )
@@ -56,7 +61,7 @@ class _GameListState extends State<GameList> {
             body: ListView.builder(
               itemCount: game.length,
               itemBuilder: (context, index) {
-                return GameTile(series: widget.series, game: game[index]);
+                return GameTile(callback: callback, series: widget.series, game: game[index]);
               },
             ),
           );

@@ -1,39 +1,48 @@
 import 'dart:developer';
-
-import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/series/series_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/models/member.dart';
+import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/pages/member/member_maintain.dart';
+import 'package:bruceboard/pages/member/member_tile.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/shared/loading.dart';
 
-class SeriesList extends StatefulWidget {
-  const SeriesList({super.key});
+class MemberList extends StatefulWidget {
+  final Community community;
+
+  const MemberList({super.key, required this.community});
 
   @override
-  State<SeriesList> createState() => _SeriesListState();
+  _MemberListState createState() => _MemberListState();
 }
 
-class _SeriesListState extends State<SeriesList> {
+class _MemberListState extends State<MemberList> {
 
-  late BruceUser bruceUser;
+  void callback() {
+    setState(() { });
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    bruceUser = Provider.of<BruceUser>(context);
+    void callback() {
+      setState(() { });
+    }
 
-    return StreamBuilder<List<Series>>(
-      stream: DatabaseService(uid: bruceUser.uid).seriesList,
+    BruceUser bruceUser = Provider.of<BruceUser>(context);
+
+    return StreamBuilder<List<Member>>(
+      stream: DatabaseService(uid: bruceUser.uid, cid: widget.community.cid).memberList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Series> series = snapshots.data!;
+          List<Member> member = snapshots.data!;
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Manage Series - Count: ${series.length}'),
+                title: Text('Manage Members - Count: ${widget.community.noMembers}/${member.length}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -46,26 +55,19 @@ class _SeriesListState extends State<SeriesList> {
                 actions: [
                   IconButton(
                     onPressed: () async {
-                      dynamic changes = await Navigator.pushNamed(
-                          context, '/series-maintain');
-                      if (changes != null) {
-                        log('series_list: Games ${changes} Changes Type : ${changes.runtimeType}');
-                      } else {
-                        log('series_list: **null** Changes Type : ${changes.runtimeType}');
-                      }
+                      log('Pick a user to add ..');
                     },
                     icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
             body: ListView.builder(
-              itemCount: series.length,
+              itemCount: member.length,
               itemBuilder: (context, index) {
-                return SeriesTile(series: series[index]);
+                return MemberTile(callback: callback, community: widget.community, member: member[index]);
               },
             ),
           );
         } else {
-          log("series_list: Snapshot Error ${snapshots.error}");
           return Loading();
         }
       }

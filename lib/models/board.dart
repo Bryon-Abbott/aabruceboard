@@ -1,7 +1,5 @@
 import 'dart:developer' as dev;
-//import 'dart:convert';
 import 'dart:math';
-//import 'package:shared_preferences/shared_preferences.dart';
 import 'package:bruceboard/utils/preferences.dart';
 
 class Board {
@@ -13,8 +11,18 @@ class Board {
   List<int> rowResults = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
   List<int> colResults = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
   List<int> percentSplits = List<int>.filled(5, 20); // Q1, Q2, Q3, Q4, Community
+  bool dirty = true;
 
   Board({ required this.gid, });
+
+  @override
+  void dispose() {
+    if (dirty) {
+      dev.log("Save Board to Firebase");
+    } else {
+      dev.log("Dont Save Board to Firebase");
+    }
+  }
 
   bool scoresLocked = false;
 

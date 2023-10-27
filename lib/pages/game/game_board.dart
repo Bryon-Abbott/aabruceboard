@@ -12,16 +12,18 @@ import 'package:bruceboard/shared/loading.dart';
 const double gridSizeLarge = 1000;
 const double gridSizeSmall = 500;
 // ===========================================================================
-// Desc: Create the main GameBoard screen and necessary widgets and member
-// functions.
+// Desc: Refactored GameBoard from Release 1 to utilize Firebase vs
+// SharedPreferences to store the game data.
 // ----------
 // NOTES:
+// Todo: Review resizing functions
 // The resizing of the screen is costly from a loading data perspective
 // as the data is loaded twice everytime the screen size is changed. This
 // will have minimal impact on Mobile instances but is costly for Web and
 // desktop apps.
 // ----------
-// 2023/09/18 Bryon   Created
+// 2023/09/18: Bryon   Created
+// 2023/10/24: Bryon   Refactored
 // ===========================================================================
 class GameBoard extends StatefulWidget {
 //  const GameBoard({super.key});
@@ -39,8 +41,8 @@ class _GameBoardState extends State<GameBoard> {
   late Game game;
 
   late TextStyle textStyle;
+  // Todo: Refactor to bring all controllers into a list (or else improve).
   late TextEditingController controller1, controller2;
-
   List<TextEditingController> controllers = [];
 
   double gridSize = gridSizeSmall;
@@ -68,27 +70,21 @@ class _GameBoardState extends State<GameBoard> {
   void dispose() {
     controller1.dispose();
     controller2.dispose();
+    for (TextEditingController c in controllers ) {
+      c.dispose;
+    }
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-//    players = Players();
-//    games = Games();
-//    game = games.getGame(games.currentGame);
     game = widget.game;
 
     // Calculate screen size
-    var padding = MediaQuery
-        .of(context)
-        .padding;
-    screenHeight = MediaQuery
-        .of(context)
-        .size
+    var padding = MediaQuery.of(context).padding;
+    screenHeight = MediaQuery.of(context).size
         .height - padding.top - padding.bottom;
-    screenWidth = MediaQuery
-        .of(context)
-        .size
+    screenWidth = MediaQuery.of(context).size
         .width - padding.left - padding.right;
 
     // Dynamically adjust the grid size for Small:Phone / Large:Web,Tablet, etc
@@ -102,14 +98,11 @@ class _GameBoardState extends State<GameBoard> {
         name: "${this.runtimeType.toString()}:build");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
-    textStyle = Theme
-        .of(context)
-        .textTheme
-        .bodySmall!
+    textStyle = Theme.of(context).textTheme.bodySmall!
         .copyWith(color: Colors.yellow);
 
     return StreamBuilder<Board>(
-        stream: DatabaseService(pid: _pid, sid: _sid, gid: _gid).board,
+        stream: DatabaseService(uid: _pid, sid: _sid, gid: _gid).board,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Board board = snapshot.data!;
@@ -896,10 +889,8 @@ class _BoardGridState extends State<BoardGrid> {
       if (board.rowResults[i] == -1 ||
           board.colResults[i] == -1) continue;
       // Get last diget of each score
-      lastDigitOne =
-          board.rowResults[i] % 10; // Column Number = Team one
-      lastDigitTwo =
-          board.colResults[i] % 10; // Row Number = Team two
+      lastDigitOne = board.rowResults[i] % 10; // Column Number = Team one
+      lastDigitTwo = board.colResults[i] % 10; // Row Number = Team two
       // Check if both are equal
       if ((board.colScores[col] == lastDigitOne) &&
           board.rowScores[row] == lastDigitTwo) {

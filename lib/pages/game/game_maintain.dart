@@ -28,7 +28,7 @@ class _GameMaintainState extends State<GameMaintain> {
   late Series series;
   late String _sid;
   late String _gid;
-  late String _pid;
+  late String _uid;
 
   @override
   void initState() {
@@ -36,14 +36,14 @@ class _GameMaintainState extends State<GameMaintain> {
     game = widget.game;
     _sid = series.sid;
     _gid = game?.gid ?? 'not set';
-    _pid = game?.pid ?? 'not set';
+    _uid = game?.pid ?? 'not set';
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
-    _pid = bruceUser.uid;
+    _uid = bruceUser.uid;
     //Game? game = widget.game;
     String _currentGameName = "";
     String _currentTeamOne = "";
@@ -164,9 +164,9 @@ class _GameMaintainState extends State<GameMaintain> {
                               if ( game == null ) {
                                 log('Add Game');
                                 // Add new Game
-                                DocumentReference result = await DatabaseService(pid: _pid, sid: _sid).addGame(
+                                DocumentReference result = await DatabaseService(uid: _uid, sid: _sid).addGame(
                                   sid: _sid,
-                                  pid: _pid,
+                                  uid: _uid,
                                   name: _currentGameName,
                                   teamOne: _currentTeamOne,
                                   teamTwo: _currentTeamTwo,
@@ -175,31 +175,78 @@ class _GameMaintainState extends State<GameMaintain> {
                                 // Add a default board to Database
                                 if (result != null) {
                                   _gid = result.id;
+                                  await DatabaseService(uid: _uid, sid: _sid, gid: _gid )
+                                      .addBoard(gid: _gid,);
+                                  await DatabaseService(uid: _uid, sid: _sid).incrementSeriesNoGames(1);
+                                  widget.series.noGames =widget.series.noGames+1; // Update class to maintain alignment
                                 }
-                                log('Add Board for Game $_gid');
-                                await DatabaseService(pid: _pid, sid: _sid, gid: _gid ).addBoard(
-                                  gid: _gid,
-                                );
                               } else {
                                 // update existing game
-                                log('Update Game $_gid');
-                                await DatabaseService(pid: _pid, sid: _sid).updateGame(
+                                //log('Update Game $_gid');
+                                await DatabaseService(uid: _uid, sid: _sid).updateGame(
                                   gid: _gid,
                                   sid: _sid,
-                                  pid: _pid,
+                                  uid: _uid,
                                   name: _currentGameName,
                                   teamOne: _currentTeamOne,
                                   teamTwo: _currentTeamTwo,
                                   squareValue: _currentSquareValue,
                                 );                              }
                               // Save Updates to Shared Preferences
-                              Navigator.pop(context);
+                              Navigator.of(context).pop();
                             }
                           },
                           child: const Text('Save'),
                         ),
                       ),
                       Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: (game==null)
+                              ? null
+                              : () async {
+                              bool results = await showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                  // titlePadding: EdgeInsets.fromLTRB(6,2,2,2),
+                                  // actionsPadding: EdgeInsets.all(2),
+                                  // contentPadding: EdgeInsets.fromLTRB(6,2,6,2),
+                                  // shape: RoundedRectangleBorder(
+                                  //     borderRadius: BorderRadius.circular(2.0)
+                                  // ),
+                                  title: Text("Delete Game Warning "),
+                                  titleTextStyle: Theme.of(context).textTheme.bodyLarge,
+                                  contentTextStyle: Theme.of(context).textTheme.bodyLarge,
+                                  content: Text("Are you sure you want to delete this?"),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(true);
+                                      },
+                                      child: Text('Yes'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).pop(false);
+                                      },
+                                      child: Text('Cancel'),
+                                    ),
+                                  ],
+                                ),
+                              );
+                              if (results) {
+                                log('Delete Game ... U:$_uid, S:$_sid, G:$_gid');
+                                await DatabaseService(uid: _uid, sid: _sid).deleteGame(_gid);
+                                await DatabaseService(uid: _uid, sid: _sid, gid: _gid).deleteBoard();
+                                await DatabaseService(uid: _uid, sid: _sid).incrementSeriesNoGames(-1);
+                                widget.series.noGames  = widget.series.noGames -1;
+                                Navigator.of(context).pop();
+                              } else {
+                                log('Game Delete Action Cancelled');
+                              }
+                            },
+                            child: const Text("Delete")),
+                      ),                      Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
                             onPressed: () {

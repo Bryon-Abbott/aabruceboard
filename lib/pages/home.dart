@@ -1,47 +1,26 @@
-import 'package:bruceboard/pages/player/profile.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'package:adaptive_theme/adaptive_theme.dart';
-
-import 'package:bruceboard/utils/brucearguments.dart';
+import 'package:bruceboard/pages/player/profile.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/utils/games.dart';
 import 'package:bruceboard/services/auth.dart';
 import 'package:bruceboard/pages/settings_main.dart';
 import 'package:bruceboard/theme/theme_manager.dart';
 
-//import 'package:bruceboard/models/collection.dart';
-//import '../services/database.dart';
 // ==========
 // Desc: Load home screen
 // ----------
 // 2023/09/12 Bryon   Created
 // ==========
 class Home extends StatefulWidget {
-  // final AdaptiveThemeMode? savedThemeMode;
-  // final VoidCallback onChanged;
-
-  // const Home({
-  //   super.key,
-  //   this.savedThemeMode,
-  //   required this.onChanged,
-  // });
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  //Map data = {};
-  //Object? parameters;
-//  late BruceArguments args;
-//  late Players players;
-//  late Games games;
-//  bool settingDarkMode = false;
-
 
   @override
   void dispose() {
@@ -66,11 +45,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    // args = ModalRoute.of(context)!.settings.arguments as BruceArguments;
-    // players = args.players;
-    // games = args.games;
 
-    //final AuthService _auth = AuthService();
     final bruceUser = Provider.of<BruceUser?>(context) ?? BruceUser(uid: 'x');
     //final DatabaseService _db = DatabaseService(uid: bruceUser.uid);
 
@@ -82,15 +57,6 @@ class _HomeState extends State<Home> {
     double newScreenWidth = screenWidth - padding.left - padding.right;
     //dev.log("Screen Dimensions are Height: $screenHeight, Width: $screenWidth : Height: $newScreenHeight, Width: $newScreenWidth", name: " ${this.runtimeType.toString()}:build");
 
-    // return MultiProvider(
-    //     providers: [
-    //       // StreamProvider<BruceUser?>.value(
-    //       //     initialData: BruceUser(uid: bruceUser.uid),
-    //       //     value: AuthService().user),
-    //       StreamProvider<List<Collection>>.value(
-    //           initialData: [],
-    //           value: DatabaseService(uid: bruceUser.uid).collections),
-    //     ],
       return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
@@ -197,9 +163,7 @@ class _HomeState extends State<Home> {
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton.icon(
                               onPressed: (bruceUser.uid == 'x') ? null : () async {
-                                Navigator.pushNamed(
-                                  //  context, '/manageplayers', arguments: BruceArguments(players, games));
-                                    context, '/manageplayers');
+                                Navigator.pushNamed(context, '/community-list');
                               },
                               icon: Icon(
                                 Icons.person,

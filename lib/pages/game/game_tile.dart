@@ -9,8 +9,9 @@ import 'package:flutter/material.dart';
 class GameTile extends StatelessWidget {
   final Series series;
   final Game game;
+  final Function callback;
 
-  GameTile({ required this.series, required this.game });
+  GameTile({ required this.callback, required this.series, required this.game });
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +20,9 @@ class GameTile extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
         child: ListTile(
-          onTap: () {
+          onTap: () async {
             log("Game Tapped ... ${game.name} ");
-            Navigator.of(context).push(
+            await Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => GameBoard(game: game)),
             );
           },
@@ -34,9 +35,10 @@ class GameTile extends StatelessWidget {
           title: Text('Game: ${game.name}'),
           subtitle: Text(' SID: ${game.sid} GID: ${game.gid}'),
           trailing: IconButton(
-            onPressed: (){
-              Navigator.of(context).push(
+            onPressed: () async {
+              await Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => GameMaintain(series: series, game: game)));
+              callback();
             },
             icon: Icon(Icons.edit),
           ),

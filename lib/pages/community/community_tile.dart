@@ -1,14 +1,14 @@
 import 'dart:developer';
 
-import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/game/game_list.dart';
-import 'package:bruceboard/pages/series/series_maintain.dart';
+import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/pages/member/member_list.dart';
+import 'package:bruceboard/pages/community/community_maintain.dart';
 import 'package:flutter/material.dart';
 
-class SeriesTile extends StatelessWidget {
+class CommunityTile extends StatelessWidget {
 
-  final Series series;
-  SeriesTile({ required this.series });
+  final Community community;
+  CommunityTile({ required this.community });
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,9 @@ class SeriesTile extends StatelessWidget {
         margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
         child: ListTile(
           onTap: () {
-            // log("Series Tapped ... ${series.name} ");
+            // log("Community Tapped ... ${community.name} ");
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => GameList(series: series)),
+              MaterialPageRoute(builder: (context) => MemberList(community: community,)),
             );
           },
           leading: Icon(Icons.list_alt_outlined),
@@ -29,14 +29,14 @@ class SeriesTile extends StatelessWidget {
           //   backgroundColor: Colors.brown,
           //   backgroundImage: AssetImage('assets/player.png'),
           // ),
-          title: Text('Series: ${series.name}'),
-          subtitle: Text('Games: ${series.noGames}'
-//              ' SID: ${series.sid}'
+          title: Text('Community: ${community.name}'),
+          subtitle: Text('Members: ${community.noMembers}'
+//              ' SID: ${community.sid}'
           ),
           trailing: IconButton(
               onPressed: (){
                 Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => SeriesMaintain(series: series)));
+                    MaterialPageRoute(builder: (context) => CommunityMaintain(community: community)));
               },
               icon: Icon(Icons.edit),
           ),

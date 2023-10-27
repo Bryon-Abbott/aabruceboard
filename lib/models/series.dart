@@ -1,9 +1,12 @@
-class Series {
+import 'dart:developer';
+
+import 'package:bruceboard/services/database.dart';
+
+class Series  {
   final String sid;
-  final String name;
-  final String type;
+  String name;
+  String type;
   int noGames=0;
 
-  Series({ required this.sid, required this.name, required this.type });
-
+  Series({ required this.sid, required this.name, required this.type, required this.noGames });
 }

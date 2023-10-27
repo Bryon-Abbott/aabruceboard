@@ -1,26 +1,21 @@
-import 'package:adaptive_theme/adaptive_theme.dart';
-import 'package:bruceboard/pages/auth/authenticate.dart';
-import 'package:bruceboard/pages/game/game_list.dart';
-import 'package:bruceboard/pages/game/game_maintain.dart';
-import 'package:bruceboard/pages/series/series_list.dart';
-import 'package:bruceboard/pages/series/series_maintain.dart';
-import 'package:bruceboard/pages/player/profile.dart';
-import 'package:bruceboard/services/auth.dart';
-import 'package:bruceboard/services/database.dart';
-import 'package:bruceboard/theme/theme_constants.dart';
-import 'package:bruceboard/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:provider/provider.dart';
-import 'package:bruceboard/models/player.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+
+import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 
+import 'package:bruceboard/pages/auth/authenticate.dart';
+import 'package:bruceboard/pages/series/series_list.dart';
+import 'package:bruceboard/pages/series/series_maintain.dart';
+import 'package:bruceboard/pages/community/community_list.dart';
+import 'package:bruceboard/pages/community/community_maintain.dart';
+import 'package:bruceboard/pages/player/profile.dart';
+import 'package:bruceboard/services/auth.dart';
+import 'package:bruceboard/theme/theme_constants.dart';
+import 'package:bruceboard/utils/preferences.dart';
+import 'package:bruceboard/models/player.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:bruceboard/pages/loading.dart';
 import 'package:bruceboard/pages/home.dart';
 import 'package:bruceboard/pages/about.dart';
@@ -28,12 +23,11 @@ import 'package:bruceboard/pages/manage_players.dart';
 import 'package:bruceboard/pages/maintain_player.dart';
 import 'package:bruceboard/pages/manage_games.dart';
 import 'package:bruceboard/pages/maintain_game.dart';
-import 'package:bruceboard/pages/game_board.dart';
 import 'package:bruceboard/pages/settings_main.dart';
 import 'package:bruceboard/pages/settings_scoring.dart';
-import 'package:bruceboard/utils/preferences.dart';
-import 'package:bruceboard/utils/downloadgame.dart';
-import 'package:bruceboard/theme/theme_constants.dart';
+
+import 'firebase_options.dart';
+
 
 import 'firebase_options.dart';
 main() async {
@@ -118,17 +112,13 @@ class LoadApp extends StatelessWidget {
               '/maintainplayer': (context) => const MaintainPlayer(),
               '/managegames': (context) => const ManageGames(),
               '/maintaingame': (context) => const MaintainGame(),
-              //          '/gameboard': (context) => GameBoard(),
-              '/gameboard': (context) => GameBoard(gameStorage: DownloadGame()),
               '/about': (context) => const About(),
               '/authenticate': (contexct) => const Authenticate(),
-              // '/signin': (context) => const Signin(),
-              // '/signup': (context) => const Signup(),
               '/profile': (context) => SettingsForm(),
               '/series-list': (context) => const SeriesList(),
               '/series-maintain': (context) => const SeriesMaintain(),
-              // '/game-list': (context) => const GameList(),
-              // '/game-maintain': (context) => const GameMaintain(),
+              '/community-list': (context) => const CommunityList(),
+              '/community-maintain': (context) => const CommunityMaintain(),
               '/settings': (context) => const SettingsMain(),
               // Not sure I need this?
               '/settings_scoring': (context) => const SettingsScoring(),

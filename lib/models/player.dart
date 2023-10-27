@@ -1,4 +1,4 @@
-import '../services/auth.dart';
+import 'package:bruceboard/services/auth.dart';
 
 class BruceUser {
 
@@ -15,6 +15,7 @@ class BruceUser {
   }
 }
 
+// Note: pid == uid
 class Player {
 
   final String uid;
@@ -23,7 +24,7 @@ class Player {
   final String initials;
 
   int noCommunityMembers = 0;
-  int noCollections = 0;
+  int noSeries = 0;
   int noTotalGames = 0;
 
   Player({required this.uid, required this.fName, required this.lName, required this.initials});

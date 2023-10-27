@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:bruceboard/models/series.dart';
+import 'package:bruceboard/models/community.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,51 +8,51 @@ import 'package:provider/provider.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
 // Create a Form widget.
-class SeriesMaintain extends StatefulWidget {
+class CommunityMaintain extends StatefulWidget {
 
-  final Series? series;
-  const SeriesMaintain({super.key, this.series});
+  final Community? community;
+  const CommunityMaintain({super.key, this.community});
 
   @override
-  SeriesMaintainState createState() => SeriesMaintainState();
+  CommunityMaintainState createState() => CommunityMaintainState();
 }
 
-class SeriesMaintainState extends State<SeriesMaintain> {
-  final _formSeriesKey = GlobalKey<FormState>();
+class CommunityMaintainState extends State<CommunityMaintain> {
+  final _formCommunityKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     //cid = ModalRoute.of(context)!.settings.arguments as String;
     BruceUser bruceUser = Provider.of<BruceUser>(context);
     String _uid = bruceUser.uid;
-    late String _sid;
-//    Series series = Provider.of<Series>(context);
-    Series? series = widget.series; ;
-    String _currentSeriesName = "";
-    String _currentSeriesType = "";
-    int _currentSeriesNoGames = 0;
+    late String _cid;
+    Community? community = widget.community;
+    String _currentCommunityName = "";
+    String _currentCommunityType = "";
+    int _currentCommunityNoMembers = 0;
     int noGames = 0;
 
     // Todo: Remove this
-    if (widget.series != null) {
-      series = widget.series!;
-      log('Got Series ${widget.series!.name}');
+    if (widget.community != null) {
+      community = widget.community!;
+      log('Got Community ${widget.community!.name}');
     } else {
-      log('No Series found ... New series, dont use until created?');
+      log('No Community found ... New community, dont use until created?');
     }
 
-    if ( series != null ) {
-      _sid = series.sid;
-      _currentSeriesName = widget.series?.name ?? 'xxx';
-      _currentSeriesType = widget.series?.type ?? 'xxx';
-      _currentSeriesNoGames = widget.series?.noGames ?? 0;
+    if ( community != null ) {
+//      _uid = community.pid;
+      _cid = widget.community!.cid;
+      _currentCommunityName = widget.community?.name ?? 'xxx';
+      _currentCommunityType = widget.community?.approvalType ?? 'xxx';
+      _currentCommunityNoMembers = widget.community?.noMembers ?? 0;
     }
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
 //            backgroundColor: Colors.blue[900],
-            title: Text((widget.series != null ) ? 'Edit Series' : 'Add Series'),
+            title: Text((widget.community != null ) ? 'Edit Community' : 'Add Community'),
             centerTitle: true,
             elevation: 0,
             leading: IconButton(
@@ -66,31 +66,30 @@ class SeriesMaintainState extends State<SeriesMaintain> {
             child: Form(
               //autovalidateMode: AutovalidateMode.always,
               onChanged: () {
-                //debugPrint("Something Changed ... Game '$game' Email '$email' ");
                 Form.of(primaryFocus!.context!).save();
               },
-              key: _formSeriesKey,
+              key: _formCommunityKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Series Name: "),
+                  const Text("Community Name: "),
                   TextFormField(
-                    initialValue: _currentSeriesName,
+                    initialValue: _currentCommunityName,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter Series Name';
+                        return 'Please enter Community Name';
                       }
                       return null;
                     },
                     onSaved: (String? value) {
                       //debugPrint('Game name is: $value');
-                      _currentSeriesName = value ?? 'Series 000';
+                      _currentCommunityName = value ?? 'Community 000';
                     },
                   ),
                   const Text("Type: "),
                   TextFormField(
-                    initialValue: _currentSeriesType,
+                    initialValue: _currentCommunityType,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -100,12 +99,12 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Email is: $value');
-                      _currentSeriesType = value ?? 'auto-approve';
+                      _currentCommunityType = value ?? 'auto-approve';
                     },
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Number of Games: ${series?.noGames ?? 'N/A'}"),
+                    child: Text("Number of Members: ${community?.noMembers ?? 'N/A'}"),
                   ),
                   Row(
                     children: [
@@ -114,30 +113,30 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                         child: ElevatedButton(
                           onPressed: () async {
                             // Validate returns true if the form is valid, or false otherwise.
-                            if (_formSeriesKey.currentState!.validate()) {
+                            if (_formCommunityKey.currentState!.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
-                              if ( widget.series == null ) {
+                              if ( widget.community == null ) {
                                 // Add new Game
-                                await DatabaseService(uid: _uid).addSeries(
-                                    name: _currentSeriesName,
-                                    type: _currentSeriesType,
-                                    noGames: _currentSeriesNoGames,
+                                await DatabaseService(uid: _uid).addCommunity(
+                                    name: _currentCommunityName,
+                                    approvalType: _currentCommunityType,
+                                    noMembers: _currentCommunityNoMembers,
                                 );
-                                widget.series?.noGames++;
+                                widget.community?.noMembers++;
                               } else {
-                                // update existing game
-                                await DatabaseService(uid: _uid).updateSeries(
-                                  sid: widget.series?.sid ?? 'Error',
-                                  name: _currentSeriesName,
-                                  type: _currentSeriesType,
-                                  noGames: _currentSeriesNoGames,
+                                // update existing community
+                                await DatabaseService(uid: _uid).updateCommunity(
+                                  cid: widget.community?.cid ?? 'Error',
+                                  name: _currentCommunityName,
+                                  approvalType: _currentCommunityType,
+                                  noMembers: _currentCommunityNoMembers,
                                 );
                               }
                               // Save Updates to Shared Preferences
-                              log("series_maintain: Added/Updated series "
-                                  "${widget.series?.noGames}");
-                              Navigator.of(context).pop(widget.series);
+                              log("community_maintain: Added/Updated community "
+                                  "${widget.community?.noMembers}");
+                              Navigator.of(context).pop(widget.community);
                             }
                           },
                           child: const Text('Save'),
@@ -146,18 +145,18 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                            onPressed: (series==null || series.noGames > 0)
+                            onPressed: (community==null || community.noMembers > 0)
                                 ? () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text("Must delete ALL games in series"),
+                                  content: const Text("Must delete ALL members in community"),
                                 )
                               );
                             }
                                 : () {
-                              if (series!.noGames == 0) {
-                                log('Delete Series ...');
-                                DatabaseService(uid: _uid).deleteSeries(_sid);
+                              if (community!.noMembers == 0) {
+                                log('Delete Community ...');
+                                DatabaseService(uid: _uid).deleteCommunity(_cid);
                                 Navigator.of(context).pop();
                               }
                             },
@@ -168,7 +167,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                         child: ElevatedButton(
                             onPressed: () {
                               if (kDebugMode) {
-                                print("Return without adding series");
+                                print("Return without adding community");
                               }
                               Navigator.pop(context);
                             },
