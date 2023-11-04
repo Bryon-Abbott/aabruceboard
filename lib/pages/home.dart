@@ -1,9 +1,12 @@
 
+import 'dart:developer';
+
+import 'package:bruceboard/models/community.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'package:bruceboard/pages/player/profile.dart';
+import 'package:bruceboard/pages/player/player_profile.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/auth.dart';
 import 'package:bruceboard/pages/settings_main.dart';
@@ -179,6 +182,43 @@ class _HomeState extends State<Home> {
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton.icon(
                               onPressed: (bruceUser.uid == 'x') ? null : () async {
+                                Community? community ;
+                                dynamic results = await Navigator.pushNamed(context, '/community-select');
+                                if (results != null) {
+                                  community = results as Community;
+                                  log("Community Selected: ${community.name}");
+                                }
+                              },
+                              icon: Icon(
+                                Icons.person,
+                                size: 32,
+                                color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                              ),
+                              label: Text('Community Select',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton.icon(
+                              onPressed: (bruceUser.uid == 'x') ? null : () async {
+                                Navigator.pushNamed(context, '/membership-list');
+                              },
+                              icon: Icon(
+                                Icons.collections_outlined,
+                                size: 32,
+                                color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                              ),
+                              label: Text('Memberships',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton.icon(
+                              onPressed: (bruceUser.uid == 'x') ? null : () async {
                                 Navigator.pushNamed(
                                   //  context, '/manageplayers', arguments: BruceArguments(players, games));
                                 context, '/series-list');
@@ -260,7 +300,7 @@ void onMenuSelected(BuildContext context, int item) async {
       break;
     case 1:
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => SettingsForm()),
+        MaterialPageRoute(builder: (context) => PlayerProfile()),
       );
       break;
     case 2:

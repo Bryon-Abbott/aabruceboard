@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:bruceboard/models/series.dart';
+import 'package:bruceboard/models/membership.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,51 +8,46 @@ import 'package:provider/provider.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
 // Create a Form widget.
-class SeriesMaintain extends StatefulWidget {
+class MembershipMaintain extends StatefulWidget {
 
-  final Series? series;
-  const SeriesMaintain({super.key, this.series});
+  final Membership? membership;
+  const MembershipMaintain({super.key, this.membership});
 
   @override
-  SeriesMaintainState createState() => SeriesMaintainState();
+  MembershipMaintainState createState() => MembershipMaintainState();
 }
 
-class SeriesMaintainState extends State<SeriesMaintain> {
-  final _formSeriesKey = GlobalKey<FormState>();
+class MembershipMaintainState extends State<MembershipMaintain> {
+  final _formMembershipKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     //cid = ModalRoute.of(context)!.settings.arguments as String;
     BruceUser bruceUser = Provider.of<BruceUser>(context);
     String _uid = bruceUser.uid;
-    late String _sid;
-//    Series series = Provider.of<Series>(context);
-    Series? series = widget.series; ;
-    String _currentSeriesName = "";
-    String _currentSeriesType = "";
-    int _currentSeriesNoGames = 0;
-    int noGames = 0;
+    late String _cid;
+//    Membership membership = Provider.of<Membership>(context);
+    Membership? membership = widget.membership; ;
+    String _currentStatus = "";
 
     // Todo: Remove this
-    if (widget.series != null) {
-      series = widget.series!;
-      log('Got Series ${widget.series!.name}');
+    if (widget.membership != null) {
+      membership = widget.membership!;
+      log('Got Membership ${widget.membership!.cid}');
     } else {
-      log('No Series found ... New series, dont use until created?');
+      log('No Membership found ... New membership, dont use until created?');
     }
 
-    if ( series != null ) {
-      _sid = series.sid;
-      _currentSeriesName = widget.series?.name ?? 'xxx';
-      _currentSeriesType = widget.series?.type ?? 'xxx';
-      _currentSeriesNoGames = widget.series?.noGames ?? 0;
+    if ( membership != null ) {
+      _cid = membership.cid;
+      _currentStatus = widget.membership?.status ?? 'Null';
     }
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
 //            backgroundColor: Colors.blue[900],
-            title: Text((widget.series != null ) ? 'Edit Series' : 'Add Series'),
+            title: Text((widget.membership != null ) ? 'Edit Membership' : 'Add Membership'),
             centerTitle: true,
             elevation: 0,
             leading: IconButton(
@@ -69,43 +64,33 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                 //debugPrint("Something Changed ... Game '$game' Email '$email' ");
                 Form.of(primaryFocus!.context!).save();
               },
-              key: _formSeriesKey,
+              key: _formMembershipKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Series Name: "),
+                  const Text("Community ID: "),
                   TextFormField(
-                    initialValue: _currentSeriesName,
+                    readOnly: true,
+                    initialValue: 'Select Community',
+                  ),
+                  const Text("Membership Status: "),
+                  TextFormField(
+                    initialValue: _currentStatus,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter Series Name';
+                        return 'Please enter Membership Status';
                       }
                       return null;
                     },
                     onSaved: (String? value) {
                       //debugPrint('Game name is: $value');
-                      _currentSeriesName = value ?? 'Series 000';
-                    },
-                  ),
-                  const Text("Type: "),
-                  TextFormField(
-                    initialValue: _currentSeriesType,
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter type';
-                      }
-                      return null;
-                    },
-                    onSaved: (String? value) {
-                      //debugPrint('Email is: $value');
-                      _currentSeriesType = value ?? 'auto-approve';
+                      _currentStatus = value ?? 'Pending';
                     },
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Number of Games: ${series?.noGames ?? 'N/A'}"),
+                    child: Text("Number of Members: ???"),
                   ),
                   Row(
                     children: [
@@ -114,30 +99,27 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                         child: ElevatedButton(
                           onPressed: () async {
                             // Validate returns true if the form is valid, or false otherwise.
-                            if (_formSeriesKey.currentState!.validate()) {
+                            if (_formMembershipKey.currentState!.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
-                              if ( widget.series == null ) {
+                              if ( widget.membership == null ) {
                                 // Add new Game
-                                await DatabaseService(uid: _uid).addSeries(
-                                    name: _currentSeriesName,
-                                    type: _currentSeriesType,
-                                    noGames: _currentSeriesNoGames,
+                                await DatabaseService(uid: _uid).addMembership(
+                                  pid: 'xx', // Todo: Fix this
+                                  status: _currentStatus,
                                 );
-                                widget.series?.noGames++;
+                                //widget.membership?.noGames++;
                               } else {
                                 // update existing game
-                                await DatabaseService(uid: _uid).updateSeries(
-                                  sid: widget.series?.sid ?? 'S9999',
-                                  name: _currentSeriesName,
-                                  type: _currentSeriesType,
-                                  noGames: _currentSeriesNoGames,
+                                await DatabaseService(uid: _uid, cid: _cid).updateMembership(
+                                  pid: 'xx',  // Todo: Fix this
+                                  status: _currentStatus,
                                 );
                               }
                               // Save Updates to Shared Preferences
-                              log("series_maintain: Added/Updated series "
-                                  "${widget.series?.noGames}");
-                              Navigator.of(context).pop(widget.series);
+                              log("membership_maintain: Added/Updated membership"
+                                  "${widget.membership?.cid}");
+                              Navigator.of(context).pop(widget.membership);
                             }
                           },
                           child: const Text('Save'),
@@ -146,29 +128,27 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                            onPressed: (series==null || series.noGames > 0)
-                                ? () {
+                          onPressed: (membership==null)
+                            ? () {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                  content: const Text("Must delete ALL games in series"),
+                                  content: const Text("Must delete ALL memberships"),
                                 )
                               );
                             }
-                                : () {
-                              if (series!.noGames == 0) {
-                                log('Delete Series ... ${_sid}');
-                                DatabaseService(uid: _uid).deleteSeries(_sid);
-                                Navigator.of(context).pop();
-                              }
+                            : () {
+                              log('Delete Membership ...');
+                              DatabaseService(uid: _uid).deleteMembership(_cid);
+                              Navigator.of(context).pop();
                             },
-                            child: const Text("Delete")),
+                        child: const Text("Delete")),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
                             onPressed: () {
                               if (kDebugMode) {
-                                print("Return without adding series");
+                                print("Return without adding membership");
                               }
                               Navigator.pop(context);
                             },

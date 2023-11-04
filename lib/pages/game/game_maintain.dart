@@ -177,7 +177,7 @@ class _GameMaintainState extends State<GameMaintain> {
                                   _gid = result.id;
                                   await DatabaseService(uid: _uid, sid: _sid, gid: _gid )
                                       .addBoard(gid: _gid,);
-                                  await DatabaseService(uid: _uid, sid: _sid).incrementSeriesNoGames(1);
+                                  //await DatabaseService(uid: _uid, sid: _sid).incrementSeriesNoGames(1);
                                   widget.series.noGames =widget.series.noGames+1; // Update class to maintain alignment
                                 }
                               } else {
@@ -238,7 +238,7 @@ class _GameMaintainState extends State<GameMaintain> {
                                 log('Delete Game ... U:$_uid, S:$_sid, G:$_gid');
                                 await DatabaseService(uid: _uid, sid: _sid).deleteGame(_gid);
                                 await DatabaseService(uid: _uid, sid: _sid, gid: _gid).deleteBoard();
-                                await DatabaseService(uid: _uid, sid: _sid).incrementSeriesNoGames(-1);
+                                // await DatabaseService(uid: _uid, sid: _sid).incrementSeriesNoGames(-1);
                                 widget.series.noGames  = widget.series.noGames -1;
                                 Navigator.of(context).pop();
                               } else {

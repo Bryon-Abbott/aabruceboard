@@ -1,3 +1,5 @@
+import 'package:bruceboard/pages/community/community_select.dart';
+import 'package:bruceboard/pages/player/player_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter/foundation.dart';
@@ -10,7 +12,9 @@ import 'package:bruceboard/pages/series/series_list.dart';
 import 'package:bruceboard/pages/series/series_maintain.dart';
 import 'package:bruceboard/pages/community/community_list.dart';
 import 'package:bruceboard/pages/community/community_maintain.dart';
-import 'package:bruceboard/pages/player/profile.dart';
+import 'package:bruceboard/pages/membership/membership_list.dart';
+import 'package:bruceboard/pages/membership/membership_maintain.dart';
+import 'package:bruceboard/pages/player/player_profile.dart';
 import 'package:bruceboard/services/auth.dart';
 import 'package:bruceboard/theme/theme_constants.dart';
 import 'package:bruceboard/utils/preferences.dart';
@@ -114,11 +118,15 @@ class LoadApp extends StatelessWidget {
               '/maintaingame': (context) => const MaintainGame(),
               '/about': (context) => const About(),
               '/authenticate': (contexct) => const Authenticate(),
-              '/profile': (context) => SettingsForm(),
+              '/player-profile': (context) => PlayerProfile(),
+              '/player-select': (context) => PlayerSelect(),
               '/series-list': (context) => const SeriesList(),
               '/series-maintain': (context) => const SeriesMaintain(),
               '/community-list': (context) => const CommunityList(),
               '/community-maintain': (context) => const CommunityMaintain(),
+              '/community-select': (context) => const CommunitySelect(),
+              '/membership-list': (context) => const MembershipList(),
+              '/membership-maintain': (context) => const MembershipMaintain(),
               '/settings': (context) => const SettingsMain(),
               // Not sure I need this?
               '/settings_scoring': (context) => const SettingsScoring(),

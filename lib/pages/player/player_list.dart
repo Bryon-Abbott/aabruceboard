@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:bruceboard/models/community.dart';
-import 'package:bruceboard/pages/community/community_tile.dart';
+import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/pages/player/player_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,14 +9,14 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/shared/loading.dart';
 
-class CommunityList extends StatefulWidget {
-  const CommunityList({super.key});
+class PlayerList extends StatefulWidget {
+  const PlayerList({super.key});
 
   @override
-  State<CommunityList> createState() => _CommunityListState();
+  State<PlayerList> createState() => _PlayerListState();
 }
 
-class _CommunityListState extends State<CommunityList> {
+class _PlayerListState extends State<PlayerList> {
 
   late BruceUser bruceUser;
 
@@ -25,14 +25,15 @@ class _CommunityListState extends State<CommunityList> {
 
     bruceUser = Provider.of<BruceUser>(context);
 
-    return StreamBuilder<List<Community>>(
-      stream: DatabaseService(uid: bruceUser.uid).communityList,
+    return StreamBuilder<List<Player>>(
+      stream: DatabaseService(uid: bruceUser.uid).playerListStream,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Community> community = snapshots.data!;
+          List<Player> player = snapshots.data!;
           return Scaffold(
             appBar: AppBar(
-                title: Text('Manage Community - Count: ${community.length}'),
+      //            backgroundColor: Colors.blue[900],
+                title: Text('Manage Player - Count: ${player.length}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -46,25 +47,25 @@ class _CommunityListState extends State<CommunityList> {
                   IconButton(
                     onPressed: () async {
                       dynamic changes = await Navigator.pushNamed(
-                          context, '/community-maintain');
+                          context, '/player-maintain');
                       if (changes != null) {
-                        log('community_list: Members ${changes} Changes Type : ${changes.runtimeType}');
+                        log('player_list: Games ${changes} Changes Type : ${changes.runtimeType}');
                       } else {
-                        log('community_list: **null** Changes Type : ${changes.runtimeType}');
+                        log('player_list: **null** Changes Type : ${changes.runtimeType}');
                       }
                     },
                     icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
             body: ListView.builder(
-              itemCount: community.length,
+              itemCount: player.length,
               itemBuilder: (context, index) {
-                return CommunityTile(community: community[index]);
+                return PlayerTile(player: player[index]);
               },
             ),
           );
         } else {
-          log("community_list: Snapshot Error ${snapshots.error}");
+          log("player_list: Snapshot Error ${snapshots.error}");
           return Loading();
         }
       }

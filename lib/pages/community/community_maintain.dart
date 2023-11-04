@@ -35,7 +35,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
     // Todo: Remove this
     if (widget.community != null) {
       community = widget.community!;
-      log('Got Community ${widget.community!.name}');
+      log('community_maintain: Got Community ${widget.community!.name}');
     } else {
       log('No Community found ... New community, dont use until created?');
     }
@@ -123,7 +123,6 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                     approvalType: _currentCommunityType,
                                     noMembers: _currentCommunityNoMembers,
                                 );
-                                widget.community?.noMembers++;
                               } else {
                                 // update existing community
                                 await DatabaseService(uid: _uid).updateCommunity(

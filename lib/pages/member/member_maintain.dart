@@ -111,7 +111,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   credits: _currentCredits,
                                 );
                                 // Add a default board to Database
-                                  await DatabaseService(uid: _pid, cid: _cid).incrementCommunityNoMembers(1);
+                                  // await DatabaseService(uid: _pid, cid: _cid).incrementCommunityNoMembers(1);
                                   widget.community.noMembers++;  // =widget.series.noMembers+1; // Update class to maintain alignment
                               } else {
                                 // update existing member
@@ -158,7 +158,6 @@ class _MemberMaintainState extends State<MemberMaintain> {
                               if (results) {
                                 log('Delete Member ... P:$_pid, C:$_cid, U:$_uid');
                                 await DatabaseService(uid: _pid, cid: _cid).deleteMember(_pid);
-                                await DatabaseService(uid: _pid, cid: _cid).incrementCommunityNoMembers(-1);
                                 widget.community.noMembers  = widget.community.noMembers -1;
                                 Navigator.of(context).pop();
                               } else {
