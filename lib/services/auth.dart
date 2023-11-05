@@ -63,7 +63,8 @@ class AuthService {
       await result.user!.updateDisplayName('Display Name');
       User user = result.user!;
       // create a new document for the user with the uid
-      await DatabaseService(uid: user.uid).updatePlayer('FNAME', 'LNAME', "FL", -1);
+      Player player = Player(data: {'uid': user.uid, 'pid': -1, 'fName': 'FNAME', 'lName': 'LNAME', 'initials': 'FL'} );
+      await DatabaseService(uid: user.uid).updatePlayer(player: player);
       return _userFromFirebaseUser(user);
     } catch (error) {
       print(error.toString());

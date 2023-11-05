@@ -34,7 +34,7 @@ class _GameMaintainState extends State<GameMaintain> {
   void initState() {
     series = widget.series;
     game = widget.game;
-    _sid = series.sid;
+    _sid = series.key;
     _gid = game?.gid ?? 'not set';
     _uid = game?.pid ?? 'not set';
     super.initState();

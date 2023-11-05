@@ -15,7 +15,8 @@ class CommunitySelect extends StatefulWidget {
 }
 
 class _CommunitySelectState extends State<CommunitySelect> {
-  Player player = Player(uid: 'Select Player', pid: -1, lName: '', fName: '', initials: 'xx');
+  //Map<String, dynamic> data =;
+  Player player = Player(data: {'uid': 'Select Player', 'pid': -1, 'lName': '', 'fName': '', 'initials': 'xx'});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +40,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
           ListTile(
             leading: Icon(Icons.person_outline),
             title: Text("Player: ${player.fName} ${player.lName}"),
-            subtitle: Text("PID: ${player.uid}"),
+            subtitle: Text("PID: ${player.pid}"),
             trailing: ElevatedButton(
                 onPressed: () async {
                   dynamic playerSelected = await Navigator.pushNamed(
@@ -61,7 +62,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
             child: SizedBox(
               height: 300,
               child: StreamBuilder<List<Community>>(
-                stream: DatabaseService(uid: player.uid).communityList,
+                stream: DatabaseService(uid: player.key).communityList,
                 builder: (context, snapshots) {
               if(snapshots.hasData) {
                 List<Community> community = snapshots.data!;

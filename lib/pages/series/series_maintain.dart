@@ -42,7 +42,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
     }
 
     if ( series != null ) {
-      _sid = series.sid;
+      //_sid = series.sid;
       _currentSeriesName = widget.series?.name ?? 'xxx';
       _currentSeriesType = widget.series?.type ?? 'xxx';
       _currentSeriesNoGames = widget.series?.noGames ?? 0;
@@ -119,19 +119,26 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                               // you'd often call a server or save the information in a database.
                               if ( widget.series == null ) {
                                 // Add new Game
+                                Map<String, dynamic> data =
+                                { 'sid': -1,
+                                  'name': _currentSeriesName,
+                                  'type': _currentSeriesType,
+                                  'noGames': _currentSeriesNoGames,
+                                };
                                 await DatabaseService(uid: _uid).addSeries(
-                                    name: _currentSeriesName,
-                                    type: _currentSeriesType,
-                                    noGames: _currentSeriesNoGames,
+                                  series: Series( data: data ),
                                 );
                                 widget.series?.noGames++;
                               } else {
                                 // update existing game
+                                // await DatabaseService(uid: _uid).updateSeries(
+                                //   sid: widget.series?.sid ?? 'S9999',
+                                //   name: _currentSeriesName,
+                                //   type: _currentSeriesType,
+                                //   noGames: _currentSeriesNoGames,
+                                // );
                                 await DatabaseService(uid: _uid).updateSeries(
-                                  sid: widget.series?.sid ?? 'S9999',
-                                  name: _currentSeriesName,
-                                  type: _currentSeriesType,
-                                  noGames: _currentSeriesNoGames,
+                                  series: widget.series!,
                                 );
                               }
                               // Save Updates to Shared Preferences
@@ -156,8 +163,9 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                             }
                                 : () {
                               if (series!.noGames == 0) {
-                                log('Delete Series ... ${_sid}');
-                                DatabaseService(uid: _uid).deleteSeries(_sid);
+                                // log('Delete Series ... ${_sid}');
+                                log('Delete Series ... ${series.key}');
+                                DatabaseService(uid: _uid).deleteSeries(series.key);
                                 Navigator.of(context).pop();
                               }
                             },

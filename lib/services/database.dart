@@ -69,19 +69,20 @@ class DatabaseService {
 //               ***   PLAYER DATABASE MEMBERS   ***
 // =============================================================================
   // Update Player
-  Future<void> updatePlayer(String fName, String lName, String initials, int pid) async {
+  // Future<void> updatePlayer(String fName, String lName, String initials, int pid) async {
+    Future<void> updatePlayer({ required Player player }) async {
     //int playerNo = 0;
-    log('Database: Update Player ... ${fName}');
-    if (pid == -1) {
+    log('Database: Update Player ... ${player.fName}');
+    if (player.pid == -1) {
       // Get the next player number
       await configCollection.doc('Production').get().then(
               (DocumentSnapshot doc) {
             final data = doc.data() as Map<String, dynamic>;
-            pid = data['nextPid'];
+            player.pid = data['nextPid'];
           },
           onError: (e) {
             print("Error getting Player Next Number: $e");
-            pid = -1;
+            player.pid = -1;
           }
       );
       // Increment the next player number
@@ -89,13 +90,7 @@ class DatabaseService {
         {"nextPid": FieldValue.increment(1)},
       );
     }
-
-    return await playerCollection.doc(uid).set({
-      'fName': fName,
-      'lName': lName,
-      'initials': initials,
-      'pid' : pid,
-    });
+    return await playerCollection.doc(uid).set(player.updateMap, SetOptions(merge: true));
   }
 
   // Update single field in Series doc
@@ -116,16 +111,7 @@ class DatabaseService {
       return snapshot.docs.map((doc) {
         //print(doc.data);
         Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-        return Player(
-          uid: doc.id,
-          pid: data['pid'] ?? -1,
-          fName: data['fName'] ?? 'FNAME',
-          lName: data['lName'] ?? 'LNAME',
-          initials: data['initials'] ?? 'FN',
-        )..noMemberships  = (data['noMemberships'] ?? -1)
-         ..noCommunities  = (data['noCommunities'] ?? -1)
-         ..noSeries       = (data['noSeries'] ?? -1)
-         ..nextSid        = (data['nextSid'] ?? 0);
+        return Player(data: data );
       }).toList();
     } else {
       return [];
@@ -136,24 +122,16 @@ class DatabaseService {
   Player _playerFromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
     if (uid != null) {
-      return Player(
-          uid: uid!,
-          pid: data['pid'] ?? -1,
-          fName: data['fName'],
-          lName: data['lName'],
-          initials: data['initials']
-      )..noMemberships  = (data['noMemberships'] ?? -1)
-       ..noCommunities  = (data['noCommunities'] ?? -1)
-       ..noSeries       = (data['noSeries'] ?? -1)
-       ..nextSid        = (data['nextSid'] ?? 0);
+      return Player(data: data);
     } else {
       log('_playerFromSnapshot: Error: UID Not Set');
-      return Player(uid: 'x', pid: -1, fName: 'null', lName: 'null', initials: 'nn');
+      return Player(data: { 'uid': 'x', 'pid': -1,
+        'fName': 'null', 'lName': 'null', 'initials': 'nn' }
+      );
     }
   }
 
-  //get players stream
-  // ToDo: refactor players to playerList;
+  // Get players stream
   Stream<List<Player>> get playerListStream {
     return playerCollection.snapshots()
       .map(_playerListFromSnapshot);
@@ -175,16 +153,7 @@ class DatabaseService {
 
         final data = doc.data() as Map<String, dynamic>;
 
-        Player player = Player(
-          uid: doc.id,
-          pid: data['pid'] ?? -1,
-          fName: data['fName'] ?? "Error",
-          lName: data['lName'] ?? "Error",
-          initials: data['initials'] ?? "Er",
-        )..noMemberships  = (data['noMemberships'] ?? -1)
-         ..noCommunities  = (data['noCommunities'] ?? -1)
-         ..noSeries       = (data['noSeries'] ?? -1)
-         ..nextSid        = (data['seriesNextNo'] ?? 0);
+        Player player = Player(data: data);
 
         log('Database: player: Got Player ${player.fName} NoMemberships: ${player.noMemberships}');
         return(player);
@@ -198,32 +167,20 @@ class DatabaseService {
 // =============================================================================
 //                ***   SERIES DATABASE MEMBERS   ***
 // =============================================================================
-  // Todo: change parameters to required named parameters.
-  // Update Series
-  Future<void> addSeries({
-    required String name,
-    required String type,
-    required int noGames,
-  }) async {
-    int nextSid = -1;
+  Future<void> addSeries({ required Series series,} ) async {
     int noSeries = -1;
     // Get the next series number for the player
     await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
-        nextSid = data['nextSid'] ?? 0;  // If nextSid not found, start at 0.
+        series.sid = data['nextSid'] ?? 0;  // If nextSid not found, start at 0.
       },
         onError: (e) {
           log("Error getting Player Next Series ID: $e");
-          nextSid = 9999;
+          series.sid = 9999;
         }
     );
-    // Format Key for Document ID
-    NumberFormat intFormat = NumberFormat("S0000", "en_US");
-    String sid = intFormat.format(nextSid);
-    log("Creating new series on key $sid");
-
     // Set or Increment the next player number
-    if (nextSid == 0 ) {
+    if (series.sid == 0 ) {
       await playerCollection.doc(uid).update(
         {"nextSid": 1},
       );
@@ -233,11 +190,7 @@ class DatabaseService {
       );
     }
 
-    await seriesCollection.doc(sid).set({
-      'name': name,
-      'type': type,
-      'noGames' : noGames,
-    });
+    await seriesCollection.doc(series.key).set(series.updateMap);
 
     await seriesCollection.count().get()
         .then((res) => noSeries = res.count,
@@ -246,51 +199,14 @@ class DatabaseService {
       "noSeries": noSeries}
     );
   }
-
-  Future<void> updateSeries({
-    required String sid,
-    required String name,
-    required String type,
-    required int noGames }) async {
-
-    return await seriesCollection.doc(sid).set({
-      'name': name,
-      'type': type,
-      'noGames': noGames,
-    });
+  // Update the series Doc with data in provided Series class.
+  Future<void> updateSeries({ required Series series,}) async {
+    return await seriesCollection.doc(series.key).set(series.updateMap);
   }
-  // Update single field in Series doc
-  Future<void> updateSeriesField({
-    required String field,
-    String? svalue,
-    int? ivalue,
-  }) async {
-
-    if (sid != null) {
-      return await seriesCollection.doc(sid).update({
-        field: svalue ?? ivalue,
-      });
-    } else {
-      log('Database: Something went wrong for field update $field uid: $uid, sid: $sid');
-      // Todo: Throw an error here?
-      return;
-    }
-  }
-
-  // Future<void> incrementSeriesNoGames(int val) async {
-  //
-  //   if (sid != null) {
-  //     return await seriesCollection.doc(sid).update(
-  //         {"noGames": FieldValue.increment(val)});
-  //   } else {
-  //     log('DatabaseService: incrementSeriesNoGames missing Series ID');
-  //   }
-  // }
 
   // Delete given Series
   // Note: Application is responsible to delete Games prior to this call!!
   Future<void> deleteSeries(String sid) async {
-
     int noSeries = -1;
 
     await seriesCollection.doc(sid).delete();
@@ -302,22 +218,13 @@ class DatabaseService {
     );
   }
 
-
   // Series list from snapshot
   List<Series> _seriesListFromSnapshot(QuerySnapshot snapshot) {
     //seriesCollection = playerCollection.doc(uid).collection('Series');
     log('Series Size is ${snapshot.size} UID: $uid');
     return snapshot.docs.map((doc) {
-      //print(doc.data);
       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-
-      Series series = Series(
-        sid: data['seriesNo'] ?? '9999',
-        name: data['name'] ?? 'NAME',
-        type: data['type'] ?? 'TYPE',
-        noGames: data['noGames'] ?? 0,
-//        noGames: data['noGames'].cast<int>() ?? 0,
-      );
+      Series series = Series( data: data );
       return series;
     }).toList();
   }
@@ -325,12 +232,7 @@ class DatabaseService {
   // Get Series data from snapshots
   Series _seriesFromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    return Series(
-      sid: data['seriesNo'],
-      name: data['name'],
-      type: data['type'],
-      noGames: data['noGames'],
-    );
+    return Series( data: data );
   }
 
   //get collections stream
@@ -338,14 +240,6 @@ class DatabaseService {
     return seriesCollection.snapshots()
         .map(_seriesListFromSnapshot);
   }
-
-//   // get player doc stream
-//   Stream<Series> get seriesStream {
-//
-//     return seriesCollection.doc(uid).snapshots()
-//         .map((DocumentSnapshot doc) => _seriesFromSnapshot(doc));
-// //    .map(_playerFromSnapshot);
-//   }
 // =============================================================================
 //                ***   GAME DATABASE MEMBERS   ***
 // =============================================================================

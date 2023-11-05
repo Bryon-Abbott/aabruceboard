@@ -18,6 +18,8 @@ class _PlayerProfileState extends State<PlayerProfile> {
 
   final _formKey = GlobalKey<FormState>();
 
+  // Todo: Clean this up ... why all the form fields, etc
+
   // form values
   String? _currentFName;
   String? _currentLName;
@@ -94,11 +96,18 @@ class _PlayerProfileState extends State<PlayerProfile> {
 //                      ),
                       onPressed: () async {
                         if(_formKey.currentState!.validate()) {
+                            // await DatabaseService(uid: bruceUser.uid).updatePlayer(
+                            //     _currentFName ?? snapshot.data!.fName,
+                            //     _currentLName ?? snapshot.data!.lName,
+                            //     _currentInitials ?? snapshot.data!.initials,
+                            //     snapshot.data!.pid,
+                            // );
+                            player.fName = _currentFName ?? snapshot.data!.fName;
+                            player.lName = _currentLName ?? snapshot.data!.lName;
+                            player.initials = _currentInitials ?? snapshot.data!.initials;
+                            player.pid = snapshot.data!.pid;
                             await DatabaseService(uid: bruceUser.uid).updatePlayer(
-                                _currentFName ?? snapshot.data!.fName,
-                                _currentLName ?? snapshot.data!.lName,
-                                _currentInitials ?? snapshot.data!.initials,
-                                snapshot.data!.pid,
+                              player: player,
                             );
                             await AuthService().updateDisplayName(
                                 _currentDisplayName ?? AuthService().displayName
