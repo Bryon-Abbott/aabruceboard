@@ -24,11 +24,11 @@ class MembershipMaintainState extends State<MembershipMaintain> {
   Widget build(BuildContext context) {
     //cid = ModalRoute.of(context)!.settings.arguments as String;
     BruceUser bruceUser = Provider.of<BruceUser>(context);
-    String _uid = bruceUser.uid;
-    late String _cid;
+    String uid = bruceUser.uid;
+    late int cid;
 //    Membership membership = Provider.of<Membership>(context);
-    Membership? membership = widget.membership; ;
-    String _currentStatus = "";
+    Membership? membership = widget.membership;
+    String currentStatus = "";
 
     // Todo: Remove this
     if (widget.membership != null) {
@@ -39,8 +39,8 @@ class MembershipMaintainState extends State<MembershipMaintain> {
     }
 
     if ( membership != null ) {
-      _cid = membership.cid;
-      _currentStatus = widget.membership?.status ?? 'Null';
+      cid = membership.cid;
+      currentStatus = widget.membership?.status ?? 'Null';
     }
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
@@ -75,7 +75,7 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                   ),
                   const Text("Membership Status: "),
                   TextFormField(
-                    initialValue: _currentStatus,
+                    initialValue: currentStatus,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -85,11 +85,11 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Game name is: $value');
-                      _currentStatus = value ?? 'Pending';
+                      currentStatus = value ?? 'Pending';
                     },
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
                     child: Text("Number of Members: ???"),
                   ),
                   Row(
@@ -102,23 +102,24 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                             if (_formMembershipKey.currentState!.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
-                              if ( widget.membership == null ) {
+                              if ( membership == null ) {
                                 // Add new Game
-                                await DatabaseService(uid: _uid).addMembership(
-                                  pid: 'xx', // Todo: Fix this
-                                  status: _currentStatus,
-                                );
+                                Map<String, dynamic> data =
+                                {
+                                  'cid': cid,
+                                  'pid': -1,  // Todo: Fix this?
+                                  'uid': uid,
+                                  'status': 'Requested',
+                                };
+                                Membership membership = Membership(data: data);
+                                await DatabaseService(uid: uid).addMembership(membership: membership);
                                 //widget.membership?.noGames++;
                               } else {
                                 // update existing game
-                                await DatabaseService(uid: _uid, cid: _cid).updateMembership(
-                                  pid: 'xx',  // Todo: Fix this
-                                  status: _currentStatus,
-                                );
+                                await DatabaseService(uid: uid).updateMembership(membership: membership);
                               }
                               // Save Updates to Shared Preferences
-                              log("membership_maintain: Added/Updated membership"
-                                  "${widget.membership?.cid}");
+                              log("membership_maintain: Added/Updated membership ${membership?.cid}");
                               Navigator.of(context).pop(widget.membership);
                             }
                           },
@@ -131,14 +132,14 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                           onPressed: (membership==null)
                             ? () {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text("Must delete ALL memberships"),
+                                const SnackBar(
+                                  content: Text("Must delete ALL memberships"),
                                 )
                               );
                             }
                             : () {
                               log('Delete Membership ...');
-                              DatabaseService(uid: _uid).deleteMembership(_cid);
+                              DatabaseService(uid: uid).deleteMembership(membership!.key);
                               Navigator.of(context).pop();
                             },
                         child: const Text("Delete")),

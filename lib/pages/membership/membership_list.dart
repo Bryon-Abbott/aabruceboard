@@ -26,23 +26,17 @@ class _MembershipListState extends State<MembershipList> {
   Widget build(BuildContext context) {
 
     bruceUser = Provider.of<BruceUser>(context);
-    Player? player = null;
-    // Player player = DatabaseService().player;
-    // if (player != null) {
-    //   log('Player is ${player.fName}, ${player.noMemberships} ');
-    // } else {
-    //   log('Player is Null');
-    // }
+    Player? player;
 
     return StreamBuilder<List<Membership>>(
       stream: DatabaseService(uid: bruceUser.uid).membershipList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Membership> membership = snapshots.data!;
+          List<Membership> membershipList = snapshots.data!;
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Manage Membership - Count: ${membership.length}'),
+                title: Text('Manage Membership - Count: ${membershipList.length}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -55,14 +49,25 @@ class _MembershipListState extends State<MembershipList> {
                 actions: [
                   IconButton(
                     onPressed: () async {
+                      // Todo: Look at overlap of community & player.
+                      Community? community;
+                      Player? player;
                       dynamic results = await Navigator.pushNamed(context, '/community-select');
                       if (results != null) {
-                        community = results as Community;
+                        player = results[0] as Player;
+                        community = results[1] as Community;
                         log("membership_list: Community Selected: ${community?.name ?? 'Not Selected'}");
-                        await DatabaseService(cid: community?.cid ?? 'Error').addMembership(
-                          pid: community?.pid ?? 'Error',
-                          status: "Requested",
-                        );
+                        Map<String, dynamic> data =
+                        {
+                          'cid': community.cid,
+                          'pid': player.pid,  // Community Onwer PID
+                          'uid': player.uid,  // Community Owner UID
+                          'status': 'Requested',
+                        };
+                        Membership membership = Membership(data: data);
+                        // Note ... the database section is the current user but the Membership PID
+                        // is the PID of the owner of the community.
+                        await DatabaseService(uid: bruceUser.uid).addMembership(membership: membership  );
                         log("membership_list: Updating noMemberships: ${player?.noMemberships.toString() ?? 'Didnt get memberships'}");
                       }
                     },
@@ -70,15 +75,15 @@ class _MembershipListState extends State<MembershipList> {
                   )
                 ]),
             body: ListView.builder(
-              itemCount: membership.length,
+              itemCount: membershipList.length,
               itemBuilder: (context, index) {
-                return MembershipTile(membership: membership[index]);
+                return MembershipTile(membership: membershipList[index]);
               },
             ),
           );
         } else {
           log("membership_list: Snapshot Error ${snapshots.error}");
-          return Loading();
+          return const Loading();
         }
       }
     );

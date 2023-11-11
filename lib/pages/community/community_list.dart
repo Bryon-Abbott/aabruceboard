@@ -48,7 +48,7 @@ class _CommunityListState extends State<CommunityList> {
                       dynamic changes = await Navigator.pushNamed(
                           context, '/community-maintain');
                       if (changes != null) {
-                        log('community_list: Members ${changes} Changes Type : ${changes.runtimeType}');
+                        log('community_list: Members $changes Changes Type : ${changes.runtimeType}');
                       } else {
                         log('community_list: **null** Changes Type : ${changes.runtimeType}');
                       }
@@ -65,7 +65,7 @@ class _CommunityListState extends State<CommunityList> {
           );
         } else {
           log("community_list: Snapshot Error ${snapshots.error}");
-          return Loading();
+          return const Loading();
         }
       }
     );

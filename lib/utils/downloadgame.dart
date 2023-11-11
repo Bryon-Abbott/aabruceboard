@@ -21,11 +21,11 @@ class DownloadGame {
     // If download exist, store bruceboard data here, else store in docs directory.
     Directory directory = await getDownloadsDirectory() ?? await getApplicationDocumentsDirectory();
     final bruceDirectoryPath = join(directory.path, 'bruceboard');
-    Directory bruceDirectory = await Directory(bruceDirectoryPath);
+    Directory bruceDirectory = Directory(bruceDirectoryPath);
     final bruceDirectoryExists = await bruceDirectory.exists();
 
     if (!bruceDirectoryExists) {
-      log("Path does not exist ${bruceDirectoryPath} ... creating", name: "${this.runtimeType.toString()}:get _localfine");
+      log("Path does not exist $bruceDirectoryPath ... creating", name: "${runtimeType.toString()}:get _localfine");
       bruceDirectory = await Directory(bruceDirectoryPath).create(recursive: true);
     }
     return bruceDirectoryPath;
@@ -33,7 +33,7 @@ class DownloadGame {
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    log("Finding Path ${path}", name: "${this.runtimeType.toString()}:get _localfine");
+    log("Finding Path $path", name: "${runtimeType.toString()}:get _localfine");
 
     var intFormat = NumberFormat("G000000.txt", "en_US");
     String fileName = intFormat.format(game.gameNo);
@@ -45,9 +45,9 @@ class DownloadGame {
     games = args.games;
     game = games.getGame(games.currentGame);
 
-    GameData _gameData = GameData();
+    GameData gameData = GameData();
 
-    String _gameDataTxt;
+    String gameDataTxt;
 
     final file = await _localFile;
     final sink = file.openWrite();
@@ -56,42 +56,42 @@ class DownloadGame {
     String eol = Platform.isWindows ? '\r\n' : '\n';
 
     // Write out Game Data
-    _gameDataTxt  = 'Date: ${DateTime.now().toString()}${eol}';
-    _gameDataTxt += 'Game Number: ${game.gameNo}${eol}';
-    _gameDataTxt += 'Name: ${game.name}${eol}';
-    _gameDataTxt += 'Owner: ${game.owner}${eol}';
-    _gameDataTxt += 'Team One: ${game.teamOne}${eol}';
-    _gameDataTxt += 'Team Two: ${game.teamTwo}${eol}';
-    _gameDataTxt += 'Square Value: ${game.squareValue}${eol}';
+    gameDataTxt  = 'Date: ${DateTime.now().toString()}$eol';
+    gameDataTxt += 'Game Number: ${game.gameNo}$eol';
+    gameDataTxt += 'Name: ${game.name}$eol';
+    gameDataTxt += 'Owner: ${game.owner}$eol';
+    gameDataTxt += 'Team One: ${game.teamOne}$eol';
+    gameDataTxt += 'Team Two: ${game.teamTwo}$eol';
+    gameDataTxt += 'Square Value: ${game.squareValue}$eol';
 
-    sink.write(_gameDataTxt);
+    sink.write(gameDataTxt);
     //file.writeAsString(_gameDataTxt, mode: FileMode.write);
 
     // Write out Square Data
-    log("Reload Game ... GameNo: ${game.gameNo} ", name: "${this.runtimeType.toString()}:writegameData");
-    _gameData.loadData(games.getGame(games.currentGame).gameNo!);
+    log("Reload Game ... GameNo: ${game.gameNo} ", name: "${runtimeType.toString()}:writegameData");
+    gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
     var rowFormat = NumberFormat("R00", "en_US");
     var colFormat = NumberFormat("C00", "en_US");
 
-    _gameDataTxt = 'Score Info: ${eol}';
+    gameDataTxt = 'Score Info: $eol';
     for (int i=0; i<4; i++) {
-      _gameDataTxt += 'Q${i+1}: ${_gameData.quarterlyResults[i]} to ${_gameData.quarterlyResults[i+4]}, ';
+      gameDataTxt += 'Q${i+1}: ${gameData.quarterlyResults[i]} to ${gameData.quarterlyResults[i+4]}, ';
     }
-    _gameDataTxt += '$eol';
-    sink.write(_gameDataTxt);
+    gameDataTxt += eol;
+    sink.write(gameDataTxt);
 
-    _gameDataTxt = "Square Info:${eol}";
+    gameDataTxt = "Square Info:$eol";
     for (int i=0; i<100; i++) {
-      _gameDataTxt += '${rowFormat.format(i~/10+1)}:${colFormat.format(i%10+1)}, ';
-      _gameDataTxt += '(${_gameData.rowScores[i~/10]}:${_gameData.colScores[i%10]}), ';
-      _gameDataTxt += 'Player: ${_gameData.boardData[i]}, ';
-      _gameDataTxt += 'Name: ${players.searchPlayer(_gameData.boardData[i])?.fName ?? "Missing FName"} '
-                            '${players.searchPlayer(_gameData.boardData[i])?.lName ?? "Missing LName"} ';
-      _gameDataTxt += 'Email: ${players.searchPlayer(_gameData.boardData[i])?.email ?? "Missing Email"}, ';
-      _gameDataTxt += 'Phone: ${players.searchPlayer(_gameData.boardData[i])?.phone ?? "Missing Phone"}${eol}';
+      gameDataTxt += '${rowFormat.format(i~/10+1)}:${colFormat.format(i%10+1)}, ';
+      gameDataTxt += '(${gameData.rowScores[i~/10]}:${gameData.colScores[i%10]}), ';
+      gameDataTxt += 'Player: ${gameData.boardData[i]}, ';
+      gameDataTxt += 'Name: ${players.searchPlayer(gameData.boardData[i])?.fName ?? "Missing FName"} '
+                            '${players.searchPlayer(gameData.boardData[i])?.lName ?? "Missing LName"} ';
+      gameDataTxt += 'Email: ${players.searchPlayer(gameData.boardData[i])?.email ?? "Missing Email"}, ';
+      gameDataTxt += 'Phone: ${players.searchPlayer(gameData.boardData[i])?.phone ?? "Missing Phone"}$eol';
     }
-    sink.write(_gameDataTxt);
+    sink.write(gameDataTxt);
 
     // file.writeAsString(_gameDataTxt, mode: FileMode.append);
 

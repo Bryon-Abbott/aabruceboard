@@ -6,6 +6,8 @@ import 'package:bruceboard/pages/auth/authenticate.dart';
 import 'package:bruceboard/pages/home.dart';
 
 class Wrapper extends StatelessWidget {
+  const Wrapper({super.key});
+
   @override
   Widget build(BuildContext context) {
 
@@ -14,9 +16,9 @@ class Wrapper extends StatelessWidget {
     
     // return either the Home or Authenticate widget
     if (bruceUser == null){
-      return Authenticate();
+      return const Authenticate();
     } else {
-      return Home();
+      return const Home();
     }
     
   }

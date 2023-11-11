@@ -2,7 +2,6 @@ import 'dart:developer' as dev;
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:fluttericon/font_awesome5_icons.dart';
 
 import 'package:bruceboard/utils/brucearguments.dart';
 import 'package:bruceboard/utils/players.dart';
@@ -50,7 +49,7 @@ class _ManagePlayersState extends State<ManagePlayers> {
     var padding = MediaQuery.of(context).padding;
     newScreenHeight = screenHeight - padding.top - padding.bottom;
     newScreenWidth = screenWidth - padding.left - padding.right;
-    dev.log("Screen Dimensions are Height: $screenHeight, Width: $screenWidth : Height: $newScreenHeight, Width: $newScreenWidth", name: " ${this.runtimeType.toString()}:build");
+    dev.log("Screen Dimensions are Height: $screenHeight, Width: $screenWidth : Height: $newScreenHeight, Width: $newScreenWidth", name: " ${runtimeType.toString()}:build");
 
     //print('Build function ran');
     return Scaffold(
@@ -61,7 +60,7 @@ class _ManagePlayersState extends State<ManagePlayers> {
           centerTitle: true,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             // if user presses back, cancels changes to list (order/deletes)
             onPressed: () {
               if(playerListChanged) {
@@ -108,7 +107,7 @@ class _ManagePlayersState extends State<ManagePlayers> {
                               maxLines: 2,
                               textAlign: TextAlign.left,
                               overflow: TextOverflow.ellipsis,
-                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                             ),
                           ),
                         ),

@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:provider/provider.dart';
 import 'package:bruceboard/models/community.dart';
@@ -16,7 +15,7 @@ class MemberMaintain extends StatefulWidget {
   final Community community;
   final Member? member;
 
-  MemberMaintain({super.key, required this.community, this.member});
+  const MemberMaintain({super.key, required this.community, this.member});
 
   @override
   State<MemberMaintain> createState() => _MemberMaintainState();
@@ -26,28 +25,28 @@ class _MemberMaintainState extends State<MemberMaintain> {
   final _formMemberKey = GlobalKey<FormState>();
   late Member? member;
   late Community community;
-  late String _cid;
-  late String _pid;
-  late String _uid;
+//  late String _cid;
+//   late String _pid;
+//   late String _uid;
 
   @override
   void initState() {
     community = widget.community;
     member = widget.member;
-    _cid = community.cid;
-    _pid = member?.pid ?? 'error';
+//    _cid = community.key;
+//    _uid = member?.uid ?? 'error';
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
-    _uid = bruceUser.uid;
-    int _currentCredits = 0;
+    //_uid = bruceUser.uid;
+    int currentCredits = 0;
     int noMembers = 0;
 
     if ( member != null ) {
-      _currentCredits = member?.credits ?? 0;
+      currentCredits = member?.credits ?? 0;
     }
 
     // Build a Form widget using the _formMemberKey created above.
@@ -78,7 +77,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                 children: [
                   const Text("Member Credits: "),
                   TextFormField(
-                    initialValue: _currentCredits.toString(),
+                    initialValue: currentCredits.toString(),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -88,11 +87,11 @@ class _MemberMaintainState extends State<MemberMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Member name is: $value');
-                      _currentCredits = int.parse(value ?? '0');
+                      currentCredits = int.parse(value ?? '0');
                     },
                   ),
-                  Text("Community  ID: ${_cid}"),
-                  Text("Player ID: ${_pid ?? 'No Set'}"),
+                  Text("Community  ID: $community.key"),
+                  Text("Player ID: ${bruceUser.uid} ?? 'No Set'}"),
                   Row(
                     children: [
                       Padding(
@@ -106,19 +105,24 @@ class _MemberMaintainState extends State<MemberMaintain> {
                               if ( member == null ) {
                                 log('Add Member');
                                 // Add new Member
-                                await DatabaseService(uid: _uid, cid: _cid).addMember(
-                                  pid: _pid,
-                                  credits: _currentCredits,
-                                );
+                                Map<String, dynamic> data =
+                                { 'mid': -1,
+                                  'uid': bruceUser.uid,
+                                  'credits' : 0,
+                                };
+                                member = Member(data: data);
+                                await DatabaseService(uid: bruceUser.uid, cidKey: community.key).addMember(member: member!);
                                 // Add a default board to Database
                                   // await DatabaseService(uid: _pid, cid: _cid).incrementCommunityNoMembers(1);
                                   widget.community.noMembers++;  // =widget.series.noMembers+1; // Update class to maintain alignment
                               } else {
                                 // update existing member
                                 //log('Update Member $_gid');
-                                await DatabaseService(uid: _pid, cid: _cid).updateMember(
-                                  credits: _currentCredits
-                                );                              }
+                                Map<String, dynamic> data = {
+                                  'credits' : 0,
+                                };
+                                member!.update(data: data);
+                                await DatabaseService(uid: bruceUser.uid, cidKey: community.key).updateMember(member: member!);                              }
                               // Save Updates to Shared Preferences
                               Navigator.of(context).pop();
                             }
@@ -135,29 +139,29 @@ class _MemberMaintainState extends State<MemberMaintain> {
                               bool results = await showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: Text("Delete Member Warning ... "),
+                                  title: const Text("Delete Member Warning ... "),
                                   titleTextStyle: Theme.of(context).textTheme.bodyLarge,
                                   contentTextStyle: Theme.of(context).textTheme.bodyLarge,
-                                  content: Text("Are you sure you want to delete this?"),
+                                  content: const Text("Are you sure you want to delete this?"),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop(true);
                                       },
-                                      child: Text('Yes'),
+                                      child: const Text('Yes'),
                                     ),
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop(false);
                                       },
-                                      child: Text('Cancel'),
+                                      child: const Text('Cancel'),
                                     ),
                                   ],
                                 ),
                               );
                               if (results) {
-                                log('Delete Member ... P:$_pid, C:$_cid, U:$_uid');
-                                await DatabaseService(uid: _pid, cid: _cid).deleteMember(_pid);
+                                log('Delete Member ... C:${community.key}, U:${bruceUser.uid}');
+                                await DatabaseService(uid: bruceUser.uid, cidKey: community.key).deleteMember(member!.key);
                                 widget.community.noMembers  = widget.community.noMembers -1;
                                 Navigator.of(context).pop();
                               } else {

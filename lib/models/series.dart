@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:bruceboard/services/database.dart';
 import 'package:intl/intl.dart';
 
 class Series  {
@@ -15,13 +14,18 @@ class Series  {
     type = data['type'] ?? 'TYPE',
     noGames = data['noGames'] ?? 0;
 
-//  Series({ required this.sid, required this.name, required this.type, required this.noGames });
+  void update({ required Map<String, dynamic> data, }) {
+    sid = data['sid'] ?? sid;
+    name = data['name'] ?? name;
+    type = data['type'] ?? type;
+    noGames = data['noGames'] ?? noGames;
+  }
 
   String get key {
     // Format Key for Document ID
     NumberFormat intFormat = NumberFormat("S0000", "en_US");
     String key = intFormat.format(sid);
-    log("Creating new series on key $key");
+    //log("Getting Series key $key");
     return key;
   }
   // Returns a Map<String, dynamic> of all member veriables.

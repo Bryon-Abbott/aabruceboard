@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class PlayerList extends StatefulWidget {
+  const PlayerList({super.key});
+
   @override
   _PlayerListState createState() => _PlayerListState();
 }

@@ -16,7 +16,7 @@ ThemeData lightTheme = ThemeData(
  // disabledColor: Colors.red,
   //primaryColor: COLOR_PRIMARY,
   // Note: ButtonThemeData disabled is not used with MaterialWidgets.color???
-   buttonTheme: ButtonThemeData(
+   buttonTheme: const ButtonThemeData(
      disabledColor: Colors.red,
      buttonColor: Colors.blue,
    ),
@@ -68,8 +68,8 @@ ThemeData lightTheme = ThemeData(
   // ),
 
   floatingActionButtonTheme:
-    FloatingActionButtonThemeData(backgroundColor: COLOR_ACCENT),
-  textButtonTheme: TextButtonThemeData(
+    const FloatingActionButtonThemeData(backgroundColor: COLOR_ACCENT),
+  textButtonTheme: const TextButtonThemeData(
     style: ButtonStyle(
 
     )

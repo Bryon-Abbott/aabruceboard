@@ -1,7 +1,6 @@
 //import 'package:farklescore/pages/settings_scoring.dart';
 //import 'package:bruceboard/theme/thememanager.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -32,7 +31,7 @@ import '../firebase_options.dart';
 // ============================================================================
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  final AdaptiveThemeMode? savedThemeModex = await AdaptiveTheme.getThemeMode() ??
+  final AdaptiveThemeMode savedThemeModex = await AdaptiveTheme.getThemeMode() ??
       AdaptiveThemeMode.light;
 
   await Settings.init(cacheProvider: SharePreferenceCache());
@@ -44,7 +43,7 @@ main() async {
 
   runApp(
     // RootApp(savedThemeMode: savedThemeModex),
-    RootApp(),
+    const RootApp(),
   );
 }
 
@@ -121,9 +120,9 @@ class LoadApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           initialRoute: '/',
           routes: {
-            '/': (context) => Loading(),
+            '/': (context) => const Loading(),
   //          '/home': (context) => Home(savedThemeMode: savedThemeMode, onChanged: onChanged),
-            '/home': (context) => Home(),
+            '/home': (context) => const Home(),
             '/manageplayers': (context) => const ManagePlayers(),
             '/maintainplayer': (context) => const MaintainPlayer(),
             '/managegames': (context) => const ManageGames(),

@@ -1,11 +1,9 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/pages/player/player_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/shared/loading.dart';
 
@@ -49,11 +47,11 @@ class _PlayerSelectState extends State<PlayerSelect> {
               itemCount: player.length,
               itemBuilder: (context, index) {
                 return ListTile(
-                  leading: Icon(Icons.person_outline),
+                  leading: const Icon(Icons.person_outline),
                   title: Text("${player[index].fName} ${player[index].lName}"),
-                  subtitle: Text("${player[index].uid}"),
+                  subtitle: Text(player[index].uid),
                   trailing: IconButton(
-                    icon: Icon(Icons.check_circle_outline),
+                    icon: const Icon(Icons.check_circle_outline),
                     onPressed: () {
                       log('Icon Pressed');
                       Navigator.of(context).pop(player[index]);
@@ -66,7 +64,7 @@ class _PlayerSelectState extends State<PlayerSelect> {
           );
         } else {
           log("player_select: Snapshot Error ... ${snapshots.error}");
-          return Loading();
+          return const Loading();
         }
       }
     );

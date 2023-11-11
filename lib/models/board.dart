@@ -15,26 +15,26 @@ class Board {
 
   Board({ required this.gid, });
 
-  @override
-  void dispose() {
-    if (dirty) {
-      dev.log("Save Board to Firebase");
-    } else {
-      dev.log("Dont Save Board to Firebase");
-    }
-  }
+  // @override
+  // void dispose() {
+  //   if (dirty) {
+  //     dev.log("Save Board to Firebase");
+  //   } else {
+  //     dev.log("Dont Save Board to Firebase");
+  //   }
+  // }
 
   bool scoresLocked = false;
 
   int getFreeSquares() {
     int free = boardData.where((e) => e == -1).length;
-    dev.log("Number of free squares is $free", name: "${this.runtimeType.toString()}:getFreeSquares");
+    dev.log("Number of free squares is $free", name: "${runtimeType.toString()}:getFreeSquares");
     return free;
   }
 
   int getPickedSquares() {
     int picked = boardData.where((e) => e != -1).length;
-    dev.log("Number of picked squares is $picked", name: "${this.runtimeType.toString()}:getPickedSquares");
+    dev.log("Number of picked squares is $picked", name: "${runtimeType.toString()}:getPickedSquares");
     return picked;
   }
 
@@ -44,7 +44,7 @@ class Board {
     int excludePlayerNo = int.parse(excludePlayerNoString);
 
     int picked = boardData.where((e) => (e != -1) && (e != excludePlayerNo)).length;
-    dev.log("Number of picked squares is $picked", name: "${this.runtimeType.toString()}:getPickedSquares");
+    dev.log("Number of picked squares is $picked", name: "${runtimeType.toString()}:getPickedSquares");
     return picked;
   }
 

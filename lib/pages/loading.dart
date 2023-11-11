@@ -24,8 +24,8 @@ class _LoadingState extends State<Loading> {
     Players players = Players(); // Initialize Players Singleton
     Games games = Games(); // Initialize Games Singleton
 
-    await players.loadPlayers();
-    await games.loadGames();
+    // await players.loadPlayers();
+    // await games.loadGames();
 
     // Pause a bit to see the splash screen :)
     //await Future.delayed(const Duration(seconds: 1));

@@ -6,19 +6,19 @@ import 'package:flutter/material.dart';
 class PlayerTile extends StatelessWidget {
 
   final Player player;
-  PlayerTile({ required this.player });
+  const PlayerTile({super.key,  required this.player });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Card(
-        margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
+        margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
         child: ListTile(
           onTap: () {
              log("Player Tapped ... ${player.fName} ");
           },
-          leading: Icon(Icons.list_alt_outlined),
+          leading: const Icon(Icons.list_alt_outlined),
           // leading: CircleAvatar(
           //   radius: 25.0,
           //   backgroundColor: Colors.brown,
@@ -32,7 +32,7 @@ class PlayerTile extends StatelessWidget {
               onPressed: (){
                 log("Player Edit Pressed ... ${player.fName} ");
               },
-              icon: Icon(Icons.edit),
+              icon: const Icon(Icons.edit),
           ),
         ),
       ),

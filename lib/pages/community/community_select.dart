@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/pages/community/community_tile.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
 
     return Scaffold(
       appBar: AppBar(
-          title: Text('Community Select'),
+          title: const Text('Community Select'),
           centerTitle: true,
           elevation: 0,
           leading: IconButton(
@@ -36,9 +35,9 @@ class _CommunitySelectState extends State<CommunitySelect> {
       ),
       body: Column(
         children: [
-          Text("Player ID"),
+          const Text("Player ID"),
           ListTile(
-            leading: Icon(Icons.person_outline),
+            leading: const Icon(Icons.person_outline),
             title: Text("Player: ${player.fName} ${player.lName}"),
             subtitle: Text("PID: ${player.pid}"),
             trailing: ElevatedButton(
@@ -53,11 +52,11 @@ class _CommunitySelectState extends State<CommunitySelect> {
                     log("No player selected");
                   }
                 },
-                child: Text("Select Player")
+                child: const Text("Select Player")
             )
             ,
           ),
-          Text("Player Communities"),
+          const Text("Player Communities"),
           SingleChildScrollView(
             child: SizedBox(
               height: 300,
@@ -69,7 +68,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
                 return Scaffold(
                   appBar: AppBar(
                     //            backgroundColor: Colors.blue[900],
-                      title: Text('Select Community'),
+                      title: const Text('Select Community'),
                       centerTitle: true,
                       elevation: 0,
                       leading: IconButton(
@@ -83,14 +82,15 @@ class _CommunitySelectState extends State<CommunitySelect> {
                     itemCount: community.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        leading: Icon(Icons.person_outline),
-                        title: Text("${community[index].name}"),
+                        leading: const Icon(Icons.person_outline),
+                        title: Text(community[index].name),
                         subtitle: Text("${community[index].cid}"),
                         trailing: IconButton(
-                          icon: Icon(Icons.check_circle_outline),
+                          icon: const Icon(Icons.check_circle_outline),
                           onPressed: () {
                             log('Icon Pressed');
-                            Navigator.of(context).pop(community[index]);
+
+                            Navigator.of(context).pop([player, community[index]]);
                           },
                         )
                         ,
@@ -101,7 +101,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
                 );
               } else {
                 log("community_list: Snapshot Error ${snapshots.error}");
-                return Loading();
+                return const Loading();
               }
           }
     ),

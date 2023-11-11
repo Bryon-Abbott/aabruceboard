@@ -4,7 +4,6 @@ import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:provider/provider.dart';
 
@@ -16,7 +15,7 @@ class GameMaintain extends StatefulWidget {
   final Series series;
   final Game? game;
 
-  GameMaintain({super.key, required this.series, this.game});
+  const GameMaintain({super.key, required this.series, this.game});
 
   @override
   State<GameMaintain> createState() => _GameMaintainState();
@@ -26,17 +25,17 @@ class _GameMaintainState extends State<GameMaintain> {
   final _formGameKey = GlobalKey<FormState>();
   late Game? game;
   late Series series;
-  late String _sid;
-  late String _gid;
+//  late int _sid;
+  late int _gid;
   late String _uid;
 
   @override
   void initState() {
     series = widget.series;
     game = widget.game;
-    _sid = series.key;
-    _gid = game?.gid ?? 'not set';
-    _uid = game?.pid ?? 'not set';
+//    _sid = series.sid;
+    _gid = game?.gid ?? -1;
+//    _uid = game?.pid ?? -1;
     super.initState();
   }
 
@@ -45,18 +44,18 @@ class _GameMaintainState extends State<GameMaintain> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
     _uid = bruceUser.uid;
     //Game? game = widget.game;
-    String _currentGameName = "";
-    String _currentTeamOne = "";
-    String _currentTeamTwo = "";
-    int _currentSquareValue = 0;
+    String currentGameName = "";
+    String currentTeamOne = "";
+    String currentTeamTwo = "";
+    int currentSquareValue = 0;
 
     int noGames = 0;
 
     if ( game != null ) {
-      _currentGameName = game?.name ?? 'Name';
-      _currentTeamOne = game?.teamOne ?? 'Team One';
-      _currentTeamTwo = game?.teamTwo ?? 'Team Two';
-      _currentSquareValue= game?.squareValue ?? 0;
+      currentGameName = game?.name ?? 'Name';
+      currentTeamOne = game?.teamOne ?? 'Team One';
+      currentTeamTwo = game?.teamTwo ?? 'Team Two';
+      currentSquareValue= game?.squareValue ?? 0;
     }
 
     // Build a Form widget using the _formGameKey created above.
@@ -87,7 +86,7 @@ class _GameMaintainState extends State<GameMaintain> {
                 children: [
                   const Text("Game Name: "),
                   TextFormField(
-                    initialValue: _currentGameName,
+                    initialValue: currentGameName,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -97,12 +96,12 @@ class _GameMaintainState extends State<GameMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Game name is: $value');
-                      _currentGameName = value ?? 'Game 000';
+                      currentGameName = value ?? 'Game 000';
                     },
                   ),
                   const Text("Square Value: "),
                   TextFormField(
-                    initialValue: _currentSquareValue.toString(),
+                    initialValue: currentSquareValue.toString(),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -113,15 +112,15 @@ class _GameMaintainState extends State<GameMaintain> {
                     onSaved: (String? value) {
                       //debugPrint('Square Value is: "$value"');
                       if (value == null || value.isEmpty) {
-                        _currentSquareValue = 0;
+                        currentSquareValue = 0;
                       } else {
-                        _currentSquareValue = int.parse(value ?? '0');
+                        currentSquareValue = int.parse(value ?? '0');
                       }
                     },
                   ),
                   const Text("Team One: "),
                   TextFormField(
-                    initialValue: _currentTeamOne,
+                    initialValue: currentTeamOne,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -131,12 +130,12 @@ class _GameMaintainState extends State<GameMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Email is: $value');
-                      _currentTeamOne = value ?? '';
+                      currentTeamOne = value ?? '';
                     },
                   ),
                   const Text("Team Two: "),
                   TextFormField(
-                    initialValue: _currentTeamTwo,
+                    initialValue: currentTeamTwo,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -146,11 +145,11 @@ class _GameMaintainState extends State<GameMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Email is: $value');
-                      _currentTeamTwo = value ?? '';
+                      currentTeamTwo = value ?? '';
                     },
                   ),
-                  Text("Series ID: ${_sid}"),
-                  Text("Game ID: ${_gid ?? 'No Set'}"),
+                  Text("Series ID: ${series.key}"),
+                  Text("Game ID: ${game?.key ?? 'No Set'}"),
                   Row(
                     children: [
                       Padding(
@@ -164,34 +163,45 @@ class _GameMaintainState extends State<GameMaintain> {
                               if ( game == null ) {
                                 log('Add Game');
                                 // Add new Game
-                                DocumentReference result = await DatabaseService(uid: _uid, sid: _sid).addGame(
-                                  sid: _sid,
-                                  uid: _uid,
-                                  name: _currentGameName,
-                                  teamOne: _currentTeamOne,
-                                  teamTwo: _currentTeamTwo,
-                                  squareValue: _currentSquareValue,
+                                Map<String, dynamic> data =
+                                { 'gid': -1,
+                                  'sid': series.sid,
+                                  'uid': _uid,
+                                  'name': currentGameName,
+                                  'teamOne': currentTeamOne,
+                                  'teamTwo': currentTeamTwo,
+                                  'squareValue': currentSquareValue,
+                                };
+                                game = Game(data: data);
+                                await DatabaseService(uid: _uid, sidKey: series.key).addGame(
+                                  game: game!,
                                 );
+                                log("Add Game ${game!.key}");
                                 // Add a default board to Database
-                                if (result != null) {
-                                  _gid = result.id;
-                                  await DatabaseService(uid: _uid, sid: _sid, gid: _gid )
-                                      .addBoard(gid: _gid,);
-                                  //await DatabaseService(uid: _uid, sid: _sid).incrementSeriesNoGames(1);
-                                  widget.series.noGames =widget.series.noGames+1; // Update class to maintain alignment
-                                }
+                              //     _gid = result.id;
+                                  await DatabaseService( uid: _uid, sidKey: series.key, gidKey: game!.key )
+                                      .addBoard(gidKey: game!.key,);
+                                  // await DatabaseService(uid: _uid, sidKey: series.key).incrementSeriesNoGames(1);
+                                  series.noGames = series.noGames+1; // Update class to maintain alignment
+                              //   }
                               } else {
-                                // update existing game
-                                //log('Update Game $_gid');
-                                await DatabaseService(uid: _uid, sid: _sid).updateGame(
-                                  gid: _gid,
-                                  sid: _sid,
-                                  uid: _uid,
-                                  name: _currentGameName,
-                                  teamOne: _currentTeamOne,
-                                  teamTwo: _currentTeamTwo,
-                                  squareValue: _currentSquareValue,
-                                );                              }
+                                // Update existing game
+                                log('Update Game ${game!.key}');
+                                Map<String, dynamic> data =
+                                {
+                                  // 'gid': game!.gid,
+                                  // 'sid': series.sid,
+                                  // 'uid': _uid,
+                                  'name': currentGameName,
+                                  'teamOne': currentTeamOne,
+                                  'teamTwo': currentTeamTwo,
+                                  'squareValue': currentSquareValue,
+                                };
+                                game!.update(data: data);
+                                await DatabaseService(uid: _uid, sidKey: series.key).updateGame(
+                                  game: game!,
+                                );
+                              }
                               // Save Updates to Shared Preferences
                               Navigator.of(context).pop();
                             }
@@ -214,32 +224,32 @@ class _GameMaintainState extends State<GameMaintain> {
                                   // shape: RoundedRectangleBorder(
                                   //     borderRadius: BorderRadius.circular(2.0)
                                   // ),
-                                  title: Text("Delete Game Warning "),
+                                  title: const Text("Delete Game Warning "),
                                   titleTextStyle: Theme.of(context).textTheme.bodyLarge,
                                   contentTextStyle: Theme.of(context).textTheme.bodyLarge,
-                                  content: Text("Are you sure you want to delete this?"),
+                                  content: const Text("Are you sure you want to delete this?"),
                                   actions: [
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop(true);
                                       },
-                                      child: Text('Yes'),
+                                      child: const Text('Yes'),
                                     ),
                                     TextButton(
                                       onPressed: () {
                                         Navigator.of(context).pop(false);
                                       },
-                                      child: Text('Cancel'),
+                                      child: const Text('Cancel'),
                                     ),
                                   ],
                                 ),
                               );
                               if (results) {
-                                log('Delete Game ... U:$_uid, S:$_sid, G:$_gid');
-                                await DatabaseService(uid: _uid, sid: _sid).deleteGame(_gid);
-                                await DatabaseService(uid: _uid, sid: _sid, gid: _gid).deleteBoard();
-                                // await DatabaseService(uid: _uid, sid: _sid).incrementSeriesNoGames(-1);
-                                widget.series.noGames  = widget.series.noGames -1;
+                                log('Delete Game ... U:$_uid, S:${series.key}, G:${game!.key}');
+                                await DatabaseService(uid: _uid, sidKey: series.key).deleteGame(game!.key);
+                                await DatabaseService(uid: _uid, sidKey: series.key, gidKey: game!.key).deleteBoard();
+                                // await DatabaseService(uid: _uid, sid: series.sid).incrementSeriesNoGames(-1);
+                                series.noGames  = series.noGames -1;
                                 Navigator.of(context).pop();
                               } else {
                                 log('Game Delete Action Cancelled');

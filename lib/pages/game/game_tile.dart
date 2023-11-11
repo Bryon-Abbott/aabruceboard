@@ -11,36 +11,36 @@ class GameTile extends StatelessWidget {
   final Game game;
   final Function callback;
 
-  GameTile({ required this.callback, required this.series, required this.game });
+  const GameTile({super.key,  required this.callback, required this.series, required this.game });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
       child: Card(
-        margin: EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
+        margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
         child: ListTile(
           onTap: () async {
             log("Game Tapped ... ${game.name} ");
             await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => GameBoard(game: game)),
+              MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),
             );
           },
-          leading: Icon(Icons.sports_football_outlined),
+          leading: const Icon(Icons.sports_football_outlined),
           // leading: CircleAvatar(
           //   radius: 25.0,
           //   backgroundColor: Colors.brown,
           //   backgroundImage: AssetImage('assets/player.png'),
           // ),
           title: Text('Game: ${game.name}'),
-          subtitle: Text(' SID: ${game.sid} GID: ${game.gid}'),
+          subtitle: Text(' SID: ${series.key} GID: ${game.key}'),
           trailing: IconButton(
             onPressed: () async {
               await Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => GameMaintain(series: series, game: game)));
               callback();
             },
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
           ),
         ),
       ),

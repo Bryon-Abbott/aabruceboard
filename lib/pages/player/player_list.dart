@@ -5,7 +5,6 @@ import 'package:bruceboard/pages/player/player_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/shared/loading.dart';
 
@@ -49,7 +48,7 @@ class _PlayerListState extends State<PlayerList> {
                       dynamic changes = await Navigator.pushNamed(
                           context, '/player-maintain');
                       if (changes != null) {
-                        log('player_list: Games ${changes} Changes Type : ${changes.runtimeType}');
+                        log('player_list: Games $changes Changes Type : ${changes.runtimeType}');
                       } else {
                         log('player_list: **null** Changes Type : ${changes.runtimeType}');
                       }
@@ -66,7 +65,7 @@ class _PlayerListState extends State<PlayerList> {
           );
         } else {
           log("player_list: Snapshot Error ${snapshots.error}");
-          return Loading();
+          return const Loading();
         }
       }
     );

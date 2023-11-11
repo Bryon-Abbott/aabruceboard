@@ -1,4 +1,5 @@
 import 'package:bruceboard/services/auth.dart';
+import 'package:intl/intl.dart';
 
 class BruceUser {
 
@@ -38,9 +39,9 @@ class Player {
   // Player({required this.uid, required this.pid,
   //   required this.fName, required this.lName, required this.initials,
   // });
-  Player({ required data, }) :
+  Player({ required Map<String, dynamic> data, }) :
     uid           = data['uid']           ?? 'error',
-    pid           = data['pid']           ?? 'error',
+    pid           = data['pid']           ?? -1,
     fName         = data['fName']         ?? 'FNAME',
     lName         = data['lName']         ?? 'LNAME',
     initials      = data['initials']      ?? 'FL',
@@ -51,6 +52,12 @@ class Player {
   // The key for the Player Document is the Firestore Users ID (uid)
   String get key {
     return uid;
+  }
+  // The key created from PID used for composite keys (Memberships)
+  String get pidKey {
+    NumberFormat pFormat = NumberFormat("P00000000", "en_US");
+    String pKey = pFormat.format(pid);
+    return pKey;
   }
 
   // Returns a Map<String, dynamic> of all member veriables.

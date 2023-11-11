@@ -9,6 +9,8 @@ import 'package:bruceboard/shared/constants.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 class PlayerProfile extends StatefulWidget {
+  const PlayerProfile({super.key});
+
   // const PlayerProfile({super.key});
   @override
   _PlayerProfileState createState() => _PlayerProfileState();
@@ -17,8 +19,6 @@ class PlayerProfile extends StatefulWidget {
 class _PlayerProfileState extends State<PlayerProfile> {
 
   final _formKey = GlobalKey<FormState>();
-
-  // Todo: Clean this up ... why all the form fields, etc
 
   // form values
   String? _currentFName;
@@ -30,6 +30,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
   Widget build(BuildContext context) {
 
     BruceUser bruceUser = Provider.of<BruceUser>(context);
+    // log('Bruce User ID ${bruceUser.uid}');
 
     return StreamBuilder<Player>(
       stream: DatabaseService(uid: bruceUser.uid).playerStream,
@@ -48,39 +49,39 @@ class _PlayerProfileState extends State<PlayerProfile> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  SizedBox(height: 20.0),
-                  Text("First Name"),
+                  const SizedBox(height: 20.0),
+                  const Text("First Name"),
                   TextFormField(
                     initialValue: player.fName,
                   decoration: textInputDecoration,
                     validator: (val) => val!.isEmpty ? 'Please enter your first name' : null,
                     onChanged: (val) => setState(() => _currentFName = val),
                   ),
-                  SizedBox(height: 10.0),
-                  Text("Last Name"),
+                  const SizedBox(height: 10.0),
+                  const Text("Last Name"),
                   TextFormField(
                     initialValue: player.lName,
                     decoration: textInputDecoration,
                     validator: (val) => val!.isEmpty ? 'Please enter your last name' : null,
                     onChanged: (val) => setState(() => _currentLName = val),
                   ),
-                  SizedBox(height: 10.0),
-                  Text("Initials"),
+                  const SizedBox(height: 10.0),
+                  const Text("Initials"),
                   TextFormField(
                     initialValue: player.initials,
                     decoration: textInputDecoration,
                     validator: (val) => val!.isEmpty ? 'Please enter your desired initials' : null,
                     onChanged: (val) => setState(() => _currentInitials = val),
                   ),
-                  SizedBox(height: 10.0),
-                  Text("Display Name"),
+                  const SizedBox(height: 10.0),
+                  const Text("Display Name"),
                   TextFormField(
                     initialValue: AuthService().displayName,
                     decoration: textInputDecoration,
                     validator: (val) => val!.isEmpty ? 'Please enter your desired Display Name' : null,
                     onChanged: (val) => setState(() => _currentDisplayName = val),
                   ),
-                  SizedBox(height: 10,),
+                  const SizedBox(height: 10,),
                   Text("Player Number: ${player.pid}"),
                   Text("Number of Memberships: ${player.noMemberships}"),
                   Text("Number of Communities: ${player.noCommunities}"),
@@ -91,21 +92,16 @@ class _PlayerProfileState extends State<PlayerProfile> {
                         // style: ButtonStyle(
                         //   backgroundColor: MaterialStateProperty.all<Color>(Colors.pink[400]!),
                         // ),
-                      child: Text('Update',),
+                      child: const Text('Update',),
 //                        style: TextStyle(color: Colors.white),
 //                      ),
                       onPressed: () async {
                         if(_formKey.currentState!.validate()) {
-                            // await DatabaseService(uid: bruceUser.uid).updatePlayer(
-                            //     _currentFName ?? snapshot.data!.fName,
-                            //     _currentLName ?? snapshot.data!.lName,
-                            //     _currentInitials ?? snapshot.data!.initials,
-                            //     snapshot.data!.pid,
-                            // );
                             player.fName = _currentFName ?? snapshot.data!.fName;
                             player.lName = _currentLName ?? snapshot.data!.lName;
                             player.initials = _currentInitials ?? snapshot.data!.initials;
                             player.pid = snapshot.data!.pid;
+                            // log("player_profile: Update Player ${player.fName}");
                             await DatabaseService(uid: bruceUser.uid).updatePlayer(
                               player: player,
                             );
@@ -125,7 +121,8 @@ class _PlayerProfileState extends State<PlayerProfile> {
             ),
           );
         } else {
-          return Loading();
+          log("No Player found ...");
+          return const Loading();
         }
       }
     );

@@ -18,6 +18,8 @@ import 'package:bruceboard/theme/theme_manager.dart';
 // 2023/09/12 Bryon   Created
 // ==========
 class Home extends StatefulWidget {
+  const Home({super.key});
+
 
   @override
   State<Home> createState() => _HomeState();
@@ -69,7 +71,7 @@ class _HomeState extends State<Home> {
           ) ,
           onPressed: null,
         ),
-        title: Text('Home'),
+        title: const Text('Home'),
         centerTitle: true,
         elevation: 0,
         actions: [
@@ -130,7 +132,7 @@ class _HomeState extends State<Home> {
           child: SingleChildScrollView(
             child: Column(
                   children: <Widget>[
-                SizedBox(height: 80,),
+                const SizedBox(height: 80,),
                 Text('Welcome',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayLarge,
@@ -147,8 +149,8 @@ class _HomeState extends State<Home> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
                       child: SizedBox(
                         height: 300,
                         width: 150,
@@ -182,11 +184,13 @@ class _HomeState extends State<Home> {
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton.icon(
                               onPressed: (bruceUser.uid == 'x') ? null : () async {
-                                Community? community ;
+                                Community? community;
+                                Player? player;
                                 dynamic results = await Navigator.pushNamed(context, '/community-select');
                                 if (results != null) {
-                                  community = results as Community;
-                                  log("Community Selected: ${community.name}");
+                                  player = results[0] as Player;
+                                  community = results[1] as Community;
+                                  log("Community Selected: ${community.name} ${player.pidKey} ${community.key}");
                                 }
                               },
                               icon: Icon(
@@ -293,14 +297,14 @@ class _HomeState extends State<Home> {
 }
 // Helper Functions
 void onMenuSelected(BuildContext context, int item) async {
-  final AuthService _auth = AuthService();
+  final AuthService auth = AuthService();
   switch (item) {
     case 0:
-      await _auth.signOut();
+      await auth.signOut();
       break;
     case 1:
       Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => PlayerProfile()),
+        MaterialPageRoute(builder: (context) => const PlayerProfile()),
       );
       break;
     case 2:

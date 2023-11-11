@@ -1,8 +1,8 @@
 import 'package:bruceboard/pages/community/community_select.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
+import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:flutter/foundation.dart';
 
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -20,7 +20,7 @@ import 'package:bruceboard/theme/theme_constants.dart';
 import 'package:bruceboard/utils/preferences.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:bruceboard/pages/loading.dart';
+//import 'package:bruceboard/pages/loading.dart';
 import 'package:bruceboard/pages/home.dart';
 import 'package:bruceboard/pages/about.dart';
 import 'package:bruceboard/pages/manage_players.dart';
@@ -33,11 +33,10 @@ import 'package:bruceboard/pages/settings_scoring.dart';
 import 'firebase_options.dart';
 
 
-import 'firebase_options.dart';
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final AdaptiveThemeMode? savedThemeModex = await AdaptiveTheme.getThemeMode() ??
+  final AdaptiveThemeMode savedThemeModex = await AdaptiveTheme.getThemeMode() ??
       AdaptiveThemeMode.light;
 
   await Settings.init(cacheProvider: SharePreferenceCache());
@@ -49,7 +48,7 @@ main() async {
 
   runApp(
     // RootApp(savedThemeMode: savedThemeModex),
-    RootApp(),
+    const RootApp(),
   );
 }
 
@@ -95,31 +94,31 @@ class LoadApp extends StatelessWidget {
     return StreamProvider<BruceUser?>.value(
       initialData: null, // BruceUser(uid: 'x'),
       value: AuthService().user,
-        child: AdaptiveTheme(
-          light: lightTheme,
-          dark: darkTheme,
-          debugShowFloatingThemeButton: false,
-          initial: savedThemeMode ?? AdaptiveThemeMode.light,
-          builder: (theme, lightTheme) =>
-          MaterialApp(
+      child: AdaptiveTheme(
+        light: lightTheme,
+        dark: darkTheme,
+        debugShowFloatingThemeButton: false,
+        initial: savedThemeMode ?? AdaptiveThemeMode.light,
+        builder: (theme, lightTheme) =>
+        MaterialApp(
             title: 'Bruce Board',
 //          theme: lightTheme,
             theme: theme,
             darkTheme: darkTheme,
             debugShowCheckedModeBanner: false,
-            initialRoute: '/',
+            initialRoute: '/home',
             routes: {
-              '/': (context) => Loading(),
+              '/': (context) => const Loading(),
               // '/home': (context) => Home(savedThemeMode: savedThemeMode, onChanged: onChanged),
-              '/home': (context) => Home(),
+              '/home': (context) => const Home(),
               '/manageplayers': (context) => const ManagePlayers(),
               '/maintainplayer': (context) => const MaintainPlayer(),
               '/managegames': (context) => const ManageGames(),
               '/maintaingame': (context) => const MaintainGame(),
               '/about': (context) => const About(),
               '/authenticate': (contexct) => const Authenticate(),
-              '/player-profile': (context) => PlayerProfile(),
-              '/player-select': (context) => PlayerSelect(),
+              '/player-profile': (context) => const PlayerProfile(),
+              '/player-select': (context) => const PlayerSelect(),
               '/series-list': (context) => const SeriesList(),
               '/series-maintain': (context) => const SeriesMaintain(),
               '/community-list': (context) => const CommunityList(),

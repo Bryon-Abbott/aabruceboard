@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_maintain.dart';
@@ -21,6 +19,14 @@ class GameList extends StatefulWidget {
 }
 
 class _GameListState extends State<GameList> {
+  late Series series;
+
+  @override
+  void initState() {
+    series = widget.series;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -31,14 +37,14 @@ class _GameListState extends State<GameList> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<Game>>(
-      stream: DatabaseService(uid: bruceUser.uid, sid: widget.series.key).gameList,
+      stream: DatabaseService(uid: bruceUser.uid, sidKey: series.key).gameList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Game> game = snapshots.data!;
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Manage Games - Count: ${widget.series.noGames}/${game.length}'),
+                title: Text('Manage Games - Count: ${series.noGames}/${game.length}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -52,7 +58,7 @@ class _GameListState extends State<GameList> {
                   IconButton(
                     onPressed: () async {
                       await Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => GameMaintain(series: widget.series)));
+                          MaterialPageRoute(builder: (context) => GameMaintain(series: series)));
                       setState(() {}); // Set state to refresh series changes.
                     },
                     icon: const Icon(Icons.add_circle_outline),
@@ -61,12 +67,12 @@ class _GameListState extends State<GameList> {
             body: ListView.builder(
               itemCount: game.length,
               itemBuilder: (context, index) {
-                return GameTile(callback: callback, series: widget.series, game: game[index]);
+                return GameTile(callback: callback, series: series, game: game[index]);
               },
             ),
           );
         } else {
-          return Loading();
+          return const Loading();
         }
       }
     );

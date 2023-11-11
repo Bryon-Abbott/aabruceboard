@@ -62,8 +62,8 @@ class _AboutState extends State<About> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text.rich(
-                      TextSpan(
-                        children: const <TextSpan>[
+                      const TextSpan(
+                        children: <TextSpan>[
                           TextSpan(text: 'This is a game application to allow friends to '),
                           TextSpan(text: 'manage a Football pool, collecting points, '),
                           TextSpan(text: 'entering scores and displaying point results.'),
@@ -75,9 +75,9 @@ class _AboutState extends State<About> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text.rich(
-                    TextSpan(
+                    const TextSpan(
                         text: "Key Features include: ",
-                        children: const <TextSpan> [
+                        children: <TextSpan> [
                           TextSpan(text: "Add Players, Add Games, Assign Players to Squares "),
                           TextSpan(text: "Enter quarterly scores and display player points "),
                         ]
@@ -85,7 +85,7 @@ class _AboutState extends State<About> {
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                 ),
-                SizedBox(height: 40),
+                const SizedBox(height: 40),
                 Text("Product Manager: Meagan Sheehan",
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleMedium,
@@ -94,7 +94,7 @@ class _AboutState extends State<About> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
-                Spacer(),
+                const Spacer(),
                 Text("App Name: ${_packageInfo.appName}",
                     textAlign: TextAlign.start,
                   style: Theme.of(context).textTheme.titleSmall,

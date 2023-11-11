@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/community.dart';
-import 'package:bruceboard/pages/member/member_maintain.dart';
 import 'package:bruceboard/pages/member/member_tile.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/shared/loading.dart';
@@ -35,7 +34,7 @@ class _MemberListState extends State<MemberList> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<Member>>(
-      stream: DatabaseService(uid: bruceUser.uid, cid: widget.community.cid).memberList,
+      stream: DatabaseService(uid: bruceUser.uid, cidKey: widget.community.key).memberList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Member> member = snapshots.data!;
@@ -68,7 +67,7 @@ class _MemberListState extends State<MemberList> {
             ),
           );
         } else {
-          return Loading();
+          return const Loading();
         }
       }
     );

@@ -1,10 +1,11 @@
 import 'dart:developer';
 
-import 'package:bruceboard/models/series.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
+import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
 // Create a Form widget.
@@ -19,40 +20,45 @@ class SeriesMaintain extends StatefulWidget {
 
 class SeriesMaintainState extends State<SeriesMaintain> {
   final _formSeriesKey = GlobalKey<FormState>();
+  late Series? series;
+
+  @override
+  void initState() {
+    series = widget.series;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     //cid = ModalRoute.of(context)!.settings.arguments as String;
     BruceUser bruceUser = Provider.of<BruceUser>(context);
-    String _uid = bruceUser.uid;
-    late String _sid;
-//    Series series = Provider.of<Series>(context);
-    Series? series = widget.series; ;
-    String _currentSeriesName = "";
-    String _currentSeriesType = "";
-    int _currentSeriesNoGames = 0;
+    String uid = bruceUser.uid;
+    late String sid;
+
+    String currentSeriesName = "";
+    String currentSeriesType = "";
+    int currentSeriesNoGames = 0;
     int noGames = 0;
 
     // Todo: Remove this
-    if (widget.series != null) {
-      series = widget.series!;
-      log('Got Series ${widget.series!.name}');
+    if (series != null) {
+      log('Got Series ${series!.name}');
     } else {
       log('No Series found ... New series, dont use until created?');
     }
 
     if ( series != null ) {
       //_sid = series.sid;
-      _currentSeriesName = widget.series?.name ?? 'xxx';
-      _currentSeriesType = widget.series?.type ?? 'xxx';
-      _currentSeriesNoGames = widget.series?.noGames ?? 0;
+      currentSeriesName = series?.name ?? 'xxx';
+      currentSeriesType = series?.type ?? 'xxx';
+      currentSeriesNoGames = series?.noGames ?? 0;
     }
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
 //            backgroundColor: Colors.blue[900],
-            title: Text((widget.series != null ) ? 'Edit Series' : 'Add Series'),
+            title: Text((series != null ) ? 'Edit Series' : 'Add Series'),
             centerTitle: true,
             elevation: 0,
             leading: IconButton(
@@ -75,7 +81,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                 children: [
                   const Text("Series Name: "),
                   TextFormField(
-                    initialValue: _currentSeriesName,
+                    initialValue: currentSeriesName,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -85,12 +91,12 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Game name is: $value');
-                      _currentSeriesName = value ?? 'Series 000';
+                      currentSeriesName = value ?? 'Series 000';
                     },
                   ),
                   const Text("Type: "),
                   TextFormField(
-                    initialValue: _currentSeriesType,
+                    initialValue: currentSeriesType,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -100,7 +106,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Email is: $value');
-                      _currentSeriesType = value ?? 'auto-approve';
+                      currentSeriesType = value ?? 'auto-approve';
                     },
                   ),
                   Padding(
@@ -117,34 +123,36 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                             if (_formSeriesKey.currentState!.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
-                              if ( widget.series == null ) {
-                                // Add new Game
+                              if ( series == null ) {
+                                // Create new Series and store to Firebase
                                 Map<String, dynamic> data =
                                 { 'sid': -1,
-                                  'name': _currentSeriesName,
-                                  'type': _currentSeriesType,
-                                  'noGames': _currentSeriesNoGames,
+                                  'name': currentSeriesName,
+                                  'type': currentSeriesType,
+                                  'noGames': currentSeriesNoGames,
                                 };
-                                await DatabaseService(uid: _uid).addSeries(
-                                  series: Series( data: data ),
+                                series = Series( data: data ) ;
+                                await DatabaseService(uid: uid).addSeries(
+                                  series: series!,
                                 );
-                                widget.series?.noGames++;
+                                series?.noGames++;
                               } else {
-                                // update existing game
-                                // await DatabaseService(uid: _uid).updateSeries(
-                                //   sid: widget.series?.sid ?? 'S9999',
-                                //   name: _currentSeriesName,
-                                //   type: _currentSeriesType,
-                                //   noGames: _currentSeriesNoGames,
-                                // );
-                                await DatabaseService(uid: _uid).updateSeries(
-                                  series: widget.series!,
-                                );
+                                // Update existing Series and store to Firebase
+                                Map<String, dynamic> data =
+                                { 'sid': -1,
+                                  'name': currentSeriesName,
+                                  'type': currentSeriesType,
+                                  'noGames': currentSeriesNoGames,
+                                };
+                                series!.update(data: data);
+                                // series!.name = currentSeriesName;
+                                // series!.type = currentSeriesType;
+                                // series!.noGames = currentSeriesNoGames;
+                                await DatabaseService(uid: uid).updateSeries(series: series!,);
                               }
                               // Save Updates to Shared Preferences
-                              log("series_maintain: Added/Updated series "
-                                  "${widget.series?.noGames}");
-                              Navigator.of(context).pop(widget.series);
+                              log("series_maintain: Added/Updated series ${series?.noGames}");
+                              Navigator.of(context).pop(series);
                             }
                           },
                           child: const Text('Save'),
@@ -153,19 +161,19 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                            onPressed: (series==null || series.noGames > 0)
+                            onPressed: (series==null || series!.noGames > 0)
                                 ? () {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: const Text("Must delete ALL games in series"),
+                                const SnackBar(
+                                  content: Text("Must delete ALL games in series"),
                                 )
                               );
                             }
                                 : () {
                               if (series!.noGames == 0) {
                                 // log('Delete Series ... ${_sid}');
-                                log('Delete Series ... ${series.key}');
-                                DatabaseService(uid: _uid).deleteSeries(series.key);
+                                log('Delete Series ... ${series!.key}');
+                                DatabaseService(uid: uid).deleteSeries(series!.key);
                                 Navigator.of(context).pop();
                               }
                             },

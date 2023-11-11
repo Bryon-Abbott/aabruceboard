@@ -46,10 +46,9 @@ class _SeriesListState extends State<SeriesList> {
                 actions: [
                   IconButton(
                     onPressed: () async {
-                      dynamic changes = await Navigator.pushNamed(
-                          context, '/series-maintain');
+                      dynamic changes = await Navigator.pushNamed(context, '/series-maintain');
                       if (changes != null) {
-                        log('series_list: Games ${changes} Changes Type : ${changes.runtimeType}');
+                        log('series_list: Games $changes Changes Type : ${changes.runtimeType}');
                       } else {
                         log('series_list: **null** Changes Type : ${changes.runtimeType}');
                       }
@@ -66,7 +65,7 @@ class _SeriesListState extends State<SeriesList> {
           );
         } else {
           log("series_list: Snapshot Error ${snapshots.error}");
-          return Loading();
+          return const Loading();
         }
       }
     );

@@ -2,12 +2,15 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/models/series.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/shared/loading.dart';
+import 'package:provider/provider.dart';
 
 const double gridSizeLarge = 1000;
 const double gridSizeSmall = 500;
@@ -27,18 +30,21 @@ const double gridSizeSmall = 500;
 // ===========================================================================
 class GameBoard extends StatefulWidget {
 //  const GameBoard({super.key});
-  const GameBoard({super.key, required this.game});
-final Game game;
+  const GameBoard({super.key, required this.series, required this.game});
+  final Series series;
+  final Game game;
 
 @override
   State<GameBoard> createState() => _GameBoardState();
 }
 
 class _GameBoardState extends State<GameBoard> {
-  late String _sid;
-  late String _gid;
-  late String _pid;
+  // late int _sid;
+  // late int _gid;
+  // late int _pid;
   late Game game;
+  late Series series;
+  late String _uid;
 
   late TextStyle textStyle;
   // Todo: Refactor to bring all controllers into a list (or else improve).
@@ -54,9 +60,10 @@ class _GameBoardState extends State<GameBoard> {
   @override
   void initState() {
     game = widget.game;
-    _sid = game.sid;
-    _gid = game.gid;
-    _pid = game.pid;
+    series = widget.series;
+    // _sid = game.sid;
+    // _gid = game.gid;
+    // _pid = game.pid;
     controller1 = TextEditingController();
     controller2 = TextEditingController();
 
@@ -80,6 +87,9 @@ class _GameBoardState extends State<GameBoard> {
   Widget build(BuildContext context) {
     game = widget.game;
 
+    BruceUser bruceUser = Provider.of<BruceUser>(context);
+    _uid = bruceUser.uid;
+
     // Calculate screen size
     var padding = MediaQuery.of(context).padding;
     screenHeight = MediaQuery.of(context).size
@@ -95,14 +105,14 @@ class _GameBoardState extends State<GameBoard> {
     }
 
     dev.log("Reload Game ... GameNo: ${game.gid} ",
-        name: "${this.runtimeType.toString()}:build");
+        name: "${runtimeType.toString()}:build");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
     textStyle = Theme.of(context).textTheme.bodySmall!
         .copyWith(color: Colors.yellow);
 
     return StreamBuilder<Board>(
-        stream: DatabaseService(uid: _pid, sid: _sid, gid: _gid).board,
+        stream: DatabaseService(uid: _uid, sidKey: series.key, gidKey: game.key).board,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Board board = snapshot.data!;
@@ -173,7 +183,7 @@ class _GameBoardState extends State<GameBoard> {
                                 // style: ElevatedButton.styleFrom(
                                 //   backgroundColor: Colors.amber[900],
                                 // ),
-                                child: Icon(Icons.sports_football_outlined,
+                                child: const Icon(Icons.sports_football_outlined,
                                   // color: Colors.yellow,
                                   size: 24,
                                 ),
@@ -188,7 +198,7 @@ class _GameBoardState extends State<GameBoard> {
                               child: ElevatedButton(
                                 onPressed: () {},
                                 style: ElevatedButton.styleFrom(
-                                  textStyle: TextStyle(
+                                  textStyle: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold
                                   ),
@@ -215,7 +225,7 @@ class _GameBoardState extends State<GameBoard> {
                                 child: ElevatedButton(
                                   onPressed: () {},
                                   style: ElevatedButton.styleFrom(
-                                    textStyle: TextStyle(
+                                    textStyle: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold
                                     ),
@@ -249,7 +259,7 @@ class _GameBoardState extends State<GameBoard> {
             );
           } else {
             dev.log("game_test: Error ${snapshot.error}");
-            return Loading();
+            return const Loading();
           }
         }
     );
@@ -278,7 +288,7 @@ class _GameBoardState extends State<GameBoard> {
           return Wrap(children: [
             Padding(
               padding: const EdgeInsets.all(2.0),
-              child: Container(
+              child: SizedBox(
                 width: 35,
                 child: Text("Qtr${index + 1}:"),
               ),
@@ -286,7 +296,7 @@ class _GameBoardState extends State<GameBoard> {
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: Container(
-                padding: EdgeInsets.all(1.0),
+                padding: const EdgeInsets.all(1.0),
                 width: 30,
                 decoration: BoxDecoration(
                   border: Border.all(color: Theme.of(context).colorScheme.outline),
@@ -299,7 +309,7 @@ class _GameBoardState extends State<GameBoard> {
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: Container(
-                padding: EdgeInsets.all(1.0),
+                padding: const EdgeInsets.all(1.0),
                 width: 30,
                 decoration: BoxDecoration(
                   border: Border.all(color: Theme.of(context).colorScheme.outline),
@@ -309,8 +319,8 @@ class _GameBoardState extends State<GameBoard> {
                     textAlign: TextAlign.right),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
+            const Padding(
+              padding: EdgeInsets.all(2.0),
               child: SizedBox(
                 width: 35,
                 child: Text("Won:"),
@@ -319,7 +329,7 @@ class _GameBoardState extends State<GameBoard> {
             Padding(
               padding: const EdgeInsets.all(1.0),
               child: Container(
-                padding: EdgeInsets.all(1.0),
+                padding: const EdgeInsets.all(1.0),
                 width: 150,
                 decoration: BoxDecoration(
                   border: Border.all(color: Theme.of(context).colorScheme.outline),
@@ -329,8 +339,8 @@ class _GameBoardState extends State<GameBoard> {
                     board.colResults[index], board)),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
+            const Padding(
+              padding: EdgeInsets.all(2.0),
               child: SizedBox(
                 width: 35,
                 child: Text("Pts:"),
@@ -339,7 +349,7 @@ class _GameBoardState extends State<GameBoard> {
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: Container(
-                padding: EdgeInsets.all(1.0),
+                padding: const EdgeInsets.all(1.0),
                 width: 40,
                 decoration: BoxDecoration(
                   border: Border.all(color: Theme.of(context).colorScheme.outline),
@@ -355,24 +365,26 @@ class _GameBoardState extends State<GameBoard> {
                 height: 25,
                 width: 45,
                 child: ElevatedButton(
-                  child: Text('Score'),
+                  child: const Text('Score'),
                   onPressed: () async {
-                    dev.log("Getting Scores ... ", name: "${this.runtimeType.toString()}:buildScore");
+                    dev.log("Getting Scores ... ", name: "${runtimeType.toString()}:buildScore");
                     final List<String>? score = await openDialogScores(index, board);
                     if (score == null || score.isEmpty) {
                       return;
                     } else {
-                      dev.log("Loading Game Data ... GameNo: ${game.gid} ", name: "${this.runtimeType.toString()}:buildScore");
+                      dev.log("Loading Game Data ... GameNo: ${game.gid} ", name: "${runtimeType.toString()}:buildScore");
                       //gameData.loadData(game.gameNo!);
-                      if (score[0].isNotEmpty)
+                      if (score[0].isNotEmpty) {
                         board.rowResults[index] = int.parse(score[0]);
-                      if (score[1].isNotEmpty)
+                      }
+                      if (score[1].isNotEmpty) {
                         board.colResults[index] = int.parse(score[1]);
+                      }
 
-                      dev.log("Saving Game Data ... GameNo: ${game.gid} ", name: "${this.runtimeType.toString()}:buildScore");
+                      dev.log("Saving Game Data ... GameNo: ${game.gid} ", name: "${runtimeType.toString()}:buildScore");
                       //gameData.saveData(game.gameNo!);
                       setState(() {
-                        dev.log("setState() ...", name: "${this.runtimeType.toString()}:buildScore");
+                        dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
                       });
                     }
                   },
@@ -390,7 +402,7 @@ class _GameBoardState extends State<GameBoard> {
                       setState(() {
                       });
                     },
-                    child: Text("Update")),
+                    child: const Text("Update")),
               ],)
             ]
         ),
@@ -404,7 +416,7 @@ class _GameBoardState extends State<GameBoard> {
   void onMenuSelected(BuildContext context, int item, Board board) async {
     switch (item) {
       case 0:
-        dev.log("Menu Select 0:Download Game", name: "${this.runtimeType.toString()}:onMenuSelected");
+        dev.log("Menu Select 0:Download Game", name: "${runtimeType.toString()}:onMenuSelected");
 //        widget.gameStorage.writeGameData(BruceArguments(players, games));
         break;
       case 1:
@@ -433,12 +445,12 @@ class _GameBoardState extends State<GameBoard> {
         break;
       case 2:
         int qtrPercents = 0;
-        dev.log("Menu Select 2:Update Splits", name: "${this.runtimeType.toString()}:onMenuSelected");
+        dev.log("Menu Select 2:Update Splits", name: "${runtimeType.toString()}:onMenuSelected");
         final List<String>? percents = await openDialogSplits(board);
         if (percents == null || percents.isEmpty) {
           return;
         } else {
-          dev.log("Loading Game Data ... GameNo: ${game.gid} ", name: "${this.runtimeType.toString()}:buildScore");
+          dev.log("Loading Game Data ... GameNo: ${game.gid} ", name: "${runtimeType.toString()}:buildScore");
           //gameData.loadData(game.gameNo!);
 
           for (int i=0; i<4; i++) {
@@ -446,15 +458,15 @@ class _GameBoardState extends State<GameBoard> {
               board.percentSplits[i] = int.parse(percents[i]);
             }
             qtrPercents += board.percentSplits[i];
-            dev.log("Split Data ... '${percents[i]}' ", name: "${this.runtimeType.toString()}:buildScore");
+            dev.log("Split Data ... '${percents[i]}' ", name: "${runtimeType.toString()}:buildScore");
           }
           board.percentSplits[4] = 100 - qtrPercents;
-          dev.log("Split Data ... GameNo: ${game.gid}, Qtr Splits: $qtrPercents,  Total Splits: ${board.percentSplits[4]}", name: "${this.runtimeType.toString()}:buildScore");
+          dev.log("Split Data ... GameNo: ${game.gid}, Qtr Splits: $qtrPercents,  Total Splits: ${board.percentSplits[4]}", name: "${runtimeType.toString()}:buildScore");
 
-          dev.log("Saving Game Data ... GameNo: ${game.gid}", name: "${this.runtimeType.toString()}:buildScore");
+          dev.log("Saving Game Data ... GameNo: ${game.gid}", name: "${runtimeType.toString()}:buildScore");
           //board.saveData(game.gameNo!);
           setState(() {
-            dev.log("setState() ...", name: "${this.runtimeType.toString()}:buildScore");
+            dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
           });
         }
         break;
@@ -465,9 +477,9 @@ class _GameBoardState extends State<GameBoard> {
       showDialog<List<String>>(
         context: context,
         builder: (context) => AlertDialog(
-          titlePadding: EdgeInsets.fromLTRB(6,2,2,2),
-          actionsPadding: EdgeInsets.all(2),
-          contentPadding: EdgeInsets.fromLTRB(6,2,6,2),
+          titlePadding: const EdgeInsets.fromLTRB(6,2,2,2),
+          actionsPadding: const EdgeInsets.all(2),
+          contentPadding: const EdgeInsets.fromLTRB(6,2,6,2),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(2.0)
           ),
@@ -496,7 +508,7 @@ class _GameBoardState extends State<GameBoard> {
           actions: [
             TextButton(
               onPressed: submitScores,
-              child: Text('Save'),
+              child: const Text('Save'),
             ),
           ],
         ),
@@ -511,13 +523,13 @@ class _GameBoardState extends State<GameBoard> {
   Future<List<String>?> openDialogSplits(Board board) => showDialog<List<String>>(
     context: context,
     builder: (context) => AlertDialog(
-      titlePadding: EdgeInsets.fromLTRB(6,2,2,2),
-      actionsPadding: EdgeInsets.all(2),
-      contentPadding: EdgeInsets.fromLTRB(6,2,6,2),
+      titlePadding: const EdgeInsets.fromLTRB(6,2,2,2),
+      actionsPadding: const EdgeInsets.all(2),
+      contentPadding: const EdgeInsets.fromLTRB(6,2,6,2),
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(2.0)
       ),
-      title: Text("Quarterly Percentage Splits"),
+      title: const Text("Quarterly Percentage Splits"),
       titleTextStyle: Theme.of(context).textTheme.bodyLarge,
       contentTextStyle: Theme.of(context).textTheme.bodyLarge,
       content: Column(
@@ -547,7 +559,7 @@ class _GameBoardState extends State<GameBoard> {
       actions: [
         TextButton(
           onPressed: submitSplits,
-          child: Text('Save'),
+          child: const Text('Save'),
         ),
       ],
     ),
@@ -568,17 +580,17 @@ class _GameBoardState extends State<GameBoard> {
 
     if (scoreOne == -1 || scoreTwo == -1) return "Enter Score";
 
-    // Get last diget of each score
+    // Get last digit of each score
     int lastDigitOne = scoreOne % 10; // Column Number = Team one
     int lastDigitTwo = scoreTwo % 10; // Row Number = Team two
-    dev.log("Last digit One : $lastDigitOne Last digit two: $lastDigitTwo", name: "${this.runtimeType.toString()}:getWinner");
+    dev.log("Last digit One : $lastDigitOne Last digit two: $lastDigitTwo", name: "${runtimeType.toString()}:getWinner");
 
     //log("Last Digits are $lastDigitOne : $lastDigitTwo",name: 'GameBoard');
 
     // Get column and row indexes for given score digit
     int row = gameData.rowScores.indexOf(lastDigitTwo);
     int col = gameData.colScores.indexOf(lastDigitOne);
-    dev.log("Row : $row Col: $col", name: "${this.runtimeType.toString()}:getWinner");
+    dev.log("Row : $row Col: $col", name: "${runtimeType.toString()}:getWinner");
 
     if (col == -1 || row == -1) return "Lock scores";
     // log("Row : Col are $row : $col",name: 'GameBoard');
@@ -586,7 +598,7 @@ class _GameBoardState extends State<GameBoard> {
     // Find the player number on the board
     int playerNo = gameData.boardData[row * 10 + col];
 
-    // If no player assiged to board return No Player
+    // If no player assigned to board return No Player
     if (playerNo == -1) return "Not picked";
 
     // if the playerNo cant be found return Player not found (should never happen) else return name.
@@ -617,7 +629,7 @@ class _GameBoardState extends State<GameBoard> {
           spacing: 2,
           children:
             List.generate(5, (index) {
-              return Container(
+              return SizedBox(
                 width: 80,
                 child: Row(
                   children: [
@@ -625,7 +637,7 @@ class _GameBoardState extends State<GameBoard> {
                     Padding(
                       padding: const EdgeInsets.all(2.0),
                       child: Container(
-                        padding: EdgeInsets.all(1.0),
+                        padding: const EdgeInsets.all(1.0),
                         width: 40,
                         decoration: BoxDecoration(
                           border: Border.all(color: Theme.of(context).colorScheme.outline),
@@ -640,15 +652,15 @@ class _GameBoardState extends State<GameBoard> {
               );
             }) +
                 [
-                  Container(
+                  SizedBox(
                     width: 90,
                     child: Row(
                       children: [
-                        Text("Total:"),
+                        const Text("Total:"),
                         Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: Container(
-                            padding: EdgeInsets.all(1.0),
+                            padding: const EdgeInsets.all(1.0),
                             width: 40,
                             decoration: BoxDecoration(
                               border: Border.all(color: Theme.of(context).colorScheme.outline),
@@ -673,7 +685,7 @@ class _GameBoardState extends State<GameBoard> {
 // Selection of squares and renumbering of Row/Column numbers
 // ============================================================================
 class BoardGrid extends StatefulWidget {
-  const BoardGrid({Key? key, required this.game, required this.board}); // : super(key: key);
+  const BoardGrid({super.key, required this.game, required this.board}); // : super(key: key);
   final Game game;
   final Board board;
 
@@ -705,7 +717,7 @@ class _BoardGridState extends State<BoardGrid> {
     //game = widget.game;
     //players = Players();
     //game = games.getGame(games.currentGame);
-    dev.log("Initialize default GameData data.", name: "${this.runtimeType.toString()}:initState");
+    dev.log("Initialize default GameData data.", name: "${runtimeType.toString()}:initState");
     board = widget.board;
   }
 
@@ -724,7 +736,7 @@ class _BoardGridState extends State<BoardGrid> {
       gridSize = gridSizeSmall;
     }
 
-    dev.log("Reloading Data ... gameNo: ${game.gid}", name: "${this.runtimeType.toString()}:build");
+    dev.log("Reloading Data ... gameNo: ${game.gid}", name: "${runtimeType.toString()}:build");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
 
@@ -756,20 +768,20 @@ class _BoardGridState extends State<BoardGrid> {
 
   List<Widget> buildSquares() {
     List<Widget> grid = [];
-    grid.add(NumberButton());
+    grid.add(numberButton());
     for (int col = 0; col < 10; col++) {
-      grid.add(ScoreButton(col, board.colScores));
+      grid.add(scoreButton(col, board.colScores));
     }
     for (int row = 0; row < 10; row++) {
-      grid.add(ScoreButton(row, board.rowScores));
+      grid.add(scoreButton(row, board.rowScores));
       for (int col = 0; col < 10; col++) {
-        grid.add(GameButton(row * 10 + col));
+        grid.add(gameButton(row * 10 + col));
       }
     }
     return grid;
   }
 
-  Widget NumberButton() {
+  Widget numberButton() {
     return Padding(
       padding: const EdgeInsets.all(1),
       child: ElevatedButton(
@@ -780,17 +792,17 @@ class _BoardGridState extends State<BoardGrid> {
             () {
           if (board.getFreeSquares() == 0) {
             setState(() {
-              dev.log("Pressed Number button", name: "${this.runtimeType.toString()}:NumberButton");
+              dev.log("Pressed Number button", name: "${runtimeType.toString()}:NumberButton");
               board.setScores();
-              dev.log("saving Data ... gameNo: ${game.gid} ", name: "${this.runtimeType.toString()}:NumberButton");
+              dev.log("saving Data ... gameNo: ${game.gid} ", name: "${runtimeType.toString()}:NumberButton");
               //board.saveData(games.getGame(games.currentGame).gameNo!);
             });
           } else {
-            dev.log("Can't set numbers until board is full", name: "${this.runtimeType.toString()}:NumberButton");
+            dev.log("Can't set numbers until board is full", name: "${runtimeType.toString()}:NumberButton");
           }
         },
         style: ElevatedButton.styleFrom(
-          textStyle: TextStyle(
+          textStyle: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold
           ),
@@ -803,18 +815,18 @@ class _BoardGridState extends State<BoardGrid> {
         child: (board.getFreeSquares() != 0 )
           ? Text(board.getFreeSquares().toString())
           : board.scoresLocked
-            ? Icon(Icons.lock_outline, color: Colors.red)
-            : Icon(Icons.lock_open_rounded, color: Colors.green),
+            ? const Icon(Icons.lock_outline, color: Colors.red)
+            : const Icon(Icons.lock_open_rounded, color: Colors.green),
       ),
     );
   }
 
-  Widget ScoreButton(int scoreIndex, List<int> scores) {
+  Widget scoreButton(int scoreIndex, List<int> scores) {
     return Padding(
       padding: const EdgeInsets.all(1),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         onPressed: (scores[scoreIndex]) == -1 ? null : () {},
         // onPressed: () {
@@ -826,7 +838,7 @@ class _BoardGridState extends State<BoardGrid> {
         // ),
         //label: Text(""),
         child: (scores[scoreIndex] == -1)
-            ? Text("?")
+            ? const Text("?")
             : Text(
                 scores[scoreIndex].toString(),
               ),
@@ -834,22 +846,19 @@ class _BoardGridState extends State<BoardGrid> {
     );
   }
 
-  Widget GameButton(int squareIndex) {
+  Widget gameButton(int squareIndex) {
     return Padding(
       padding: const EdgeInsets.all(1),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           disabledBackgroundColor: getSquareColor(squareIndex),
         ),
-        child: (board.boardData[squareIndex] == -1)
-            ? Text("FS")
-            : Text("XX"),
 //            : Text(players.searchPlayer(board.boardData[squareIndex])?.initials
 //            ?? "??",
 //        ),
         onPressed: (board.boardData[squareIndex] == -1) ? () async {
-          dev.log("Pressed game button ($squareIndex)", name: "${this.runtimeType.toString()}:GameButton");
+          dev.log("Pressed game button ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
         //   dynamic playerSelected = await Navigator.pushNamed(
         //       context, '/manageplayers',
         //       arguments: BruceArguments(players, games));
@@ -869,6 +878,9 @@ class _BoardGridState extends State<BoardGrid> {
         //   }
          }
         : null,
+        child: (board.boardData[squareIndex] == -1)
+            ? const Text("FS")
+            : const Text("XX"),
       ),
     );
   }
@@ -882,13 +894,14 @@ class _BoardGridState extends State<BoardGrid> {
 
     //int i=0;
     // Scores not set
-    if (board.rowScores[row] == -1 || board.colScores[col] == -1)
+    if (board.rowScores[row] == -1 || board.colScores[col] == -1) {
       return null;
+    }
 
     for (int i = 3; i >= 0; i--) {
       if (board.rowResults[i] == -1 ||
           board.colResults[i] == -1) continue;
-      // Get last diget of each score
+      // Get last digit of each score
       lastDigitOne = board.rowResults[i] % 10; // Column Number = Team one
       lastDigitTwo = board.colResults[i] % 10; // Row Number = Team two
       // Check if both are equal

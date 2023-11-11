@@ -41,7 +41,7 @@ class _ManageGamesState extends State<ManageGames> {
     var padding = MediaQuery.of(context).padding;
     newScreenHeight = screenHeight - padding.top - padding.bottom;
     newScreenWidth = screenWidth - padding.left - padding.right;
-    dev.log("Screen Dimensions are Height: $screenHeight, Width: $screenWidth : Height: $newScreenHeight, Width: $newScreenWidth", name: " ${this.runtimeType.toString()}:build");
+    dev.log("Screen Dimensions are Height: $screenHeight, Width: $screenWidth : Height: $newScreenHeight, Width: $newScreenWidth", name: " ${runtimeType.toString()}:build");
 
 
     //print('Build function ran');
@@ -106,7 +106,7 @@ class _ManageGamesState extends State<ManageGames> {
                                 maxLines: 2,
                                 textAlign: TextAlign.left,
                                 overflow: TextOverflow.ellipsis,
-                                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
                                 ),
                               ),
                             ),

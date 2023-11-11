@@ -80,7 +80,7 @@ class MaintainPlayerState extends State<MaintainPlayer> {
             centerTitle: true,
             elevation: 0,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
               onPressed: () {
                 Navigator.pop(context, playerListChanged);
               },          
@@ -97,7 +97,7 @@ class MaintainPlayerState extends State<MaintainPlayer> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Player First Name: "),
+                  const Text("Player First Name: "),
                   TextFormField(
                     controller: ctlrFName,
                     textCapitalization: TextCapitalization.words,
@@ -117,7 +117,7 @@ class MaintainPlayerState extends State<MaintainPlayer> {
                       playerFName = value.toString();
                     },
                   ),
-                  Text("       last Name: "),
+                  const Text("       last Name: "),
                   TextFormField(
                     controller: ctlrLName,
                     textCapitalization: TextCapitalization.words,
@@ -137,7 +137,7 @@ class MaintainPlayerState extends State<MaintainPlayer> {
                       playerLName = value.toString();
                     },
                   ),
-                  Text("Email: "),
+                  const Text("Email: "),
                   TextFormField(
                     initialValue: playerEmail,
                     // The validator receives the text that the user has entered.
@@ -159,7 +159,7 @@ class MaintainPlayerState extends State<MaintainPlayer> {
                       playerEmail = value.toString();
                     },
                   ),
-                  Text("Initials: "),
+                  const Text("Initials: "),
                   TextFormField(
                     controller: ctlrInitials,
                     textCapitalization: TextCapitalization.characters,
@@ -179,7 +179,7 @@ class MaintainPlayerState extends State<MaintainPlayer> {
                       playerInitials = value.toString().toUpperCase();
                     },
                   ),
-                  Text("Phone Number: "),
+                  const Text("Phone Number: "),
                   TextFormField(
                     initialValue: playerPhone,
                     // The validator receives the text that the user has entered.
@@ -200,7 +200,7 @@ class MaintainPlayerState extends State<MaintainPlayer> {
                       return null;
                     },
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp('([+0-9\)\(-])')),
+                      FilteringTextInputFormatter.allow(RegExp('([+0-9)(-])')),
                       LengthLimitingTextInputFormatter(17),
                     ],
                     onSaved: (String? value) {
@@ -214,11 +214,11 @@ class MaintainPlayerState extends State<MaintainPlayer> {
                         int len = cleanValue.length;
                         country = "+${cleanValue.substring(0, len-10)}";
                         phone = cleanValue.substring(len-10);
-                        log("Phone with CC value is '$cleanValue' Country '$country', Phone: '$phone'", name: "${this.runtimeType.toString()}:build");
+                        log("Phone with CC value is '$cleanValue' Country '$country', Phone: '$phone'", name: "${runtimeType.toString()}:build");
                       }
                       // Format +1(999)555-1234
-                      log("Phone value is '$cleanValue' Country '$country', Phone: '$phone'", name: "${this.runtimeType.toString()}:build");
-                      playerPhone = "${country}(${phone.substring(0,3)})${phone.substring(3,6)}-${phone.substring(6,10)}";
+                      log("Phone value is '$cleanValue' Country '$country', Phone: '$phone'", name: "${runtimeType.toString()}:build");
+                      playerPhone = "$country(${phone.substring(0,3)})${phone.substring(3,6)}-${phone.substring(6,10)}";
                       //playerPhone = value.toString();
                     },
                   ),
