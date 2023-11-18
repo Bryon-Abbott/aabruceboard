@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:flutter/foundation.dart';
@@ -173,13 +174,11 @@ class _GameMaintainState extends State<GameMaintain> {
                                   'squareValue': currentSquareValue,
                                 };
                                 game = Game(data: data);
-                                await DatabaseService(uid: _uid, sidKey: series.key).addGame(
-                                  game: game!,
-                                );
+                                await DatabaseService(game!, uid: _uid, sidKey: series.key).fsDocAdd();
                                 log("Add Game ${game!.key}");
                                 // Add a default board to Database
                               //     _gid = result.id;
-                                  await DatabaseService( uid: _uid, sidKey: series.key, gidKey: game!.key )
+                                  await DatabaseService(Board(data: {}), uid: _uid, sidKey: series.key, gidKey: game!.key )
                                       .addBoard(gidKey: game!.key,);
                                   // await DatabaseService(uid: _uid, sidKey: series.key).incrementSeriesNoGames(1);
                                   series.noGames = series.noGames+1; // Update class to maintain alignment
@@ -198,9 +197,7 @@ class _GameMaintainState extends State<GameMaintain> {
                                   'squareValue': currentSquareValue,
                                 };
                                 game!.update(data: data);
-                                await DatabaseService(uid: _uid, sidKey: series.key).updateGame(
-                                  game: game!,
-                                );
+                                await DatabaseService(game!, uid: _uid, sidKey: series.key).fsDocUpdate();
                               }
                               // Save Updates to Shared Preferences
                               Navigator.of(context).pop();
@@ -246,8 +243,8 @@ class _GameMaintainState extends State<GameMaintain> {
                               );
                               if (results) {
                                 log('Delete Game ... U:$_uid, S:${series.key}, G:${game!.key}');
-                                await DatabaseService(uid: _uid, sidKey: series.key).deleteGame(game!.key);
-                                await DatabaseService(uid: _uid, sidKey: series.key, gidKey: game!.key).deleteBoard();
+                                await DatabaseService(game!, uid: _uid, sidKey: series.key).fsDocDelete();
+                                await DatabaseService(Board(data: {}), uid: _uid, sidKey: series.key, gidKey: game!.key).deleteBoard();
                                 // await DatabaseService(uid: _uid, sid: series.sid).incrementSeriesNoGames(-1);
                                 series.noGames  = series.noGames -1;
                                 Navigator.of(context).pop();

@@ -1,9 +1,18 @@
-import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:intl/intl.dart';
 
-class Series  {
-  int sid=-1;  // Numeric 0000-9999
+class Series extends FirestoreDoc {
+  // Base Variables
+  @override
+  final String nextIdField = 'nextMid';
+  @override
+  final String totalField = 'noMembers';
+  @override
+  final NumberFormat _keyFormat = NumberFormat("M0000", "en_US");
+  // Data Class Variables
+
+  int sid;  // Numeric 0000-9999
   String name;
   String type;
   int noGames;
@@ -12,7 +21,8 @@ class Series  {
     sid = data['sid'] ?? -1,
     name = data['name'] ?? 'NAME',
     type = data['type'] ?? 'TYPE',
-    noGames = data['noGames'] ?? 0;
+    noGames = data['noGames'] ?? 0,
+    super(data: {'docID': data['docId'] ?? -1});
 
   void update({ required Map<String, dynamic> data, }) {
     sid = data['sid'] ?? sid;

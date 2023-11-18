@@ -1,8 +1,17 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:intl/intl.dart';
 
-class Membership {
+class Membership extends FirestoreDoc {
+  // Base Variables
+  @override
+  final String nextIdField = 'nextMid';
+  @override
+  final String totalField = 'noMembers';
+  @override
+  final NumberFormat _keyFormat = NumberFormat("M0000", "en_US");
+  // Data Class Variables
   int cid;
   int pid;
   String uid;
@@ -13,7 +22,8 @@ class Membership {
         cid = data['cid'] ?? -1,
         pid = data['pid'] ?? -1,
         uid = data['uid'] ?? 'error',
-        status = data['status'] ?? 'error';
+        status = data['status'] ?? 'error',
+        super(data: {'docID': data['docId'] ?? -1});
 
   String get key {
     // Format Key for Document ID
@@ -28,6 +38,7 @@ class Membership {
   // Returns a Map<String, dynamic> of all member veriables.
   Map<String, dynamic> get updateMap {
     return {
+      'docId': docId,
       'cid': cid,
       'pid': pid,
       'uid': uid,

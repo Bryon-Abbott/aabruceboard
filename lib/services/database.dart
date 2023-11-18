@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/member.dart';
@@ -18,6 +19,7 @@ class DatabaseService {
   String? sidKey; // Series ID
   String? gidKey; // Game ID (User as Game ID and Board ID)
   String? cidKey; // Player ID (Used as Member)
+  FirestoreDoc fsDoc;
 
 //  FirebaseFirestore db;
   final CollectionReference configCollection = FirebaseFirestore.instance
@@ -26,6 +28,9 @@ class DatabaseService {
   final CollectionReference playerCollection = FirebaseFirestore.instance
       .collection('Player');
 
+  late CollectionReference docCollection;
+  late CollectionReference parentCollection;
+
   late CollectionReference seriesCollection;
   late CollectionReference communityCollection;
   late CollectionReference membershipCollection;
@@ -33,7 +38,7 @@ class DatabaseService {
   late CollectionReference gameCollection;
   late CollectionReference boardCollection;
 
-  DatabaseService({ this.uid, this.cidKey, this.sidKey, this.gidKey }) {
+  DatabaseService(this.fsDoc, { this.uid, this.cidKey, this.sidKey, this.gidKey }) {
     // If UID not passed in, try to calculate it from Firebase Auth.
     // In fact you should never need to pass in UID as long as you check
     // to ensure the user is signed in.
@@ -41,7 +46,19 @@ class DatabaseService {
       final User? user = FirebaseAuth.instance.currentUser;
       if (user != null) uid = user.uid;
     }
-
+    log('MessageService: Class Type is > ${fsDoc.runtimeType}');
+    switch (fsDoc.runtimeType.toString()) {
+      case 'Message': {
+        parentCollection = playerCollection;
+        docCollection = playerCollection.doc(uid).collection('Message');
+        log('MessageSerive: Found "Message" class');
+      }
+      break;
+      default: {
+        log('MessageSerive: Undefined class ${fsDoc.runtimeType}');
+      }
+      break;
+    }
     //log('Setting up DatabaseService ${uid}');
     if (uid != null) {
       seriesCollection = playerCollection.doc(uid).collection(
@@ -62,6 +79,86 @@ class DatabaseService {
       }
     }
   }
+
+// =============================================================================
+//                ***   DATABASE MEMBERS   ***
+// =============================================================================
+  Future<void> fsDocAdd() async {
+    int noDocs = -1;
+    // Get the next series number for the player
+    await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      fsDoc.docId = data[fsDoc.nextIdField] ?? 0;  // If nextSid not found, start at 0.
+    },
+        onError: (e) {
+          log("Error getting Player Next Series ID: $e");
+          fsDoc.docId = 9999;
+        }
+    );
+    log('Message: fsDocAdd: fsDoc Typs: ${fsDoc.runtimeType} fsDocId: ${fsDoc.docId} ');
+    // Set or Increment the next Series number
+    if (fsDoc.docId == 0 ) {
+      await playerCollection.doc(uid).update(
+        {fsDoc.nextIdField: 1},
+      );
+    } else {
+      await playerCollection.doc(uid).update(
+        {fsDoc.nextIdField: FieldValue.increment(1)},
+      );
+    }
+
+    // await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
+    await docCollection.doc(uid).set(fsDoc.updateMap);
+    await docCollection.count().get()
+        .then((res) => noDocs = res.count,
+    );
+    await parentCollection.doc(uid).update({
+      fsDoc.totalField: noDocs}  // ToDo: Fix this>
+    );
+  }
+  // Update the series Doc with data in provided Series class.
+  Future<void> fsDocUpdate() async {
+    return await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
+  }
+
+  // Delete given Series
+  // Note: Application is responsible to delete Games prior to this call!!
+  Future<void> fsDocDelete() async {
+    int noDocs = -1;
+
+    await docCollection.doc(fsDoc.key).delete();
+    // fsDoc = FirestoreDoc(data: {});  // Clear out the class?
+    await docCollection.count().get()
+        .then((res) => noDocs = res.count,
+    );
+    await parentCollection.doc(uid).update({
+      fsDoc.totalField: noDocs}
+    );
+  }
+
+  // Series list from snapshot
+  List<FirestoreDoc> _fsDocListFromSnapshot(QuerySnapshot snapshot) {
+    //seriesCollection = playerCollection.doc(uid).collection('Series');
+    log('Series Size is ${snapshot.size} UID: $uid');
+    return snapshot.docs.map((doc) {
+      Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+      FirestoreDoc fsDoc = FirestoreDoc( data: data );
+      return fsDoc;
+    }).toList();
+  }
+
+  // Get Series data from snapshots
+  Series _fsDocFromSnapshot(DocumentSnapshot snapshot) {
+    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+    return Series( data: data );
+  }
+
+  //get collections stream
+  Stream<List<FirestoreDoc>> get fsDocList {
+    return docCollection.snapshots()
+        .map(_fsDocListFromSnapshot);
+  }
+
 // =============================================================================
 //               ***   PLAYER DATABASE MEMBERS   ***  (DONE)
 // =============================================================================
@@ -164,163 +261,163 @@ class DatabaseService {
     return null;
   }
 
-// =============================================================================
-//                ***   SERIES DATABASE MEMBERS   ***  (DONE)
-// =============================================================================
-  Future<void> addSeries({ required Series series,} ) async {
-    int noSeries = -1;
-    // Get the next series number for the player
-    await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
-        final data = doc.data() as Map<String, dynamic>;
-        series.sid = data['nextSid'] ?? 0;  // If nextSid not found, start at 0.
-      },
-        onError: (e) {
-          log("Error getting Player Next Series ID: $e");
-          series.sid = 9999;
-        }
-    );
-    // Set or Increment the next Series number
-    if (series.sid == 0 ) {
-      await playerCollection.doc(uid).update(
-        {"nextSid": 1},
-      );
-    } else {
-      await playerCollection.doc(uid).update(
-        {"nextSid": FieldValue.increment(1)},
-      );
-    }
-
-    await seriesCollection.doc(series.key).set(series.updateMap);
-    await seriesCollection.count().get()
-        .then((res) => noSeries = res.count,
-    );
-    await playerCollection.doc(uid).update({
-      "noSeries": noSeries}
-    );
-  }
-  // Update the series Doc with data in provided Series class.
-  Future<void> updateSeries({ required Series series,}) async {
-    return await seriesCollection.doc(series.key).set(series.updateMap);
-  }
-
-  // Delete given Series
-  // Note: Application is responsible to delete Games prior to this call!!
-  Future<void> deleteSeries(String sidKey) async {
-    int noSeries = -1;
-
-    await seriesCollection.doc(sidKey).delete();
-    await seriesCollection.count().get()
-        .then((res) => noSeries = res.count,
-    );
-    await playerCollection.doc(uid).update({
-      "noSeries": noSeries}
-    );
-  }
-
-  // Series list from snapshot
-  List<Series> _seriesListFromSnapshot(QuerySnapshot snapshot) {
-    //seriesCollection = playerCollection.doc(uid).collection('Series');
-    log('Series Size is ${snapshot.size} UID: $uid');
-    return snapshot.docs.map((doc) {
-      Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-      Series series = Series( data: data );
-      return series;
-    }).toList();
-  }
-
-  // Get Series data from snapshots
-  Series _seriesFromSnapshot(DocumentSnapshot snapshot) {
-    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    return Series( data: data );
-  }
-
-  //get collections stream
-  Stream<List<Series>> get seriesList {
-    return seriesCollection.snapshots()
-        .map(_seriesListFromSnapshot);
-  }
-// =============================================================================
-//                ***   GAME DATABASE MEMBERS   *** (DONE)
-// =============================================================================
-  // Update Game
-  Future<void> addGame( { required Game game } ) async  {
-    int noGames = -1;
-    // Get the next series number for the player
-    await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      game.gid = data['nextGid'] ?? 0;  // If nextGid not found, start at 0.
-    },
-      onError: (e) {
-        log("Error getting Series Next Game ID: $e");
-        game.gid = 9999;
-      }
-    );
-    // Set or Increment the next Game number
-    if (game.gid == 0 ) {
-      await playerCollection.doc(uid).update(
-        {"nextGid": 1},
-      );
-    } else {
-      await playerCollection.doc(uid).update(
-        {"nextGid": FieldValue.increment(1)},
-      );
-    }
-
-    log("Adding game for key ${game.key}");
-    await gameCollection.doc(game.key).set(game.updateMap);
-    await gameCollection.count().get()
-        .then((res) => noGames = res.count,
-    );
-    await seriesCollection.doc(sidKey).update({
-      "noGames": noGames}
-    );
-  }
-
-  // Update the game Doc with data in provided Game class.
-  Future<void> updateGame({ required Game game,}) async {
-    return await gameCollection.doc(game.key).set(game.updateMap);
-  }
-
-  // Delete given Game
-  // Note: Application is responsible to delete the associated Board prior to this call!!
-  Future<void> deleteGame(String gidKey) async {
-    int noGames = -1;
-    await gameCollection.doc(gidKey).delete();
-    await gameCollection.count().get()
-        .then((res) => noGames = res.count,
-    );
-    await seriesCollection.doc(sidKey).update({
-      "noGames": noGames
-    });
-  }
-
-  // Game list from snapshot
-  List<Game> _gameListFromSnapshot(QuerySnapshot snapshot) {
-    return snapshot.docs.map((doc) {
-      //print(doc.data);
-      Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-      return Game( data: data );
-    }).toList();
-  }
-
-  // Game data from snapshots
-  Game _gameFromSnapshot(DocumentSnapshot snapshot) {
-    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    return Game( data: data );
-  }
-
-  //get collections stream
-  Stream<List<Game>> get gameList {
-    return gameCollection.snapshots()
-        .map(_gameListFromSnapshot);
-  }
-
-  // get game doc stream
-  Stream<Game> get game {
-    return gameCollection.doc(sidKey).snapshots()
-        .map((DocumentSnapshot doc) => _gameFromSnapshot(doc));
-//    .map(_playerFromSnapshot);
-  }
+// // =============================================================================
+// //                ***   SERIES DATABASE MEMBERS   ***  (DONE)
+// // =============================================================================
+//   Future<void> addSeries({ required Series series,} ) async {
+//     int noSeries = -1;
+//     // Get the next series number for the player
+//     await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
+//         final data = doc.data() as Map<String, dynamic>;
+//         series.sid = data['nextSid'] ?? 0;  // If nextSid not found, start at 0.
+//       },
+//         onError: (e) {
+//           log("Error getting Player Next Series ID: $e");
+//           series.sid = 9999;
+//         }
+//     );
+//     // Set or Increment the next Series number
+//     if (series.sid == 0 ) {
+//       await playerCollection.doc(uid).update(
+//         {"nextSid": 1},
+//       );
+//     } else {
+//       await playerCollection.doc(uid).update(
+//         {"nextSid": FieldValue.increment(1)},
+//       );
+//     }
+//
+//     await seriesCollection.doc(series.key).set(series.updateMap);
+//     await seriesCollection.count().get()
+//         .then((res) => noSeries = res.count,
+//     );
+//     await playerCollection.doc(uid).update({
+//       "noSeries": noSeries}
+//     );
+//   }
+//   // Update the series Doc with data in provided Series class.
+//   Future<void> updateSeries({ required Series series,}) async {
+//     return await seriesCollection.doc(series.key).set(series.updateMap);
+//   }
+//
+//   // Delete given Series
+//   // Note: Application is responsible to delete Games prior to this call!!
+//   Future<void> deleteSeries(String sidKey) async {
+//     int noSeries = -1;
+//
+//     await seriesCollection.doc(sidKey).delete();
+//     await seriesCollection.count().get()
+//         .then((res) => noSeries = res.count,
+//     );
+//     await playerCollection.doc(uid).update({
+//       "noSeries": noSeries}
+//     );
+//   }
+//
+//   // Series list from snapshot
+//   List<Series> _seriesListFromSnapshot(QuerySnapshot snapshot) {
+//     //seriesCollection = playerCollection.doc(uid).collection('Series');
+//     log('Series Size is ${snapshot.size} UID: $uid');
+//     return snapshot.docs.map((doc) {
+//       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+//       Series series = Series( data: data );
+//       return series;
+//     }).toList();
+//   }
+//
+//   // Get Series data from snapshots
+//   Series _seriesFromSnapshot(DocumentSnapshot snapshot) {
+//     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+//     return Series( data: data );
+//   }
+//
+//   //get collections stream
+//   Stream<List<Series>> get seriesList {
+//     return seriesCollection.snapshots()
+//         .map(_seriesListFromSnapshot);
+//   }
+// // =============================================================================
+// //                ***   GAME DATABASE MEMBERS   *** (DONE)
+// // =============================================================================
+//   // Update Game
+//   Future<void> addGame( { required Game game } ) async  {
+//     int noGames = -1;
+//     // Get the next series number for the player
+//     await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
+//       final data = doc.data() as Map<String, dynamic>;
+//       game.gid = data['nextGid'] ?? 0;  // If nextGid not found, start at 0.
+//     },
+//       onError: (e) {
+//         log("Error getting Series Next Game ID: $e");
+//         game.gid = 9999;
+//       }
+//     );
+//     // Set or Increment the next Game number
+//     if (game.gid == 0 ) {
+//       await playerCollection.doc(uid).update(
+//         {"nextGid": 1},
+//       );
+//     } else {
+//       await playerCollection.doc(uid).update(
+//         {"nextGid": FieldValue.increment(1)},
+//       );
+//     }
+//
+//     log("Adding game for key ${game.key}");
+//     await gameCollection.doc(game.key).set(game.updateMap);
+//     await gameCollection.count().get()
+//         .then((res) => noGames = res.count,
+//     );
+//     await seriesCollection.doc(sidKey).update({
+//       "noGames": noGames}
+//     );
+//   }
+//
+//   // Update the game Doc with data in provided Game class.
+//   Future<void> updateGame({ required Game game,}) async {
+//     return await gameCollection.doc(game.key).set(game.updateMap);
+//   }
+//
+//   // Delete given Game
+//   // Note: Application is responsible to delete the associated Board prior to this call!!
+//   Future<void> deleteGame(String gidKey) async {
+//     int noGames = -1;
+//     await gameCollection.doc(gidKey).delete();
+//     await gameCollection.count().get()
+//         .then((res) => noGames = res.count,
+//     );
+//     await seriesCollection.doc(sidKey).update({
+//       "noGames": noGames
+//     });
+//   }
+//
+//   // Game list from snapshot
+//   List<Game> _gameListFromSnapshot(QuerySnapshot snapshot) {
+//     return snapshot.docs.map((doc) {
+//       //print(doc.data);
+//       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+//       return Game( data: data );
+//     }).toList();
+//   }
+//
+//   // Game data from snapshots
+//   Game _gameFromSnapshot(DocumentSnapshot snapshot) {
+//     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+//     return Game( data: data );
+//   }
+//
+//   //get collections stream
+//   Stream<List<Game>> get gameList {
+//     return gameCollection.snapshots()
+//         .map(_gameListFromSnapshot);
+//   }
+//
+//   // get game doc stream
+//   Stream<Game> get game {
+//     return gameCollection.doc(sidKey).snapshots()
+//         .map((DocumentSnapshot doc) => _gameFromSnapshot(doc));
+// //    .map(_playerFromSnapshot);
+//   }
 // =============================================================================
 //                ***   BOARD DATABASE MEMBERS   *** (DONE)
 // =============================================================================
@@ -380,9 +477,7 @@ class DatabaseService {
     return snapshot.docs.map((doc) {
       //print(doc.data);
       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-      return Board(
-        gid: data['gid'] ?? -1,
-      );
+      return Board(data: data);
     }).toList();
   }
 
@@ -391,9 +486,7 @@ class DatabaseService {
 
     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
 
-    Board board = Board(
-      gid: data['gid'] ?? 'error',
-    );
+    Board board = Board(data: data);
 
     board.boardData = data['boardData'].cast<int>();
     board.rowScores = data['rowScores'].cast<int>();
@@ -425,273 +518,273 @@ class DatabaseService {
 //    .map(_playerFromSnapshot);
   }
 
-// =============================================================================
-//                ***   COMMUNITY DATABASE MEMBERS   *** (DONE)
-// =============================================================================
-  Future<void> addCommunity({ required Community community }) async {
-    int noCommunities = -1;
-    // Get the next community number for the player
-    await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      community.cid = data['nextCid'] ?? 0;  // If nextCid not found, start at 0.
-    },
-        onError: (e) {
-          log("Error getting Player Next Community ID: $e");
-          community.cid = 9999;
-        }
-    );
-    // Set or Increment the next player number
-    if (community.cid == 0 ) {
-      await playerCollection.doc(uid).update(
-        {"nextCid": 1},
-      );
-    } else {
-      await playerCollection.doc(uid).update(
-        {"nextCid": FieldValue.increment(1)},
-      );
-    }
-
-    await communityCollection.doc(community.key).set(community.updateMap);
-    await communityCollection.count().get()
-        .then((res) => noCommunities = res.count,
-    );
-    await playerCollection.doc(uid).update({
-      "noCommunities": noCommunities}
-    );
-  }
-
-  Future<void> updateCommunity({required Community community}) async {
-    int noCommunities = -1;
-    await communityCollection.doc(community.key).set(community.updateMap);
-  }
-
-  // Update single field in Series doc
-  Future<void> updateCommunityField({
-    required String cidKey,
-    required String field,
-    String? svalue,
-    int? ivalue,
-  }) async {
-
-    return await communityCollection.doc(cidKey).update({
-      field: svalue ?? ivalue,
-    });
-  }
-
-  // increment / decriment Number of Members
-  // Future<void> incrementCommunityNoMembers(int val) async {
-  //
-  //   return await communityCollection.doc(cid).update(
-  //       {"noMembers": FieldValue.increment(val)});
-  // }
-
-  // Delete given Series
-  // Note: Application is responsible to delete Games prior to this call!!
-  Future<void> deleteCommunity(String cidKey) async {
-    int noCommunities = -1;
-    log('database: deleteCommunity: Deleting community $cidKey');
-    await communityCollection.doc(cidKey).delete();
-    await communityCollection.count().get()
-        .then((res) => noCommunities = res.count,
-    );
-    await playerCollection.doc(uid).update( {"noCommunities": noCommunities} );
-  }
-
-  // Community list from snapshot
-  List<Community> _communityListFromSnapshot(QuerySnapshot snapshot) {
-    log('Community Size is ${snapshot.size} UID: $uid');
-    return snapshot.docs.map((doc) {
-      //print(doc.data);
-      Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-      Community community = Community(data: data);
-      return community;
-    }).toList();
-  }
-
-  // Get Series data from snapshots
-  Community _communityFromSnapshot(DocumentSnapshot snapshot) {
-    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    return Community(data: data);
-  }
-
-  //get collections stream
-  Stream<List<Community>> get communityList {
-    return communityCollection.snapshots()
-        .map(_communityListFromSnapshot);
-  }
-
-  // Get Community Doc stream
-  Stream<Community> get communityStream {
-    if (cidKey != null) {
-      return communityCollection.doc(cidKey).snapshots()
-          .map((DocumentSnapshot doc) => _communityFromSnapshot(doc));
-//    .map(_playerFromSnapshot);
-    } else {
-      log('database: Something went wrong for get community, cidKey: $cidKey');
-      // Todo: Throw an error here?
-      return const Stream.empty();
-    }
-  }
-
-  // get player doc stream
-  Community? get community {
-    communityCollection.doc(cidKey).get()
-        .then((DocumentSnapshot doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          log('database: Got Community: ${data['name']}, CID: ${doc.id}');
-          return Community(data: data);
-    },
-        onError: (error) {
-          log("Error getting Player UID: $uid, Error: $error");
-          return null;
-        });
-    return null;
-  }
-// =============================================================================
-//                ***   MEMBER DATABASE MEMBERS   *** (DONE)
-// =============================================================================
-  // Todo: change parameters to required named parameters.
-  // Update Series
-  Future<void> addMember({ required Member member }) async {
-    int noMembers = -1;
-    // Get the next Member number for the player
-    await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      member.mid = data['nextMid'] ?? 0;  // If nextMid not found, start at 0.
-    },
-        onError: (e) {
-          log("Error getting Player Next Member ID: $e");
-          member.mid = 9999;
-        }
-    );
-    // Set or Increment the next Member number
-    if (member.mid == 0 ) {
-      await playerCollection.doc(uid).update(
-        {"nextMid": 1},
-      );
-    } else {
-      await playerCollection.doc(uid).update(
-        {"nextMid": FieldValue.increment(1)},
-      );
-    }
-
-    await memberCollection.doc(member.key).set(member.updateMap);
-    await memberCollection.count().get()
-        .then((res) => noMembers = res.count,
-    );
-    await communityCollection.doc(cidKey).update({
-      "noMembers": noMembers}
-    );
-
-  }
-  // Update Member document
-  Future<void> updateMember({ required Member member }) async {
-    await memberCollection.doc(member.key).set(member.updateMap);
-
-  }
-
-  // increment / decriment Number of Members (Note MID = PID)
-  Future<void> incrementMemberCredits({required String pidKey, required int val}) async {
-
-    return await memberCollection.doc(pidKey).update(
-        {"credits": FieldValue.increment(val)});
-  }
-
-  // Delete given the Player ID (which is the Document Reference for Members)
-  // Note: Application should check to see if the Member is associate with any
-  // active boards else this will be lost?
-  Future<void> deleteMember(String pidKey) async {
-    return await memberCollection.doc(pidKey).delete();
-  }
-
-  // Member list from snapshot
-  List<Member> _memberListFromSnapshot(QuerySnapshot snapshot) {
-    log('Member Size is ${snapshot.size} cidKey: ${cidKey}');
-    return snapshot.docs.map((doc) {
-      Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-      return Member(data: data);
-    }).toList();
-  }
-
-  // Get Member data from snapshots
-  Member _memberFromSnapshot(DocumentSnapshot snapshot) {
-    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    return Member(data: data);
-  }
-
-  //Get Member stream
-  Stream<List<Member>> get memberList {
-    if (cidKey != null) {
-      return memberCollection.snapshots()
-          .map(_memberListFromSnapshot);
-    } else {
-      log('Database: Something went wrong for get memberList, cidKey: $cidKey uid: $uid');
-      return const Stream.empty();
-    }
-  }
-
-//   // Get Member doc stream
-//   Stream<Member> get member {
+// // =============================================================================
+// //                ***   COMMUNITY DATABASE MEMBERS   *** (DONE)
+// // =============================================================================
+//   Future<void> addCommunity({ required Community community }) async {
+//     int noCommunities = -1;
+//     // Get the next community number for the player
+//     await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
+//       final data = doc.data() as Map<String, dynamic>;
+//       community.cid = data['nextCid'] ?? 0;  // If nextCid not found, start at 0.
+//     },
+//         onError: (e) {
+//           log("Error getting Player Next Community ID: $e");
+//           community.cid = 9999;
+//         }
+//     );
+//     // Set or Increment the next player number
+//     if (community.cid == 0 ) {
+//       await playerCollection.doc(uid).update(
+//         {"nextCid": 1},
+//       );
+//     } else {
+//       await playerCollection.doc(uid).update(
+//         {"nextCid": FieldValue.increment(1)},
+//       );
+//     }
 //
-//     if (cid != null) {
-//       return memberCollection.doc(pid).snapshots()
-//           .map((DocumentSnapshot doc) => _memberFromSnapshot(doc));
+//     await communityCollection.doc(community.key).set(community.updateMap);
+//     await communityCollection.count().get()
+//         .then((res) => noCommunities = res.count,
+//     );
+//     await playerCollection.doc(uid).update({
+//       "noCommunities": noCommunities}
+//     );
+//   }
+//
+//   Future<void> updateCommunity({required Community community}) async {
+//     int noCommunities = -1;
+//     await communityCollection.doc(community.key).set(community.updateMap);
+//   }
+//
+//   // Update single field in Series doc
+//   Future<void> updateCommunityField({
+//     required String cidKey,
+//     required String field,
+//     String? svalue,
+//     int? ivalue,
+//   }) async {
+//
+//     return await communityCollection.doc(cidKey).update({
+//       field: svalue ?? ivalue,
+//     });
+//   }
+//
+//   // increment / decriment Number of Members
+//   // Future<void> incrementCommunityNoMembers(int val) async {
+//   //
+//   //   return await communityCollection.doc(cid).update(
+//   //       {"noMembers": FieldValue.increment(val)});
+//   // }
+//
+//   // Delete given Series
+//   // Note: Application is responsible to delete Games prior to this call!!
+//   Future<void> deleteCommunity(String cidKey) async {
+//     int noCommunities = -1;
+//     log('database: deleteCommunity: Deleting community $cidKey');
+//     await communityCollection.doc(cidKey).delete();
+//     await communityCollection.count().get()
+//         .then((res) => noCommunities = res.count,
+//     );
+//     await playerCollection.doc(uid).update( {"noCommunities": noCommunities} );
+//   }
+//
+//   // Community list from snapshot
+//   List<Community> _communityListFromSnapshot(QuerySnapshot snapshot) {
+//     log('Community Size is ${snapshot.size} UID: $uid');
+//     return snapshot.docs.map((doc) {
+//       //print(doc.data);
+//       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+//       Community community = Community(data: data);
+//       return community;
+//     }).toList();
+//   }
+//
+//   // Get Series data from snapshots
+//   Community _communityFromSnapshot(DocumentSnapshot snapshot) {
+//     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+//     return Community(data: data);
+//   }
+//
+//   //get collections stream
+//   Stream<List<Community>> get communityList {
+//     return communityCollection.snapshots()
+//         .map(_communityListFromSnapshot);
+//   }
+//
+//   // Get Community Doc stream
+//   Stream<Community> get communityStream {
+//     if (cidKey != null) {
+//       return communityCollection.doc(cidKey).snapshots()
+//           .map((DocumentSnapshot doc) => _communityFromSnapshot(doc));
 // //    .map(_playerFromSnapshot);
 //     } else {
-//       log('Database: Something went wrong for get member, cid: $cid pid: $pid');
+//       log('database: Something went wrong for get community, cidKey: $cidKey');
+//       // Todo: Throw an error here?
 //       return const Stream.empty();
 //     }
 //   }
-
-// =============================================================================
-//                ***   MEMBERSHIP DATABASE MEMBERS   ***
-// =============================================================================
-  // Todo: change parameters to required named parameters.
-  // Update Membership
-  Future<void> addMembership({required Membership membership}) async {
-
-    int noMemberships = -1;
-    log('Adding Membership : ${uid} / ${membership.key}');
-    await membershipCollection.doc(membership.key).set(membership.updateMap);
-    await membershipCollection.count().get().then((res) => noMemberships = res.count,);
-    await playerCollection.doc(uid).update(
-        {"noMemberships": noMemberships});
-  }
-
-  Future<void> updateMembership({required Membership membership }) async {
-    return await membershipCollection.doc(membership.key).set({ membership.updateMap });
-  }
-
-  // Delete given the Collection ID
-  Future<void> deleteMembership(String midKey) async {
-    int noMemberships = -1;
-
-    await membershipCollection.doc(midKey).delete();
-    await membershipCollection.count().get().then((res) =>
-        noMemberships = res.count,
-      );
-    await playerCollection.doc(uid).update(
-        {"noMemberships": noMemberships});
-  }
-
-  // Member list from snapshot
-  List<Membership> _membershipListFromSnapshot(QuerySnapshot snapshot) {
-    log('Database: _m..fromSnapshot: Membership Size is ${snapshot.size} UID: $uid');
-    return snapshot.docs.map((doc) {
-      Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-      return Membership(data: data);
-    }).toList();
-  }
-
-  // Get Member data from snapshots
-  Membership _membershipFromSnapshot(DocumentSnapshot snapshot) {
-    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    return Membership(data: data);
-  }
-
-  //Get Member stream
-  Stream<List<Membership>> get membershipList {
-    return membershipCollection.snapshots()
-        .map(_membershipListFromSnapshot);
-  }
+//
+//   // get player doc stream
+//   Community? get community {
+//     communityCollection.doc(cidKey).get()
+//         .then((DocumentSnapshot doc) {
+//           final data = doc.data() as Map<String, dynamic>;
+//           log('database: Got Community: ${data['name']}, CID: ${doc.id}');
+//           return Community(data: data);
+//     },
+//         onError: (error) {
+//           log("Error getting Player UID: $uid, Error: $error");
+//           return null;
+//         });
+//     return null;
+//   }
+// // =============================================================================
+// //                ***   MEMBER DATABASE MEMBERS   *** (DONE)
+// // =============================================================================
+//   // Todo: change parameters to required named parameters.
+//   // Update Series
+//   Future<void> addMember({ required Member member }) async {
+//     int noMembers = -1;
+//     // Get the next Member number for the player
+//     await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
+//       final data = doc.data() as Map<String, dynamic>;
+//       member.mid = data['nextMid'] ?? 0;  // If nextMid not found, start at 0.
+//     },
+//         onError: (e) {
+//           log("Error getting Player Next Member ID: $e");
+//           member.mid = 9999;
+//         }
+//     );
+//     // Set or Increment the next Member number
+//     if (member.mid == 0 ) {
+//       await playerCollection.doc(uid).update(
+//         {"nextMid": 1},
+//       );
+//     } else {
+//       await playerCollection.doc(uid).update(
+//         {"nextMid": FieldValue.increment(1)},
+//       );
+//     }
+//
+//     await memberCollection.doc(member.key).set(member.updateMap);
+//     await memberCollection.count().get()
+//         .then((res) => noMembers = res.count,
+//     );
+//     await communityCollection.doc(cidKey).update({
+//       "noMembers": noMembers}
+//     );
+//
+//   }
+//   // Update Member document
+//   Future<void> updateMember({ required Member member }) async {
+//     await memberCollection.doc(member.key).set(member.updateMap);
+//
+//   }
+//
+//   // increment / decriment Number of Members (Note MID = PID)
+//   Future<void> incrementMemberCredits({required String pidKey, required int val}) async {
+//
+//     return await memberCollection.doc(pidKey).update(
+//         {"credits": FieldValue.increment(val)});
+//   }
+//
+//   // Delete given the Player ID (which is the Document Reference for Members)
+//   // Note: Application should check to see if the Member is associate with any
+//   // active boards else this will be lost?
+//   Future<void> deleteMember(String pidKey) async {
+//     return await memberCollection.doc(pidKey).delete();
+//   }
+//
+//   // Member list from snapshot
+//   List<Member> _memberListFromSnapshot(QuerySnapshot snapshot) {
+//     log('Member Size is ${snapshot.size} cidKey: $cidKey');
+//     return snapshot.docs.map((doc) {
+//       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+//       return Member(data: data);
+//     }).toList();
+//   }
+//
+//   // Get Member data from snapshots
+//   Member _memberFromSnapshot(DocumentSnapshot snapshot) {
+//     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+//     return Member(data: data);
+//   }
+//
+//   //Get Member stream
+//   Stream<List<Member>> get memberList {
+//     if (cidKey != null) {
+//       return memberCollection.snapshots()
+//           .map(_memberListFromSnapshot);
+//     } else {
+//       log('Database: Something went wrong for get memberList, cidKey: $cidKey uid: $uid');
+//       return const Stream.empty();
+//     }
+//   }
+//
+// //   // Get Member doc stream
+// //   Stream<Member> get member {
+// //
+// //     if (cid != null) {
+// //       return memberCollection.doc(pid).snapshots()
+// //           .map((DocumentSnapshot doc) => _memberFromSnapshot(doc));
+// // //    .map(_playerFromSnapshot);
+// //     } else {
+// //       log('Database: Something went wrong for get member, cid: $cid pid: $pid');
+// //       return const Stream.empty();
+// //     }
+// //   }
+//
+// // =============================================================================
+// //                ***   MEMBERSHIP DATABASE MEMBERS   ***
+// // =============================================================================
+//   // Todo: change parameters to required named parameters.
+//   // Update Membership
+//   Future<void> addMembership({required Membership membership}) async {
+//
+//     int noMemberships = -1;
+//     log('Adding Membership : $uid / ${membership.key}');
+//     await membershipCollection.doc(membership.key).set(membership.updateMap);
+//     await membershipCollection.count().get().then((res) => noMemberships = res.count,);
+//     await playerCollection.doc(uid).update(
+//         {"noMemberships": noMemberships});
+//   }
+//
+//   Future<void> updateMembership({required Membership membership }) async {
+//     return await membershipCollection.doc(membership.key).set({ membership.updateMap });
+//   }
+//
+//   // Delete given the Collection ID
+//   Future<void> deleteMembership(String midKey) async {
+//     int noMemberships = -1;
+//
+//     await membershipCollection.doc(midKey).delete();
+//     await membershipCollection.count().get().then((res) =>
+//         noMemberships = res.count,
+//       );
+//     await playerCollection.doc(uid).update(
+//         {"noMemberships": noMemberships});
+//   }
+//
+//   // Member list from snapshot
+//   List<Membership> _membershipListFromSnapshot(QuerySnapshot snapshot) {
+//     log('Database: _m..fromSnapshot: Membership Size is ${snapshot.size} UID: $uid');
+//     return snapshot.docs.map((doc) {
+//       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+//       return Membership(data: data);
+//     }).toList();
+//   }
+//
+//   // Get Member data from snapshots
+//   Membership _membershipFromSnapshot(DocumentSnapshot snapshot) {
+//     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+//     return Membership(data: data);
+//   }
+//
+//   //Get Member stream
+//   Stream<List<Membership>> get membershipList {
+//     return membershipCollection.snapshots()
+//         .map(_membershipListFromSnapshot);
+//   }
 }

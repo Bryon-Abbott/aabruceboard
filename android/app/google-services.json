@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "339334468602",
+    "project_id": "aabruceboard",
+    "storage_bucket": "aabruceboard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:339334468602:android:757327f36b584486988a43",
+        "android_client_info": {
+          "package_name": "com.abbottavenue.aabruceboard"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5HVh3ORVVli9WxAUOG_3S-ggQBj8GGFE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

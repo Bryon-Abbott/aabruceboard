@@ -111,7 +111,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   'credits' : 0,
                                 };
                                 member = Member(data: data);
-                                await DatabaseService(uid: bruceUser.uid, cidKey: community.key).addMember(member: member!);
+                                await DatabaseService(member!, uid: bruceUser.uid, cidKey: community.key).fsDocAdd();
                                 // Add a default board to Database
                                   // await DatabaseService(uid: _pid, cid: _cid).incrementCommunityNoMembers(1);
                                   widget.community.noMembers++;  // =widget.series.noMembers+1; // Update class to maintain alignment
@@ -122,7 +122,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   'credits' : 0,
                                 };
                                 member!.update(data: data);
-                                await DatabaseService(uid: bruceUser.uid, cidKey: community.key).updateMember(member: member!);                              }
+                                await DatabaseService(member!, uid: bruceUser.uid, cidKey: community.key).fsDocUpdate();                              }
                               // Save Updates to Shared Preferences
                               Navigator.of(context).pop();
                             }
@@ -161,7 +161,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                               );
                               if (results) {
                                 log('Delete Member ... C:${community.key}, U:${bruceUser.uid}');
-                                await DatabaseService(uid: bruceUser.uid, cidKey: community.key).deleteMember(member!.key);
+                                await DatabaseService(member!, uid: bruceUser.uid, cidKey: community.key).fsDocDelete();
                                 widget.community.noMembers  = widget.community.noMembers -1;
                                 Navigator.of(context).pop();
                               } else {

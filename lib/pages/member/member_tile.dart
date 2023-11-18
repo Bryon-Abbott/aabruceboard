@@ -17,7 +17,7 @@ class MemberTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Player? player = DatabaseService(uid: member.uid).player;
+    Player? player = DatabaseService(Player(data: {}), uid: member.uid).player;
 
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),

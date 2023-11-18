@@ -26,7 +26,7 @@ class _CommunityListState extends State<CommunityList> {
     bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<Community>>(
-      stream: DatabaseService(uid: bruceUser.uid).communityList,
+      stream: DatabaseService(Community(data: {}), uid: bruceUser.uid).fsDocList as Stream<List<Community>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Community> community = snapshots.data!;

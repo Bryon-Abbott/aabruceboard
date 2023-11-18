@@ -1,7 +1,15 @@
-import 'dart:developer';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:intl/intl.dart';
 
-class Community {
+class Community extends FirestoreDoc {
+  // Base Variables
+  @override
+  final String nextIdField = 'nextCid';
+  @override
+  final String totalField = 'noCommunities';
+  @override
+  final NumberFormat _keyFormat = NumberFormat("MS00000000", "en_US");
+  // Data Class Variables
   int cid;
   String uid;
   String name;
@@ -13,9 +21,11 @@ class Community {
         uid = data['uid'] ?? 'error',
         name = data['name'] ?? 'NAME',
         type = data['type'] ?? 'TYPE',
-        noMembers = data['noMembers'] ?? 0;
+        noMembers = data['noMembers'] ?? 0,
+        super(data: {'docID': data['docId'] ?? -1});
 
   void update({ required Map<String, dynamic> data, }) {
+    docId = data['docId'] ?? docId;
     cid = data['cid'] ?? cid;
     uid = data['uid'] ?? uid;
     name = data['name'] ?? name;
@@ -25,15 +35,14 @@ class Community {
 
   String get key {
     // Format Key for Document ID
-    NumberFormat intFormat = NumberFormat("C0000", "en_US");
-    String key = intFormat.format(cid);
-    // log("Retrieving community $key");
+    String key = _keyFormat.format(docId);
     return key;
   }
 
   // Returns a Map<String, dynamic> of all member veriables.
   Map<String, dynamic> get updateMap {
     return {
+      'docId': docId,
       'cid': cid,
       'uid': uid,
       'name': name,
@@ -41,5 +50,4 @@ class Community {
       'noMembers': noMembers,
     };
   }
-
 }

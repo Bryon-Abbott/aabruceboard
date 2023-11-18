@@ -132,9 +132,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                   'noGames': currentSeriesNoGames,
                                 };
                                 series = Series( data: data ) ;
-                                await DatabaseService(uid: uid).addSeries(
-                                  series: series!,
-                                );
+                                await DatabaseService(series!, uid: uid).fsDocAdd();
                                 series?.noGames++;
                               } else {
                                 // Update existing Series and store to Firebase
@@ -148,7 +146,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                 // series!.name = currentSeriesName;
                                 // series!.type = currentSeriesType;
                                 // series!.noGames = currentSeriesNoGames;
-                                await DatabaseService(uid: uid).updateSeries(series: series!,);
+                                await DatabaseService(series!, uid: uid).fsDocUpdate();
                               }
                               // Save Updates to Shared Preferences
                               log("series_maintain: Added/Updated series ${series?.noGames}");
@@ -173,7 +171,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                               if (series!.noGames == 0) {
                                 // log('Delete Series ... ${_sid}');
                                 log('Delete Series ... ${series!.key}');
-                                DatabaseService(uid: uid).deleteSeries(series!.key);
+                                DatabaseService(series!, uid: uid).fsDocDelete();
                                 Navigator.of(context).pop();
                               }
                             },

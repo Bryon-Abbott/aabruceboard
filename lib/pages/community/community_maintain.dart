@@ -134,9 +134,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                   'noMembers': 0,
                                 };
                                 community = Community( data: data );
-                                await DatabaseService(uid: uid).addCommunity(
-                                    community: community!,
-                                );
+                                await DatabaseService(community!, uid: uid).fsDocAdd();
                               } else {
                                 // update existing community
                                 data = {
@@ -144,9 +142,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                   'type': currentCommunityType,
                                 };
                                 community!.update(data: data);
-                                await DatabaseService(uid: uid).updateCommunity(
-                                    community: community!
-                                );
+                                await DatabaseService(community!, uid: uid).fsDocUpdate();
                               }
                               // Save Updates to Shared Preferences
                               log("community_maintain: Added/Updated community "
@@ -171,7 +167,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                 : () {
                               if (community!.noMembers == 0) {
                                 log('Delete Community ... ${community!.key}');
-                                DatabaseService(uid: uid).deleteCommunity(community!.key);
+                                DatabaseService(community!, uid: uid).fsDocDelete();
                                 Navigator.of(context).pop();
                               }
                             },

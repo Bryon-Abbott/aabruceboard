@@ -34,7 +34,7 @@ class _MemberListState extends State<MemberList> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<Member>>(
-      stream: DatabaseService(uid: bruceUser.uid, cidKey: widget.community.key).memberList,
+      stream: DatabaseService(Member(data: {}), uid: bruceUser.uid, cidKey: widget.community.key).fsDoc as Stream<List<Member>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Member> member = snapshots.data!;

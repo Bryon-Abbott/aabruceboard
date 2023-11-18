@@ -112,11 +112,11 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                                   'status': 'Requested',
                                 };
                                 Membership membership = Membership(data: data);
-                                await DatabaseService(uid: uid).addMembership(membership: membership);
+                                await DatabaseService(membership, uid: uid).fsDocAdd();
                                 //widget.membership?.noGames++;
                               } else {
                                 // update existing game
-                                await DatabaseService(uid: uid).updateMembership(membership: membership);
+                                await DatabaseService(membership, uid: uid).fsDocUpdate();
                               }
                               // Save Updates to Shared Preferences
                               log("membership_maintain: Added/Updated membership ${membership?.cid}");
@@ -139,7 +139,7 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                             }
                             : () {
                               log('Delete Membership ...');
-                              DatabaseService(uid: uid).deleteMembership(membership!.key);
+                              DatabaseService(membership!, uid: uid).fsDocDelete();
                               Navigator.of(context).pop();
                             },
                         child: const Text("Delete")),

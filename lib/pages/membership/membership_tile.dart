@@ -45,7 +45,7 @@ class MembershipTile extends StatelessWidget {
               // Navigator.of(context).push(
               //     MaterialPageRoute(builder: (context) => MembershipMaintain(membership: membership)));
               log('membership_tile: Delete Membership. Key: ${membership.key}');
-              DatabaseService().deleteMembership(membership.key);
+              DatabaseService(membership).fsDocDelete();
               },
             icon: const Icon(Icons.delete),
           ),

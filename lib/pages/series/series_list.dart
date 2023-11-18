@@ -26,7 +26,7 @@ class _SeriesListState extends State<SeriesList> {
     bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<Series>>(
-      stream: DatabaseService(uid: bruceUser.uid).seriesList,
+      stream: DatabaseService(Series(data: {}), uid: bruceUser.uid).fsDocList as Stream<List<Series>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Series> series = snapshots.data!;

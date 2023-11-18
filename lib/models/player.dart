@@ -1,3 +1,4 @@
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/services/auth.dart';
 import 'package:intl/intl.dart';
 
@@ -16,18 +17,20 @@ class BruceUser {
   }
 }
 
-class Player {
+class Player extends FirestoreDoc {
+  // Base Variables
+  @override
+  final String nextIdField = 'nextMid';
+  @override
+  final String totalField = 'noMembers';
+  @override
+  final NumberFormat _keyFormat = NumberFormat("P00000000", "en_US");
+  // Data Class Variables
   String uid;
   String fName;
   String lName;
   String initials;
   int pid;
-
-  // Next Numebrs - Firestore Only
-  // int nextSid = 0; // Players series start at 0 (0-9999)
-  // int nextGid = 0; // Players gaems start at 0 (0-999999)
-  // int nextCid = 0; // Players communities start at 0 (0-99999)
-  // int nextMid = 0; // Players membership start at 0 (0-9999)
 
   // Totalizers
   int noMemberships = 0;
@@ -47,22 +50,25 @@ class Player {
     initials      = data['initials']      ?? 'FL',
     noMemberships = data['noMemberships'] ?? 0,
     noCommunities = data['noCommunities'] ?? 0,
-    noSeries      = data['noSeries']      ?? 0;
+    noSeries      = data['noSeries']      ?? 0,
+    super(data: {'docID': data['docId'] ?? -1});
 
   // The key for the Player Document is the Firestore Users ID (uid)
+  @override
   String get key {
     return uid;
   }
   // The key created from PID used for composite keys (Memberships)
   String get pidKey {
-    NumberFormat pFormat = NumberFormat("P00000000", "en_US");
-    String pKey = pFormat.format(pid);
-    return pKey;
+    String Key = _keyFormat.format(pid);
+    return Key;
   }
 
   // Returns a Map<String, dynamic> of all member veriables.
+  @override
   Map<String, dynamic> get updateMap {
     return {
+      'docId': docId,
       'uid': uid,
       'pid': pid,
       'fName': fName,

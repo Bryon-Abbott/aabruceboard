@@ -61,7 +61,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
             child: SizedBox(
               height: 300,
               child: StreamBuilder<List<Community>>(
-                stream: DatabaseService(uid: player.key).communityList,
+                stream: DatabaseService(Community(data: {}), uid: player.key).fsDocList as Stream<List<Community>>,
                 builder: (context, snapshots) {
               if(snapshots.hasData) {
                 List<Community> community = snapshots.data!;

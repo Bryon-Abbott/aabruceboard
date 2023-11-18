@@ -37,7 +37,7 @@ class _GameListState extends State<GameList> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<Game>>(
-      stream: DatabaseService(uid: bruceUser.uid, sidKey: series.key).gameList,
+      stream: DatabaseService(Game(data: {}), uid: bruceUser.uid, sidKey: series.key).fsDocList as Stream<List<Game>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Game> game = snapshots.data!;

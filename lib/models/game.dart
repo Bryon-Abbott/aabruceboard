@@ -1,8 +1,16 @@
-import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:intl/intl.dart';
 
-class Game {
+class Game extends FirestoreDoc {
+  // Base Variables
+  @override
+  final String nextIdField = 'nextGid';
+  @override
+  final String totalField = 'noGames';
+  @override
+  final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
+  // Data Class Variables
   int gid; // Game ID
   int sid; // Series ID
   String uid; // Owners UID
@@ -19,8 +27,10 @@ class Game {
         name = data['name'] ?? 'NAME',
         teamOne = data['teamOne'] ?? 'ONE',
         teamTwo = data['teamTwo'] ?? 'TWO',
-        squareValue = data['squareValue'] ?? 0;
+        squareValue = data['squareValue'] ?? 0,
+        super(data: {'docID': data['docId'] ?? -1});
 
+  @override
   void update({
     required Map<String, dynamic> data,
   }) {
@@ -33,15 +43,15 @@ class Game {
     squareValue = data['squareValue'] ?? squareValue;
   }
 
+  @override
   String get key {
-    // Format Key for Document ID
-    NumberFormat intFormat = NumberFormat("G00000000", "en_US");
-    String key = intFormat.format(gid);
+    String key = _keyFormat.format(docId);
     // log("Gettign Game key $key");
     return key;
   }
 
   // Returns a Map<String, dynamic> of all member veriables.
+  @override
   Map<String, dynamic> get updateMap {
     return {
       'gid': gid,
@@ -53,13 +63,4 @@ class Game {
       'squareValue': squareValue,
     };
   }
-
-  // // Getters & Setters
-  // set teamOne(String team) => _teamOne=team;
-  // String get teamOne => _teamOne;
-  // set teamTwo(String team) => _teamTwo=team;
-  // String get teamTwo => _teamTwo;
-  // set squareValue(int val) => _squareValue=val;
-  // int get squareValue => _squareValue;
-
 }

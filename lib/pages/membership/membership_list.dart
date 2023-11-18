@@ -2,7 +2,9 @@ import 'dart:developer';
 
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/membership.dart';
+import 'package:bruceboard/models/message.dart';
 import 'package:bruceboard/pages/membership/membership_tile.dart';
+import 'package:bruceboard/services/message.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -29,7 +31,7 @@ class _MembershipListState extends State<MembershipList> {
     Player? player;
 
     return StreamBuilder<List<Membership>>(
-      stream: DatabaseService(uid: bruceUser.uid).membershipList,
+      stream: DatabaseService(Membership(data: {}), uid: bruceUser.uid).fsDocList as Stream<List<Membership>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Membership> membershipList = snapshots.data!;
@@ -56,7 +58,7 @@ class _MembershipListState extends State<MembershipList> {
                       if (results != null) {
                         player = results[0] as Player;
                         community = results[1] as Community;
-                        log("membership_list: Community Selected: ${community?.name ?? 'Not Selected'}");
+                        log("membership_list: Community Selected: ${community.name ?? 'Not Selected'}");
                         Map<String, dynamic> data =
                         {
                           'cid': community.cid,
@@ -67,8 +69,11 @@ class _MembershipListState extends State<MembershipList> {
                         Membership membership = Membership(data: data);
                         // Note ... the database section is the current user but the Membership PID
                         // is the PID of the owner of the community.
-                        await DatabaseService(uid: bruceUser.uid).addMembership(membership: membership  );
-                        log("membership_list: Updating noMemberships: ${player?.noMemberships.toString() ?? 'Didnt get memberships'}");
+                        await DatabaseService(membership, uid: bruceUser.uid).fsDocAdd();
+                        log("membership_list: Updating noMemberships: ${player.noMemberships.toString() ?? 'Didnt get memberships'}");
+                        Message msg = Message(data: { } );
+
+                        await MessageService(msg).fsDocAdd();
                       }
                     },
                     icon: const Icon(Icons.add_circle_outline),

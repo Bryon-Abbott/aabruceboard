@@ -1,8 +1,9 @@
 import 'dart:developer' as dev;
 import 'dart:math';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/utils/preferences.dart';
 
-class Board {
+class Board extends FirestoreDoc {
   String gid='none';
 
   List<int> boardData = List<int>.filled(100, -1);
@@ -13,7 +14,9 @@ class Board {
   List<int> percentSplits = List<int>.filled(5, 20); // Q1, Q2, Q3, Q4, Community
   bool dirty = true;
 
-  Board({ required this.gid, });
+//  Board({ required this.gid, }) :
+  Board({ required Map<String, dynamic> data, }) :
+  super(data: {'docID': data['docId'] ?? -1});
 
   // @override
   // void dispose() {

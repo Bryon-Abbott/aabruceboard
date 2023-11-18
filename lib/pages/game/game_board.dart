@@ -112,7 +112,7 @@ class _GameBoardState extends State<GameBoard> {
         .copyWith(color: Colors.yellow);
 
     return StreamBuilder<Board>(
-        stream: DatabaseService(uid: _uid, sidKey: series.key, gidKey: game.key).board,
+        stream: DatabaseService(Board(data: {}), uid: _uid, sidKey: series.key, gidKey: game.key).board,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Board board = snapshot.data!;

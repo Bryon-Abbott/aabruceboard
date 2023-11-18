@@ -33,7 +33,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
     // log('Bruce User ID ${bruceUser.uid}');
 
     return StreamBuilder<Player>(
-      stream: DatabaseService(uid: bruceUser.uid).playerStream,
+      stream: DatabaseService(Player(data: {}), uid: bruceUser.uid).playerStream,
       builder: (context, snapshot) {
         if(snapshot.hasData) {
           Player player = snapshot.data!;
@@ -102,7 +102,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
                             player.initials = _currentInitials ?? snapshot.data!.initials;
                             player.pid = snapshot.data!.pid;
                             // log("player_profile: Update Player ${player.fName}");
-                            await DatabaseService(uid: bruceUser.uid).updatePlayer(
+                            await DatabaseService(player, uid: bruceUser.uid).updatePlayer(
                               player: player,
                             );
                             await AuthService().updateDisplayName(
