@@ -19,7 +19,9 @@ class DatabaseService {
   String? sidKey; // Series ID
   String? gidKey; // Game ID (User as Game ID and Board ID)
   String? cidKey; // Player ID (Used as Member)
+  late Player _player;
   FirestoreDoc fsDoc;
+
 
 //  FirebaseFirestore db;
   final CollectionReference configCollection = FirebaseFirestore.instance
@@ -51,7 +53,32 @@ class DatabaseService {
       case 'Message': {
         parentCollection = playerCollection;
         docCollection = playerCollection.doc(uid).collection('Message');
-        log('MessageSerive: Found "Message" class');
+        log('Database: Found "Message" class');
+      }
+      break;
+      case 'Player': {
+        parentCollection = configCollection;
+        docCollection = playerCollection;
+        _player = fsDoc as Player;
+        log('Database: Found "Player" class');
+      }
+      break;
+      case 'Series': {
+        parentCollection = playerCollection;
+        docCollection = playerCollection.doc(uid).collection('Series');
+        log('Database: Found "Series" class');
+      }
+      break;
+      case 'Member': {
+        parentCollection = playerCollection;
+        docCollection = playerCollection.doc(uid).collection('Member');
+        log('Database: Found "Series" class');
+      }
+      break;
+      case 'Membership': {
+        parentCollection = playerCollection;
+        docCollection = playerCollection.doc(uid).collection('Membership');
+        log('Database: Found "Series" class');
       }
       break;
       default: {
@@ -139,7 +166,7 @@ class DatabaseService {
   // Series list from snapshot
   List<FirestoreDoc> _fsDocListFromSnapshot(QuerySnapshot snapshot) {
     //seriesCollection = playerCollection.doc(uid).collection('Series');
-    log('Series Size is ${snapshot.size} UID: $uid');
+    log('Collection Size is ${snapshot.size} UID: $uid');
     return snapshot.docs.map((doc) {
       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
       FirestoreDoc fsDoc = FirestoreDoc( data: data );
@@ -148,9 +175,9 @@ class DatabaseService {
   }
 
   // Get Series data from snapshots
-  Series _fsDocFromSnapshot(DocumentSnapshot snapshot) {
+  FirestoreDoc _fsDocFromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    return Series( data: data );
+    return FirestoreDoc( data: data );
   }
 
   //get collections stream
@@ -164,28 +191,33 @@ class DatabaseService {
 // =============================================================================
   // Update Player
   // Future<void> updatePlayer(String fName, String lName, String initials, int pid) async {
-    Future<void> updatePlayer({ required Player player }) async {
+  //  Future<void> updatePlayer({ required Player player }) async {
+    Future<void> updatePlayer() async {
     //int playerNo = 0;
     //log('Database: Update Player ... ${player.fName}');
-    if (player.pid == -1) {
-      log('database:updatePlayer: Creating new player ${player.uid}');
+    if (_player.pid == -1) {
+      log('database:updatePlayer: Creating new player U:${_player.uid} P:${_player.pid} D:${_player.docId}');
       // Get the next player number
-      await configCollection.doc('Production').get().then(
+      await parentCollection.doc('Production').get().then(
               (DocumentSnapshot doc) {
+            // log("Production Snapshot Data: ${doc.data}");
             final data = doc.data() as Map<String, dynamic>;
-            player.pid = data['nextPid'];
+            _player.pid = data[_player.nextIdField] ?? 0;
+            _player.docId = _player.pid;     // Start at player 0.
           },
           onError: (e) {
-            print("Error getting Player Next Number: $e");
-            player.pid = -1;
+            log("Error getting Player Next Number: $e");
+            _player.pid = -1;
           }
       );
       // Increment the next player number
-      await configCollection.doc('Production').update(
-        {"nextPid": FieldValue.increment(1)},
+      await parentCollection.doc('Production').update(
+        { _player.nextIdField: FieldValue.increment(1) },
       );
     }
-    return await playerCollection.doc(uid).set(player.updateMap, SetOptions(merge: true));
+    // log("Player update map ${_player.updateMap}");
+    return await playerCollection.doc(uid).set(_player.updateMap, SetOptions(merge: true));
+    //return await playerCollection.doc(uid).set(_player.updateMap);
   }
 
   // Update single field in Series doc
@@ -206,7 +238,7 @@ class DatabaseService {
       return snapshot.docs.map((doc) {
         //print(doc.data);
         Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-        return Player(data: data );
+        return Player( data: data );
       }).toList();
     } else {
       return [];

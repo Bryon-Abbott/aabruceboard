@@ -3,6 +3,9 @@ import 'dart:developer';
 
 import 'package:intl/intl.dart';
 
+// enum ShapeType
+enum DocType { series, collection, game, member, membership, board, message, player }
+
 class FirestoreDoc {
   final String nextIdField = 'nextFsid';    // Stored in Player
   final String totalField = 'noDocuments';  // Strored in Parent

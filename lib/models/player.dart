@@ -20,9 +20,9 @@ class BruceUser {
 class Player extends FirestoreDoc {
   // Base Variables
   @override
-  final String nextIdField = 'nextMid';
+  final String nextIdField = 'nextPid';
   @override
-  final String totalField = 'noMembers';
+  final String totalField = 'noPlayers';
   @override
   final NumberFormat _keyFormat = NumberFormat("P00000000", "en_US");
   // Data Class Variables
@@ -76,5 +76,4 @@ class Player extends FirestoreDoc {
       'initials': initials,
     };
   }
-
 }

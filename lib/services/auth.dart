@@ -64,7 +64,9 @@ class AuthService {
       User user = result.user!;
       // create a new document for the user with the uid
       Player player = Player(data: {'uid': user.uid, 'pid': -1, 'fName': 'FNAME', 'lName': 'LNAME', 'initials': 'FL'} );
-      await DatabaseService(player, uid: user.uid).updatePlayer(player: player);
+      // Todo: Look to see if this can use the fsDoc database class
+      await DatabaseService(player, uid: user.uid).updatePlayer();
+      //await DatabaseService(player, uid: user.uid).fsDocUpdate();
       return _userFromFirebaseUser(user);
     } catch (error) {
       print(error.toString());

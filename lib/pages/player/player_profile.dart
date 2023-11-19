@@ -25,7 +25,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
   String? _currentLName;
   String? _currentInitials;
   String? _currentDisplayName;
-
+  // Todo: reduce the number of time the database is hit.
   @override
   Widget build(BuildContext context) {
 
@@ -102,9 +102,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
                             player.initials = _currentInitials ?? snapshot.data!.initials;
                             player.pid = snapshot.data!.pid;
                             // log("player_profile: Update Player ${player.fName}");
-                            await DatabaseService(player, uid: bruceUser.uid).updatePlayer(
-                              player: player,
-                            );
+                            await DatabaseService(player, uid: bruceUser.uid).updatePlayer();
                             await AuthService().updateDisplayName(
                                 _currentDisplayName ?? AuthService().displayName
                             );
