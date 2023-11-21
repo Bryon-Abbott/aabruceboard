@@ -1,3 +1,4 @@
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_maintain.dart';
@@ -36,11 +37,11 @@ class _GameListState extends State<GameList> {
 
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
-    return StreamBuilder<List<Game>>(
-      stream: DatabaseService(Game(data: {}), uid: bruceUser.uid, sidKey: series.key).fsDocList as Stream<List<Game>>,
+    return StreamBuilder<List<FirestoreDoc>>(
+      stream: DatabaseService(FSDocType.game, uid: bruceUser.uid, sidKey: series.key).fsDocList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Game> game = snapshots.data!;
+          List<Game> game = snapshots.data!.map((g) => g as Game).toList();
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],

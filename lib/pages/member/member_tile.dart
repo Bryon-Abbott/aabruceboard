@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/player.dart';
@@ -17,7 +18,7 @@ class MemberTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    Player? player = DatabaseService(Player(data: {}), uid: member.uid).player;
+    Player? player = DatabaseService(FSDocType.player, uid: member.uid).fsDoc(key: member.uid) as Player;
 
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
@@ -33,7 +34,7 @@ class MemberTile extends StatelessWidget {
           //   backgroundColor: Colors.brown,
           //   backgroundImage: AssetImage('assets/player.png'),
           // ),
-          title: Text('Member: ${player?.fName ?? "Error"} ${player?.lName ?? "Error"}'),
+          title: Text('Member: ${player.fName ?? "Error"} ${player.lName ?? "Error"}'),
           subtitle: Text(' MID: ${member.mid} CID: ${community.cid}'),
           trailing: IconButton(
             onPressed: () async {

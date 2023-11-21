@@ -1,14 +1,16 @@
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:intl/intl.dart';
 
-class Community extends FirestoreDoc {
+class Community implements FirestoreDoc {
   // Base Variables
+  @override
+  int docId = -1;
   @override
   final String nextIdField = 'nextCid';
   @override
   final String totalField = 'noCommunities';
   @override
-  final NumberFormat _keyFormat = NumberFormat("MS00000000", "en_US");
+  final NumberFormat _keyFormat = NumberFormat("C0000", "en_US");
   // Data Class Variables
   int cid;
   String uid;
@@ -17,13 +19,14 @@ class Community extends FirestoreDoc {
   int noMembers=0;
 
   Community({ required Map<String, dynamic> data, }) :
+        docId = data['docId'] ?? -1,
         cid = data['cid'] ?? -1,
         uid = data['uid'] ?? 'error',
         name = data['name'] ?? 'NAME',
         type = data['type'] ?? 'TYPE',
-        noMembers = data['noMembers'] ?? 0,
-        super(data: {'docID': data['docId'] ?? -1});
+        noMembers = data['noMembers'] ?? 0;
 
+  @override
   void update({ required Map<String, dynamic> data, }) {
     docId = data['docId'] ?? docId;
     cid = data['cid'] ?? cid;
@@ -33,6 +36,7 @@ class Community extends FirestoreDoc {
     noMembers = data['noMembers'] ?? noMembers;
   }
 
+  @override
   String get key {
     // Format Key for Document ID
     String key = _keyFormat.format(docId);
@@ -40,6 +44,7 @@ class Community extends FirestoreDoc {
   }
 
   // Returns a Map<String, dynamic> of all member veriables.
+  @override
   Map<String, dynamic> get updateMap {
     return {
       'docId': docId,

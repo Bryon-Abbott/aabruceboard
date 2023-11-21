@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -63,9 +66,14 @@ class AuthService {
       await result.user!.updateDisplayName('Display Name');
       User user = result.user!;
       // create a new document for the user with the uid
-      Player player = Player(data: {'uid': user.uid, 'pid': -1, 'fName': 'FNAME', 'lName': 'LNAME', 'initials': 'FL'} );
+ //     Player player = Player(data: {'uid': user.uid, 'pid': -1, 'fName': 'FNAME', 'lName': 'LNAME', 'initials': 'FL'} );
+        Player player = Player(data: { 'uid': user.uid } );
+        log('Adding new player ... U:${player.uid}, P:${player.pid}, fName: ${player.fName} ');
       // Todo: Look to see if this can use the fsDoc database class
-      await DatabaseService(player, uid: user.uid).updatePlayer();
+//      await DatabaseService(FSDocType.player, uid: user.uid).updatePlayer(player);
+      await DatabaseService(FSDocType.player, uid: user.uid).fsDocAdd(player);
+      player.pid = player.docId; // Make the PID equal to the docID and save to DB
+      await DatabaseService(FSDocType.player, uid: user.uid).fsDocUpdate(player);
       //await DatabaseService(player, uid: user.uid).fsDocUpdate();
       return _userFromFirebaseUser(user);
     } catch (error) {

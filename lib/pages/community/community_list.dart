@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/pages/community/community_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,7 @@ class _CommunityListState extends State<CommunityList> {
     bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<Community>>(
-      stream: DatabaseService(Community(data: {}), uid: bruceUser.uid).fsDocList as Stream<List<Community>>,
+      stream: DatabaseService(FSDocType.community, uid: bruceUser.uid).fsDocList as Stream<List<Community>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Community> community = snapshots.data!;

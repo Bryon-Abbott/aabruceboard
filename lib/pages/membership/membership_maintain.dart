@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -112,11 +113,11 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                                   'status': 'Requested',
                                 };
                                 Membership membership = Membership(data: data);
-                                await DatabaseService(membership, uid: uid).fsDocAdd();
+                                await DatabaseService(FSDocType.membership, uid: uid).fsDocAdd(membership);
                                 //widget.membership?.noGames++;
                               } else {
                                 // update existing game
-                                await DatabaseService(membership, uid: uid).fsDocUpdate();
+                                await DatabaseService(FSDocType.membership, uid: uid).fsDocUpdate(membership);
                               }
                               // Save Updates to Shared Preferences
                               log("membership_maintain: Added/Updated membership ${membership?.cid}");
@@ -139,7 +140,7 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                             }
                             : () {
                               log('Delete Membership ...');
-                              DatabaseService(membership!, uid: uid).fsDocDelete();
+                              DatabaseService(FSDocType.membership, uid: uid).fsDocDelete(membership!);
                               Navigator.of(context).pop();
                             },
                         child: const Text("Delete")),

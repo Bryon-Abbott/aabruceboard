@@ -2,10 +2,21 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/utils/preferences.dart';
+import 'package:intl/intl.dart';
 
-class Board extends FirestoreDoc {
+class Board implements FirestoreDoc {
+  @override
+  int docId = -1;
+  @override
+  final String nextIdField = 'nextBid';
+  @override
+  final String totalField = 'noBoards';
+  @override
+  final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
   String gid='none';
 
+  int sid = -1;
+  String uid = 'error' ;
   List<int> boardData = List<int>.filled(100, -1);
   List<int> rowScores = List<int>.filled(10, -1);
   List<int> colScores = List<int>.filled(10, -1);
@@ -15,17 +26,9 @@ class Board extends FirestoreDoc {
   bool dirty = true;
 
 //  Board({ required this.gid, }) :
-  Board({ required Map<String, dynamic> data, }) :
-  super(data: {'docID': data['docId'] ?? -1});
-
-  // @override
-  // void dispose() {
-  //   if (dirty) {
-  //     dev.log("Save Board to Firebase");
-  //   } else {
-  //     dev.log("Dont Save Board to Firebase");
-  //   }
-  // }
+  Board({ required Map<String, dynamic> data, }) {
+    docId = data['docId'] ?? -1;
+  }
 
   bool scoresLocked = false;
 
@@ -66,6 +69,37 @@ class Board extends FirestoreDoc {
       colScores[i] = scores.removeAt(pick);
     }
     scoresLocked = true;
+  }
+
+  @override
+  String get key {
+    String key = _keyFormat.format(docId);
+    return key;
+  }
+
+  @override
+  void update({required Map<String, dynamic> data}) {
+    docId = data['docId'] ?? docId;
+    boardData = data['boardData'];
+    rowScores = data['rowScores'];
+    colScores = data['colScores'];
+    rowResults = data['rowResults'];
+    colResults = data['colResults'];
+    percentSplits = data['percentSplits'];
+  }
+
+  @override
+  // TODO: implement updateMap
+  Map<String, dynamic> get updateMap {
+    return {
+      'docId': docId,
+      'boardData' : boardData,
+      'rowScores' : rowScores,
+      'colScores' : colScores,
+      'rowResults' : rowResults,
+      'colResults' : colResults,
+      'percentSplits' : percentSplits,
+    };
   }
 }
 

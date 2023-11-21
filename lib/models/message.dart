@@ -3,11 +3,15 @@ import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 
-class Message extends FirestoreDoc {
+class Message implements FirestoreDoc {
   @override
-  final String nextIdField = 'nextMsid';
+  int docId = -1;
   @override
-  final NumberFormat _keyFormat = NumberFormat("MS00000000", "en_US");
+  final String nextIdField = 'nextMeid';
+  @override
+  final String totalField = 'noMembers';
+  @override
+  final NumberFormat _keyFormat = NumberFormat("ME00000000", "en_US");
   // Document Specific Data items
   // @override
   // int docId;
@@ -17,15 +21,14 @@ class Message extends FirestoreDoc {
 
   //Member({ required this.cid, required this.uid, required this.credits, });
   Message({ required Map<String, dynamic> data, }) :
-       // docId = data['docId'] ?? -1,
+        docId = data['docId'] ?? -1,
         pidFrom = data['pidFrom'] ?? -1,
         pidTo = data['pidTo'] ?? -1,
-        type = data['type'] ?? 'M000',
-        super(data: {'docID': data['docId'] ?? -1});
+        type = data['type'] ?? 'M000';
 
   @override
   void update({ required Map<String, dynamic> data, }) {
-    docId = data['msid'] ?? docId;  // From Super
+    docId = data['docId'] ?? docId;  // From Super
     pidFrom = data['pidFrom'] ?? pidFrom;
     pidTo = data['pidTo'] ?? pidTo;
     type = data['type'] ?? type;

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -24,11 +25,11 @@ class _PlayerSelectState extends State<PlayerSelect> {
     // Todo: Don't need UID, look to remove from Database
     bruceUser = Provider.of<BruceUser>(context);
 
-    return StreamBuilder<List<Player>>(
-      stream: DatabaseService(Player(data: {}), uid: bruceUser.uid).playerListStream,
+    return StreamBuilder<List<FirestoreDoc>>(
+      stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Player> player = snapshots.data!;
+          List<Player> player =  snapshots.data!.map((s) => s as Player).toList();
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],

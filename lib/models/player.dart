@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/services/auth.dart';
 import 'package:intl/intl.dart';
@@ -17,8 +19,10 @@ class BruceUser {
   }
 }
 
-class Player extends FirestoreDoc {
+class Player implements FirestoreDoc {
   // Base Variables
+  @override
+  int docId = -1;
   @override
   final String nextIdField = 'nextPid';
   @override
@@ -43,15 +47,18 @@ class Player extends FirestoreDoc {
   //   required this.fName, required this.lName, required this.initials,
   // });
   Player({ required Map<String, dynamic> data, }) :
-    uid           = data['uid']           ?? 'error',
-    pid           = data['pid']           ?? -1,
-    fName         = data['fName']         ?? 'FNAME',
-    lName         = data['lName']         ?? 'LNAME',
-    initials      = data['initials']      ?? 'FL',
-    noMemberships = data['noMemberships'] ?? 0,
-    noCommunities = data['noCommunities'] ?? 0,
-    noSeries      = data['noSeries']      ?? 0,
-    super(data: {'docID': data['docId'] ?? -1});
+        docId = data['docId'] ?? -1,
+        uid = data['uid'] ?? 'error',
+        pid = data['pid'] ?? -1,
+        fName = data['fName'] ?? 'FNAME',
+        lName = data['lName'] ?? 'LNAME',
+        initials = data['initials'] ?? 'FL',
+        noMemberships = data['noMemberships'] ?? 0,
+        noCommunities = data['noCommunities'] ?? 0,
+        noSeries = data['noSeries'] ?? 0
+  {
+    log('Player: Creating player ID: $docId  U: $uid fName: $fName');
+  }
 
   // The key for the Player Document is the Firestore Users ID (uid)
   @override
@@ -62,6 +69,19 @@ class Player extends FirestoreDoc {
   String get pidKey {
     String Key = _keyFormat.format(pid);
     return Key;
+  }
+
+  @override
+  void update({ required Map<String, dynamic> data, }) {
+    docId = data['docId'] ?? -1;
+    uid = data['uid'] ?? 'error';
+    pid = data['pid'] ?? -1;
+    fName = data['fName'] ?? 'FNAME';
+    lName = data['lName'] ?? 'LNAME';
+    initials = data['initials'] ?? 'FL';
+    noMemberships = data['noMemberships'] ?? 0;
+    noCommunities = data['noCommunities'] ?? 0;
+    noSeries = data['noSeries'] ?? 0;
   }
 
   // Returns a Map<String, dynamic> of all member veriables.

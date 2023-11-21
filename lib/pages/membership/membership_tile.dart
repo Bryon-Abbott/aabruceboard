@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:flutter/material.dart';
@@ -45,7 +46,7 @@ class MembershipTile extends StatelessWidget {
               // Navigator.of(context).push(
               //     MaterialPageRoute(builder: (context) => MembershipMaintain(membership: membership)));
               log('membership_tile: Delete Membership. Key: ${membership.key}');
-              DatabaseService(membership).fsDocDelete();
+              DatabaseService(FSDocType.membership).fsDocDelete(membership);
               },
             icon: const Icon(Icons.delete),
           ),

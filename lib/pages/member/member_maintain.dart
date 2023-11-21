@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -111,7 +112,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   'credits' : 0,
                                 };
                                 member = Member(data: data);
-                                await DatabaseService(member!, uid: bruceUser.uid, cidKey: community.key).fsDocAdd();
+                                await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocAdd(member!);
                                 // Add a default board to Database
                                   // await DatabaseService(uid: _pid, cid: _cid).incrementCommunityNoMembers(1);
                                   widget.community.noMembers++;  // =widget.series.noMembers+1; // Update class to maintain alignment
@@ -122,7 +123,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   'credits' : 0,
                                 };
                                 member!.update(data: data);
-                                await DatabaseService(member!, uid: bruceUser.uid, cidKey: community.key).fsDocUpdate();                              }
+                                await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocUpdate(member!);                              }
                               // Save Updates to Shared Preferences
                               Navigator.of(context).pop();
                             }
@@ -161,7 +162,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                               );
                               if (results) {
                                 log('Delete Member ... C:${community.key}, U:${bruceUser.uid}');
-                                await DatabaseService(member!, uid: bruceUser.uid, cidKey: community.key).fsDocDelete();
+                                await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocDelete(member!);
                                 widget.community.noMembers  = widget.community.noMembers -1;
                                 Navigator.of(context).pop();
                               } else {

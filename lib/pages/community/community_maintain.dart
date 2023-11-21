@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -134,7 +135,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                   'noMembers': 0,
                                 };
                                 community = Community( data: data );
-                                await DatabaseService(community!, uid: uid).fsDocAdd();
+                                await DatabaseService(FSDocType.community, uid: uid).fsDocAdd(community!);
                               } else {
                                 // update existing community
                                 data = {
@@ -142,7 +143,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                   'type': currentCommunityType,
                                 };
                                 community!.update(data: data);
-                                await DatabaseService(community!, uid: uid).fsDocUpdate();
+                                await DatabaseService(FSDocType.community, uid: uid).fsDocUpdate(community!);
                               }
                               // Save Updates to Shared Preferences
                               log("community_maintain: Added/Updated community "
@@ -167,7 +168,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                 : () {
                               if (community!.noMembers == 0) {
                                 log('Delete Community ... ${community!.key}');
-                                DatabaseService(community!, uid: uid).fsDocDelete();
+                                DatabaseService(FSDocType.community, uid: uid).fsDocDelete(community!);
                                 Navigator.of(context).pop();
                               }
                             },

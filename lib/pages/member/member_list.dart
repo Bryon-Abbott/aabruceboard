@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -34,7 +35,7 @@ class _MemberListState extends State<MemberList> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<Member>>(
-      stream: DatabaseService(Member(data: {}), uid: bruceUser.uid, cidKey: widget.community.key).fsDoc as Stream<List<Member>>,
+      stream: DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: widget.community.key).fsDocList as Stream<List<Member>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Member> member = snapshots.data!;

@@ -4,8 +4,10 @@ import 'dart:developer';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:intl/intl.dart';
 
-class Member extends FirestoreDoc {
+class Member implements FirestoreDoc {
   // Base Variables
+  @override
+  int docId = -1;
   @override
   final String nextIdField = 'nextMid';
   @override
@@ -20,10 +22,10 @@ class Member extends FirestoreDoc {
   //Member({ required this.cid, required this.uid, required this.credits, });
   @override
   Member({ required Map<String, dynamic> data, }) :
-        mid = data['mid'] ?? -1,
-        uid = data['uid'] ?? 'error',
-        credits = data['credits'] ?? 0,
-        super(data: {'docID': data['docId'] ?? -1});
+    docId = data['docId'] ?? -1,
+    mid = data['mid'] ?? -1,
+    uid = data['uid'] ?? 'error',
+    credits = data['credits'] ?? 0;
 
   @override
   void update({ required Map<String, dynamic> data, }) {
@@ -36,7 +38,7 @@ class Member extends FirestoreDoc {
   @override
   String get key {
     // Format Key for Document ID
-    String key = _keyFormat.format(mid);
+    String key = _keyFormat.format(docId);
     log("Retrieving member $key");
     return key;
   }

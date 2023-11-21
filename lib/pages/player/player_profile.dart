@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -32,11 +33,12 @@ class _PlayerProfileState extends State<PlayerProfile> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
     // log('Bruce User ID ${bruceUser.uid}');
 
-    return StreamBuilder<Player>(
-      stream: DatabaseService(Player(data: {}), uid: bruceUser.uid).playerStream,
+    return StreamBuilder<FirestoreDoc>(
+      stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocStream( key: bruceUser.uid ),
       builder: (context, snapshot) {
+        log('player_profile: ${snapshot.data}');
         if(snapshot.hasData) {
-          Player player = snapshot.data!;
+          Player player = snapshot.data! as Player;
           return Scaffold(
             appBar: AppBar(
 //          backgroundColor: Colors.blue[900],
@@ -97,12 +99,12 @@ class _PlayerProfileState extends State<PlayerProfile> {
 //                      ),
                       onPressed: () async {
                         if(_formKey.currentState!.validate()) {
-                            player.fName = _currentFName ?? snapshot.data!.fName;
-                            player.lName = _currentLName ?? snapshot.data!.lName;
-                            player.initials = _currentInitials ?? snapshot.data!.initials;
-                            player.pid = snapshot.data!.pid;
+                            player.fName = _currentFName ?? player.fName;
+                            player.lName = _currentLName ?? player.lName;
+                            player.initials = _currentInitials ?? player.initials;
+                            player.pid = player.pid;
                             // log("player_profile: Update Player ${player.fName}");
-                            await DatabaseService(player, uid: bruceUser.uid).updatePlayer();
+                            await DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocUpdate(player);
                             await AuthService().updateDisplayName(
                                 _currentDisplayName ?? AuthService().displayName
                             );

@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/series/series_tile.dart';
 import 'package:flutter/material.dart';
@@ -25,11 +26,14 @@ class _SeriesListState extends State<SeriesList> {
 
     bruceUser = Provider.of<BruceUser>(context);
 
-    return StreamBuilder<List<Series>>(
-      stream: DatabaseService(Series(data: {}), uid: bruceUser.uid).fsDocList as Stream<List<Series>>,
+    return StreamBuilder<List<FirestoreDoc>>(
+      // stream: DatabaseService(FSDocType.series, uid: bruceUser.uid).fsDocList.cast<List<Series>>(), // as Stream<List<Series>>,
+      stream: DatabaseService(FSDocType.series, uid: bruceUser.uid).fsDocList, // as Stream<List<Series>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Series> series = snapshots.data!;
+          // categories = (map['categories'] as List)?.map((item) => item as String)?.toList();
+          List<Series> series = snapshots.data!.map((s) => s as Series).toList();
+          // List<Series> series = snapshots.data!.map(e =>) as List<Series>;
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],

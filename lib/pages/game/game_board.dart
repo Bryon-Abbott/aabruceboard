@@ -2,6 +2,7 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:flutter/material.dart';
@@ -112,7 +113,7 @@ class _GameBoardState extends State<GameBoard> {
         .copyWith(color: Colors.yellow);
 
     return StreamBuilder<Board>(
-        stream: DatabaseService(Board(data: {}), uid: _uid, sidKey: series.key, gidKey: game.key).board,
+        stream: DatabaseService(FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game.key).board,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Board board = snapshot.data!;

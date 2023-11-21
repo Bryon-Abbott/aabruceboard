@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
 import 'package:bruceboard/shared/loading.dart';
@@ -61,7 +62,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
             child: SizedBox(
               height: 300,
               child: StreamBuilder<List<Community>>(
-                stream: DatabaseService(Community(data: {}), uid: player.key).fsDocList as Stream<List<Community>>,
+                stream: DatabaseService(FSDocType.community, uid: player.key).fsDocList as Stream<List<Community>>,
                 builder: (context, snapshots) {
               if(snapshots.hasData) {
                 List<Community> community = snapshots.data!;

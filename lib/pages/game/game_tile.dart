@@ -27,11 +27,6 @@ class GameTile extends StatelessWidget {
             );
           },
           leading: const Icon(Icons.sports_football_outlined),
-          // leading: CircleAvatar(
-          //   radius: 25.0,
-          //   backgroundColor: Colors.brown,
-          //   backgroundImage: AssetImage('assets/player.png'),
-          // ),
           title: Text('Game: ${game.name}'),
           subtitle: Text(' SID: ${series.key} GID: ${game.key}'),
           trailing: IconButton(

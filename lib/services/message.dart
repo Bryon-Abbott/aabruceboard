@@ -1,13 +1,7 @@
 import 'dart:developer';
 
-import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/models/member.dart';
-import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/models/game.dart';
-import 'package:bruceboard/models/membership.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,7 +13,8 @@ class MessageService {
   String? sidKey; // Series ID
   String? gidKey; // Game ID (User as Game ID and Board ID)
   String? cidKey; // Player ID (Used as Member)
-  FirestoreDoc fsDoc;
+  //FirestoreDoc fsDoc;
+  FSDocType fsDocType;
 
 //  FirebaseFirestore db;
   final CollectionReference configCollection = FirebaseFirestore.instance
@@ -39,7 +34,7 @@ class MessageService {
   late CollectionReference docCollection;
   late CollectionReference parentCollection;
 
-  MessageService(this.fsDoc, { this.uid, this.cidKey, this.sidKey, this.gidKey }) {
+  MessageService(this.fsDocType, { this.uid, this.cidKey, this.sidKey, this.gidKey }) {
     // If UID not passed in, try to calculate it from Firebase Auth.
     // In fact you should never need to pass in UID as long as you check
     // to ensure the user is signed in.
@@ -47,16 +42,16 @@ class MessageService {
       final User? user = FirebaseAuth.instance.currentUser;
       if (user != null) uid = user.uid;
     }
-    log('MessageService: Class Type is > ${fsDoc.runtimeType}');
-    switch (fsDoc.runtimeType.toString()) {
-      case 'Message': {
+    log('MessageService: Class Type is > $fsDocType');
+    switch (fsDocType) {
+      case FSDocType.message: {
         parentCollection = playerCollection;
         docCollection = playerCollection.doc(uid).collection('Message');
         log('MessageSerive: Found "Message" class');
       }
       break;
       default: {
-        log('MessageSerive: Undefined class ${fsDoc.runtimeType}');
+        log('MessageSerive: Undefined class $fsDocType');
       }
       break;
     }
@@ -86,7 +81,7 @@ class MessageService {
 // =============================================================================
 //                ***   DATABASE MEMBERS   ***
 // =============================================================================
-  Future<void> fsDocAdd() async {
+  Future<void> fsDocAdd(FirestoreDoc fsDoc) async {
     int noDocs = -1;
     // Get the next series number for the player
     await playerCollection.doc(uid).get().then((DocumentSnapshot doc) {
@@ -120,7 +115,7 @@ class MessageService {
     );
   }
   // Update the series Doc with data in provided Series class.
-  Future<void> fsDocUpdate() async {
+  Future<void> fsDocUpdate(FirestoreDoc fsDoc) async {
     return await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
   }
 
@@ -144,7 +139,7 @@ class MessageService {
     log('Series Size is ${snapshot.size} UID: $uid');
     return snapshot.docs.map((doc) {
       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-      FirestoreDoc fsDoc = FirestoreDoc( data: data );
+      FirestoreDoc fsDoc = FirestoreDoc(fsDocType, data: data );
       return fsDoc;
     }).toList();
   }

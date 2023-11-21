@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/database.dart';
+
 // Create a Form widget.
 class SeriesMaintain extends StatefulWidget {
 
@@ -21,17 +23,21 @@ class SeriesMaintain extends StatefulWidget {
 class SeriesMaintainState extends State<SeriesMaintain> {
   final _formSeriesKey = GlobalKey<FormState>();
   late Series? series;
+  Player? player = null;
+  late BruceUser bruceUser;
 
   @override
   void initState() {
     series = widget.series;
+    // BruceUser bruceUser = Provider.of<BruceUser>(context);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     //cid = ModalRoute.of(context)!.settings.arguments as String;
-    BruceUser bruceUser = Provider.of<BruceUser>(context);
+    bruceUser = Provider.of<BruceUser>(context);
+    log('series_maintain build:  ${bruceUser.uid}');
     String uid = bruceUser.uid;
     late String sid;
 
@@ -120,25 +126,36 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                         child: ElevatedButton(
                           onPressed: () async {
                             // Validate returns true if the form is valid, or false otherwise.
+                            if (player == null) {
+                              log('series_maintain: Getting Player ... ');
+                              FirestoreDoc? fsDoc = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid);
+                              if (fsDoc != null) {
+                                player = fsDoc as Player;
+                              } else {
+                                log('Waiting for Player');
+                              }
+                            }
+                            log('series_maintain: Player is ... ${player!.fName}');
                             if (_formSeriesKey.currentState!.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
                               if ( series == null ) {
                                 // Create new Series and store to Firebase
                                 Map<String, dynamic> data =
-                                { 'sid': -1,
+                                { 'pid': player!.pid,
                                   'name': currentSeriesName,
                                   'type': currentSeriesType,
                                   'noGames': currentSeriesNoGames,
                                 };
-                                series = Series( data: data ) ;
-                                await DatabaseService(series!, uid: uid).fsDocAdd();
-                                series?.noGames++;
+                                series = Series( data: data );
+                                await DatabaseService(FSDocType.series, uid: uid).fsDocAdd(series!);
+                                series!.sid = series!.docId; // Set SID to docID
+                                await DatabaseService(FSDocType.series, uid: uid).fsDocUpdate(series!);
+                                //series?.noGames++;
                               } else {
                                 // Update existing Series and store to Firebase
                                 Map<String, dynamic> data =
-                                { 'sid': -1,
-                                  'name': currentSeriesName,
+                                { 'name': currentSeriesName,
                                   'type': currentSeriesType,
                                   'noGames': currentSeriesNoGames,
                                 };
@@ -146,7 +163,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                 // series!.name = currentSeriesName;
                                 // series!.type = currentSeriesType;
                                 // series!.noGames = currentSeriesNoGames;
-                                await DatabaseService(series!, uid: uid).fsDocUpdate();
+                                await DatabaseService(FSDocType.series, uid: uid).fsDocUpdate(series!);
                               }
                               // Save Updates to Shared Preferences
                               log("series_maintain: Added/Updated series ${series?.noGames}");
@@ -171,7 +188,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                               if (series!.noGames == 0) {
                                 // log('Delete Series ... ${_sid}');
                                 log('Delete Series ... ${series!.key}');
-                                DatabaseService(series!, uid: uid).fsDocDelete();
+                                DatabaseService(FSDocType.series, uid: uid).fsDocDelete(series!);
                                 Navigator.of(context).pop();
                               }
                             },

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/models/message.dart';
 import 'package:bruceboard/pages/membership/membership_tile.dart';
@@ -31,7 +32,7 @@ class _MembershipListState extends State<MembershipList> {
     Player? player;
 
     return StreamBuilder<List<Membership>>(
-      stream: DatabaseService(Membership(data: {}), uid: bruceUser.uid).fsDocList as Stream<List<Membership>>,
+      stream: DatabaseService(FSDocType.membership, uid: bruceUser.uid).fsDocList as Stream<List<Membership>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Membership> membershipList = snapshots.data!;
@@ -69,11 +70,11 @@ class _MembershipListState extends State<MembershipList> {
                         Membership membership = Membership(data: data);
                         // Note ... the database section is the current user but the Membership PID
                         // is the PID of the owner of the community.
-                        await DatabaseService(membership, uid: bruceUser.uid).fsDocAdd();
+                        await DatabaseService(FSDocType.membership, uid: bruceUser.uid).fsDocAdd(membership);
                         log("membership_list: Updating noMemberships: ${player.noMemberships.toString() ?? 'Didnt get memberships'}");
                         Message msg = Message(data: { } );
 
-                        await MessageService(msg).fsDocAdd();
+                        await MessageService(FSDocType.message).fsDocAdd(msg);
                       }
                     },
                     icon: const Icon(Icons.add_circle_outline),
