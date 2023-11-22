@@ -107,8 +107,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                 log('Add Member');
                                 // Add new Member
                                 Map<String, dynamic> data =
-                                { 'mid': -1,
-                                  'uid': bruceUser.uid,
+                                { 'uid': bruceUser.uid,
                                   'credits' : 0,
                                 };
                                 member = Member(data: data);

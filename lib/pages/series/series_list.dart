@@ -31,9 +31,7 @@ class _SeriesListState extends State<SeriesList> {
       stream: DatabaseService(FSDocType.series, uid: bruceUser.uid).fsDocList, // as Stream<List<Series>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          // categories = (map['categories'] as List)?.map((item) => item as String)?.toList();
           List<Series> series = snapshots.data!.map((s) => s as Series).toList();
-          // List<Series> series = snapshots.data!.map(e =>) as List<Series>;
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],

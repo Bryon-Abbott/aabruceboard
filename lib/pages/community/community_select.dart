@@ -61,11 +61,11 @@ class _CommunitySelectState extends State<CommunitySelect> {
           SingleChildScrollView(
             child: SizedBox(
               height: 300,
-              child: StreamBuilder<List<Community>>(
-                stream: DatabaseService(FSDocType.community, uid: player.key).fsDocList as Stream<List<Community>>,
+              child: StreamBuilder<List<FirestoreDoc>>(
+                stream: DatabaseService(FSDocType.community, uid: player.key).fsDocList,
                 builder: (context, snapshots) {
               if(snapshots.hasData) {
-                List<Community> community = snapshots.data!;
+                List<Community> community = snapshots.data!.map((s) => s as Community).toList();
                 return Scaffold(
                   appBar: AppBar(
                     //            backgroundColor: Colors.blue[900],
@@ -85,7 +85,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
                       return ListTile(
                         leading: const Icon(Icons.person_outline),
                         title: Text(community[index].name),
-                        subtitle: Text("${community[index].cid}"),
+                        subtitle: Text("${community[index].docId}"),
                         trailing: IconButton(
                           icon: const Icon(Icons.check_circle_outline),
                           onPressed: () {

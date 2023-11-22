@@ -31,13 +31,14 @@ class _GameMaintainState extends State<GameMaintain> {
   late int _gid;
   late String _uid;
   late Board board;
+  late Player player;
 
   @override
   void initState() {
     series = widget.series;
     game = widget.game;
 //    _sid = series.sid;
-    _gid = game?.gid ?? -1;
+    _gid = game?.docId ?? -1;
 //    _uid = game?.pid ?? -1;
     super.initState();
   }
@@ -160,6 +161,16 @@ class _GameMaintainState extends State<GameMaintain> {
                         child: ElevatedButton(
                           onPressed: () async {
                             // Validate returns true if the form is valid, or false otherwise.
+                            // if (player == null) {
+                            //   log('series_maintain: Getting Player ... ');
+                              FirestoreDoc? fsDoc = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid);
+                              if (fsDoc != null) {
+                                player = fsDoc as Player;
+                                log('Got Player for Player ${player.fName}');
+                              } else {
+                                log('Waiting for Player');
+                              }
+                            // }
                             if (_formGameKey.currentState!.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
@@ -167,8 +178,8 @@ class _GameMaintainState extends State<GameMaintain> {
                                 log('Add Game');
                                 // Add new Game
                                 Map<String, dynamic> data =
-                                { 'sid': series.sid,
-                                  'uid': _uid,
+                                { 'sid': series.docId,
+                                  'pid': player.pid,
                                   'name': currentGameName,
                                   'teamOne': currentTeamOne,
                                   'teamTwo': currentTeamTwo,
@@ -176,8 +187,8 @@ class _GameMaintainState extends State<GameMaintain> {
                                 };
                                 game = Game(data: data);
                                 await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocAdd(game!);
-                                game!.gid = game!.docId; // Set SID to docID
-                                await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocUpdate(game!);
+                                // game!.docId = game!.docId; // Set GID to docID
+                                // await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocUpdate(game!);
                                 log("Add Game ${game!.key}");
                                 // Add a default board to Database
                                 data = { 'docId': game!.docId, }; // Use same key as Game for Board
@@ -244,7 +255,7 @@ class _GameMaintainState extends State<GameMaintain> {
                               if (results) {
                                 log('Delete Game ... U:$_uid, S:${series.key}, G:${game!.key}');
                                 await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocDelete(game!);
-                                await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key, gidKey: game!.key).deleteBoard();
+                                await DatabaseService(FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game!.key).fsDocDelete(board);
                                 // await DatabaseService(uid: _uid, sid: series.sid).incrementSeriesNoGames(-1);
                                 series.noGames  = series.noGames -1;
                                 Navigator.of(context).pop();

@@ -15,7 +15,7 @@ class Member implements FirestoreDoc {
   @override
   final NumberFormat _keyFormat = NumberFormat("M0000", "en_US");
   // Data Class Variables
-  int mid;
+ // int mid;
   String uid;  // /Player/{PID}/Community/{CID}/Member/{PID} Note: PID = MID
   int credits;
 
@@ -23,14 +23,14 @@ class Member implements FirestoreDoc {
   @override
   Member({ required Map<String, dynamic> data, }) :
     docId = data['docId'] ?? -1,
-    mid = data['mid'] ?? -1,
+//    mid = data['mid'] ?? -1,
     uid = data['uid'] ?? 'error',
     credits = data['credits'] ?? 0;
 
   @override
   void update({ required Map<String, dynamic> data, }) {
     docId = data['docId'] ?? docId;
-    mid = data['mid'] ?? mid;
+//    mid = data['mid'] ?? mid;
     uid = data['uid'] ?? uid;
     credits = data['credits'] ?? credits;
   }
@@ -48,7 +48,7 @@ class Member implements FirestoreDoc {
   Map<String, dynamic> get updateMap {
     return {
       'docId': docId,
-      'mid': mid,
+//      'mid': mid,
       'uid': uid,
       'credits': credits,
     };

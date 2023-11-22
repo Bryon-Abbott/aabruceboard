@@ -105,18 +105,18 @@ class _GameBoardState extends State<GameBoard> {
       gridSize = gridSizeSmall;
     }
 
-    dev.log("Reload Game ... GameNo: ${game.gid} ",
+    dev.log("Reload Game ... GameNo: ${game.docId} ",
         name: "${runtimeType.toString()}:build");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
     textStyle = Theme.of(context).textTheme.bodySmall!
         .copyWith(color: Colors.yellow);
 
-    return StreamBuilder<Board>(
-        stream: DatabaseService(FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game.key).board,
+    return StreamBuilder<FirestoreDoc>(
+        stream: DatabaseService(FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game.key).fsDocStream(key: game.key),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            Board board = snapshot.data!;
+            Board board = snapshot.data! as Board;
             return SafeArea(
               child: Scaffold(
                 appBar: AppBar(
@@ -373,7 +373,7 @@ class _GameBoardState extends State<GameBoard> {
                     if (score == null || score.isEmpty) {
                       return;
                     } else {
-                      dev.log("Loading Game Data ... GameNo: ${game.gid} ", name: "${runtimeType.toString()}:buildScore");
+                      dev.log("Loading Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore");
                       //gameData.loadData(game.gameNo!);
                       if (score[0].isNotEmpty) {
                         board.rowResults[index] = int.parse(score[0]);
@@ -382,7 +382,7 @@ class _GameBoardState extends State<GameBoard> {
                         board.colResults[index] = int.parse(score[1]);
                       }
 
-                      dev.log("Saving Game Data ... GameNo: ${game.gid} ", name: "${runtimeType.toString()}:buildScore");
+                      dev.log("Saving Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore");
                       //gameData.saveData(game.gameNo!);
                       setState(() {
                         dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
@@ -451,7 +451,7 @@ class _GameBoardState extends State<GameBoard> {
         if (percents == null || percents.isEmpty) {
           return;
         } else {
-          dev.log("Loading Game Data ... GameNo: ${game.gid} ", name: "${runtimeType.toString()}:buildScore");
+          dev.log("Loading Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore");
           //gameData.loadData(game.gameNo!);
 
           for (int i=0; i<4; i++) {
@@ -462,9 +462,9 @@ class _GameBoardState extends State<GameBoard> {
             dev.log("Split Data ... '${percents[i]}' ", name: "${runtimeType.toString()}:buildScore");
           }
           board.percentSplits[4] = 100 - qtrPercents;
-          dev.log("Split Data ... GameNo: ${game.gid}, Qtr Splits: $qtrPercents,  Total Splits: ${board.percentSplits[4]}", name: "${runtimeType.toString()}:buildScore");
+          dev.log("Split Data ... GameNo: ${game.docId}, Qtr Splits: $qtrPercents,  Total Splits: ${board.percentSplits[4]}", name: "${runtimeType.toString()}:buildScore");
 
-          dev.log("Saving Game Data ... GameNo: ${game.gid}", name: "${runtimeType.toString()}:buildScore");
+          dev.log("Saving Game Data ... GameNo: ${game.docId}", name: "${runtimeType.toString()}:buildScore");
           //board.saveData(game.gameNo!);
           setState(() {
             dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
@@ -737,7 +737,7 @@ class _BoardGridState extends State<BoardGrid> {
       gridSize = gridSizeSmall;
     }
 
-    dev.log("Reloading Data ... gameNo: ${game.gid}", name: "${runtimeType.toString()}:build");
+    dev.log("Reloading Data ... gameNo: ${game.docId}", name: "${runtimeType.toString()}:build");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
 
@@ -795,7 +795,7 @@ class _BoardGridState extends State<BoardGrid> {
             setState(() {
               dev.log("Pressed Number button", name: "${runtimeType.toString()}:NumberButton");
               board.setScores();
-              dev.log("saving Data ... gameNo: ${game.gid} ", name: "${runtimeType.toString()}:NumberButton");
+              dev.log("saving Data ... gameNo: ${game.docId} ", name: "${runtimeType.toString()}:NumberButton");
               //board.saveData(games.getGame(games.currentGame).gameNo!);
             });
           } else {

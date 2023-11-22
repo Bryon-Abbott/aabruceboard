@@ -31,11 +31,11 @@ class _MembershipListState extends State<MembershipList> {
     bruceUser = Provider.of<BruceUser>(context);
     Player? player;
 
-    return StreamBuilder<List<Membership>>(
-      stream: DatabaseService(FSDocType.membership, uid: bruceUser.uid).fsDocList as Stream<List<Membership>>,
+    return StreamBuilder<List<FirestoreDoc>>(
+      stream: DatabaseService(FSDocType.membership, uid: bruceUser.uid).fsDocList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Membership> membershipList = snapshots.data!;
+          List<Membership> membershipList = snapshots.data!.map((s) => s as Membership).toList();
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
@@ -62,8 +62,8 @@ class _MembershipListState extends State<MembershipList> {
                         log("membership_list: Community Selected: ${community.name ?? 'Not Selected'}");
                         Map<String, dynamic> data =
                         {
-                          'cid': community.cid,
-                          'pid': player.pid,  // Community Onwer PID
+                          'cid': community.docId, // Community Owner CID
+                          'pid': player.docId,  // Community Onwer PID
                           'uid': player.uid,  // Community Owner UID
                           'status': 'Requested',
                         };

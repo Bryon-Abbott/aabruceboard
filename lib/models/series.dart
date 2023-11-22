@@ -14,14 +14,14 @@ class Series implements FirestoreDoc {
   final NumberFormat _keyFormat = NumberFormat("S0000", "en_US");
   // Data Class Variables
 
-  int sid;  // Numeric 0000-9999
+//  int sid;  // Numeric 0000-9999
   String name;
   String type;
   int noGames;
 
   Series({ required Map<String, dynamic> data, }) :
     docId = data['docId'] ?? -1,
-    sid = data['sid'] ?? -1,
+//    sid = data['sid'] ?? -1,
     name = data['name'] ?? 'NAME',
     type = data['type'] ?? 'TYPE',
     noGames = data['noGames'] ?? 0;
@@ -29,7 +29,7 @@ class Series implements FirestoreDoc {
   @override
   void update({ required Map<String, dynamic> data, }) {
     docId = data['docId'] ?? docId;
-    sid = data['sid'] ?? sid;
+//    sid = data['sid'] ?? sid;
     name = data['name'] ?? name;
     type = data['type'] ?? type;
     noGames = data['noGames'] ?? noGames;
@@ -48,7 +48,7 @@ class Series implements FirestoreDoc {
   Map<String, dynamic> get updateMap {
     return {
       'docId': docId,
-      'sid': sid,
+//      'sid': sid,
       'name': name,
       'type': type,
       'noGames': noGames,

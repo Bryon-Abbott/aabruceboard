@@ -149,8 +149,8 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                 };
                                 series = Series( data: data );
                                 await DatabaseService(FSDocType.series, uid: uid).fsDocAdd(series!);
-                                series!.sid = series!.docId; // Set SID to docID
-                                await DatabaseService(FSDocType.series, uid: uid).fsDocUpdate(series!);
+                                // series!.sid = series!.docId; // Set SID to docID
+                                // await DatabaseService(FSDocType.series, uid: uid).fsDocUpdate(series!);
                                 //series?.noGames++;
                               } else {
                                 // Update existing Series and store to Firebase

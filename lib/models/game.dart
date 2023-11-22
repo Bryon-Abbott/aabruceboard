@@ -13,9 +13,10 @@ class Game implements FirestoreDoc {
   @override
   final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
   // Data Class Variables
-  int gid; // Game ID
+//  int gid; // Game ID
   int sid; // Series ID
-  String uid; // Owners UID
+  int pid; // Player ID
+//  String uid; // Owners UID
 
   String name = "";
   int squareValue = 0;
@@ -24,9 +25,8 @@ class Game implements FirestoreDoc {
 
   Game({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
-        gid = data['gid'] ?? -1,
         sid = data['sid'] ?? -1,
-        uid = data['uid'] ?? 'error',
+        pid = data['pid'] ?? -1,
         name = data['name'] ?? 'NAME',
         teamOne = data['teamOne'] ?? 'ONE',
         teamTwo = data['teamTwo'] ?? 'TWO',
@@ -42,9 +42,8 @@ class Game implements FirestoreDoc {
   @override
   void update({ required Map<String, dynamic> data, }) {
     docId = data['docId'] ?? docId;
-    gid = data['gid'] ?? gid;
     sid = data['sid'] ?? sid;
-    uid = data['uid'] ?? uid;
+    pid = data['uid'] ?? pid;
     name = data['name'] ?? name;
     teamOne = data['teamOne'] ?? teamOne;
     teamTwo = data['teamTwo'] ?? teamTwo;
@@ -56,9 +55,8 @@ class Game implements FirestoreDoc {
   Map<String, dynamic> get updateMap {
     return {
       'docId': docId,
-      'gid': gid,
       'sid': sid,
-      'uid': uid,
+      'pid': pid,
       'name': name,
       'teamOne': teamOne,
       'teamTwo': teamTwo,

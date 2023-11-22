@@ -160,7 +160,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                     SizedBox(
-                      width: 200,
+                      width: 220,
                       child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -190,7 +190,7 @@ class _HomeState extends State<Home> {
                                 if (results != null) {
                                   player = results[0] as Player;
                                   community = results[1] as Community;
-                                  log("Community Selected: ${community.name} ${player.pidKey} ${community.key}");
+                                  log("Join Community: ${community.name} ${player.pidKey} ${community.key}");
                                 }
                               },
                               icon: Icon(
@@ -198,7 +198,7 @@ class _HomeState extends State<Home> {
                                 size: 32,
                                 color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
                               ),
-                              label: Text('Community Select',
+                              label: Text('Join Community',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),

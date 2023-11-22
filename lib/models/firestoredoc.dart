@@ -6,10 +6,17 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/board.dart';
+import 'package:bruceboard/models/member.dart';
+import 'package:bruceboard/models/membership.dart';
 import 'package:intl/intl.dart';
 
 // enum ShapeType
-enum FSDocType { series, community, game, member, membership, board, message, player }
+enum FSDocType {
+  player,
+    series, game, board,
+    community, member,
+    membership,
+    message, }
 
 abstract class FirestoreDoc {
   final String nextIdField = 'nextFsid';    // Stored in Player
@@ -30,6 +37,10 @@ abstract class FirestoreDoc {
           return Game(data: data);
         case FSDocType.board:
           return Board(data: data);
+        case FSDocType.membership:
+          return Membership(data: data);
+        case FSDocType.member:
+          return Member(data: data);
         default:
           log('Invalid Document Type');
           throw 'Invalid document type';

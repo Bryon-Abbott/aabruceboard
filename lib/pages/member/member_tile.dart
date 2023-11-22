@@ -26,7 +26,7 @@ class MemberTile extends StatelessWidget {
         margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
         child: ListTile(
           onTap: ()  {
-            log("Member Tapped ... ${member.uid} : ${member.mid} ");
+            log("Member Tapped ... ${member.uid} : ${member.docId} ");
           },
           leading: const Icon(Icons.sports_football_outlined),
           // leading: CircleAvatar(
@@ -35,7 +35,7 @@ class MemberTile extends StatelessWidget {
           //   backgroundImage: AssetImage('assets/player.png'),
           // ),
           title: Text('Member: ${player.fName ?? "Error"} ${player.lName ?? "Error"}'),
-          subtitle: Text(' MID: ${member.mid} CID: ${community.cid}'),
+          subtitle: Text(' MID: ${member.docId} CID: ${community.docId}'),
           trailing: IconButton(
             onPressed: () async {
               await Navigator.of(context).push(

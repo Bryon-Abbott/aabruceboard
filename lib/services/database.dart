@@ -33,7 +33,7 @@ class DatabaseService {
   late DocumentReference nextIdDocument;
 
 
-  late CollectionReference seriesCollection;
+//  late CollectionReference seriesCollection;
   late CollectionReference communityCollection;
   late CollectionReference membershipCollection;
   late CollectionReference memberCollection;
@@ -81,18 +81,13 @@ class DatabaseService {
       break;
       case FSDocType.board: {
         nextIdDocument = playerCollection.doc(uid);
-        statsDocument = playerCollection.doc(uid).collection('Series').doc(sidKey);
+        statsDocument = playerCollection.doc(uid).collection('Series')
+            .doc(sidKey).collection('Game')
+            .doc(gidKey);
         docCollection = playerCollection.doc(uid).collection('Series')
             .doc(sidKey).collection('Game')
             .doc(gidKey).collection('Board');
         log('Database: Found "Board" class');
-      }
-      break;
-      case FSDocType.member: {
-        nextIdDocument = playerCollection.doc(uid);
-        statsDocument = playerCollection.doc(uid);
-        docCollection = playerCollection.doc(uid).collection('Member');
-        log('Database: Found "Member" class');
       }
       break;
       case FSDocType.membership: {
@@ -102,6 +97,20 @@ class DatabaseService {
         log('Database: Found "Membership" class');
       }
       break;
+      case FSDocType.community: {
+        nextIdDocument = playerCollection.doc(uid);
+        statsDocument = playerCollection.doc(uid);
+        docCollection = playerCollection.doc(uid).collection('Community');
+        log('Database: Found "Membership" class');
+      }
+      break;
+      case FSDocType.member: {
+        nextIdDocument = playerCollection.doc(uid);
+        statsDocument = playerCollection.doc(uid).collection('Community').doc(cidKey);
+        docCollection = playerCollection.doc(uid).collection('Community').doc(cidKey).collection('Member');
+        log('Database: Found "Member" class');
+      }
+      break;
       default: {
         log('MessageSerive: Undefined class $fsDocType');
       }
@@ -109,22 +118,19 @@ class DatabaseService {
     }
     log('Setting up DatabaseService $uid');
     if (uid != null) {
-      seriesCollection = playerCollection.doc(uid).collection(
-          'Series'); // List of Series of Games User manages
-      communityCollection = playerCollection.doc(uid).collection(
-          'Community'); // List of Community of Players User manages
-      membershipCollection = playerCollection.doc(uid).collection(
-          'Membership'); // List of Communities the User has joined
+  //    seriesCollection = playerCollection.doc(uid).collection('Series'); // List of Series of Games User manages
+  //    communityCollection = playerCollection.doc(uid).collection('Community'); // List of Community of Players User manages
+  //    membershipCollection = playerCollection.doc(uid).collection('Membership'); // List of Communities the User has joined
       // If uid found ... create the remaining
-      if (cidKey != null) {
-        memberCollection = communityCollection.doc(cidKey).collection('Member'); // List of Members in a Community
-      }
-      if (sidKey != null) {
-        gameCollection = seriesCollection.doc(sidKey).collection('Game'); // List of Games in a Series
-      }
-      if (gidKey != null) {
-        boardCollection = gameCollection.doc(gidKey).collection('Board'); // Board associated with a Game (GID=BID)
-      }
+      // if (cidKey != null) {
+      //   memberCollection = communityCollection.doc(cidKey).collection('Member'); // List of Members in a Community
+      // }
+      // if (sidKey != null) {
+      //   gameCollection = seriesCollection.doc(sidKey).collection('Game'); // List of Games in a Series
+      // }
+      // if (gidKey != null) {
+      //   boardCollection = gameCollection.doc(gidKey).collection('Board'); // Board associated with a Game (GID=BID)
+      // }
     }
   }
 
@@ -502,100 +508,100 @@ class DatabaseService {
   // Update Board
   // Note form Board, the Board  ID (bid) is equal to the Game ID so the
   // 'add'member function uses the 'set' command using the gidKey as the unique number.
-  Future<void> addBoard({
-    required String gidKey,
-        }) async {
-
-    // Defaults for new board
-    List<int> boardData = List<int>.filled(100, -1);
-    List<int> rowScores = List<int>.filled(10, -1);
-    List<int> colScores = List<int>.filled(10, -1);
-    List<int> rowResults = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
-    List<int> colResults = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
-    List<int> percentSplits = List<int>.filled(5, 20); // Q1, Q2, Q3, Q4, Community
-
-    return await boardCollection.doc(gidKey).set({
-//      'gid' : gid,
-      'boardData'     : boardData,
-      'rowScores'     : rowScores,
-      'colScores'     : colScores,
-      'rowResults'    : rowResults,
-      'colResults'    : colResults,
-      'percentSplits' : percentSplits,
-    });
-  }
-
-  Future<void> updateBoard({
-    required String field,
-    required String value,
-        }) async {
-
-    if (gidKey != null) {
-      return await boardCollection.doc(gidKey).set({
-        field: value,
-      });
-    } else {
-      // Todo: Throw an error here?
-      return;
-    }
-  }
-
-  // Delete given Board
-  Future<void> deleteBoard() async {
-    if (gidKey != null ) {
-      return await boardCollection.doc(gidKey).delete();
-    } else {
-      log('DatabaseService: deleteGame missing Game ID');
-    }
-  }
-
-  // Game list from snapshot
-  List<Board> _boardListFromSnapshot(QuerySnapshot snapshot) {
-
-    return snapshot.docs.map((doc) {
-      //print(doc.data);
-      Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-      return Board(data: data);
-    }).toList();
-  }
-
-  // Game data from snapshots
-  Board _boardFromSnapshot(DocumentSnapshot snapshot) {
-
-    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-
-    Board board = Board(data: data);
-
-    board.boardData = data['boardData'].cast<int>();
-    board.rowScores = data['rowScores'].cast<int>();
-    board.rowResults = data['rowResults'].cast<int>();
-    board.colScores = data['colScores'].cast<int>();
-    board.rowResults = data['rowResults'].cast<int>();
-    board.percentSplits = data['percentSplits'].cast<int>();
-    board.dirty = false;
-
-    return board;
-  }
-
-  //get collections stream
-  Stream<List<Board>> get boardList {
-
-    if (gidKey != null) {
-      return boardCollection.snapshots()
-          .map(_boardListFromSnapshot);
-    } else {
-      return const Stream.empty();
-    }
-  }
-
-  // get game doc stream
-  Stream<Board> get board {
-    log("Getting board for GID: $gidKey, UID: $uid, SID: $sidKey");
-    return boardCollection.doc(gidKey).snapshots()
-        .map((DocumentSnapshot doc) => _boardFromSnapshot(doc));
-//    .map(_playerFromSnapshot);
-  }
-
+//   Future<void> addBoard({
+//     required String gidKey,
+//         }) async {
+//
+//     // Defaults for new board
+//     List<int> boardData = List<int>.filled(100, -1);
+//     List<int> rowScores = List<int>.filled(10, -1);
+//     List<int> colScores = List<int>.filled(10, -1);
+//     List<int> rowResults = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
+//     List<int> colResults = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
+//     List<int> percentSplits = List<int>.filled(5, 20); // Q1, Q2, Q3, Q4, Community
+//
+//     return await boardCollection.doc(gidKey).set({
+// //      'gid' : gid,
+//       'boardData'     : boardData,
+//       'rowScores'     : rowScores,
+//       'colScores'     : colScores,
+//       'rowResults'    : rowResults,
+//       'colResults'    : colResults,
+//       'percentSplits' : percentSplits,
+//     });
+//   }
+//
+//   Future<void> updateBoard({
+//     required String field,
+//     required String value,
+//         }) async {
+//
+//     if (gidKey != null) {
+//       return await boardCollection.doc(gidKey).set({
+//         field: value,
+//       });
+//     } else {
+//       // Todo: Throw an error here?
+//       return;
+//     }
+//   }
+//
+//   // Delete given Board
+//   Future<void> deleteBoard() async {
+//     if (gidKey != null ) {
+//       return await boardCollection.doc(gidKey).delete();
+//     } else {
+//       log('DatabaseService: deleteGame missing Game ID');
+//     }
+//   }
+//
+//   // Game list from snapshot
+//   List<Board> _boardListFromSnapshot(QuerySnapshot snapshot) {
+//
+//     return snapshot.docs.map((doc) {
+//       //print(doc.data);
+//       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+//       return Board(data: data);
+//     }).toList();
+//   }
+//
+//   // Game data from snapshots
+//   Board _boardFromSnapshot(DocumentSnapshot snapshot) {
+//
+//     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+//
+//     Board board = Board(data: data);
+//
+//     board.boardData = data['boardData'].cast<int>();
+//     board.rowScores = data['rowScores'].cast<int>();
+//     board.rowResults = data['rowResults'].cast<int>();
+//     board.colScores = data['colScores'].cast<int>();
+//     board.rowResults = data['rowResults'].cast<int>();
+//     board.percentSplits = data['percentSplits'].cast<int>();
+//     board.dirty = false;
+//
+//     return board;
+//   }
+//
+//   //get collections stream
+//   Stream<List<Board>> get boardList {
+//
+//     if (gidKey != null) {
+//       return boardCollection.snapshots()
+//           .map(_boardListFromSnapshot);
+//     } else {
+//       return const Stream.empty();
+//     }
+//   }
+//
+//   // get game doc stream
+//   Stream<Board> get board {
+//     log("Getting board for GID: $gidKey, UID: $uid, SID: $sidKey");
+//     return boardCollection.doc(gidKey).snapshots()
+//         .map((DocumentSnapshot doc) => _boardFromSnapshot(doc));
+// //    .map(_playerFromSnapshot);
+//   }
+//
 // // =============================================================================
 // //                ***   COMMUNITY DATABASE MEMBERS   *** (DONE)
 // // =============================================================================

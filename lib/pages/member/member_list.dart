@@ -34,11 +34,11 @@ class _MemberListState extends State<MemberList> {
 
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
-    return StreamBuilder<List<Member>>(
-      stream: DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: widget.community.key).fsDocList as Stream<List<Member>>,
+    return StreamBuilder<List<FirestoreDoc>>(
+      stream: DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: widget.community.key).fsDocList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Member> member = snapshots.data!;
+          List<Member> member = snapshots.data!.map((s) => s as Member).toList();
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],

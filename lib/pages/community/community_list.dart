@@ -26,11 +26,11 @@ class _CommunityListState extends State<CommunityList> {
 
     bruceUser = Provider.of<BruceUser>(context);
 
-    return StreamBuilder<List<Community>>(
-      stream: DatabaseService(FSDocType.community, uid: bruceUser.uid).fsDocList as Stream<List<Community>>,
+    return StreamBuilder<List<FirestoreDoc>>(
+      stream: DatabaseService(FSDocType.community, uid: bruceUser.uid).fsDocList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Community> community = snapshots.data!;
+          List<Community> community = snapshots.data!.map((s) => s as Community).toList();
           return Scaffold(
             appBar: AppBar(
                 title: Text('Manage Community - Count: ${community.length}'),

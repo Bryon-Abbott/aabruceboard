@@ -50,7 +50,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
 
     if ( community != null ) {
       uid = community!.uid;
-      cid = community!.cid;
+      cid = community!.docId;
       currentCommunityName = community?.name ?? 'xxx';
       currentCommunityType = community?.type ?? 'xxx';
       currentCommunityNoMembers = community?.noMembers ?? 0;
