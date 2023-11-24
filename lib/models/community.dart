@@ -12,14 +12,14 @@ class Community implements FirestoreDoc {
   @override
   final NumberFormat _keyFormat = NumberFormat("C0000", "en_US");
   // Data Class Variables
-  String uid;
+  int pid;
   String name;
   String type;
   int noMembers=0;
 
   Community({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
-        uid = data['uid'] ?? 'error',
+        pid = data['pid'] ?? -1,
         name = data['name'] ?? 'NAME',
         type = data['type'] ?? 'TYPE',
         noMembers = data['noMembers'] ?? 0;
@@ -27,7 +27,7 @@ class Community implements FirestoreDoc {
   @override
   void update({ required Map<String, dynamic> data, }) {
     docId = data['docId'] ?? docId;
-    uid = data['uid'] ?? uid;
+    pid = data['pid'] ?? pid;
     name = data['name'] ?? name;
     type = data['type'] ?? type;
     noMembers = data['noMembers'] ?? noMembers;
@@ -45,7 +45,7 @@ class Community implements FirestoreDoc {
   Map<String, dynamic> get updateMap {
     return {
       'docId': docId,
-      'uid': uid,
+      'pid': pid,
       'name': name,
       'type': type,
       'noMembers': noMembers,

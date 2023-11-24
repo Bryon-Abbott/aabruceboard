@@ -10,7 +10,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 // Todo: Convert this to a Database Factory
 class DatabaseService {
   // Todo: Relook at why uid is required to simplefy.
-  String? uid; // Current Active User ID
+  String? uid; // Current Active User ID - This parameter never needs to be used ... as it is looked up.
+  String? toUid; // Second User ID for Messages
+  String? fromUid; // Second User ID for Messages
+
   String? sidKey; // Series ID
   String? gidKey; // Game ID (User as Game ID and Board ID)
   String? cidKey; // Player ID (Used as Member)
@@ -25,22 +28,13 @@ class DatabaseService {
   final CollectionReference playerCollection = FirebaseFirestore.instance
       .collection('Player');
 
+  final Query messageQuery = FirebaseFirestore.instance.collectionGroup('Incoming');
+
   late CollectionReference docCollection;
-  late CollectionReference parentCollection;
-//  late CollectionReference statsCollection;
   late DocumentReference statsDocument;
-//  late CollectionReference nextIdCollection;
   late DocumentReference nextIdDocument;
 
-
-//  late CollectionReference seriesCollection;
-  late CollectionReference communityCollection;
-  late CollectionReference membershipCollection;
-  late CollectionReference memberCollection;
-  late CollectionReference gameCollection;
-  late CollectionReference boardCollection;
-
-  DatabaseService(this.fsDocType, { this.uid, this.cidKey, this.sidKey, this.gidKey }) {
+  DatabaseService(this.fsDocType, { this.toUid, this.fromUid, this.uid, this.cidKey, this.sidKey, this.gidKey }) {
     // If UID not passed in, try to calculate it from Firebase Auth.
     // In fact you should never need to pass in UID as long as you check
     // to ensure the user is signed in.
@@ -50,11 +44,28 @@ class DatabaseService {
       final User? user = FirebaseAuth.instance.currentUser;
       if (user != null) uid = user.uid;
     }
+    // if toUid not set ... set it to the current users uid.
+    if (toUid == null) {
+      toUid = uid;
+    }
+    // if toUid not set ... set it to the current users uid.
+    if (fromUid == null) {
+      fromUid = uid;
+    }
     log('DatabaseService: Class Type is > $fsDocType');
     switch (fsDocType) {
+      case FSDocType.messageowner: {
+        nextIdDocument = playerCollection.doc(uid);
+        statsDocument = playerCollection.doc(uid);
+        docCollection = playerCollection.doc(toUid).collection('MessageOwner');
+        //.doc(uid).collection('Incoming');
+        log('Database: Found "MessageOwber" class');
+      }
+      break;
       case FSDocType.message: {
-        parentCollection = playerCollection;
-        docCollection = playerCollection.doc(uid).collection('Message');
+        nextIdDocument = playerCollection.doc(toUid);
+        statsDocument = playerCollection.doc(toUid);
+        docCollection = playerCollection.doc(toUid).collection('MessageOwner').doc(fromUid).collection('Incoming');
         log('Database: Found "Message" class');
       }
       break;
@@ -117,21 +128,6 @@ class DatabaseService {
       break;
     }
     log('Setting up DatabaseService $uid');
-    if (uid != null) {
-  //    seriesCollection = playerCollection.doc(uid).collection('Series'); // List of Series of Games User manages
-  //    communityCollection = playerCollection.doc(uid).collection('Community'); // List of Community of Players User manages
-  //    membershipCollection = playerCollection.doc(uid).collection('Membership'); // List of Communities the User has joined
-      // If uid found ... create the remaining
-      // if (cidKey != null) {
-      //   memberCollection = communityCollection.doc(cidKey).collection('Member'); // List of Members in a Community
-      // }
-      // if (sidKey != null) {
-      //   gameCollection = seriesCollection.doc(sidKey).collection('Game'); // List of Games in a Series
-      // }
-      // if (gidKey != null) {
-      //   boardCollection = gameCollection.doc(gidKey).collection('Board'); // Board associated with a Game (GID=BID)
-      // }
-    }
   }
 
 // =============================================================================
@@ -229,9 +225,7 @@ class DatabaseService {
 
   //get FirestoreDoc List stream
   Stream<List<FirestoreDoc>> get fsDocList {
-    // log('fsDocList: collaction Path : ${docCollection.path}');
     Stream<QuerySnapshot<Object?>> s001 = docCollection.snapshots();
-    // log('fsDocList: Length ${s001.length}');
     return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
     // return docCollection.snapshots()
     //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));

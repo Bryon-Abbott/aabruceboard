@@ -1,14 +1,16 @@
 // Firestore Document - BaseClass
 import 'dart:developer';
+import 'package:intl/intl.dart';
 
 import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/models/message.dart';
+import 'package:bruceboard/models/messageowner.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/membership.dart';
-import 'package:intl/intl.dart';
 
 // enum ShapeType
 enum FSDocType {
@@ -16,7 +18,7 @@ enum FSDocType {
     series, game, board,
     community, member,
     membership,
-    message, }
+    messageowner, message }
 
 abstract class FirestoreDoc {
   final String nextIdField = 'nextFsid';    // Stored in Player
@@ -41,8 +43,12 @@ abstract class FirestoreDoc {
           return Membership(data: data);
         case FSDocType.member:
           return Member(data: data);
+        case FSDocType.messageowner:
+          return MessageOwner(data: data);
+        case FSDocType.message:
+          return Message(data: data);
         default:
-          log('Invalid Document Type');
+          log('FirestoreDoc: Invalid Document Type');
           throw 'Invalid document type';
       }
     //docId = data['docId'] ?? -1;

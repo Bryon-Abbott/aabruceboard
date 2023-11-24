@@ -32,7 +32,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
   Widget build(BuildContext context) {
     //cid = ModalRoute.of(context)!.settings.arguments as String;
     BruceUser bruceUser = Provider.of<BruceUser>(context);
-    String uid = bruceUser.uid;
+    //String uid = bruceUser.uid;
     late int cid;
     //Community? community = widget.community;
     String currentCommunityName = "";
@@ -42,14 +42,14 @@ class CommunityMaintainState extends State<CommunityMaintain> {
 
     // Todo: Remove this
     if (community != null) {
-      community = community!;
+      //community = community!;
       log('community_maintain: Got Community ${community!.name}');
     } else {
       log('No Community found ... New community, dont use until created?');
     }
 
     if ( community != null ) {
-      uid = community!.uid;
+      //uid = community!.uid;
       cid = community!.docId;
       currentCommunityName = community?.name ?? 'xxx';
       currentCommunityType = community?.type ?? 'xxx';
@@ -123,19 +123,20 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                             Map<String, dynamic> data;
                             // Validate returns true if the form is valid, or false otherwise.
                             if (_formCommunityKey.currentState!.validate()) {
+                              Player player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
                               if ( community == null ) {
                                 // Add new Game
                                 data = {
                                   'cid': -1,
-                                  'uid': uid,
+                                  'pid': player.pid,
                                   'name': currentCommunityName,
                                   'type': currentCommunityType,
                                   'noMembers': 0,
                                 };
                                 community = Community( data: data );
-                                await DatabaseService(FSDocType.community, uid: uid).fsDocAdd(community!);
+                                await DatabaseService(FSDocType.community).fsDocAdd(community!);
                               } else {
                                 // update existing community
                                 data = {
@@ -143,7 +144,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                   'type': currentCommunityType,
                                 };
                                 community!.update(data: data);
-                                await DatabaseService(FSDocType.community, uid: uid).fsDocUpdate(community!);
+                                await DatabaseService(FSDocType.community).fsDocUpdate(community!);
                               }
                               // Save Updates to Shared Preferences
                               log("community_maintain: Added/Updated community "
@@ -168,7 +169,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                 : () {
                               if (community!.noMembers == 0) {
                                 log('Delete Community ... ${community!.key}');
-                                DatabaseService(FSDocType.community, uid: uid).fsDocDelete(community!);
+                                DatabaseService(FSDocType.community).fsDocDelete(community!);
                                 Navigator.of(context).pop();
                               }
                             },

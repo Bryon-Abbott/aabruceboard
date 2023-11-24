@@ -1,4 +1,6 @@
 import 'package:bruceboard/pages/community/community_select.dart';
+import 'package:bruceboard/pages/message/message_list.dart';
+import 'package:bruceboard/pages/message/messageowner_list.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -120,6 +122,7 @@ class LoadApp extends StatelessWidget {
               '/player-profile': (context) => const PlayerProfile(),
               '/player-select': (context) => const PlayerSelect(),
               '/series-list': (context) => const SeriesList(),
+              '/message-list': (context) => const MessageOwnerList(),
               '/series-maintain': (context) => const SeriesMaintain(),
               '/community-list': (context) => const CommunityList(),
               '/community-maintain': (context) => const CommunityMaintain(),

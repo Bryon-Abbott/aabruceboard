@@ -24,50 +24,54 @@ class _PlayerSelectState extends State<PlayerSelect> {
 
     // Todo: Don't need UID, look to remove from Database
     bruceUser = Provider.of<BruceUser>(context);
-
-    return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocList,
-      builder: (context, snapshots) {
-        if(snapshots.hasData) {
-          List<Player> player =  snapshots.data!.map((s) => s as Player).toList();
-          return Scaffold(
-            appBar: AppBar(
-      //            backgroundColor: Colors.blue[900],
-                title: Text('Select Player - Count: ${player.length}'),
-                centerTitle: true,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  // if user presses back, cancels changes to list (order/deletes)
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-            ),
-            body: ListView.builder(
-              itemCount: player.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: const Icon(Icons.person_outline),
-                  title: Text("${player[index].fName} ${player[index].lName}"),
-                  subtitle: Text(player[index].uid),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.check_circle_outline),
+    if (bruceUser != null ) {
+      return StreamBuilder<List<FirestoreDoc>>(
+        stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocList,
+        builder: (context, snapshots) {
+          if(snapshots.hasData) {
+            List<Player> player =  snapshots.data!.map((s) => s as Player).toList();
+            return Scaffold(
+              appBar: AppBar(
+        //            backgroundColor: Colors.blue[900],
+                  title: Text('Select Player - Count: ${player.length}'),
+                  centerTitle: true,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    // if user presses back, cancels changes to list (order/deletes)
                     onPressed: () {
-                      log('Icon Pressed');
-                      Navigator.of(context).pop(player[index]);
+                      Navigator.of(context).pop();
                     },
-                  )
-                  ,
-                  );
-              },
-            ),
-          );
-        } else {
-          log("player_select: Snapshot Error ... ${snapshots.error}");
-          return const Loading();
+                  ),
+              ),
+              body: ListView.builder(
+                itemCount: player.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: const Icon(Icons.person_outline),
+                    title: Text("${player[index].fName} ${player[index].lName}"),
+                    subtitle: Text(player[index].uid),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.check_circle_outline),
+                      onPressed: () {
+                        log('Icon Pressed');
+                        Navigator.of(context).pop(player[index]);
+                      },
+                    )
+                    ,
+                    );
+                },
+              ),
+            );
+          } else {
+            log("player_select: Snapshot Error ... ${snapshots.error}");
+            return const Loading();
+          }
         }
-      }
-    );
+      );
+    } else {
+      log("Waiting for Bruce User ... ");
+      return const Loading();
     }
   }
+}

@@ -3,13 +3,19 @@ import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 
+// Note Used
+enum messageType {
+  MS0000,     // Null Message
+  MS0001      // Request to Join Community
+}
+
 class Message implements FirestoreDoc {
   @override
   int docId = -1;
   @override
   final String nextIdField = 'nextMeid';
   @override
-  final String totalField = 'noMembers';
+  final String totalField = 'noMessages';
   @override
   final NumberFormat _keyFormat = NumberFormat("ME00000000", "en_US");
   // Document Specific Data items
@@ -18,13 +24,15 @@ class Message implements FirestoreDoc {
   int pidFrom;  // /Player/{UID-REC}/Message/{UID-SEND}/Incoming/{MSID-KEY}
   int pidTo;
   String type;
+  String userMessage;
 
   //Member({ required this.cid, required this.uid, required this.credits, });
   Message({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
         pidFrom = data['pidFrom'] ?? -1,
         pidTo = data['pidTo'] ?? -1,
-        type = data['type'] ?? 'M000';
+        type = data['type'] ?? 'MS0000',
+        userMessage = data['userMessage'] ?? 'No user message provided';
 
   @override
   void update({ required Map<String, dynamic> data, }) {
@@ -32,6 +40,7 @@ class Message implements FirestoreDoc {
     pidFrom = data['pidFrom'] ?? pidFrom;
     pidTo = data['pidTo'] ?? pidTo;
     type = data['type'] ?? type;
+    userMessage = data['userMessage'] ?? userMessage;
   }
 
   // static String KEY(int id) {
@@ -50,9 +59,9 @@ class Message implements FirestoreDoc {
   }
 
   // Returns a Map<String, dynamic> of all member veriables.
-  // type: MS00000000 - Null / Invalid Message
-  //       MS00000001 - Community Join Request
-  //       MS00000002 - Square Request
+  // type: MS0000 - Null / Invalid Message
+  //       MS0001 - Community Join Request
+  //       MS0002 - Square Request
   @override
   Map<String, dynamic> get updateMap {
     return {
@@ -60,6 +69,7 @@ class Message implements FirestoreDoc {
       'pidFrom': pidFrom,
       'pidTo': pidTo,
       'type': type,
+      'userMessage': userMessage,
     };
   }
 

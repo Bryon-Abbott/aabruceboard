@@ -240,6 +240,22 @@ class _HomeState extends State<Home> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton.icon(
+                              onPressed: (bruceUser.uid == 'x') ? null : () async {
+                                Navigator.pushNamed(
+                                    context, '/message-list');
+                              },
+                              icon: Icon(
+                                Icons.message_outlined,
+                                size: 32,
+                                color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                              ),
+                              label: Text('Messages', style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton.icon(
                               onPressed: (bruceUser.uid != 'x') ? null : () async {
                                 Navigator.pushNamed(
                                   //  context, '/managegames', arguments: BruceArguments(players, games));

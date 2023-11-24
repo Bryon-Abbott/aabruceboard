@@ -4,8 +4,10 @@ import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/models/message.dart';
+import 'package:bruceboard/models/messageowner.dart';
 import 'package:bruceboard/pages/membership/membership_tile.dart';
-import 'package:bruceboard/services/message.dart';
+//import 'package:bruceboard/services/message.dart';
+import 'package:bruceboard/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -54,27 +56,40 @@ class _MembershipListState extends State<MembershipList> {
                     onPressed: () async {
                       // Todo: Look at overlap of community & player.
                       Community? community;
-                      Player? player;
+                      Player? communityPlayer;
                       dynamic results = await Navigator.pushNamed(context, '/community-select');
                       if (results != null) {
-                        player = results[0] as Player;
+                        communityPlayer = results[0] as Player;
                         community = results[1] as Community;
                         log("membership_list: Community Selected: ${community.name ?? 'Not Selected'}");
-                        Map<String, dynamic> data =
-                        {
-                          'cid': community.docId, // Community Owner CID
-                          'pid': player.docId,  // Community Onwer PID
-                          'uid': player.uid,  // Community Owner UID
-                          'status': 'Requested',
-                        };
-                        Membership membership = Membership(data: data);
+                        // Add Membership to current Player with "Requested" Status
+                        Membership membership = Membership(
+                          data: { 'cid': community.docId, // Community Owner CID
+                                  'pid': communityPlayer.docId,  // Community Onwer PID
+                                  'uid': communityPlayer.uid,  // Community Owner UID
+                                  'status': 'Requested',
+                                }
+                        );
                         // Note ... the database section is the current user but the Membership PID
                         // is the PID of the owner of the community.
                         await DatabaseService(FSDocType.membership, uid: bruceUser.uid).fsDocAdd(membership);
-                        log("membership_list: Updating noMemberships: ${player.noMemberships.toString() ?? 'Didnt get memberships'}");
-                        Message msg = Message(data: { } );
+                        log("membership_list: Updating noMemberships: ${communityPlayer.noMemberships.toString() ?? 'Didnt get memberships'}");
 
-                        await MessageService(FSDocType.message).fsDocAdd(msg);
+                        // Add Membership to current Player with "Requested" Status
+                        Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+                        MessageOwner msgOwner = MessageOwner( data: {
+                          'docId': player.docId,
+                          'uid': player.uid,  // Sending Players UID
+                        } );
+                        await DatabaseService(FSDocType.messageowner, toUid: communityPlayer.uid).fsDocAdd(msgOwner);
+                        // Add Membership to current Player with "Requested" Status
+                        Message msg = Message( data: {
+                          'pidTo': communityPlayer.docId,
+                          'pidFrom': player.docId,
+                          'uid': communityPlayer.uid,  // Sending Players UID
+                          'userMessage': 'No Comment',
+                        } );
+                        await DatabaseService(FSDocType.message, toUid: communityPlayer.uid).fsDocAdd(msg);
                       }
                     },
                     icon: const Icon(Icons.add_circle_outline),

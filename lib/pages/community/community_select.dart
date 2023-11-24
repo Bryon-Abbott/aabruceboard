@@ -36,7 +36,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
       ),
       body: Column(
         children: [
-          const Text("Player ID"),
+          // const Text("Player ID"),
           ListTile(
             leading: const Icon(Icons.person_outline),
             title: Text("Player: ${player.fName} ${player.lName}"),
@@ -46,18 +46,18 @@ class _CommunitySelectState extends State<CommunitySelect> {
                   dynamic playerSelected = await Navigator.pushNamed(
                       context, '/player-select');
                   if (playerSelected != null) {
-                    player = playerSelected as Player;
-                    setState((){});
+                    setState((){
+                      player = playerSelected as Player;
+                    });
                     log('Player Selected ${player.fName}');
                   } else {
                     log("No player selected");
                   }
                 },
                 child: const Text("Select Player")
-            )
-            ,
+            ),
           ),
-          const Text("Player Communities"),
+         // const Text("Player Communities"),
           SingleChildScrollView(
             child: SizedBox(
               height: 300,
@@ -68,7 +68,6 @@ class _CommunitySelectState extends State<CommunitySelect> {
                 List<Community> community = snapshots.data!.map((s) => s as Community).toList();
                 return Scaffold(
                   appBar: AppBar(
-                    //            backgroundColor: Colors.blue[900],
                       title: const Text('Select Community'),
                       centerTitle: true,
                       elevation: 0,
