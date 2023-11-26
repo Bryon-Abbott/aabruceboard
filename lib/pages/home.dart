@@ -20,7 +20,6 @@ import 'package:bruceboard/theme/theme_manager.dart';
 class Home extends StatefulWidget {
   const Home({super.key});
 
-
   @override
   State<Home> createState() => _HomeState();
 }

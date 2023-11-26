@@ -32,7 +32,6 @@ class _PlayerSelectState extends State<PlayerSelect> {
             List<Player> player =  snapshots.data!.map((s) => s as Player).toList();
             return Scaffold(
               appBar: AppBar(
-        //            backgroundColor: Colors.blue[900],
                   title: Text('Select Player - Count: ${player.length}'),
                   centerTitle: true,
                   elevation: 0,

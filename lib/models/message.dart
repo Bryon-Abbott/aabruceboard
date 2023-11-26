@@ -3,11 +3,20 @@ import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 
-// Note Used
-enum messageType {
-  MS0000,     // Null Message
-  MS0001      // Request to Join Community
-}
+const messageType = {
+  0: "Message",          // Desc(General Message) (Respnose: Optional: Text Response)
+  1: "Community Join Request",    // Desc(Request to Join Community) Input(Community) Response(Required: Accept / Reject)
+  2: "Square Request",    // Desc(Request Square) Input(Board, Square), Response(Required: Accept/Reject)
+  3: "Credit Request",  // Desc(Request Credits) Input(Community, Amount), Response(Required: Accept/Reject)
+
+  10001: "Community Join Response",
+};
+
+const messageResponse = {
+  -1: 'Null',
+  0: 'Rejected',
+  1: 'Accepted',
+};
 
 class Message implements FirestoreDoc {
   @override
@@ -15,6 +24,7 @@ class Message implements FirestoreDoc {
   @override
   final String nextIdField = 'nextMeid';
   @override
+  // final String totalField = 'NO-TOTALS';
   final String totalField = 'noMessages';
   @override
   final NumberFormat _keyFormat = NumberFormat("ME00000000", "en_US");
@@ -23,7 +33,10 @@ class Message implements FirestoreDoc {
   // int docId;
   int pidFrom;  // /Player/{UID-REC}/Message/{UID-SEND}/Incoming/{MSID-KEY}
   int pidTo;
-  String type;
+  int messageType;
+  int responseCode;
+  Map<String, dynamic> data = {};
+  // Map<String, dynamic> respnose = {};
   String userMessage;
 
   //Member({ required this.cid, required this.uid, required this.credits, });
@@ -31,7 +44,9 @@ class Message implements FirestoreDoc {
         docId = data['docId'] ?? -1,
         pidFrom = data['pidFrom'] ?? -1,
         pidTo = data['pidTo'] ?? -1,
-        type = data['type'] ?? 'MS0000',
+        messageType = data['messageType'] ?? -1,
+        data = data['data'] ?? {},
+        responseCode = data['responseCode'] ?? -1,
         userMessage = data['userMessage'] ?? 'No user message provided';
 
   @override
@@ -39,7 +54,9 @@ class Message implements FirestoreDoc {
     docId = data['docId'] ?? docId;  // From Super
     pidFrom = data['pidFrom'] ?? pidFrom;
     pidTo = data['pidTo'] ?? pidTo;
-    type = data['type'] ?? type;
+    messageType = data['messageType'] ?? messageType;
+    data = data['data'] ?? data;
+    responseCode = data['responseCode'] ?? responseCode;
     userMessage = data['userMessage'] ?? userMessage;
   }
 
@@ -59,18 +76,16 @@ class Message implements FirestoreDoc {
   }
 
   // Returns a Map<String, dynamic> of all member veriables.
-  // type: MS0000 - Null / Invalid Message
-  //       MS0001 - Community Join Request
-  //       MS0002 - Square Request
   @override
   Map<String, dynamic> get updateMap {
     return {
       'docId': docId,
       'pidFrom': pidFrom,
       'pidTo': pidTo,
-      'type': type,
+      'messageType': messageType,
+      'data': data,
+      'responseCode': responseCode,
       'userMessage': userMessage,
     };
   }
-
 }

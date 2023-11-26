@@ -73,22 +73,25 @@ class _MembershipListState extends State<MembershipList> {
                         // Note ... the database section is the current user but the Membership PID
                         // is the PID of the owner of the community.
                         await DatabaseService(FSDocType.membership, uid: bruceUser.uid).fsDocAdd(membership);
-                        log("membership_list: Updating noMemberships: ${communityPlayer.noMemberships.toString() ?? 'Didnt get memberships'}");
 
-                        // Add Membership to current Player with "Requested" Status
+                        log("membership_list: Updating noMemberships: ${communityPlayer.noMemberships.toString() ?? 'Didnt get memberships'}");
+                        // Add MemberOwner to Community Player for current Player
                         Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                         MessageOwner msgOwner = MessageOwner( data: {
                           'docId': player.docId,
                           'uid': player.uid,  // Sending Players UID
                         } );
                         await DatabaseService(FSDocType.messageowner, toUid: communityPlayer.uid).fsDocAdd(msgOwner);
-                        // Add Membership to current Player with "Requested" Status
+                        // Add Join Request Message to Community Player with "Requested" Status
                         Message msg = Message( data: {
+                          'messageType': 1, // Community Join Request
                           'pidTo': communityPlayer.docId,
                           'pidFrom': player.docId,
                           'uid': communityPlayer.uid,  // Sending Players UID
+                          'data': {'cid': community.docId, 'pid': community.pid},
                           'userMessage': 'No Comment',
                         } );
+                        log('membership_lsit: Adding Message to ${communityPlayer.uid} from U: ${bruceUser.uid}');
                         await DatabaseService(FSDocType.message, toUid: communityPlayer.uid).fsDocAdd(msg);
                       }
                     },

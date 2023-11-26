@@ -10,7 +10,7 @@ class Community implements FirestoreDoc {
   @override
   final String totalField = 'noCommunities';
   @override
-  final NumberFormat _keyFormat = NumberFormat("C0000", "en_US");
+  static NumberFormat _keyFormat = NumberFormat("C0000", "en_US");
   // Data Class Variables
   int pid;
   String name;
@@ -31,6 +31,11 @@ class Community implements FirestoreDoc {
     name = data['name'] ?? name;
     type = data['type'] ?? type;
     noMembers = data['noMembers'] ?? noMembers;
+  }
+
+  static String Key(int cid) {
+    String key = _keyFormat.format(cid);
+    return key;
   }
 
   @override

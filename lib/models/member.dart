@@ -13,26 +13,33 @@ class Member implements FirestoreDoc {
   @override
   final String totalField = 'noMembers';
   @override
-  final NumberFormat _keyFormat = NumberFormat("M0000", "en_US");
+  static NumberFormat _keyFormat = NumberFormat("P00000000", "en_US");
   // Data Class Variables
- // int mid;
-  String uid;  // /Player/{PID}/Community/{CID}/Member/{PID} Note: PID = MID
+  //int pid;
+  //String uid;  // /Player/{PID}/Community/{CID}/Member/{PID} Note: PID = MID
   int credits;
 
   //Member({ required this.cid, required this.uid, required this.credits, });
   @override
   Member({ required Map<String, dynamic> data, }) :
-    docId = data['docId'] ?? -1,
+    docId = data['docId'] ?? -1,  // Member's docId == PID
 //    mid = data['mid'] ?? -1,
-    uid = data['uid'] ?? 'error',
+//    pid = data['pid'] ?? -1,
+    //uid = data['uid'] ?? 'error',
     credits = data['credits'] ?? 0;
 
   @override
   void update({ required Map<String, dynamic> data, }) {
     docId = data['docId'] ?? docId;
-//    mid = data['mid'] ?? mid;
-    uid = data['uid'] ?? uid;
+  //  pid = data['pid'] ?? pid;
+    //uid = data['uid'] ?? uid;
     credits = data['credits'] ?? credits;
+  }
+
+
+  static String Key(int cid) {
+    String key = _keyFormat.format(cid);
+    return key;
   }
 
   @override
@@ -49,7 +56,7 @@ class Member implements FirestoreDoc {
     return {
       'docId': docId,
 //      'mid': mid,
-      'uid': uid,
+//      'uid': uid,
       'credits': credits,
     };
   }

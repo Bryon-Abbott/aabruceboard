@@ -17,8 +17,8 @@ class DatabaseService {
   String? sidKey; // Series ID
   String? gidKey; // Game ID (User as Game ID and Board ID)
   String? cidKey; // Player ID (Used as Member)
-  //late Player _player;
-  // FirestoreDoc fsDoc;
+
+  String messageLocation; // Where to write / read messages (default to
   FSDocType fsDocType;
 
 //  FirebaseFirestore db;
@@ -34,7 +34,11 @@ class DatabaseService {
   late DocumentReference statsDocument;
   late DocumentReference nextIdDocument;
 
-  DatabaseService(this.fsDocType, { this.toUid, this.fromUid, this.uid, this.cidKey, this.sidKey, this.gidKey }) {
+  DatabaseService(this.fsDocType,
+      { this.toUid, this.fromUid, this.uid,
+        this.cidKey, this.sidKey, this.gidKey,
+        this.messageLocation = 'Incoming',
+      }) {
     // If UID not passed in, try to calculate it from Firebase Auth.
     // In fact you should never need to pass in UID as long as you check
     // to ensure the user is signed in.
@@ -45,13 +49,10 @@ class DatabaseService {
       if (user != null) uid = user.uid;
     }
     // if toUid not set ... set it to the current users uid.
-    if (toUid == null) {
-      toUid = uid;
-    }
+    toUid ??= uid;
     // if toUid not set ... set it to the current users uid.
-    if (fromUid == null) {
-      fromUid = uid;
-    }
+    fromUid ??= uid;
+
     log('DatabaseService: Class Type is > $fsDocType');
     switch (fsDocType) {
       case FSDocType.messageowner: {
@@ -60,13 +61,15 @@ class DatabaseService {
         docCollection = playerCollection.doc(toUid).collection('MessageOwner');
         //.doc(uid).collection('Incoming');
         log('Database: Found "MessageOwber" class');
+        log(docCollection.path);
       }
       break;
       case FSDocType.message: {
-        nextIdDocument = playerCollection.doc(toUid);
-        statsDocument = playerCollection.doc(toUid);
-        docCollection = playerCollection.doc(toUid).collection('MessageOwner').doc(fromUid).collection('Incoming');
-        log('Database: Found "Message" class');
+        nextIdDocument = playerCollection.doc(uid);  // Next number in sender Player id
+        statsDocument = playerCollection.doc(toUid).collection('MessageOwner').doc(fromUid);
+        docCollection = playerCollection.doc(toUid).collection('MessageOwner').doc(fromUid).collection(messageLocation);
+        log('Database: Found "Message" class : ${docCollection.path}');
+        log(docCollection.path);
       }
       break;
       case FSDocType.player: {
@@ -105,7 +108,8 @@ class DatabaseService {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid);
         docCollection = playerCollection.doc(uid).collection('Membership');
-        log('Database: Found "Membership" class');
+        log('Database: Found "Membership" class : ${docCollection.path}');
+        log(docCollection.path);
       }
       break;
       case FSDocType.community: {
@@ -120,6 +124,7 @@ class DatabaseService {
         statsDocument = playerCollection.doc(uid).collection('Community').doc(cidKey);
         docCollection = playerCollection.doc(uid).collection('Community').doc(cidKey).collection('Member');
         log('Database: Found "Member" class');
+        log(docCollection.path);
       }
       break;
       default: {
@@ -136,8 +141,11 @@ class DatabaseService {
   Future<void> fsDocAdd(FirestoreDoc fsDoc) async {
     int noDocs = -1;
     // If there is already a docId, use it vs getting the Next Number
+    log("database: adding documnet : ${fsDoc.docId}");
     if (fsDoc.docId == -1) {
       // Get the next series number for the player
+      log('database: creating new key');
+      log(nextIdDocument.path);
       await nextIdDocument.get().then((DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         fsDoc.docId = data[fsDoc.nextIdField] ?? 0;  // If nextSid not found, start at 0.
@@ -156,11 +164,17 @@ class DatabaseService {
       }
     }
     // log('Updating Firebase ${fsDoc.updateMap}');
+    log('database: Adding document ${fsDoc.runtimeType} Key: ${fsDoc.key}');
+    log(docCollection.path);
     await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
     await docCollection.count().get()
         .then((res) => noDocs = res.count,
     );
-    await statsDocument.update({ fsDoc.totalField: noDocs} );
+    if (fsDoc.totalField != 'NO-TOTALS') {
+      log('database: updating number of docs $noDocs');
+      log(statsDocument.path);
+      await statsDocument.update({ fsDoc.totalField: noDocs} );
+    }
   }
   // Update the series Doc with data in provided Series class.
   Future<void> fsDocUpdate(FirestoreDoc fsDoc) async {
@@ -171,15 +185,17 @@ class DatabaseService {
   // Note: Application is responsible to delete Games prior to this call!!
   Future<void> fsDocDelete(FirestoreDoc fsDoc) async {
     int noDocs = -1;
-
+    log('database: fsDocDelete: path: ${docCollection.path} key: ${fsDoc.key} ');
+    log(docCollection.path);
     await docCollection.doc(fsDoc.key).delete();
     // fsDoc = FirestoreDoc(data: {});  // Clear out the class?
-    await docCollection.count().get()
-        .then((res) => noDocs = res.count,
-    );
-    await statsDocument.update({
-      fsDoc.totalField: noDocs}
-    );
+
+    if (fsDoc.totalField != 'NO-TOTALS') {
+      await docCollection.count().get()
+          .then((res) => noDocs = res.count,
+      );
+      await statsDocument.update({ fsDoc.totalField: noDocs} );
+    }
   }
 
   // Series list from snapshot
@@ -201,31 +217,60 @@ class DatabaseService {
   }
 
   // get FirestoreDoc stream
-  Stream<FirestoreDoc> fsDocStream({ required String key }) {
-    // log('database fsDocStream: getting player for U: ${key} Path: ${playerCollection.path}');
-    // log('database fsDocStream: Parent: ${docCollection.toString()} ');
-    return docCollection.doc(key).snapshots()
-        .map((DocumentSnapshot doc) => _fsDocFromSnapshot(doc));
+  Stream<FirestoreDoc> fsDocStream({String? key, int? docId}) {
+    log('database fsDocStream: getting player for U: ${key} Path: ${playerCollection.path}');
+    log('database fsDocStream: Parent: ${docCollection.toString()} ');
+    Stream<FirestoreDoc> fsDocStream;
+    if (key != null) {
+      fsDocStream = docCollection.doc(key).snapshots()
+          .map((DocumentSnapshot doc) => _fsDocFromSnapshot(doc));
 //    .map(_playerFromSnapshot);
+    } else if (docId != null) {
+      // Note ... only 1 document matches the docId so select the firts ..
+      fsDocStream = docCollection.where('docId', isEqualTo:docId ).snapshots()
+          .map((QuerySnapshot doc) => _fsDocFromSnapshot(doc.docs.first));
+    } else {
+      fsDocStream = Stream.empty();
+    }
+    return fsDocStream;
   }
 
-  Future<FirestoreDoc?> fsDoc({required String key}) async {
+//  Future<FirestoreDoc?> fsDoc({required String key}) async {
+  Future<FirestoreDoc?> fsDoc({String? key, int? docId}) async {
     FirestoreDoc? fsDoc;
-    await docCollection.doc(key).get()
-      .then((DocumentSnapshot doc) {
+    if (key != null ) {
+      await docCollection.doc(key).get()
+          .then((DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         fsDoc = FirestoreDoc(fsDocType, data: data);
       },
-    onError: (error) {
-      log("Error getting Player UID: $uid, Error: $error");
+          onError: (error) {
+            log("Error getting Player UID: $uid, Error: $error");
+            fsDoc = null;
+          });
+    } else if (docId != null ) {
+      await docCollection.where('docId', isEqualTo:docId ).get()
+          .then((querySnapshot) {
+        final data = querySnapshot.docs.first.data() as Map<String, dynamic>;
+        fsDoc = FirestoreDoc(fsDocType, data: data);
+        log('Got Player by ID : ${fsDoc!.docId}');
+      },
+          onError: (error) {
+            log("Error getting Player UID: $uid, Error: $error");
+            fsDoc = null;
+          });
+    } else {
       fsDoc = null;
-    });
+    }
     return fsDoc;
   }
 
   //get FirestoreDoc List stream
   Stream<List<FirestoreDoc>> get fsDocList {
+    log('database: fsDocList: ');
     Stream<QuerySnapshot<Object?>> s001 = docCollection.snapshots();
+    //log('database: fsDocList: Length ${s001.length} ');
+    log(docCollection.path);
     return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
     // return docCollection.snapshots()
     //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));

@@ -43,8 +43,7 @@ class _MessageListState extends State<MessageList> {
               // as Stream<List<Message>>,
               builder: (context, snapshots) {
                 if (snapshots.hasData) {
-                  List<Message> message = snapshots.data!.map((
-                      s) => s as Message).toList();
+                  List<Message> message = snapshots.data!.map((s) => s as Message).toList();
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
