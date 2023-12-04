@@ -1,5 +1,4 @@
 import 'package:bruceboard/pages/community/community_select.dart';
-import 'package:bruceboard/pages/message/message_list.dart';
 import 'package:bruceboard/pages/message/messageowner_list.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
 import 'package:bruceboard/shared/loading.dart';

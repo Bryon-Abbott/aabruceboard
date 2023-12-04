@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 
 // Todo: Look at provider for Series ID (sid) vs passing as parameter.
 // Create a Form widget.
@@ -101,8 +101,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                           onPressed: () async {
                             // Validate returns true if the form is valid, or false otherwise.
                             if (_formMemberKey.currentState!.validate()) {
-                              // If the form is valid, display a snackbar. In the real world,
-                              // you'd often call a server or save the information in a database.
+                              // Add member ...
                               if ( member == null ) {
                                 log('Add Member');
                                 // Add new Member

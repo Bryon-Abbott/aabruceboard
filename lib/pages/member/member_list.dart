@@ -7,7 +7,7 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/pages/member/member_tile.dart';
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 class MemberList extends StatefulWidget {

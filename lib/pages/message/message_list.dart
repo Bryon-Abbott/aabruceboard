@@ -2,14 +2,13 @@ import 'dart:developer';
 
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/message.dart';
-import 'package:bruceboard/models/message.dart';
 import 'package:bruceboard/models/messageowner.dart';
 import 'package:bruceboard/pages/message/message_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 class MessageList extends StatefulWidget {
@@ -49,7 +48,7 @@ class _MessageListState extends State<MessageList> {
                     children: [
                       Text("Message Owner: ${widget.messageOwner.docId} Player: ${player.fName} ${player.lName}"),
                       SizedBox(
-                        height: 100,
+                        height: 150,
                         child: ListView.builder(
                           itemCount: message.length,
                           itemBuilder: (context, index) {

@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:bruceboard/models/messageowner.dart';
 import 'package:flutter/material.dart';
 
-import 'package:bruceboard/models/message.dart';
 //import 'package:bruceboard/pages/message/message_maintain.dart';
 
 class MessageOwnerTile extends StatelessWidget {

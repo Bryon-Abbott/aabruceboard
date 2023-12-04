@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthService {

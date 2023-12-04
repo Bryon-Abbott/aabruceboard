@@ -1,5 +1,4 @@
 // Community Member
-import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 

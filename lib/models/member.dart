@@ -13,7 +13,7 @@ class Member implements FirestoreDoc {
   @override
   final String totalField = 'noMembers';
   @override
-  static NumberFormat _keyFormat = NumberFormat("P00000000", "en_US");
+  static final NumberFormat _keyFormat = NumberFormat("P00000000", "en_US");
   // Data Class Variables
   //int pid;
   //String uid;  // /Player/{PID}/Community/{CID}/Member/{PID} Note: PID = MID
@@ -35,7 +35,6 @@ class Member implements FirestoreDoc {
     //uid = data['uid'] ?? uid;
     credits = data['credits'] ?? credits;
   }
-
 
   static String Key(int cid) {
     String key = _keyFormat.format(cid);

@@ -1,15 +1,13 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/models/message.dart';
 import 'package:bruceboard/models/messageowner.dart';
 import 'package:bruceboard/pages/message/message_list.dart';
-import 'package:bruceboard/pages/message/messageowner_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 class MessageOwnerList extends StatefulWidget {

@@ -189,7 +189,7 @@ class _HomeState extends State<Home> {
                                 if (results != null) {
                                   player = results[0] as Player;
                                   community = results[1] as Community;
-                                  log("Join Community: ${community.name} ${player.pidKey} ${community.key}");
+                                  log("Add to Community: ${community.name} ${player.pidKey} ${community.key}");
                                 }
                               },
                               icon: Icon(
@@ -197,7 +197,7 @@ class _HomeState extends State<Home> {
                                 size: 32,
                                 color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
                               ),
-                              label: Text('Join Community',
+                              label: Text('Add Community',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),

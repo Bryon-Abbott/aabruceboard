@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 
 // Create a Form widget.
 class SeriesMaintain extends StatefulWidget {
@@ -23,7 +23,7 @@ class SeriesMaintain extends StatefulWidget {
 class SeriesMaintainState extends State<SeriesMaintain> {
   final _formSeriesKey = GlobalKey<FormState>();
   late Series? series;
-  Player? player = null;
+  Player? player;
   late BruceUser bruceUser;
 
   @override

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/services/auth.dart';
 import 'package:bruceboard/shared/constants.dart';
 import 'package:bruceboard/shared/loading.dart';

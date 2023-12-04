@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/board.dart';
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:provider/provider.dart';
 

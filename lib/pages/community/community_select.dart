@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
 
@@ -62,7 +62,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
             child: SizedBox(
               height: 300,
               child: StreamBuilder<List<FirestoreDoc>>(
-                stream: DatabaseService(FSDocType.community, uid: player.key).fsDocList,
+                stream: DatabaseService(FSDocType.community, uid: player.uid ).fsDocList,
                 builder: (context, snapshots) {
               if(snapshots.hasData) {
                 List<Community> community = snapshots.data!.map((s) => s as Community).toList();
@@ -89,13 +89,10 @@ class _CommunitySelectState extends State<CommunitySelect> {
                           icon: const Icon(Icons.check_circle_outline),
                           onPressed: () {
                             log('Icon Pressed');
-
                             Navigator.of(context).pop([player, community[index]]);
                           },
-                        )
-                        ,
+                        ),
                       );
-                      // return CommunityTile(community: community[index]);
                     },
                   ),
                 );

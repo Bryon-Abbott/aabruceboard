@@ -1,22 +1,8 @@
 // Community Member
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
-
-const messageType = {
-  0: "Message",          // Desc(General Message) (Respnose: Optional: Text Response)
-  1: "Community Join Request",    // Desc(Request to Join Community) Input(Community) Response(Required: Accept / Reject)
-  2: "Square Request",    // Desc(Request Square) Input(Board, Square), Response(Required: Accept/Reject)
-  3: "Credit Request",  // Desc(Request Credits) Input(Community, Amount), Response(Required: Accept/Reject)
-
-  10001: "Community Join Response",
-};
-
-const messageResponse = {
-  -1: 'Null',
-  0: 'Rejected',
-  1: 'Accepted',
-};
 
 class Message implements FirestoreDoc {
   @override
@@ -35,29 +21,34 @@ class Message implements FirestoreDoc {
   int pidTo;
   int messageType;
   int responseCode;
+  Timestamp timestamp; // Time the class was created
   Map<String, dynamic> data = {};
   // Map<String, dynamic> respnose = {};
-  String userMessage;
+  String comment;
+  String description;
 
-  //Member({ required this.cid, required this.uid, required this.credits, });
   Message({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
         pidFrom = data['pidFrom'] ?? -1,
         pidTo = data['pidTo'] ?? -1,
         messageType = data['messageType'] ?? -1,
+        timestamp = data['timestamp'] ?? Timestamp.now(),
         data = data['data'] ?? {},
         responseCode = data['responseCode'] ?? -1,
-        userMessage = data['userMessage'] ?? 'No user message provided';
+        description = data['description'] ?? 'No Message Description',
+        comment = data['comment'] ?? 'No Message Comment Provided';
 
   @override
-  void update({ required Map<String, dynamic> data, }) {
+  void update({ required Map<String, dynamic> data, updateTimestamp }) {
     docId = data['docId'] ?? docId;  // From Super
     pidFrom = data['pidFrom'] ?? pidFrom;
     pidTo = data['pidTo'] ?? pidTo;
     messageType = data['messageType'] ?? messageType;
+    timestamp = data['timestamp'] ?? timestamp;
     data = data['data'] ?? data;
     responseCode = data['responseCode'] ?? responseCode;
-    userMessage = data['userMessage'] ?? userMessage;
+    description = data['description'] ?? description;
+    comment = data['comment'] ?? comment;
   }
 
   // static String KEY(int id) {
@@ -83,9 +74,11 @@ class Message implements FirestoreDoc {
       'pidFrom': pidFrom,
       'pidTo': pidTo,
       'messageType': messageType,
+      'timestamp': timestamp,
       'data': data,
       'responseCode': responseCode,
-      'userMessage': userMessage,
+      'description': description,
+      'comment': comment,
     };
   }
 }

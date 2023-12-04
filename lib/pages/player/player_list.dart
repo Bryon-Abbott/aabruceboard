@@ -6,7 +6,7 @@ import 'package:bruceboard/pages/player/player_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:bruceboard/services/database.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 class PlayerList extends StatefulWidget {

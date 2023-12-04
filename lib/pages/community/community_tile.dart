@@ -22,15 +22,11 @@ class CommunityTile extends StatelessWidget {
               MaterialPageRoute(builder: (context) => MemberList(community: community,)),
             );
           },
-          leading: const Icon(Icons.list_alt_outlined),
-          // leading: CircleAvatar(
-          //   radius: 25.0,
-          //   backgroundColor: Colors.brown,
-          //   backgroundImage: AssetImage('assets/player.png'),
-          // ),
+          //leading: const Icon(Icons.list_alt_outlined),
+          leading: const Icon(Icons.people_outline),
           title: Text('Community: ${community.name}'),
           subtitle: Text('Members: ${community.noMembers}'
-              ' SID: ${community.key}'
+              ' CID: ${community.key}'
           ),
           trailing: IconButton(
               onPressed: (){
