@@ -48,7 +48,7 @@ class MembershipTile extends StatelessWidget {
                 log('membership_list: Comment is ${comment}');
                 if (comment != null ) {
                   log('membership_tile: Delete Membership. Key: ${membership.key} ... ${comment}');
-                  membership.status ='Remove Rrequested';
+                  membership.status ='Remove Requested';
                   // Note ... the database section is the current user but the Membership PID
                   // is the PID of the owner of the community.
                   await DatabaseService(FSDocType.membership).fsDocUpdate(membership);

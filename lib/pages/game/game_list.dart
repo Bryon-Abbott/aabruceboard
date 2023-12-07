@@ -38,7 +38,7 @@ class _GameListState extends State<GameList> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.game, uid: bruceUser.uid, sidKey: series.key).fsDocList,
+      stream: DatabaseService(FSDocType.game, sidKey: series.key).fsDocList,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Game> game = snapshots.data!.map((g) => g as Game).toList();

@@ -28,7 +28,7 @@ class _SeriesListState extends State<SeriesList> {
 
     return StreamBuilder<List<FirestoreDoc>>(
       // stream: DatabaseService(FSDocType.series, uid: bruceUser.uid).fsDocList.cast<List<Series>>(), // as Stream<List<Series>>,
-      stream: DatabaseService(FSDocType.series, uid: bruceUser.uid).fsDocList, // as Stream<List<Series>>,
+      stream: DatabaseService(FSDocType.series).fsDocList, // as Stream<List<Series>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Series> series = snapshots.data!.map((s) => s as Series).toList();

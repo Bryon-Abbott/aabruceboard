@@ -9,23 +9,28 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 
 const messageDesc = {
-  00000: "Message",          // Desc(General Message) (Respnose: Optional: Text Response)
-  00001: "Community Add Request",    // Desc(Request to Add Community) Input(Community) Response(Required: Accept / Reject)
-  00002: "Community Remove Request", // Desc(Request to be Removed from Community) Input(Community) Response(Required: Accept / Reject)
-  00003: "Square Request",    // Desc(Request Square) Input(Board, Square), Response(Required: Accept/Reject)
-  00004: "Credit Request",  // Desc(Request Credits) Input(Community, Amount), Response(Required: Accept/Reject)
-
+  00000: "Message",                   // Desc(General Message) (Respnose: Optional: Text Response)
+// Requests
+  00001: "Community Add Request",     // Desc(Request to Add Community) Input(Community) Response(Required: Accept / Reject)
+  00002: "Community Remove Request",  // Desc(Request to be Removed from Community) Input(Community) Response(Required: Accept / Reject)
+  00003: "Square Select Request",     // Desc(Request Square) Input(Board, Square), Response(Required: Accept/Reject)
+  00004: "Credit Request",            // Desc(Request Credits) Input(Community, Amount), Response(Required: Accept/Reject)
+// Responses
   10001: "Community Add Response",
   10002: "Community Remove Response",
+  10003: "Square Select Response",
+// Notifications
+  20001: "Added Credits Notification",  //
 };
 
 enum messageRespType {
-   undefined, accepted, rejected
+   undefined, accepted, rejected, notification,
 }
 const messageResp = {
   messageRespType.undefined: -1,
   messageRespType.rejected: 0,
   messageRespType.accepted: 1,
+  messageRespType.notification: 2,
 };
 
 class MessageService {
@@ -235,6 +240,36 @@ Future<void> messageMembershipRemoveRejectResponse(
     'data': {'cid': message.data['cid'], 'pid': message.data['pid']}
   });
   return await DatabaseService(FSDocType.message, toUid: fromPlayer.uid).fsDocAdd(response);
+}
+// ==========================================================================
+// Send messages to notify Player that Credits have been added to there membership.
+// Steps:
+// 1. Create Copy of Message to 'Processed' message queue
+// 2. Delete Message
+// 3. Create Respnose message (and MessageOwner)
+Future<void> messageMemberAddCreditsNotification(
+    {  required int credits,
+      required Player fromPlayer,
+      required Player toPlayer,
+      String description = 'No descriptions',
+      String comment = 'Please add me to your community'}) async {
+  // Add MemberOwner to Community Player for current Player
+  MessageOwner msgOwner = MessageOwner( data: {
+    'docId': fromPlayer.pid,  // Current Players PID (ie Player the message was sent to)
+    'uid': fromPlayer.uid,  // Current Players UID
+  });
+  await DatabaseService(FSDocType.messageowner, toUid: toPlayer.uid).fsDocAdd(msgOwner);
+  // Add Message (response) to senders messages.
+  Message message = Message(data:
+  { 'messageType' : 20001,  // 20001 Add Credits notification
+    'pidFrom': fromPlayer.pid,
+    'pidTo': toPlayer.pid,
+    'responseCode': messageResp[messageRespType.notification],      // Notification ... No response expected.
+    'description': description,
+    'comment': comment,
+    'data': { 'credits': 10 }
+  });
+  return await DatabaseService(FSDocType.message, toUid: toPlayer.uid).fsDocAdd(message);
 }
 // ==========================================================================
 // Just archive the provided message

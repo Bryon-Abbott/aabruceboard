@@ -79,7 +79,7 @@ class _MembershipListState extends State<MembershipList> {
                             // Add MemberOwner to Community Player for current Player
                             // Process Messages
                             await messageMembershipAddRequest(membership: membership, player: player, communityPlayer: communityPlayer,
-                                description: '${player.fName} ${player.lName} request to be added to your <${community.name}> community',
+                                description: '${player.fName} ${player.lName} requested to be added to your <${community.name}> community',
                                 comment: comment);
                           }
                         } else {

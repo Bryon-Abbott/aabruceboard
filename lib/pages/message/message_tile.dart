@@ -165,8 +165,17 @@ class MessageTile extends StatelessWidget {
           await DatabaseService(FSDocType.membership).fsDocDelete(membership);
         } else if (message.responseCode == messageResp[messageRespType.rejected]) {
           // Update membership with Status back to Approved if Removal was rejected
+          membership.status = 'Approved';
           await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
         }
+        await messageArchive(message: message, fromPlayer: fromPlayer);
+      }
+      break;
+    // ------------------------------------------------------------------------
+    // *** Add Credits Notification Message
+    // 1. No action - Archive Message
+      case 20001: {
+        log('message_tile: Add Credits Notification from: ${fromPlayer.fName} to: ${toPlayer.fName}');
         await messageArchive(message: message, fromPlayer: fromPlayer);
       }
       break;
@@ -216,14 +225,20 @@ class MessageTile extends StatelessWidget {
     // ========================================================================
     // ------------------------------------------------------------------------
       case 10001: {   // Community Add Request Accept Respnose Message
-        log('membership_tile: Pressed Message Reject - Community Add Accept Response');
-        log("membership_tile: *** Cant Reject a Response message");
+        log('message_tile: Pressed Message Reject - Community Add Accept Response');
+        log("message_tile: *** Cant Reject a Response message");
       }
       break;
     // ------------------------------------------------------------------------
       case 10002: {   // Community Remove Request Message
-        log('membership_tile: Pressed Message Reject - Community Remove Reject Response');
-        log("membership_tile: *** Cant Reject a Response message");
+        log('message_tile: Pressed Message Reject - Community Remove Reject Response');
+        log("message_tile: *** Cant Reject a Response message");
+      }
+      break;
+    // ------------------------------------------------------------------------
+      case 20001: {   // Community Remove Request Message
+        log('message_tile: Pressed Message Reject - Add Credits Notification');
+        log("message_tile: *** Cant Reject a Notification message");
       }
       break;
     }

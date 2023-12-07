@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/firestoredoc.dart';
+import 'package:bruceboard/services/messageservice.dart';
+import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -34,8 +36,6 @@ class _MemberMaintainState extends State<MemberMaintain> {
   void initState() {
     community = widget.community;
     member = widget.member;
-//    _cid = community.key;
-//    _uid = member?.uid ?? 'error';
     super.initState();
   }
 
@@ -43,11 +43,11 @@ class _MemberMaintainState extends State<MemberMaintain> {
   Widget build(BuildContext context) {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
     //_uid = bruceUser.uid;
-    int currentCredits = 0;
+    int newCredits = 0;
     int noMembers = 0;
 
     if ( member != null ) {
-      currentCredits = member?.credits ?? 0;
+      newCredits = member?.credits ?? 0;
     }
 
     // Build a Form widget using the _formMemberKey created above.
@@ -78,7 +78,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                 children: [
                   const Text("Member Credits: "),
                   TextFormField(
-                    initialValue: currentCredits.toString(),
+                    initialValue: newCredits.toString(),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -88,7 +88,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Member name is: $value');
-                      currentCredits = int.parse(value ?? '0');
+                      newCredits = int.parse(value ?? '0');
                     },
                   ),
                   Text("Community  ID: $community.key"),
@@ -115,13 +115,24 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   // await DatabaseService(uid: _pid, cid: _cid).incrementCommunityNoMembers(1);
                                   widget.community.noMembers++;  // =widget.series.noMembers+1; // Update class to maintain alignment
                               } else {
-                                // update existing member
-                                //log('Update Member $_gid');
-                                Map<String, dynamic> data = {
-                                  'credits' : 0,
-                                };
-                                member!.update(data: data);
-                                await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocUpdate(member!);                              }
+                                String? comment = await openDialogMessageComment(context);
+                                log('member_maintain: Comment is ${comment}');
+                                if (comment != null ) {
+                                  int prevCredits = member!.credits;
+                                  Map<String, dynamic> data = {
+                                    'credits' : newCredits,
+                                  };
+                                  member!.update(data: data);
+                                  await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocUpdate(member!);
+                                  // Send Message to user
+                                  Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+                                  Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
+                                  messageMemberAddCreditsNotification(credits: newCredits, fromPlayer: player, toPlayer: memberPlayer,
+                                    description: "Credits on your account were updated from ${prevCredits} to ${newCredits} : (${member!.credits-prevCredits})",
+                                    comment: comment,
+                                  );
+                                }
+                              }
                               // Save Updates to Shared Preferences
                               Navigator.of(context).pop();
                             }

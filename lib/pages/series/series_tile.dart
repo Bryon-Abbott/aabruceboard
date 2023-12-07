@@ -22,15 +22,8 @@ class SeriesTile extends StatelessWidget {
             );
           },
           leading: const Icon(Icons.list_alt_outlined),
-          // leading: CircleAvatar(
-          //   radius: 25.0,
-          //   backgroundColor: Colors.brown,
-          //   backgroundImage: AssetImage('assets/player.png'),
-          // ),
           title: Text('Series: ${series.name}'),
-          subtitle: Text('Games: ${series.noGames}'
-              ', SID: ${series.key}'
-          ),
+          subtitle: Text('Games: ${series.noGames}, SID: ${series.key}'),
           trailing: IconButton(
               onPressed: (){
                 Navigator.of(context).push(
