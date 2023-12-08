@@ -35,7 +35,7 @@ class _MemberListState extends State<MemberList> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: widget.community.key).fsDocList,
+      stream: DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: widget.community.key).fsDocListStream,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Member> member = snapshots.data!.map((s) => s as Member).toList();

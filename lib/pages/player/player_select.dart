@@ -25,7 +25,7 @@ class _PlayerSelectState extends State<PlayerSelect> {
     // Todo: Don't need UID, look to remove from Database
     bruceUser = Provider.of<BruceUser>(context);
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocList,
+      stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocListStream,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Player> player =  snapshots.data!.map((s) => s as Player).toList();

@@ -38,7 +38,7 @@ class _MessageListState extends State<MessageList> {
           log('message_list: Got Player fName:${player.fName}');
           return StreamBuilder<List<FirestoreDoc>>(
               stream: DatabaseService(FSDocType.message, toUid: bruceUser.uid,
-                  fromUid: widget.messageOwner.uid).fsDocList,
+                  fromUid: widget.messageOwner.uid).fsDocListStream,
               // as Stream<List<Message>>,
               builder: (context, snapshots) {
                 if (snapshots.hasData) {

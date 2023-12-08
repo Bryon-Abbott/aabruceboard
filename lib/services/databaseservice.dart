@@ -276,7 +276,7 @@ class DatabaseService {
   }
 
   //get FirestoreDoc List stream
-  Stream<List<FirestoreDoc>> get fsDocList {
+  Stream<List<FirestoreDoc>> get fsDocListStream {
     log('Database: fsDocList: ');
     log(docCollection.path);
     Stream<QuerySnapshot<Object?>> s001 = docCollection.snapshots();

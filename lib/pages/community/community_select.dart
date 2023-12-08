@@ -62,7 +62,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
             child: SizedBox(
               height: 300,
               child: StreamBuilder<List<FirestoreDoc>>(
-                stream: DatabaseService(FSDocType.community, uid: player.uid ).fsDocList,
+                stream: DatabaseService(FSDocType.community, uid: player.uid ).fsDocListStream,
                 builder: (context, snapshots) {
               if(snapshots.hasData) {
                 List<Community> community = snapshots.data!.map((s) => s as Community).toList();

@@ -24,7 +24,7 @@ class _CommunityListState extends State<CommunityList> {
   Widget build(BuildContext context) {
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.community).fsDocList,
+      stream: DatabaseService(FSDocType.community).fsDocListStream,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Community> community = snapshots.data!.map((s) => s as Community).toList();

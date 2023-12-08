@@ -31,7 +31,7 @@ class _MessageListState extends State<MessageOwnerList> {
         child: SizedBox(
           height: 800,
           child: StreamBuilder<List<FirestoreDoc>>(
-          stream: DatabaseService(FSDocType.messageowner, toUid: bruceUser.uid).fsDocList, // as Stream<List<Message>>,
+          stream: DatabaseService(FSDocType.messageowner, toUid: bruceUser.uid).fsDocListStream, // as Stream<List<Message>>,
           builder: (context, snapshots) {
             if(snapshots.hasData) {
               List<MessageOwner> messageOwner = snapshots.data!.map((s) => s as MessageOwner).toList();
