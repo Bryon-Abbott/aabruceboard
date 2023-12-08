@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
 
 Widget addVerticalSpace(double height){
   return SizedBox(
@@ -25,7 +24,7 @@ Future<String?> openDialogMessageComment(BuildContext context) {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(2.0)
         ),
-      title: Text("Message Text"),
+      title: const Text("Message Text"),
       titleTextStyle: Theme.of(context).textTheme.bodyLarge,
       contentTextStyle: Theme.of(context).textTheme.bodyLarge,
       content: Column(
@@ -33,7 +32,7 @@ Future<String?> openDialogMessageComment(BuildContext context) {
         children: [
           TextField(
             autofocus: true,
-            decoration: InputDecoration(hintText: 'Add text to message ...'),
+            decoration: const InputDecoration(hintText: 'Add text to message ...'),
             style: Theme.of(context).textTheme.bodyMedium,
             controller: controller1,
             onSubmitted: (_) {

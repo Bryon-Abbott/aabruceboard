@@ -1,6 +1,9 @@
 # Test scripts 
 This is a document with test scripts
-
+## Index
+- User 
+  - Register 
+  - Update Profile  
 ## User / Player Test 
 
 ## Community / Membership Tests

@@ -69,6 +69,15 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                 Navigator.pop(context);
               },
             ),
+            actions: [
+              IconButton(
+                onPressed: () {
+                  log("Pressed reset");
+                },
+                icon: const Icon(Icons.clear_all),
+                tooltip: "Reset number of members ...",
+              ),
+            ],
           ),
           body: SingleChildScrollView(
             child: Form(

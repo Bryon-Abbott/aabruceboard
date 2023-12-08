@@ -4,7 +4,6 @@ import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/pages/community/community_tile.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';

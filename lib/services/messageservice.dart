@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/models/message.dart';

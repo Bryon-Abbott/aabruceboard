@@ -12,11 +12,11 @@ import 'package:provider/provider.dart';
 
 class MembershipTile extends StatelessWidget {
   final Membership membership;
-  MembershipTile({super.key,  required this.membership });
+  const MembershipTile({super.key,  required this.membership });
 
   @override
   Widget build(BuildContext context) {
-    BruceUser bruceUser = Provider.of<BruceUser>(context);;
+    BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return Padding(
       padding: const EdgeInsets.only(top: 8.0),
@@ -45,9 +45,9 @@ class MembershipTile extends StatelessWidget {
                 // Navigator.of(context).push(
                 //     MaterialPageRoute(builder: (context) => MembershipMaintain(membership: membership)));
                 String? comment = await openDialogMessageComment(context);
-                log('membership_list: Comment is ${comment}');
+                log('membership_list: Comment is $comment');
                 if (comment != null ) {
-                  log('membership_tile: Delete Membership. Key: ${membership.key} ... ${comment}');
+                  log('membership_tile: Delete Membership. Key: ${membership.key} ... $comment');
                   membership.status ='Remove Requested';
                   // Note ... the database section is the current user but the Membership PID
                   // is the PID of the owner of the community.
@@ -58,7 +58,7 @@ class MembershipTile extends StatelessWidget {
                 }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Membership is in an invalid status to delete"))
+                    const SnackBar(content: Text("Membership is in an invalid status to delete"))
                 );
               }
             },

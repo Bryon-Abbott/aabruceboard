@@ -64,7 +64,7 @@ class _MembershipListState extends State<MembershipList> {
                           Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                           // Verify Request with Player.
                           String? comment = await openDialogMessageComment(context);
-                          log('membership_list: Comment is ${comment}');
+                          log('membership_list: Comment is $comment');
                           if (comment != null ) {
                             Membership membership = Membership(
                               data: { 'cid': community.docId, // Community Owner CID

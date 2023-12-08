@@ -116,7 +116,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   widget.community.noMembers++;  // =widget.series.noMembers+1; // Update class to maintain alignment
                               } else {
                                 String? comment = await openDialogMessageComment(context);
-                                log('member_maintain: Comment is ${comment}');
+                                log('member_maintain: Comment is $comment');
                                 if (comment != null ) {
                                   int prevCredits = member!.credits;
                                   Map<String, dynamic> data = {
@@ -128,7 +128,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                                   Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
                                   messageMemberAddCreditsNotification(credits: newCredits, fromPlayer: player, toPlayer: memberPlayer,
-                                    description: "Credits on your account were updated from ${prevCredits} to ${newCredits} : (${member!.credits-prevCredits})",
+                                    description: "Credits on your account were updated from $prevCredits to $newCredits : (${member!.credits-prevCredits})",
                                     comment: comment,
                                   );
                                 }
