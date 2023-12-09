@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:bruceboard/pages/player/player_profile.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/auth.dart';
-import 'package:bruceboard/pages/settings_main.dart';
+import 'package:bruceboard/pages/settings/settings_main.dart';
 import 'package:bruceboard/theme/theme_manager.dart';
 
 // ==========

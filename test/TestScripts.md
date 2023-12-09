@@ -2,13 +2,13 @@
 This is a document with test scripts
 ## Index
 - 01.User 
-  	- 01.01.Register Player 
-  	- 01.02.Update Profile  
-	- 01.03.Remvoe Player 
+  	- 01.01.Register Player
+  	- 01.02.Update Profile
+	- 01.03.Remvoe Player
 - 02.Community 
-	- 02.01.Add Community 
-	- 02.02.Edit Community 
-	- 02.03.Delete Community 
+	- 02.01.Add Community
+	- 02.02.Edit Community
+	- 02.03.Delete Community
 - 03.Series
 	- 03.01.Add Series
 	- 03.02.Edit Series 

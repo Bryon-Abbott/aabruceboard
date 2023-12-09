@@ -28,8 +28,8 @@ import 'package:bruceboard/pages/manage_players.dart';
 import 'package:bruceboard/pages/maintain_player.dart';
 import 'package:bruceboard/pages/manage_games.dart';
 import 'package:bruceboard/pages/maintain_game.dart';
-import 'package:bruceboard/pages/settings_main.dart';
-import 'package:bruceboard/pages/settings_scoring.dart';
+import 'package:bruceboard/pages/settings/settings_main.dart';
+import 'package:bruceboard/pages/settings/settings_scoring.dart';
 
 import 'firebase_options.dart';
 

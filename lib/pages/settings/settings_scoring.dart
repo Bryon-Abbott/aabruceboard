@@ -3,6 +3,9 @@
 // ----------
 // 2023/09/12 Bryon   Created
 // ==========
+import 'dart:developer';
+
+import 'package:bruceboard/shared/dataupdates.dart';
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 
@@ -79,16 +82,18 @@ class _SettingsScoringState extends State<SettingsScoring> {
               ]
           ),
           SettingsSection(
-            title: const Text("Roll Scores"),
+            title: const Text("Data Collection"),
             tiles: [
               SettingsTile(
-                title: const Text("Three Ones"),
-                leading: const Icon(Icons.scoreboard),
-                trailing: const IntegerFormField(
-                  sharedPreferenceKey: Preferences.keyThreeOnesScore,
-                  initialValue: '300',
+                title: const Text("Refresh Collection Totals"),
+                leading: const Icon(Icons.data_exploration_outlined),
+                trailing: IconButton(
+                  icon: Icon(Icons.update_outlined),
+                  onPressed: () {
+                    updateCounts(collection: "Community");
+                  },
                 ),
-              )
+              ),
             ],
           )
         ],

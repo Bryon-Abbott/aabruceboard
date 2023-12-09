@@ -262,7 +262,7 @@ class DatabaseService {
         log('database: fsDoc: doc collection from docId size: ${querySnapshot.size}');
         final data = querySnapshot.docs.first.data() as Map<String, dynamic>;
         fsDoc = FirestoreDoc(fsDocType, data: data);
-        log('Got Player by ID : ${fsDoc!.docId}');
+        log('Got Document by ID : ${fsDoc!.docId}');
       },
           onError: (error) {
             log("Error getting Player UID: $uid, Error: $error");
@@ -277,7 +277,7 @@ class DatabaseService {
 
   //get FirestoreDoc List stream
   Stream<List<FirestoreDoc>> get fsDocListStream {
-    log('Database: fsDocList: ');
+    log('Database: fsDocListStream: ');
     log(docCollection.path);
     Stream<QuerySnapshot<Object?>> s001 = docCollection.snapshots();
     return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
@@ -285,6 +285,44 @@ class DatabaseService {
     //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
 //        .map(_fsDocListFromSnapshot);
   }
+  //get FirestoreDoc List
+  //Future<List<FirestoreDoc>> get fsDocList async {
+  Future<List<FirestoreDoc>> get fsDocList async {
+    log('Database: fsDocList: ');
+    log(docCollection.path);
+    List<FirestoreDoc> fsDocList = [];
+    await docCollection.get().then((snapshot) {
+      log('Database: fsDocList: Snapshot Size ${snapshot.size}');
+      for (QueryDocumentSnapshot<Object?> doc in snapshot.docs) {
+        log('Database: fsDocList: Snapshot Doc ID:  ${doc.id}');
+        Map<String, dynamic> data =  doc.data()! as Map<String, dynamic>;
+        FirestoreDoc fsDoc = FirestoreDoc( fsDocType, data: data );
+        fsDocList.add(fsDoc);
+      }
+       // snapshot.docs.forEach((doc) {
+       // });
+       log('database: fsDocList: return type ${fsDocList.runtimeType} Length: ${fsDocList.length}');
+      },
+      onError: (e) => log("Error getting document: $e"),
+    );
+    return fsDocList;
+  }
+
+
+  //get FirestoreDoc List stream
+  // ToDo: Fix this.
+  Future<int> get fsDocCount async {
+    int docCount=0;
+    log('Database: fsDocCount: ');
+    log(docCollection.path);
+
+    await docCollection.count().get().then((snapshot) {
+      docCount = snapshot.count;
+    });
+    return Future<int>.value(docCount);
+  }
+
+
 
 // // =============================================================================
 // //               ***   PLAYER DATABASE MEMBERS   ***  (DONE)
