@@ -51,8 +51,9 @@ class MembershipTile extends StatelessWidget {
                     },
                     leading: const Icon(Icons.list_alt_outlined),
                     title: Text('Membership Status: ${membership.status}'),
-                    subtitle: Text('Community: ${membership.key}, Owner: ${communityPlayer2?.fName ?? "..."} ${communityPlayer2?.lName ?? ""} \n'
-                    'Community Name: ${community2?.name ?? 'yyy'}'),
+                    subtitle: Text(
+                      'Community: ${community2?.name ?? 'yyy'} (${membership.key})\n'
+                      'Owner: ${communityPlayer2?.fName ?? "..."} ${communityPlayer2?.lName ?? ""}'),
                     trailing: IconButton(
                       onPressed: () async {
                         // Todo: Check status to determine what happens
