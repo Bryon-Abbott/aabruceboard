@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/pages/auth/authenticate.dart';
-import 'package:bruceboard/pages/home.dart';
+import 'package:bruceboard/pages/general/home.dart';
 
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});

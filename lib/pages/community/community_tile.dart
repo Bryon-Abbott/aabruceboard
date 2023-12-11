@@ -25,8 +25,9 @@ class CommunityTile extends StatelessWidget {
           //leading: const Icon(Icons.list_alt_outlined),
           leading: const Icon(Icons.people_outline),
           title: Text('Community: ${community.name}'),
-          subtitle: Text('Members: ${community.noMembers}'
-              ' CID: ${community.key}'
+          subtitle:
+            Text('CID: ${community.key}'
+                ' Members: ${community.noMembers}'
           ),
           trailing: IconButton(
               onPressed: (){

@@ -6,8 +6,8 @@ import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 
 import 'package:bruceboard/shared/loading.dart';
-import 'package:bruceboard/pages/home.dart';
-import 'package:bruceboard/pages/about.dart';
+import 'package:bruceboard/pages/general/home.dart';
+import 'package:bruceboard/pages/general/about.dart';
 import 'package:bruceboard/pages/manage_players.dart';
 import 'package:bruceboard/pages/maintain_player.dart';
 import 'package:bruceboard/pages/manage_games.dart';

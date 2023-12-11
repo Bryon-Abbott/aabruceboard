@@ -223,22 +223,38 @@ class MessageTile extends StatelessWidget {
       }
       break;
     // ========================================================================
+    // Todo: Clean up these invalid responses (disable / remove reject icon)
     // ------------------------------------------------------------------------
       case 10001: {   // Community Add Request Accept Respnose Message
         log('message_tile: Pressed Message Reject - Community Add Accept Response');
         log("message_tile: *** Cant Reject a Response message");
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Can't Reject a Response message, accpet"),
+            )
+        );
       }
       break;
     // ------------------------------------------------------------------------
       case 10002: {   // Community Remove Request Message
         log('message_tile: Pressed Message Reject - Community Remove Reject Response');
         log("message_tile: *** Cant Reject a Response message");
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Can't Reject a Response message, accpet"),
+            )
+        );
       }
       break;
     // ------------------------------------------------------------------------
       case 20001: {   // Community Remove Request Message
         log('message_tile: Pressed Message Reject - Add Credits Notification');
         log("message_tile: *** Cant Reject a Notification message");
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Can't Reject a Response message, accpet"),
+            )
+        );
       }
       break;
     }
