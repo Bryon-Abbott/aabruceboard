@@ -35,12 +35,12 @@ class _GameMaintainState extends State<GameMaintain> {
 
   @override
   void initState() {
+    super.initState();
     series = widget.series;
     game = widget.game;
 //    _sid = series.sid;
     _gid = game?.docId ?? -1;
 //    _uid = game?.pid ?? -1;
-    super.initState();
   }
 
   @override
@@ -254,8 +254,9 @@ class _GameMaintainState extends State<GameMaintain> {
                               );
                               if (results) {
                                 log('Delete Game ... U:$_uid, S:${series.key}, G:${game!.key}');
-                                await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocDelete(game!);
+                                board = await DatabaseService(FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game!.key).fsDoc(docId: game!.docId) as Board;
                                 await DatabaseService(FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game!.key).fsDocDelete(board);
+                                await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocDelete(game!);
                                 // await DatabaseService(uid: _uid, sid: series.sid).incrementSeriesNoGames(-1);
                                 series.noGames  = series.noGames -1;
                                 Navigator.of(context).pop();

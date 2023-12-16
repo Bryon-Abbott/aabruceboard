@@ -1,7 +1,5 @@
 
-import 'dart:developer';
 
-import 'package:bruceboard/models/community.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -183,25 +181,43 @@ class _HomeState extends State<Home> {
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton.icon(
                               onPressed: (bruceUser.uid == 'x') ? null : () async {
-                                Community? community;
-                                Player? player;
-                                dynamic results = await Navigator.pushNamed(context, '/community-select');
-                                if (results != null) {
-                                  player = results[0] as Player;
-                                  community = results[1] as Community;
-                                  log("Add to Community: ${community.name} ${player.pidKey} ${community.key}");
-                                }
+                                Navigator.pushNamed(
+                                  //  context, '/manageplayers', arguments: BruceArguments(players, games));
+                                    context, '/series-list');
                               },
                               icon: Icon(
-                                Icons.person,
+                                Icons.sports_football_outlined,
                                 size: 32,
                                 color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
                               ),
-                              label: Text('Add Community',
+                              label: Text('Series',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),
                           ),
+                          // Padding(
+                          //   padding: const EdgeInsets.all(8.0),
+                          //   child: ElevatedButton.icon(
+                          //     onPressed: (bruceUser.uid == 'x') ? null : () async {
+                          //       Community? community;
+                          //       Player? player;
+                          //       dynamic results = await Navigator.pushNamed(context, '/community-select');
+                          //       if (results != null) {
+                          //         player = results[0] as Player;
+                          //         community = results[1] as Community;
+                          //         log("Add to Community: ${community.name} ${player.pidKey} ${community.key}");
+                          //       }
+                          //     },
+                          //     icon: Icon(
+                          //       Icons.person,
+                          //       size: 32,
+                          //       color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
+                          //     ),
+                          //     label: Text('Add Community',
+                          //       style: Theme.of(context).textTheme.titleMedium,
+                          //     ),
+                          //   ),
+                          // ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: ElevatedButton.icon(
@@ -214,24 +230,6 @@ class _HomeState extends State<Home> {
                                 color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
                               ),
                               label: Text('Memberships',
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton.icon(
-                              onPressed: (bruceUser.uid == 'x') ? null : () async {
-                                Navigator.pushNamed(
-                                  //  context, '/manageplayers', arguments: BruceArguments(players, games));
-                                context, '/series-list');
-                              },
-                              icon: Icon(
-                                Icons.sports_football_outlined,
-                                size: 32,
-                                color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
-                              ),
-                              label: Text('Series',
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),

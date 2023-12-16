@@ -167,22 +167,27 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                            onPressed: (community==null || community!.noMembers > 0)
-                                ? () {
+                          onPressed: () {
+                            if (community==null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Community Not Saved"),
+                                )
+                              );
+                            } else if (community!.noMembers > 0) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text("Must delete ALL members in community"),
                                 )
                               );
-                            }
-                                : () {
-                              if (community!.noMembers == 0) {
+                            } else {
                                 log('Delete Community ... ${community!.key}');
                                 DatabaseService(FSDocType.community).fsDocDelete(community!);
                                 Navigator.of(context).pop();
                               }
                             },
-                            child: const Text("Delete")),
+                            child: const Text("Delete")
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),

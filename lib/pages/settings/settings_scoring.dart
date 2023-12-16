@@ -3,7 +3,6 @@
 // ----------
 // 2023/09/12 Bryon   Created
 // ==========
-import 'dart:developer';
 
 import 'package:bruceboard/shared/dataupdates.dart';
 import 'package:flutter/material.dart';
@@ -88,7 +87,7 @@ class _SettingsScoringState extends State<SettingsScoring> {
                 title: const Text("Refresh Collection Totals"),
                 leading: const Icon(Icons.data_exploration_outlined),
                 trailing: IconButton(
-                  icon: Icon(Icons.update_outlined),
+                  icon: const Icon(Icons.update_outlined),
                   onPressed: () {
                     updateCounts(collection: "Community");
                   },

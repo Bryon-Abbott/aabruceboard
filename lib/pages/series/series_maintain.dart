@@ -1,10 +1,9 @@
 import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:provider/provider.dart';
 
+import 'package:bruceboard/pages/access/access_list.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
@@ -117,7 +116,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Number of Games: ${series?.noGames ?? 'N/A'}"),
+                    child: Text("Number of Games: ${series?.noGames ?? 'N/A'}, Number of Community Accesses ${series?.noAccesses ?? 0}"),
                   ),
                   Row(
                     children: [
@@ -157,7 +156,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                 Map<String, dynamic> data =
                                 { 'name': currentSeriesName,
                                   'type': currentSeriesType,
-                                  'noGames': currentSeriesNoGames,
+                                  'noGames': currentSeriesNoGames,  // Todo: Delete this and let default? Add noAccesses?
                                 };
                                 series!.update(data: data);
                                 // series!.name = currentSeriesName;
@@ -176,23 +175,49 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                            onPressed: (series==null || series!.noGames > 0)
-                                ? () {
+                          onPressed: () {
+                            if (series==null) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("Must delete ALL games in series"),
+                                  content: Text("Series not saved ..."),
                                 )
                               );
+                            } else if (series!.noGames > 0) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Must delete ALL games in series ..."),
+                                )
+                              );
+                            } else if (series!.noAccesses > 0) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Must delete ALL access in series ..."),
+                                  )
+                              );
+                            } else {
+                              // log('Delete Series ... ${_sid}');
+                              log('Delete Series ... ${series!.key}');
+                              DatabaseService(FSDocType.series, uid: uid).fsDocDelete(series!);
+                              Navigator.of(context).pop();
+
                             }
-                                : () {
-                              if (series!.noGames == 0) {
-                                // log('Delete Series ... ${_sid}');
-                                log('Delete Series ... ${series!.key}');
-                                DatabaseService(FSDocType.series, uid: uid).fsDocDelete(series!);
-                                Navigator.of(context).pop();
-                              }
-                            },
+                          },
                             child: const Text("Delete")),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ElevatedButton(
+                            onPressed: (series==null) ? null : () async {
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => AccessList(series: series!)),
+                              );
+                              series = await DatabaseService(FSDocType.series).fsDoc(key: series!.key) as Series;
+                              setState(() {
+                                log('series_maintain: setting State: ${series!.noAccesses}');
+                              });
+                            log('series_maintain: Back from AccessList, No Access ${series!.noAccesses}');
+                            },
+                            child: const Text("Access")),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),

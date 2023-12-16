@@ -13,7 +13,7 @@ void updateCounts({required String collection}) async {
     Community c = f as Community;
     actualCount = await DatabaseService(FSDocType.member, cidKey: c.key).fsDocCount;
     if (actualCount != c.noMembers) {
-      log("*** Community Member Missmatch ${c.docId} Name: ${c.name} NoMembers: ${c.noMembers} Actual Members ${actualCount}");
+      log("*** Community Member Missmatch ${c.docId} Name: ${c.name} NoMembers: ${c.noMembers} Actual Members $actualCount");
       c.noMembers = actualCount;
       await DatabaseService(FSDocType.community).fsDocUpdate(c);
     }

@@ -91,8 +91,8 @@ class _MemberMaintainState extends State<MemberMaintain> {
                       newCredits = int.parse(value ?? '0');
                     },
                   ),
-                  Text("Community  ID: $community.key"),
-                  Text("Player ID: ${bruceUser.uid} ?? 'No Set'}"),
+                  Text("Community  ID: ${community.key}"),
+                  Text("Player ID: ${bruceUser.uid}}"),
                   Row(
                     children: [
                       Padding(
@@ -128,7 +128,8 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                                   Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
                                   messageMemberAddCreditsNotification(credits: newCredits, fromPlayer: player, toPlayer: memberPlayer,
-                                    description: "Credits on your account were updated from $prevCredits to $newCredits : (${member!.credits-prevCredits})",
+                                    description: "Credits on your account were updated from $prevCredits to $newCredits : (${member!.credits-prevCredits})\n"
+                                    "Community: <${community.name}>, Owner: ${player.fName} ${player.lName}",
                                     comment: comment,
                                   );
                                 }
@@ -144,42 +145,53 @@ class _MemberMaintainState extends State<MemberMaintain> {
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
                             onPressed: (member==null)
-                              ? null
-                              : () async {
+                                ? null
+                                : () async {
                               bool results = await showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
                                   title: const Text("Delete Member Warning ... "),
                                   titleTextStyle: Theme.of(context).textTheme.bodyLarge,
                                   contentTextStyle: Theme.of(context).textTheme.bodyLarge,
-                                  content: const Text("Are you sure you want to delete this?"),
+                                  content: Text("Are you sure you want to delete this member with ${member!.credits} credits?"),
                                   actions: [
                                     TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(true);
-                                      },
+                                      onPressed: () { Navigator.of(context).pop(true); },
                                       child: const Text('Yes'),
                                     ),
                                     TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop(false);
-                                      },
+                                      onPressed: () { Navigator.of(context).pop(false); },
                                       child: const Text('Cancel'),
                                     ),
                                   ],
                                 ),
                               );
                               if (results) {
-                                log('Delete Member ... C:${community.key}, U:${bruceUser.uid}');
-                                await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocDelete(member!);
-                                widget.community.noMembers  = widget.community.noMembers -1;
-                                Navigator.of(context).pop();
+                                String? comment = await openDialogMessageComment(context);
+                                if (comment != null) {
+                                  log('Delete Member ... C:${community.key}, U:${bruceUser.uid}');
+                                  await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key)
+                                      .fsDocDelete(member!);
+                                  widget.community.noMembers  = widget.community.noMembers -1;
+                                  log('member_maintain: Comment is $comment');
+                                  Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+                                  Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
+                                  messageMemberRemoveNotification(credits: member!.credits, fromPlayer: player, toPlayer: memberPlayer,
+                                    description: "Your membership has been removed\n"
+                                        "Community <${community.name}> Owner: ${player.fName} ${player.lName} \n"
+                                        "Credits Released ${member!.credits}",
+                                    comment: comment
+                                  );
+                                  Navigator.of(context).pop();
+                                }
                               } else {
                                 log('Member Delete Action Cancelled');
                               }
                             },
-                            child: const Text("Delete")),
-                      ),                      Padding(
+                            child: const Text("Delete")
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
                             onPressed: () {

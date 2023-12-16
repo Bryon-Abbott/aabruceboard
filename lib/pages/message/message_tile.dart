@@ -103,21 +103,36 @@ class MessageTile extends StatelessWidget {
     // 2. Add Player Member to Community
     // 3. Send Accept message
       case 00002: {   // Community Remove Request Message
-        Member? member = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
-          .fsDoc(docId: message.pidFrom) as Member;
-        if (member.credits == 0) {
+        log('message_tile: case 00002:');
+        FirestoreDoc? result = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
+            .fsDoc(docId: message.pidFrom);
+        log('message_tile: case 00002: member: ${result?.docId ?? 'No member'}');
+        if (result == null) {
+        // Member? member = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
+        //   .fsDoc(docId: message.pidFrom) as Member;
+        // if (member == null) {  // Didn't find the member in the community? Maybe not registered yet.
           Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
-          String? comment = await openDialogMessageComment(context) ?? "Sorry to see you leave our community";
-          await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocDelete(member);
+          String? comment = await openDialogMessageComment(context) ?? "Were not registered to our community";
           // Add Message to Archive
-          String desc = '${toPlayer.fName} ${toPlayer.lName} accepted your request to be removed from the <${community.name}> community';
+          String desc = '${toPlayer.fName} ${toPlayer.lName} accepted your request to be removed from the <${community.name ?? "No Name"}> community';
           await messageMembershipRemoveAcceptResponse(message: message, fromPlayer: fromPlayer, toPlayer: toPlayer,
               comment: comment, description: desc);
         } else {
-          // Error: Member has credits ... display message
-          ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text("Member has ${member.credits} credit(s) remaining, zero out before removing member"))
-          );
+          Member member = result as Member;
+          if (member.credits == 0)  {
+            Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
+            String? comment = await openDialogMessageComment(context) ?? "Sorry to see you leave our community";
+            await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocDelete(member);
+            // Add Message to Archive
+            String desc = '${toPlayer.fName} ${toPlayer.lName} accepted your request to be removed from the <${community.name}> community';
+            await messageMembershipRemoveAcceptResponse(message: message, fromPlayer: fromPlayer, toPlayer: toPlayer,
+                comment: comment, description: desc);
+          } else {
+            // Error: Member has credits ... display message
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("Member has ${member.credits} credit(s) remaining, zero out before removing member"))
+            );
+          }
         }
       }
       break;
@@ -176,6 +191,14 @@ class MessageTile extends StatelessWidget {
     // 1. No action - Archive Message
       case 20001: {
         log('message_tile: Add Credits Notification from: ${fromPlayer.fName} to: ${toPlayer.fName}');
+        await messageArchive(message: message, fromPlayer: fromPlayer);
+      }
+      break;
+    // ------------------------------------------------------------------------
+    // *** Add Credits Notification Message
+    // 1. No action - Archive Message
+      case 20002: {
+        log('message_tile: Remove Community Notification from: ${fromPlayer.fName} to: ${toPlayer.fName}');
         await messageArchive(message: message, fromPlayer: fromPlayer);
       }
       break;
@@ -257,6 +280,19 @@ class MessageTile extends StatelessWidget {
         );
       }
       break;
+    // ------------------------------------------------------------------------
+      case 20002: {   // Community Remove Request Message
+        log('message_tile: Pressed Message Reject - Remove Membership Notification');
+        log("message_tile: *** Cant Reject a Notification message");
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Can't Reject a Response message, accpet"),
+            )
+        );
+      }
+      break;
+      default:
+        log('message_tile: Error ... invalid Message Type ${message.messageType}');
     }
   }
 }

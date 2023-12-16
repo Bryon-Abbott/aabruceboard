@@ -20,6 +20,7 @@ const messageDesc = {
   10003: "Square Select Response",
 // Notifications
   20001: "Added Credits Notification",  //
+  20002: "Removed Membership Notification",
 };
 
 enum messageRespType {
@@ -266,7 +267,37 @@ Future<void> messageMemberAddCreditsNotification(
     'responseCode': messageResp[messageRespType.notification],      // Notification ... No response expected.
     'description': description,
     'comment': comment,
-    'data': { 'credits': 10 }
+    'data': { 'credits': credits }
+  });
+  return await DatabaseService(FSDocType.message, toUid: toPlayer.uid).fsDocAdd(message);
+}
+// ==========================================================================
+// Send messages to notify Player that Credits have been added to there membership.
+// Steps:
+// 1. Create Copy of Message to 'Processed' message queue
+// 2. Delete Message
+// 3. Create Respnose message (and MessageOwner)
+Future<void> messageMemberRemoveNotification(
+    {  required int credits,
+      required Player fromPlayer,
+      required Player toPlayer,
+      String description = 'No descriptions',
+      String comment = 'Please add me to your community'}) async {
+  // Add MemberOwner to Community Player for current Player
+  MessageOwner msgOwner = MessageOwner( data: {
+    'docId': fromPlayer.pid,  // Current Players PID (ie Player the message was sent to)
+    'uid': fromPlayer.uid,  // Current Players UID
+  });
+  await DatabaseService(FSDocType.messageowner, toUid: toPlayer.uid).fsDocAdd(msgOwner);
+  // Add Message (response) to senders messages.
+  Message message = Message(data:
+  { 'messageType' : 20002,  // 20002 Remove Member notification
+    'pidFrom': fromPlayer.pid,
+    'pidTo': toPlayer.pid,
+    'responseCode': messageResp[messageRespType.notification],      // Notification ... No response expected.
+    'description': description,
+    'comment': comment,
+    'data': { 'credits': credits }
   });
   return await DatabaseService(FSDocType.message, toUid: toPlayer.uid).fsDocAdd(message);
 }
