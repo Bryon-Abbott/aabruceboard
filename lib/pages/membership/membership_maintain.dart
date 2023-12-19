@@ -103,13 +103,14 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                             if (_formMembershipKey.currentState!.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
+                              Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                               if ( membership == null ) {
                                 // Add new Game
                                 Map<String, dynamic> data =
                                 {
                                   'cid': cid,
-                                  'pid': -1,  // Todo: Fix this?
-                                  'uid': uid,
+                                  'cpid': -1,  // Todo: Fix this?
+                                  'pid': player.pid,
                                   'status': 'Requested',
                                 };
                                 Membership membership = Membership(data: data);

@@ -36,6 +36,12 @@ class Member implements FirestoreDoc {
     credits = data['credits'] ?? credits;
   }
 
+  @override
+  static String KEY(int cid) {
+    String key = _keyFormat.format(cid);
+    return key;
+  }
+
   static String Key(int cid) {
     String key = _keyFormat.format(cid);
     return key;

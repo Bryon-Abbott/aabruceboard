@@ -15,6 +15,7 @@ class Membership implements FirestoreDoc {
   final NumberFormat _keyFormat = NumberFormat("C0000", "en_US");
   // Data Class Variables
   int cid;  // Community ID
+  int cpid;  // Community PID
   int pid;  // Community PID
 //  String uid;
   String status;
@@ -26,15 +27,16 @@ class Membership implements FirestoreDoc {
   Membership({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
         cid = data['cid'] ?? -1,
+        cpid = data['cpid'] ?? -1,
         pid = data['pid'] ?? -1,
 //        uid = data['uid'] ?? 'error',
         status = data['status'] ?? 'error';
 
   @override
-  static String KEY(int pid, int cid) {
+  static String KEY(int cpid, int cid) {
     // Format Key for Document ID
     String cKey = _cFormat.format(cid);
-    String pKey = _pFormat.format(pid);
+    String pKey = _pFormat.format(cpid);
     log("Membership: KEY: Retrieving community $pKey$cKey");
     return "$pKey$cKey";
   }
@@ -45,7 +47,7 @@ class Membership implements FirestoreDoc {
     NumberFormat cFormat = NumberFormat("C0000", "en_US");
     String cKey = cFormat.format(cid);
     NumberFormat pFormat = NumberFormat("P00000000", "en_US");
-    String pKey = pFormat.format(pid);
+    String pKey = pFormat.format(cpid);
     log("Membership: key: Retrieving community $pKey$cKey");
     return "$pKey$cKey";
   }
@@ -54,8 +56,8 @@ class Membership implements FirestoreDoc {
   void update({ required Map<String, dynamic> data, }) {
     docId = data['docId'] ?? docId;
     cid = data['cid'] ?? -1;
+    cpid = data['cpid'] ?? -1;
     pid = data['pid'] ?? -1;
-//    uid = data['uid'] ?? 'error';
     status = data['status'] ?? 'error';
   }
 
@@ -65,8 +67,8 @@ class Membership implements FirestoreDoc {
     return {
       'docId': docId,
       'cid': cid,
+      'cpid': cpid,
       'pid': pid,
-//      'uid': uid,
       'status': status,
     };
   }

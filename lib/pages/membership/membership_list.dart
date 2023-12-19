@@ -68,7 +68,8 @@ class _MembershipListState extends State<MembershipList> {
                           if (comment != null ) {
                             Membership membership = Membership(
                               data: { 'cid': community.docId, // Community Owner CID
-                                'pid': communityPlayer.docId,  // Community Onwer PID
+                                'cpid': communityPlayer.docId,  // Community Onwer PID
+                                'pid': player.docId,  // Player PID
                                 'status': 'Requested',
                               }
                             );

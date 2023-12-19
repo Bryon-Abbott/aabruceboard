@@ -1,5 +1,7 @@
 import 'dart:developer';
 import 'package:bruceboard/models/firestoredoc.dart';
+import 'package:bruceboard/services/messageservice.dart';
+import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,10 +22,19 @@ class MemberList extends StatefulWidget {
 }
 
 class _MemberListState extends State<MemberList> {
+  Player? player;
+  Player? playerSelected;
+  late Community community;
 
-  void callback() {
-    setState(() { });
+  @override
+  void initState() {
+    super.initState();
+    community = widget.community;
   }
+  // ToDo: What is happening here with 2 callback functions.
+  // void callback() {
+  //   setState(() { });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -35,14 +46,14 @@ class _MemberListState extends State<MemberList> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: widget.community.key).fsDocListStream,
+      stream: DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocListStream,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Member> member = snapshots.data!.map((s) => s as Member).toList();
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Manage Members - Count: ${widget.community.noMembers}/${member.length}'),
+                title: Text('Manage Members - Count: ${community.noMembers}/${member.length}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -55,7 +66,40 @@ class _MemberListState extends State<MemberList> {
                 actions: [
                   IconButton(
                     onPressed: () async {
-                      log('Pick a user to add ..');
+                      player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+                      dynamic results = await Navigator.pushNamed(
+                          context, '/player-select');
+                      if (results != null) {
+                        // setState((){
+                        // });
+                        playerSelected = results as Player;
+                        dynamic existingMember = await DatabaseService(FSDocType.member, cidKey: community.key).fsDoc(
+                            key: Member.KEY(playerSelected!.pid));
+                        if (existingMember == null ) {
+                          // Add Member to Community
+                          String? comment = await openDialogMessageComment(context);
+                          if (comment != null) {
+                            Member member = Member(data:
+                            { 'docId': playerSelected!.pid,   // Set the memberID to the pid of the selected player
+                              'credits': 0,
+                            });
+                            await DatabaseService(FSDocType.member, cidKey: community.key).fsDocAdd(member);
+                            // Add Message to Archive
+                            String desc = '${player!.fName} ${player!.lName} added you to the <${community.name}> community';
+                            await messageMemberAddNotification(cid: community.docId, playerFrom: player!, playerTo: playerSelected!,
+                                comment: comment, description: desc);
+                            log('member_list: Player Selected ${player?.fName ?? 'No Player?'}');
+                          } else {
+                            log("member_list: Canceld out of Comment dialog");
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Member already exist."))
+                          );
+                        }
+                      } else {
+                        log("member_list: No player selected");
+                      }
                     },
                     icon: const Icon(Icons.add_circle_outline),
                   )

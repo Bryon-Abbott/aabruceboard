@@ -5,6 +5,7 @@ import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:provider/provider.dart';
 import 'package:bruceboard/models/community.dart';
@@ -78,6 +79,9 @@ class _MemberMaintainState extends State<MemberMaintain> {
                 children: [
                   const Text("Member Credits: "),
                   TextFormField(
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                     initialValue: newCredits.toString(),
                     // The validator receives the text that the user has entered.
                     validator: (value) {
@@ -88,7 +92,8 @@ class _MemberMaintainState extends State<MemberMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Member name is: $value');
-                      newCredits = int.parse(value ?? '0');
+                      if (value?.isNotEmpty ?? false )
+                        newCredits = int.parse(value ?? '0');
                     },
                   ),
                   Text("Community  ID: ${community.key}"),

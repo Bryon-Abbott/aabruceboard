@@ -56,10 +56,10 @@ class DatabaseService {
     switch (fsDocType) {
       case FSDocType.messageowner: {
         nextIdDocument = playerCollection.doc(uid);
-        statsDocument = playerCollection.doc(uid);
+        statsDocument = playerCollection.doc(uid);  // Write stats to sending player?
         docCollection = playerCollection.doc(toUid).collection('MessageOwner');
         //.doc(uid).collection('Incoming');
-        log('Database: Found "MessageOwber" class');
+        log('Database: Found "MessageOwner" class');
         log(docCollection.path);
       }
       break;
@@ -180,6 +180,7 @@ class DatabaseService {
       log('Database: fsDocAdd: updating number of docs $noDocs');
       log(statsDocument.path);
       await statsDocument.update({ fsDoc.totalField: noDocs} );
+      log('Database: fsDocAdd: updated number of docs $noDocs');
     }
   }
   // Update the FirestoreDoc with data in provided Series class.
