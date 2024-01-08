@@ -5,6 +5,7 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/pages/series/series_access_list.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
@@ -58,8 +59,11 @@ class MembershipTile extends StatelessWidget {
                     child: Card(
                       margin: const EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
                       child: ListTile(
-                        onTap: () {
+                        onTap: () async {
                           log("Membership Tapped ... ${membership.cpid} ${membership.cid} ");
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => SeriesAccessList(membership: membership)),
+                          );
                         },
                         leading: const Icon(Icons.list_alt_outlined),
                         title: Text('Membership Status: ${membership.status}'),

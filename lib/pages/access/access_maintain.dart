@@ -100,7 +100,7 @@ class AccessMaintainState extends State<AccessMaintain> {
                               if ( access == null ) {
                                 // Add new Game
                                 Access access = Access(data: {
-                                  'cid': cid,
+                                  'cid': -1,
                                   'pid': -1,  // Todo: Fix this?
                                   'uid': uid,
                                   'status': 'Requested',

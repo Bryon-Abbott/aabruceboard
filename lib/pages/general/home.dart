@@ -134,7 +134,7 @@ class _HomeState extends State<Home> {
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayLarge,
                 ),
-                Text('Bruce Squares Board',
+                Text('BruceBoard Squares',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayLarge,
                 ),

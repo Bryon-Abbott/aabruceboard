@@ -28,7 +28,7 @@ class Player implements FirestoreDoc {
   @override
   final String totalField = 'noPlayers';
   @override
-  final NumberFormat _keyFormat = NumberFormat("P00000000", "en_US");
+  static final NumberFormat _keyFormat = NumberFormat("P00000000", "en_US");
   // Data Class Variables
   String uid;
   String fName;
@@ -66,7 +66,7 @@ class Player implements FirestoreDoc {
     return uid;
   }
   // The key created from PID used for composite keys (Memberships)
-  String get pidKey {
+  static String Key(int pid) {
     String Key = _keyFormat.format(pid);
     return Key;
   }

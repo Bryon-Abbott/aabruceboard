@@ -44,8 +44,8 @@ class Series implements FirestoreDoc {
     return key;
   }
 
-  static String Key(int cid) {
-    String key = _keyFormat.format(cid);
+  static String Key(int sid) {
+    String key = _keyFormat.format(sid);
     return key;
   }
 

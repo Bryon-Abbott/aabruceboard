@@ -19,7 +19,7 @@ class DatabaseService {
   String messageLocation; // Where to write / read messages (default to
   FSDocType fsDocType;
 
-//  FirebaseFirestore db;
+  FirebaseFirestore db = FirebaseFirestore.instance;
   final CollectionReference configCollection = FirebaseFirestore.instance
       .collection('Config');
 
@@ -296,6 +296,17 @@ class DatabaseService {
     // return docCollection.snapshots()
     //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
 //        .map(_fsDocListFromSnapshot);
+  }
+
+  //get FirestoreDoc List stream
+  Stream<List<FirestoreDoc>> fsDocGroupListStream({ required int pid, required int cid} ) {
+    log('Database: fsDocGroupListStream: pid: ${pid} cid: ${cid} ');
+    Stream<QuerySnapshot<Object?>> s001 =
+      db.collectionGroup("Access")
+        .where('pid', isEqualTo: pid)
+        .where('cid', isEqualTo: cid)
+        .snapshots();
+    return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
   }
   //get FirestoreDoc List
   //Future<List<FirestoreDoc>> get fsDocList async {
