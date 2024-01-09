@@ -9,7 +9,7 @@ class BruceUser {
   final AuthService _auth = AuthService();
   final String uid;
 
-  BruceUser({ required this.uid });
+  BruceUser({ this.uid = 'Anonymous'});
 
   // Note: displayName is stored in the Firestore Auth system not in
   // the Firebase database.  This is similar to email and phone number.
@@ -48,7 +48,7 @@ class Player implements FirestoreDoc {
   // });
   Player({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
-        uid = data['uid'] ?? 'error',
+        uid = data['uid'] ?? 'Anonymous',
         pid = data['pid'] ?? -1,
         fName = data['fName'] ?? 'FNAME',
         lName = data['lName'] ?? 'LNAME',
@@ -57,7 +57,7 @@ class Player implements FirestoreDoc {
         noCommunities = data['noCommunities'] ?? 0,
         noSeries = data['noSeries'] ?? 0
   {
-    log('Player: Creating player ID: $docId  U: $uid fName: $fName');
+    log('Player: Creating player ID: $docId  U: $uid fName: $fName', name: '${runtimeType.toString()}:...');
   }
 
   // The key for the Player Document is the Firestore Users ID (uid)
@@ -74,7 +74,7 @@ class Player implements FirestoreDoc {
   @override
   void update({ required Map<String, dynamic> data, }) {
     docId = data['docId'] ?? -1;
-    uid = data['uid'] ?? 'error';
+    uid = data['uid'] ?? 'Anonymous';
     pid = data['pid'] ?? -1;
     fName = data['fName'] ?? 'FNAME';
     lName = data['lName'] ?? 'LNAME';

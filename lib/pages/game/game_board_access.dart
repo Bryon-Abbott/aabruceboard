@@ -2,6 +2,7 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:bruceboard/models/communityplayer.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
@@ -38,12 +39,9 @@ class GameBoardAccess extends StatefulWidget {
 }
 
 class _GameBoardAccessState extends State<GameBoardAccess> {
-  // late int _sid;
-  // late int _gid;
-  // late int _pid;
   late Game game;
   late Series series;
-  late String _uid;
+  //late String _uid;
 
   late TextStyle textStyle;
 
@@ -71,20 +69,14 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
   Widget build(BuildContext context) {
     game = widget.game;
 
-    BruceUser bruceUser = Provider.of<BruceUser>(context);
-    _uid = bruceUser.uid;
+    CommunityPlayer communityPlayerProvider = Provider.of<CommunityPlayer>(context);
+    Player communityPlayer = communityPlayerProvider.communityPlayer;
 
     // Calculate screen size
-    var padding = MediaQuery
-        .of(context)
-        .padding;
-    screenHeight = MediaQuery
-        .of(context)
-        .size
+    var padding = MediaQuery.of(context).padding;
+    screenHeight = MediaQuery.of(context).size
         .height - padding.top - padding.bottom;
-    screenWidth = MediaQuery
-        .of(context)
-        .size
+    screenWidth = MediaQuery.of(context).size
         .width - padding.left - padding.right;
 
     // Dynamically adjust the grid size for Small:Phone / Large:Web,Tablet, etc
@@ -94,8 +86,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
       gridSize = gridSizeSmall;
     }
 
-    dev.log("Reload Game ... GameNo: ${game.docId} ",
-        name: "${runtimeType.toString()}:build");
+    dev.log("Reload Game ... GameNo: ${game.docId} GameOwner: ${communityPlayer.docId}, ${communityPlayer.fName}",  name: "${runtimeType.toString()}:build");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
     textStyle = Theme
@@ -106,7 +97,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
 
     return StreamBuilder<FirestoreDoc>(
         stream: DatabaseService(
-            FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game.key)
+            FSDocType.board, uid: communityPlayer.uid, sidKey: series.key, gidKey: game.key)
             .fsDocStream(key: game.key),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
@@ -232,7 +223,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
               ),
             );
           } else {
-            dev.log("game_board_access: Error ${snapshot.error}");
+            dev.log("game_board_access: Error ${snapshot.error}", name: "${runtimeType.toString()}:build");
             return const Loading();
           }
         }
@@ -503,7 +494,7 @@ class _BoardGridState extends State<BoardGrid> {
   void initState() {
     super.initState();
     game = widget.game;
-    dev.log("Initialize default GameData data.", name: "${runtimeType.toString()}:initState");
+    dev.log("Initialize default GameData data.", name: "${runtimeType.toString()}:initState()");
     board = widget.board;
   }
 
@@ -521,7 +512,7 @@ class _BoardGridState extends State<BoardGrid> {
     } else {
       gridSize = gridSizeSmall;
     }
-    dev.log("Reloading Data ... gameNo: ${game.docId}", name: "${runtimeType.toString()}:build");
+    dev.log("Reloading Data ... gameNo: ${game.docId}", name: "${runtimeType.toString()}:build()");
 
     return SizedBox(
       height: max(min(screenHeight - 308, gridSize-1), 100),

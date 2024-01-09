@@ -1,3 +1,4 @@
+import 'package:bruceboard/models/communityplayer.dart';
 import 'package:bruceboard/pages/community/community_select.dart';
 import 'package:bruceboard/pages/message/messageowner_list.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
@@ -21,7 +22,7 @@ import 'package:bruceboard/theme/theme_constants.dart';
 import 'package:bruceboard/utils/preferences.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:firebase_core/firebase_core.dart';
-//import 'package:bruceboard/pages/loading.dart';
+// import 'package:bruceboard/pages/loading.dart';
 import 'package:bruceboard/pages/general/home.dart';
 import 'package:bruceboard/pages/general/about.dart';
 import 'package:bruceboard/pages/manage_players.dart';
@@ -95,46 +96,49 @@ class LoadApp extends StatelessWidget {
     return StreamProvider<BruceUser?>.value(
       initialData: null, // BruceUser(uid: 'x'),
       value: AuthService().user,
-      child: AdaptiveTheme(
-        light: lightTheme,
-        dark: darkTheme,
-        debugShowFloatingThemeButton: false,
-        initial: savedThemeMode ?? AdaptiveThemeMode.light,
-        builder: (theme, lightTheme) =>
-        MaterialApp(
-            title: 'Bruce Board',
-//          theme: lightTheme,
-            theme: theme,
-            darkTheme: darkTheme,
-            debugShowCheckedModeBanner: false,
-            initialRoute: '/home',
-            routes: {
-              '/': (context) => const Loading(),
-              // '/home': (context) => Home(savedThemeMode: savedThemeMode, onChanged: onChanged),
-              '/home': (context) => const Home(),
-              '/manageplayers': (context) => const ManagePlayers(),
-              '/maintainplayer': (context) => const MaintainPlayer(),
-              '/managegames': (context) => const ManageGames(),
-              '/maintaingame': (context) => const MaintainGame(),
-              '/about': (context) => const About(),
-              '/authenticate': (contexct) => const Authenticate(),
-              '/player-profile': (context) => const PlayerProfile(),
-              '/player-select': (context) => const PlayerSelect(),
-              '/series-list': (context) => const SeriesList(),
-              '/message-list': (context) => const MessageOwnerList(),
-              '/series-maintain': (context) => const SeriesMaintain(),
-              '/community-list': (context) => const CommunityList(),
-              '/community-maintain': (context) => const CommunityMaintain(),
-              '/community-select': (context) => const CommunitySelect(),
-              '/membership-list': (context) => const MembershipList(),
-              '/membership-maintain': (context) => const MembershipMaintain(),
-              '/settings': (context) => const SettingsMain(),
-              // Not sure I need this?
-              '/settings_scoring': (context) => const SettingsScoring(),
-              // Not sure I need this?
-            },
+      child: Provider<CommunityPlayer>(
+        create: (context) => CommunityPlayer(),
+        child: AdaptiveTheme(
+          light: lightTheme,
+          dark: darkTheme,
+          debugShowFloatingThemeButton: false,
+          initial: savedThemeMode ?? AdaptiveThemeMode.light,
+          builder: (theme, lightTheme) =>
+          MaterialApp(
+              title: 'Bruce Board',
+        //          theme: lightTheme,
+              theme: theme,
+              darkTheme: darkTheme,
+              debugShowCheckedModeBanner: false,
+              initialRoute: '/home',
+              routes: {
+                '/': (context) => const Loading(),
+                // '/home': (context) => Home(savedThemeMode: savedThemeMode, onChanged: onChanged),
+                '/home': (context) => const Home(),
+                '/manageplayers': (context) => const ManagePlayers(),
+                '/maintainplayer': (context) => const MaintainPlayer(),
+                '/managegames': (context) => const ManageGames(),
+                '/maintaingame': (context) => const MaintainGame(),
+                '/about': (context) => const About(),
+                '/authenticate': (contexct) => const Authenticate(),
+                '/player-profile': (context) => const PlayerProfile(),
+                '/player-select': (context) => const PlayerSelect(),
+                '/series-list': (context) => const SeriesList(),
+                '/message-list': (context) => const MessageOwnerList(),
+                '/series-maintain': (context) => const SeriesMaintain(),
+                '/community-list': (context) => const CommunityList(),
+                '/community-maintain': (context) => const CommunityMaintain(),
+                '/community-select': (context) => const CommunitySelect(),
+                '/membership-list': (context) => const MembershipList(),
+                '/membership-maintain': (context) => const MembershipMaintain(),
+                '/settings': (context) => const SettingsMain(),
+                // Not sure I need this?
+                '/settings_scoring': (context) => const SettingsScoring(),
+                // Not sure I need this?
+              },
+            ),
           ),
-        ),
+      ),
     );
   }
 }

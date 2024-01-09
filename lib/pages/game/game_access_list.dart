@@ -1,3 +1,4 @@
+import 'package:bruceboard/models/communityplayer.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
@@ -13,9 +14,9 @@ import 'package:bruceboard/shared/loading.dart';
 
 class GameAccessList extends StatefulWidget {
   final Series series;
-  final Player seriesPlayer;
-
-  const GameAccessList( {super.key, required this.series, required this.seriesPlayer} );
+//  final Player seriesPlayer;
+//  const GameAccessList( {super.key, required this.series, required this.seriesPlayer} );
+  const GameAccessList( {super.key, required this.series} );
 
   @override
   _GameAccessListState createState() => _GameAccessListState();
@@ -23,12 +24,12 @@ class GameAccessList extends StatefulWidget {
 
 class _GameAccessListState extends State<GameAccessList> {
   late Series series;
-  late Player seriesPlayer;
+//  late Player seriesPlayer;
 
   @override
   void initState() {
     series = widget.series;
-    seriesPlayer = widget.seriesPlayer;
+//    seriesPlayer = widget.seriesPlayer;
     super.initState();
   }
 
@@ -40,9 +41,11 @@ class _GameAccessListState extends State<GameAccessList> {
     }
 
     BruceUser bruceUser = Provider.of<BruceUser>(context);
+    CommunityPlayer communityPlayerProvider = Provider.of<CommunityPlayer>(context) ;
+    Player communityPlayer = communityPlayerProvider.communityPlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.game, uid: seriesPlayer.uid, sidKey: series.key).fsDocListStream,
+      stream: DatabaseService(FSDocType.game, uid: communityPlayer.uid, sidKey: series.key).fsDocListStream,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Game> game = snapshots.data!.map((g) => g as Game).toList();

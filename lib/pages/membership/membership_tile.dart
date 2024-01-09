@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/models/communityplayer.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/membership.dart';
@@ -9,6 +10,7 @@ import 'package:bruceboard/pages/series/series_access_list.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
+import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -22,11 +24,12 @@ class MembershipTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
+    CommunityPlayer communityPlayerProvider = Provider.of<CommunityPlayer>(context); // ?? CommunityPlayer();
+    Player? communityPlayer;
     Member? member;
     // Player communityPlayer = DatabaseService(FSDocType.player).fsDoc(docId: membership.pid) as Player;
     // Community community = DatabaseService(FSDocType.community, uid: communityPlayer.uid)
     //     .fsDoc(docId: membership.cid) as Community;
-    Player? communityPlayer;
     Player? player;
     Community? community;
 
@@ -35,16 +38,14 @@ class MembershipTile extends StatelessWidget {
       builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot) {
         if (snapshot.hasData) {
           communityPlayer = snapshot.data as Player;
-        } else {
-          log('membership_tile: CommunityPlayer Snapshot has no data ... ');
-        }
+          communityPlayerProvider.communityPlayer = communityPlayer!;
         return FutureBuilder<FirestoreDoc?>(
           future: DatabaseService(FSDocType.community, uid: communityPlayer?.uid ?? "xxx").fsDoc(docId: membership.cid),
           builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot2) {
             if (snapshot2.hasData) {
               community = snapshot2.data as Community;
             } else {
-              log('membership_tile: Community Snapshot has no data ... ');
+              log('membership_tile: Community Snapshot has no data ... ', name: '${runtimeType.toString()}:...');
             }
             return FutureBuilder<FirestoreDoc?>(
                 future: DatabaseService(FSDocType.member, uid: communityPlayer?.uid ?? "xxx", cidKey: Community.Key(membership.cid)).fsDoc(docId: membership.pid),
@@ -52,7 +53,7 @@ class MembershipTile extends StatelessWidget {
                   if (snapshot3.hasData) {
                     member = snapshot3.data as Member;
                   } else {
-                    log('membership_tile: Member Snapshot has no data ... ');
+                    log('membership_tile: Member Snapshot has no data ... ', name: '${runtimeType.toString()}:...');
                   }
                   return Padding(
                     padding: const EdgeInsets.only(top: 1.0),
@@ -60,7 +61,7 @@ class MembershipTile extends StatelessWidget {
                       margin: const EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
                       child: ListTile(
                         onTap: () async {
-                          log("Membership Tapped ... ${membership.cpid} ${membership.cid} ");
+                          log("Membership Tapped ... ${membership.cpid} ${membership.cid} ", name: '${runtimeType.toString()}:...');
                           Navigator.of(context).push(
                             MaterialPageRoute(builder: (context) => SeriesAccessList(membership: membership)),
                           );
@@ -80,7 +81,7 @@ class MembershipTile extends StatelessWidget {
                                 padding: const EdgeInsets.all(0),
                                 //iconSize: 16,
                                 onPressed: () async {
-                                  log('membership_tile: Build the Credit functionality');
+                                  log('membership_tile: Build the Credit functionality', name: '${runtimeType.toString()}:...');
                                   dynamic results = await showDialog(
                                     context: context,
                                     builder: (context) => AlertDialog(
@@ -132,7 +133,7 @@ class MembershipTile extends StatelessWidget {
                                     ),
                                   );
                                   if (results != null ) {
-                                    log('Credits Request ${results[0]}, Message: ${results[1]}, Credit/Debit: ${results[2]} PID: ${membership.pid} CID: ${membership.cid}');
+                                    log('Credits Request ${results[0]}, Message: ${results[1]}, Credit/Debit: ${results[2]} PID: ${membership.pid} CID: ${membership.cid}', name: '${runtimeType.toString()}:...');
                                     // Send Message to user
                                     Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                                     Player? communityPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: membership.cpid) as Player;
@@ -153,7 +154,7 @@ class MembershipTile extends StatelessWidget {
                                           comment: results[1]);
                                     }
                                   } else {
-                                    log('Cancel Credit Request, PID: ${membership.pid} CID: ${membership.cid}');
+                                    log('Cancel Credit Request, PID: ${membership.pid} CID: ${membership.cid}', name: '${runtimeType.toString()}:...');
                                   }
                                   // log('member_maintain: Comment is $comment');
                                   // if (comment != null ) {
@@ -190,11 +191,9 @@ class MembershipTile extends StatelessWidget {
                                     // Navigator.of(context).push(
                                     //     MaterialPageRoute(builder: (context) => MembershipMaintain(membership: membership)));
                                     String? comment = await openDialogMessageComment(context);
-                                    log('membership_list: Comment is $comment');
+                                    log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
                                     if (comment != null) {
-                                      log(
-                                          'membership_tile: Delete Membership. Key: ${membership
-                                              .key} ... $comment');
+                                      log('membership_tile: Delete Membership. Key: ${membership.key} ... $comment', name: '${runtimeType.toString()}:...');
                                       membership.status = 'Remove Requested';
                                       // Note ... the database section is the current user but the Membership PID
                                       // is the PID of the owner of the community.
@@ -222,11 +221,9 @@ class MembershipTile extends StatelessWidget {
                                     //     MaterialPageRoute(builder: (context) => MembershipMaintain(membership: membership)));
                                     String? comment = await openDialogMessageComment(
                                         context);
-                                    log('membership_list: Comment is $comment');
+                                    log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
                                     if (comment != null) {
-                                      log(
-                                          'membership_tile: Delete Membership. Key: ${membership
-                                              .key} ... $comment');
+                                      log('membership_tile: Delete Membership. Key: ${membership.key} ... $comment', name: '${runtimeType.toString()}:...');
                                       membership.status = 'Removed';
                                       // Note ... the database section is the current user but the Membership PID
                                       // is the PID of the owner of the community.
@@ -262,7 +259,11 @@ class MembershipTile extends StatelessWidget {
               );
             }
         );
-    }
+        } else {
+          log('membership_tile: CommunityPlayer Snapshot has no data ... ', name: '${runtimeType.toString()}:...');
+          return const Loading();
+        }
+      }
     );
   }
 }

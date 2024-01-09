@@ -64,7 +64,7 @@ class _SeriesAccessListState extends State<SeriesAccessList> {
             ),
           );
         } else {
-          log("series_list: Snapshot Error ${snapshots.error}");
+          log("build: Snapshot is ${snapshots.error}", name: '${runtimeType.toString()}:...');
           return const Loading();
         }
       }

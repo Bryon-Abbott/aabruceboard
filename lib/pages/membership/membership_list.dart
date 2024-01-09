@@ -28,7 +28,7 @@ class _MembershipListState extends State<MembershipList> {
   Widget build(BuildContext context) {
 
     bruceUser = Provider.of<BruceUser>(context);
-    Player? player;
+    // Player? player;
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.membership).fsDocListStream,
@@ -64,7 +64,7 @@ class _MembershipListState extends State<MembershipList> {
                           Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                           // Verify Request with Player.
                           String? comment = await openDialogMessageComment(context);
-                          log('membership_list: Comment is $comment');
+                          log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
                           if (comment != null ) {
                             Membership membership = Membership(
                               data: { 'cid': community.docId, // Community Owner CID
@@ -76,7 +76,7 @@ class _MembershipListState extends State<MembershipList> {
                             // Note ... the database section is the current user but the Membership PID
                             // is the PID of the owner of the community.
                             await DatabaseService(FSDocType.membership).fsDocAdd(membership);
-                            log("membership_list: Updating MSID: ${membership.docId ?? -600}");
+                            log("membership_list: Updating MSID: ${membership.docId ?? -600}", name: '${runtimeType.toString()}:...');
                             // Add MemberOwner to Community Player for current Player
                             // Process Messages
                             await messageMembershipAddRequest(membership: membership, player: player, communityPlayer: communityPlayer,
@@ -102,7 +102,7 @@ class _MembershipListState extends State<MembershipList> {
             ),
           );
         } else {
-          log("membership_list: Snapshot Error ${snapshots.error}");
+          log("membership_list: Snapshot Error ${snapshots.error}", name: '${runtimeType.toString()}:...');
           return const Loading();
         }
       }
