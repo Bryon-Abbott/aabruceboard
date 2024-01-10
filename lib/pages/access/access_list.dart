@@ -1,16 +1,13 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
+
+import 'package:provider/provider.dart';
 import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/access/access_tile.dart';
-import 'package:bruceboard/services/messageservice.dart';
-import 'package:bruceboard/shared/helperwidgets.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/community.dart';
-//import 'package:bruceboard/pages/membership/membership_tile.dart';
+import 'package:bruceboard/pages/access/access_tile.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 // Todo: Implement delete

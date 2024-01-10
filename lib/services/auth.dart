@@ -16,7 +16,7 @@ class AuthService {
 
   String get displayName {
     if (_auth.currentUser == null) {
-      return "No User Signed On";
+      return "Anonymous";
     } else {
       return _auth.currentUser?.displayName ?? "No Display Name";
     }

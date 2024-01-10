@@ -2,10 +2,11 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:bruceboard/models/communityplayer.dart';
+import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
+import 'package:bruceboard/pages/game/game_board_grid.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bruceboard/models/game.dart';
@@ -69,7 +70,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
   Widget build(BuildContext context) {
     game = widget.game;
 
-    CommunityPlayer communityPlayerProvider = Provider.of<CommunityPlayer>(context);
+    CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
     Player communityPlayer = communityPlayerProvider.communityPlayer;
 
     // Calculate screen size
@@ -208,7 +209,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                                 }),
                             child: Center(
                               // child: BoardGrid(args: BruceArguments(players, games))
-                                child: BoardGrid(game: game, board: board)
+                                child: GameBoardGrid(game: game, board: board)
                             ),
                           )
                         ],
@@ -254,8 +255,8 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: SizedBox(
-                width: 35,
-                child: Text("Qtr${index + 1}:"),
+                width: 25,
+                child: Text("Q${index + 1}:"),
               ),
             ),
             Padding(
@@ -324,31 +325,8 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                     textAlign: TextAlign.right),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: SizedBox(
-                height: 25,
-                width: 45,
-                child: ElevatedButton(
-                  child: const Text('Score'),
-                  onPressed: () async { }, // Do Nothing ...
-                ),
-              ),
-            ),
           ]);
-        }) +
-            [
-              Wrap(
-                alignment: WrapAlignment.end,
-                children: [
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                      });
-                    },
-                    child: const Text("Update")),
-              ],)
-            ]
+        })
         ),
       ),
     );
@@ -417,15 +395,15 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
           children:
             List.generate(5, (index) {
               return SizedBox(
-                width: 80,
+                width: 70,
                 child: Row(
                   children: [
-                    Text((index < 4) ? "Qtr${index+1}:" : "Com:"),
+                    Text((index < 4) ? "Q${index+1}:" : "Com:"),
                     Padding(
                       padding: const EdgeInsets.all(2.0),
                       child: Container(
                         padding: const EdgeInsets.all(1.0),
-                        width: 40,
+                        width: 30,
                         decoration: BoxDecoration(
                           border: Border.all(color: Theme.of(context).colorScheme.outline),
                           color: Theme.of(context).colorScheme.surfaceVariant,
@@ -440,7 +418,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
             }) +
                 [
                   SizedBox(
-                    width: 90,
+                    width: 85,
                     child: Row(
                       children: [
                         const Text("Total:"),
@@ -466,171 +444,3 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
     );
   }
 } // End _GameBoard:
-
-// ============================================================================
-// Board Grid Widget that provide the functions necessary to manage the
-// Selection of squares and renumbering of Row/Column numbers
-// ============================================================================
-class BoardGrid extends StatefulWidget {
-  const BoardGrid({super.key, required this.game, required this.board}); // : super(key: key);
-  final Game game;
-  final Board board;
-
-  @override
-  State<BoardGrid> createState() => _BoardGridState();
-}
-
-class _BoardGridState extends State<BoardGrid> {
-  late TextStyle textStyle;
-  late Game game;
-  late Board board;
-
-  double screenWidth = gridSizeSmall; // Defaults value
-  double screenHeight = gridSizeSmall; // Defaults value
-
-  double gridSize = 500;
-
-  @override
-  void initState() {
-    super.initState();
-    game = widget.game;
-    dev.log("Initialize default GameData data.", name: "${runtimeType.toString()}:initState()");
-    board = widget.board;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    textStyle =
-        Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.yellow);
-    // Calculate screen size
-    var padding = MediaQuery.of(context).padding;
-    screenHeight =  MediaQuery.of(context).size.height - padding.top - padding.bottom;
-    screenWidth = MediaQuery.of(context).size.width - padding.left - padding.right;
-
-    if (screenWidth > 1000) {
-      gridSize = gridSizeLarge;
-    } else {
-      gridSize = gridSizeSmall;
-    }
-    dev.log("Reloading Data ... gameNo: ${game.docId}", name: "${runtimeType.toString()}:build()");
-
-    return SizedBox(
-      height: max(min(screenHeight - 308, gridSize-1), 100),
-      width: min(screenWidth - 45, gridSize-1),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: SizedBox(
-            height: gridSize,  // These determine the Size of the buttons (~x/11)
-            width: gridSize,
-            child: GridView.count(
-              primary: false,
-              crossAxisCount: 11,
-              crossAxisSpacing: 2,
-              mainAxisSpacing: 2,
-              children: buildSquares(),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  List<Widget> buildSquares() {
-    List<Widget> grid = [];
-    grid.add(numberButton());
-    for (int col = 0; col < 10; col++) {
-      grid.add(scoreButton(col, board.colScores));
-    }
-    for (int row = 0; row < 10; row++) {
-      grid.add(scoreButton(row, board.rowScores));
-      for (int col = 0; col < 10; col++) {
-        grid.add(gameButton(row * 10 + col));
-      }
-    }
-    return grid;
-  }
-
-  Widget numberButton() {
-    return Padding(
-      padding: const EdgeInsets.all(1),
-      child: ElevatedButton(
-        onPressed: () {}, // Do Nothing ...
-        style: ElevatedButton.styleFrom(
-          textStyle: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold
-          ),
-        ),
-        child: (board.getFreeSquares() != 0 )
-          ? Text(board.getFreeSquares().toString())
-          : board.scoresLocked
-            ? const Icon(Icons.lock_outline, color: Colors.red)
-            : const Icon(Icons.lock_open_rounded, color: Colors.green),
-      ),
-    );
-  }
-
-  Widget scoreButton(int scoreIndex, List<int> scores) {
-    return Padding(
-      padding: const EdgeInsets.all(1),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        onPressed: (scores[scoreIndex]) == -1 ? null : () {}, // Do Nothing ...
-        child: (scores[scoreIndex] == -1)
-            ? const Text("?")
-            : Text(
-                scores[scoreIndex].toString(),
-              ),
-      ),
-    );
-  }
-
-  Widget gameButton(int squareIndex) {
-    return Padding(
-      padding: const EdgeInsets.all(1),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          disabledBackgroundColor: getSquareColor(squareIndex),
-        ),
-        onPressed: (board.boardData[squareIndex] == -1) ? () async {
-          dev.log("Pressed game button ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
-         }
-        : null,
-        child: (board.boardData[squareIndex] == -1)
-            ? const Text("FS")
-            : const Text("XX"),
-      ),
-    );
-  }
-
-  Color? getSquareColor(int index) {
-    int lastDigitOne = -1; // Column Number = Team one
-    int lastDigitTwo = -1; // Row Number = Team two
-
-    int row = index ~/ 10;
-    int col = index % 10;
-
-    if (board.rowScores[row] == -1 || board.colScores[col] == -1) {
-      return null;
-    }
-
-    for (int i = 3; i >= 0; i--) {
-      if (board.rowResults[i] == -1 ||
-          board.colResults[i] == -1) continue;
-      // Get last digit of each score
-      lastDigitOne = board.rowResults[i] % 10; // Column Number = Team one
-      lastDigitTwo = board.colResults[i] % 10; // Row Number = Team two
-      // Check if both are equal
-      if ((board.colScores[col] == lastDigitOne) &&
-          board.rowScores[row] == lastDigitTwo) {
-        return Colors.red[(i + 2) * 100];
-      }
-    }
-    return null;
-  }
-} // End _BoardGrid:

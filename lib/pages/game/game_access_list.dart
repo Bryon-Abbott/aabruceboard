@@ -1,4 +1,4 @@
-import 'package:bruceboard/models/communityplayer.dart';
+import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
@@ -14,8 +14,7 @@ import 'package:bruceboard/shared/loading.dart';
 
 class GameAccessList extends StatefulWidget {
   final Series series;
-//  final Player seriesPlayer;
-//  const GameAccessList( {super.key, required this.series, required this.seriesPlayer} );
+
   const GameAccessList( {super.key, required this.series} );
 
   @override
@@ -24,12 +23,10 @@ class GameAccessList extends StatefulWidget {
 
 class _GameAccessListState extends State<GameAccessList> {
   late Series series;
-//  late Player seriesPlayer;
 
   @override
   void initState() {
     series = widget.series;
-//    seriesPlayer = widget.seriesPlayer;
     super.initState();
   }
 
@@ -40,8 +37,7 @@ class _GameAccessListState extends State<GameAccessList> {
       setState(() { });
     }
 
-    BruceUser bruceUser = Provider.of<BruceUser>(context);
-    CommunityPlayer communityPlayerProvider = Provider.of<CommunityPlayer>(context) ;
+    CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context) ;
     Player communityPlayer = communityPlayerProvider.communityPlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(

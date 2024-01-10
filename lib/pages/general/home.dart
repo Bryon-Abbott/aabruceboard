@@ -1,18 +1,17 @@
 import 'dart:developer';
-
-import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/models/communityplayer.dart';
-import 'package:bruceboard/services/databaseservice.dart';
-import 'package:bruceboard/shared/loading.dart';
+import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import 'package:bruceboard/pages/player/player_profile.dart';
-import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/auth.dart';
-import 'package:bruceboard/pages/settings/settings_main.dart';
 import 'package:bruceboard/theme/theme_manager.dart';
+import 'package:bruceboard/models/firestoredoc.dart';
+import 'package:bruceboard/models/communityplayerprovider.dart';
+import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/services/databaseservice.dart';
+import 'package:bruceboard/services/auth.dart';
+import 'package:bruceboard/pages/player/player_profile.dart';
+import 'package:bruceboard/pages/settings/settings_main.dart';
 
 // ==========
 // Desc: Load home screen
@@ -52,10 +51,9 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final BruceUser bruceUser = Provider.of<BruceUser?>(context) ?? BruceUser();
-    CommunityPlayer communityPlayer = Provider.of<CommunityPlayer>(context);
+    CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
+    ActivePlayerProvider activePlayerProvider = Provider.of<ActivePlayerProvider>(context);
     late Player player;
-    //final Player player = await getPlayer(uid: bruceUser.uid);
-    //final DatabaseService _db = DatabaseService(uid: bruceUser.uid);
 
     // Calculate screen size
     double screenWidth = MediaQuery.of(context).size.width;
@@ -68,19 +66,30 @@ class _HomeState extends State<Home> {
     return FutureBuilder<FirestoreDoc?>(
       future: DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid),
       builder: (BuildContext context, AsyncSnapshot<FirestoreDoc?> snapshot) {
-        if ( snapshot.hasData ) {
+        log('Pre-Community UID: ${communityPlayerProvider.communityPlayer.uid} ${communityPlayerProvider.communityPlayer.fName}',
+            name: "${runtimeType.toString()}:build");
+        log('Pre-Active UID: ${activePlayerProvider.activePlayer.uid} ${activePlayerProvider.activePlayer.fName}',
+            name: "${runtimeType.toString()}:build");
+        // Default communityPlayer if not set yet
+        if (snapshot.hasData) {
           if (snapshot.data != null) {
             player = snapshot.data as Player;
             log('Home: Got Player ${player.fName}', name: "${runtimeType.toString()}:build");
-            communityPlayer.communityPlayer = player;
+            activePlayerProvider.activePlayer = player;
+            if (communityPlayerProvider.communityPlayer.uid == 'Anonymous') {
+              communityPlayerProvider.communityPlayer = player;
+            }
           }
         }
+        log('Post-Community Owner UID: ${communityPlayerProvider.communityPlayer.uid} ${communityPlayerProvider.communityPlayer.fName}',
+            name: "${runtimeType.toString()}:build");
+        log('Post-Active UID: ${activePlayerProvider.activePlayer.uid} ${activePlayerProvider.activePlayer.fName}',
+            name: "${runtimeType.toString()}:build");
         return Scaffold(
           backgroundColor: Colors.grey,
           appBar: AppBar(
             leading: IconButton(
-              icon:
-                  Icon(Icons.arrow_back, color: Colors.white.withOpacity(0)),
+              icon: Icon(Icons.arrow_back, color: Colors.white.withOpacity(0)),
               onPressed: null,
             ),
             title: const Text('Home'),
@@ -229,29 +238,6 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                             ),
-                            // Padding(
-                            //   padding: const EdgeInsets.all(8.0),
-                            //   child: ElevatedButton.icon(
-                            //     onPressed: (bruceUser.uid == 'Anonymous') ? null : () async {
-                            //       Community? community;
-                            //       Player? player;
-                            //       dynamic results = await Navigator.pushNamed(context, '/community-select');
-                            //       if (results != null) {
-                            //         player = results[0] as Player;
-                            //         community = results[1] as Community;
-                            //         log("Add to Community: ${community.name} ${player.pidKey} ${community.key}");
-                            //       }
-                            //     },
-                            //     icon: Icon(
-                            //       Icons.person,
-                            //       size: 32,
-                            //       color: Theme.of(context).textTheme.titleMedium?.color ?? Colors.red,
-                            //     ),
-                            //     label: Text('Add Community',
-                            //       style: Theme.of(context).textTheme.titleMedium,
-                            //     ),
-                            //   ),
-                            // ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: ElevatedButton.icon(

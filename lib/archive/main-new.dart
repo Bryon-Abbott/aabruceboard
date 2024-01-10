@@ -1,4 +1,4 @@
-import 'package:bruceboard/pages/wrapper.dart';
+import 'package:bruceboard/archive/wrapper.dart';
 import 'package:bruceboard/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

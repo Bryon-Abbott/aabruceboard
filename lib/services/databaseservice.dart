@@ -178,14 +178,15 @@ class DatabaseService {
         .then((res) => noDocs = res.count,
     );
     if (fsDoc.totalField != 'NO-TOTALS') {
-      log('Database: fsDocAdd: updating number of docs $noDocs', name: '${runtimeType.toString()}:...');
+      log('fsDocAdd: updating number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
       log(statsDocument.path, name: '${runtimeType.toString()}:...');
       await statsDocument.update({ fsDoc.totalField: noDocs} );
-      log('Database: fsDocAdd: updated number of docs $noDocs', name: '${runtimeType.toString()}:...');
+      log('updated number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
     }
   }
   // Update the FirestoreDoc with data in provided Series class.
   Future<void> fsDocUpdate(FirestoreDoc fsDoc) async {
+    log('fsDocUpdate: updating doc id ${fsDoc.docId}', name: '${runtimeType.toString()}:fsDocAdd()');
     return await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
   }
 

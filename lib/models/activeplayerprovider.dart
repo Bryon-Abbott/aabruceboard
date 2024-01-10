@@ -3,13 +3,13 @@ import 'package:bruceboard/models/player.dart';
 import 'package:flutter/foundation.dart';
 
 // class SeriesPlayer with ChangeNotifier {
-class CommunityPlayer {
+class ActivePlayerProvider {
   Player _player = Player(data: {});
 
-  void set communityPlayer(Player player) {
+  void set activePlayer(Player player) {
     _player = player;
     // notifyListeners();
   }
 
-  Player get communityPlayer => _player;
+  Player get activePlayer => _player;
 }

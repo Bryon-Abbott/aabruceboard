@@ -1,3 +1,4 @@
+import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
@@ -35,17 +36,18 @@ class _GameListState extends State<GameList> {
       setState(() { });
     }
 
-    BruceUser bruceUser = Provider.of<BruceUser>(context);
+    CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context) ;
+    Player communityPlayer = communityPlayerProvider.communityPlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.game, sidKey: series.key).fsDocListStream,
+      stream: DatabaseService(FSDocType.game, uid: communityPlayer.uid, sidKey: series.key).fsDocListStream,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Game> game = snapshots.data!.map((g) => g as Game).toList();
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Manage Games - Count: ${series.noGames}/${game.length}'),
+                title: Text('List Games - Count: ${series.noGames}/${game.length}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(

@@ -1,13 +1,19 @@
-import 'package:bruceboard/models/communityplayer.dart';
-import 'package:bruceboard/pages/community/community_select.dart';
-import 'package:bruceboard/pages/message/messageowner_list.dart';
-import 'package:bruceboard/pages/player/player_select.dart';
-import 'package:bruceboard/shared/loading.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-
+import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
+import 'firebase_options.dart';
+
+import 'package:bruceboard/shared/loading.dart';
+import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:bruceboard/models/communityplayerprovider.dart';
+import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/services/auth.dart';
+import 'package:bruceboard/theme/theme_constants.dart';
+import 'package:bruceboard/utils/preferences.dart';
 
 import 'package:bruceboard/pages/auth/authenticate.dart';
 import 'package:bruceboard/pages/series/series_list.dart';
@@ -17,12 +23,9 @@ import 'package:bruceboard/pages/community/community_maintain.dart';
 import 'package:bruceboard/pages/membership/membership_list.dart';
 import 'package:bruceboard/pages/membership/membership_maintain.dart';
 import 'package:bruceboard/pages/player/player_profile.dart';
-import 'package:bruceboard/services/auth.dart';
-import 'package:bruceboard/theme/theme_constants.dart';
-import 'package:bruceboard/utils/preferences.dart';
-import 'package:bruceboard/models/player.dart';
-import 'package:firebase_core/firebase_core.dart';
-// import 'package:bruceboard/pages/loading.dart';
+import 'package:bruceboard/pages/community/community_select.dart';
+import 'package:bruceboard/pages/message/messageowner_list.dart';
+import 'package:bruceboard/pages/player/player_select.dart';
 import 'package:bruceboard/pages/general/home.dart';
 import 'package:bruceboard/pages/general/about.dart';
 import 'package:bruceboard/pages/manage_players.dart';
@@ -31,9 +34,6 @@ import 'package:bruceboard/pages/manage_games.dart';
 import 'package:bruceboard/pages/maintain_game.dart';
 import 'package:bruceboard/pages/settings/settings_main.dart';
 import 'package:bruceboard/pages/settings/settings_scoring.dart';
-
-import 'firebase_options.dart';
-
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -94,19 +94,23 @@ class LoadApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamProvider<BruceUser?>.value(
-      initialData: null, // BruceUser(uid: 'x'),
+      initialData: BruceUser(),
       value: AuthService().user,
-      child: Provider<CommunityPlayer>(
-        create: (context) => CommunityPlayer(),
+      child: MultiProvider(
+        providers: [
+          Provider<ActivePlayerProvider>(create: (_) => ActivePlayerProvider()),
+          Provider<CommunityPlayerProvider>(create: (_) => CommunityPlayerProvider()),
+        ],
         child: AdaptiveTheme(
           light: lightTheme,
           dark: darkTheme,
           debugShowFloatingThemeButton: false,
           initial: savedThemeMode ?? AdaptiveThemeMode.light,
-          builder: (theme, lightTheme) =>
-          MaterialApp(
+          builder: (theme, lightTheme) {
+            log('Return MaterialApp', name: '${runtimeType.toString()}:build()');
+            return MaterialApp(
               title: 'Bruce Board',
-        //          theme: lightTheme,
+              //          theme: lightTheme,
               theme: theme,
               darkTheme: darkTheme,
               debugShowCheckedModeBanner: false,
@@ -136,8 +140,9 @@ class LoadApp extends StatelessWidget {
                 '/settings_scoring': (context) => const SettingsScoring(),
                 // Not sure I need this?
               },
-            ),
-          ),
+            );
+          }
+        ),
       ),
     );
   }

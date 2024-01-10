@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/material.dart';
@@ -27,8 +28,8 @@ class _MembershipListState extends State<MembershipList> {
   @override
   Widget build(BuildContext context) {
 
-    bruceUser = Provider.of<BruceUser>(context);
-    // Player? player;
+    BruceUser bruceUser = Provider.of<BruceUser>(context);
+    Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.membership).fsDocListStream,
@@ -61,7 +62,7 @@ class _MembershipListState extends State<MembershipList> {
                         dynamic existingMembership = await DatabaseService(FSDocType.membership).fsDoc(
                             key: Membership.KEY(communityPlayer.docId, community.docId));
                         if (existingMembership == null ) { // If not found, request membership from community owner.
-                          Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+                          // Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                           // Verify Request with Player.
                           String? comment = await openDialogMessageComment(context);
                           log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
@@ -69,7 +70,7 @@ class _MembershipListState extends State<MembershipList> {
                             Membership membership = Membership(
                               data: { 'cid': community.docId, // Community Owner CID
                                 'cpid': communityPlayer.docId,  // Community Onwer PID
-                                'pid': player.docId,  // Player PID
+                                'pid': activePlayer.docId,  // Player PID
                                 'status': 'Requested',
                               }
                             );
@@ -79,8 +80,8 @@ class _MembershipListState extends State<MembershipList> {
                             log("membership_list: Updating MSID: ${membership.docId ?? -600}", name: '${runtimeType.toString()}:...');
                             // Add MemberOwner to Community Player for current Player
                             // Process Messages
-                            await messageMembershipAddRequest(membership: membership, player: player, communityPlayer: communityPlayer,
-                                description: '${player.fName} ${player.lName} requested to be added to your <${community.name}> community',
+                            await messageMembershipAddRequest(membership: membership, player: activePlayer, communityPlayer: communityPlayer,
+                                description: '${activePlayer.fName} ${activePlayer.lName} requested to be added to your <${community.name}> community',
                                 comment: comment);
                           }
                         } else {

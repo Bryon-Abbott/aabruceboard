@@ -50,7 +50,7 @@ class Board implements FirestoreDoc {
     int excludePlayerNo = int.parse(excludePlayerNoString);
 
     int picked = boardData.where((e) => (e != -1) && (e != excludePlayerNo)).length;
-    dev.log("Number of bought squares is $picked", name: "${runtimeType.toString()}:getBoughtSquares");
+    //dev.log("Number of bought squares is $picked", name: "${runtimeType.toString()}:getBoughtSquares");
     return picked;
   }
 
