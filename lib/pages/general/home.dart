@@ -26,7 +26,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late Future<Player> _futurePlayer;
+  //late Future<Player> _futurePlayer;
+  late CommunityPlayerProvider communityPlayerProvider; // = Provider.of<CommunityPlayerProvider>(context);
+  late ActivePlayerProvider activePlayerProvider; // = Provider.of<ActivePlayerProvider>(context);
 
   @override
   void dispose() {
@@ -38,6 +40,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     themeManager.addListener(themeListener);
+    // communityPlayerProvider = CommunityPlayerProvider();
+    // activePlayerProvider = ActivePlayerProvider();
     //Preferences.setDarkMode(true);
     // bool settingDarkMode = Preferences.getDarkMode() ?? false;
   }
@@ -51,8 +55,10 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final BruceUser bruceUser = Provider.of<BruceUser?>(context) ?? BruceUser();
-    CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
-    ActivePlayerProvider activePlayerProvider = Provider.of<ActivePlayerProvider>(context);
+    log('Start of Build: ${bruceUser.uid} ${bruceUser.displayName}', name: "${runtimeType.toString()}:build()");
+
+    communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
+    activePlayerProvider = Provider.of<ActivePlayerProvider>(context);
     late Player player;
 
     // Calculate screen size
@@ -67,24 +73,29 @@ class _HomeState extends State<Home> {
       future: DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid),
       builder: (BuildContext context, AsyncSnapshot<FirestoreDoc?> snapshot) {
         log('Pre-Community UID: ${communityPlayerProvider.communityPlayer.uid} ${communityPlayerProvider.communityPlayer.fName}',
-            name: "${runtimeType.toString()}:build");
+            name: "${runtimeType.toString()}:build()");
         log('Pre-Active UID: ${activePlayerProvider.activePlayer.uid} ${activePlayerProvider.activePlayer.fName}',
-            name: "${runtimeType.toString()}:build");
+            name: "${runtimeType.toString()}:build()");
         // Default communityPlayer if not set yet
         if (snapshot.hasData) {
-          if (snapshot.data != null) {
+          log('Got Document with docId ${snapshot.data!.docId} and Type: ${snapshot.data.runtimeType}', name: "${runtimeType.toString()}:build()");
+          if (snapshot.data!.docId != -1) {
             player = snapshot.data as Player;
-            log('Home: Got Player ${player.fName}', name: "${runtimeType.toString()}:build");
+            log('Got Player ${player.fName}', name: "${runtimeType.toString()}:build()");
             activePlayerProvider.activePlayer = player;
             if (communityPlayerProvider.communityPlayer.uid == 'Anonymous') {
               communityPlayerProvider.communityPlayer = player;
             }
+          } else {
+            log('No Player ... set to  Providers to Anonymous.', name: "${runtimeType.toString()}:build()");
+            activePlayerProvider.activePlayer = Player(data: {});
+            communityPlayerProvider.communityPlayer = Player(data: {});
           }
         }
         log('Post-Community Owner UID: ${communityPlayerProvider.communityPlayer.uid} ${communityPlayerProvider.communityPlayer.fName}',
-            name: "${runtimeType.toString()}:build");
+            name: "${runtimeType.toString()}:build()");
         log('Post-Active UID: ${activePlayerProvider.activePlayer.uid} ${activePlayerProvider.activePlayer.fName}',
-            name: "${runtimeType.toString()}:build");
+            name: "${runtimeType.toString()}:build()");
         return Scaffold(
           backgroundColor: Colors.grey,
           appBar: AppBar(
@@ -366,27 +377,31 @@ class _HomeState extends State<Home> {
       },
     );
   }
-}
 
 // Helper Functions
-void onMenuSelected(BuildContext context, int item) {
-  final AuthService auth = AuthService();
-  switch (item) {
-    case 0:
-      auth.signOut();
-      break;
-    case 1:
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const PlayerProfile()),
-      );
-      break;
-    case 2:
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const SettingsMain()),
-      );
-      break;
-    case 3:
-      SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-      break;
+  void onMenuSelected(BuildContext context, int item) {
+    final AuthService auth = AuthService();
+    switch (item) {
+      case 0:
+        // log('Reset Provider Players to Anonymous and Sign Out', name: "${runtimeType.toString()}:onMenuSelected()");
+        // communityPlayerProvider.communityPlayer = Player(data: {});
+        // activePlayerProvider.activePlayer = Player(data: {});
+        auth.signOut();
+        break;
+      case 1:
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const PlayerProfile()),
+        );
+        break;
+      case 2:
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const SettingsMain()),
+        );
+        break;
+      case 3:
+        SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+        break;
+    }
   }
 }
+

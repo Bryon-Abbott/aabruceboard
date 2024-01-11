@@ -1,8 +1,10 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/board.dart';
+import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -31,7 +33,8 @@ class _GameMaintainState extends State<GameMaintain> {
   late int _gid;
   late String _uid;
   late Board board;
-  late Player player;
+  late Grid grid;
+  late Player activePlayer;
 
   @override
   void initState() {
@@ -52,6 +55,8 @@ class _GameMaintainState extends State<GameMaintain> {
     String currentTeamOne = "";
     String currentTeamTwo = "";
     int currentSquareValue = 0;
+
+    activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     int noGames = 0;
 
@@ -152,55 +157,46 @@ class _GameMaintainState extends State<GameMaintain> {
                       currentTeamTwo = value ?? '';
                     },
                   ),
-                  Text("Series ID: ${series.key}"),
-                  Text("Game ID: ${game?.key ?? 'No Set'}"),
+                  Text("Series ID: ${series.key} " "Game ID: ${game?.key ?? 'Not Set '} " "Game ID: ${activePlayer.docId}"),
+                  // Text("Game ID: ${game?.key ?? 'No Set'}"),
                   Row(
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: ElevatedButton(
                           onPressed: () async {
-                            // Validate returns true if the form is valid, or false otherwise.
-                            // if (player == null) {
-                            //   log('series_maintain: Getting Player ... ');
-                              FirestoreDoc? fsDoc = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid);
-                              if (fsDoc != null) {
-                                player = fsDoc as Player;
-                                log('Got Player for Player ${player.fName}');
-                              } else {
-                                log('Waiting for Player');
-                              }
-                            // }
                             if (_formGameKey.currentState!.validate()) {
-                              // If the form is valid, display a snackbar. In the real world,
-                              // you'd often call a server or save the information in a database.
                               if ( game == null ) {
-                                log('Add Game');
+                                log('Add Game', name: '${runtimeType.toString()}:builid()');
                                 // Add new Game
                                 Map<String, dynamic> data =
                                 { 'sid': series.docId,
-                                  'pid': player.pid,
+                                  'pid': activePlayer.pid,
                                   'name': currentGameName,
                                   'teamOne': currentTeamOne,
                                   'teamTwo': currentTeamTwo,
                                   'squareValue': currentSquareValue,
                                 };
                                 game = Game(data: data);
-                                await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocAdd(game!);
+                                await DatabaseService(FSDocType.game, sidKey: series.key).fsDocAdd(game!);
                                 // game!.docId = game!.docId; // Set GID to docID
                                 // await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocUpdate(game!);
-                                log("Add Game ${game!.key}");
+                                log("Add Game ${game!.key}", name: '${runtimeType.toString()}:builid()');
                                 // Add a default board to Database
-                                data = { 'docId': game!.docId, }; // Use same key as Game for Board
-                                board = Board(data: data );
-                                await DatabaseService(FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game!.key )
+                                // data = { 'docId': game!.docId, }; // Use same key as Game for Board
+                                board = Board(data: { 'docId': game!.docId, } );
+                                await DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game!.key )
                                       .fsDocAdd( board );
                                   // await DatabaseService(uid: _uid, sidKey: series.key).incrementSeriesNoGames(1);
+                                grid = Grid(data: { 'docId': game!.docId, } );
+                                await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game!.key )
+                                    .fsDocAdd( grid );
+                                // await DatabaseService(uid: _uid, sidKey: series.key).incrementSeriesNoGames(1);
                                   series.noGames = series.noGames+1; // Update class to maintain alignment
                               //   }
                               } else {
                                 // Update existing game
-                                log('Update Game ${game!.key}');
+                                log('Update Game ${game!.key}', name: '${runtimeType.toString()}:builid()');
                                 Map<String, dynamic> data =
                                 { 'name': currentGameName,
                                   'teamOne': currentTeamOne,
@@ -226,12 +222,6 @@ class _GameMaintainState extends State<GameMaintain> {
                               bool results = await showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  // titlePadding: EdgeInsets.fromLTRB(6,2,2,2),
-                                  // actionsPadding: EdgeInsets.all(2),
-                                  // contentPadding: EdgeInsets.fromLTRB(6,2,6,2),
-                                  // shape: RoundedRectangleBorder(
-                                  //     borderRadius: BorderRadius.circular(2.0)
-                                  // ),
                                   title: const Text("Delete Game Warning "),
                                   titleTextStyle: Theme.of(context).textTheme.bodyLarge,
                                   contentTextStyle: Theme.of(context).textTheme.bodyLarge,
@@ -253,15 +243,17 @@ class _GameMaintainState extends State<GameMaintain> {
                                 ),
                               );
                               if (results) {
-                                log('Delete Game ... U:$_uid, S:${series.key}, G:${game!.key}');
-                                board = await DatabaseService(FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game!.key).fsDoc(docId: game!.docId) as Board;
-                                await DatabaseService(FSDocType.board, uid: _uid, sidKey: series.key, gidKey: game!.key).fsDocDelete(board);
-                                await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocDelete(game!);
+                                log('Delete Game ... U:$_uid, S:${series.key}, G:${game!.key}', name: '${runtimeType.toString()}:build()');
+                                // ToDo: Should be able to just use Board(data: {docID: game!.docId})
+                                board = await DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game!.key).fsDoc(docId: game!.docId) as Board;
+                                await DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game!.key).fsDocDelete(board);
+                                await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game!.key).fsDocDelete(Grid(data: { 'docID': game!.docId } ));
+                                await DatabaseService(FSDocType.game, sidKey: series.key).fsDocDelete(game!);
                                 // await DatabaseService(uid: _uid, sid: series.sid).incrementSeriesNoGames(-1);
                                 series.noGames  = series.noGames -1;
                                 Navigator.of(context).pop();
                               } else {
-                                log('Game Delete Action Cancelled');
+                                log('Game Delete Action Cancelled', name: '${runtimeType.toString()}:build()');
                               }
                             },
                             child: const Text("Delete")),

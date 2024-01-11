@@ -1,5 +1,5 @@
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/pages/player_tile.dart';
+import 'package:bruceboard/archive/player_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

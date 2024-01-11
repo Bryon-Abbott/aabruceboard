@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
+import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_board_grid.dart';
@@ -209,7 +210,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                                 }),
                             child: Center(
                               // child: BoardGrid(args: BruceArguments(players, games))
-                                child: GameBoardGrid(game: game, board: board)
+                                child: GameBoardGrid(game: game, board: board, series: series)
                             ),
                           )
                         ],
@@ -301,8 +302,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                   border: Border.all(color: Theme.of(context).colorScheme.outline),
                   color: Theme.of(context).colorScheme.surfaceVariant,
                 ),
-                child: Text(getWinners(board.rowResults[index],
-                    board.colResults[index], board)),
+                child: Text(getWinners(board.rowResults[index], board.colResults[index])),
               ),
             ),
             const Padding(
@@ -312,19 +312,19 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                 child: Text("Pts:"),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Container(
-                padding: const EdgeInsets.all(1.0),
-                width: 40,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.outline),
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                ),
-                child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
-                    textAlign: TextAlign.right),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(2.0),
+            //   child: Container(
+            //     padding: const EdgeInsets.all(1.0),
+            //     width: 40,
+            //     decoration: BoxDecoration(
+            //       border: Border.all(color: Theme.of(context).colorScheme.outline),
+            //       color: Theme.of(context).colorScheme.surfaceVariant,
+            //     ),
+            //     child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
+            //         textAlign: TextAlign.right),
+            //   ),
+            // ),
           ]);
         })
         ),
@@ -343,7 +343,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
     }
   }
 
-  String getWinners(int scoreOne, int scoreTwo, Board gameData) {
+  String getWinners(int scoreOne, int scoreTwo ) {
     //log("Scores are $scoreOne : $scoreTwo",name: 'GameBoard');
 
     // If score is not set yet return TBD
@@ -358,19 +358,19 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
 
     //log("Last Digits are $lastDigitOne : $lastDigitTwo",name: 'GameBoard');
 
-    // Get column and row indexes for given score digit
-    int row = gameData.rowScores.indexOf(lastDigitTwo);
-    int col = gameData.colScores.indexOf(lastDigitOne);
-    dev.log("Row : $row Col: $col", name: "${runtimeType.toString()}:getWinner");
-
-    if (col == -1 || row == -1) return "Lock scores";
-    // log("Row : Col are $row : $col",name: 'GameBoard');
-
-    // Find the player number on the board
-    int playerNo = gameData.boardData[row * 10 + col];
-
-    // If no player assigned to board return No Player
-    if (playerNo == -1) return "Not picked";
+    // // Get column and row indexes for given score digit
+    // int row = gridData.rowScores.indexOf(lastDigitTwo);
+    // int col = gridData.colScores.indexOf(lastDigitOne);
+    // dev.log("Row : $row Col: $col", name: "${runtimeType.toString()}:getWinner");
+    //
+    // if (col == -1 || row == -1) return "Lock scores";
+    // // log("Row : Col are $row : $col",name: 'GameBoard');
+    //
+    // // Find the player number on the board
+    // int playerNo = gridData.boardData[row * 10 + col];
+    //
+    // // If no player assigned to board return No Player
+    // if (playerNo == -1) return "Not picked";
     String displayName = "To Be Determined";
     return displayName;
   } // End _GameBoard:getWinners
@@ -408,8 +408,9 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                           border: Border.all(color: Theme.of(context).colorScheme.outline),
                           color: Theme.of(context).colorScheme.surfaceVariant,
                         ),
-                        child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
-                            textAlign: TextAlign.right),
+                        child: Text('Fix Me'),
+                        // child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
+                        //     textAlign: TextAlign.right),
                       ),
                     ),
                   ],
@@ -431,8 +432,9 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                               border: Border.all(color: Theme.of(context).colorScheme.outline),
                               color: Theme.of(context).colorScheme.surfaceVariant,
                             ),
-                            child: Text((board.getBoughtSquares()*game.squareValue).toString(),
-                                textAlign: TextAlign.right),
+                            child: Text('Fix Me'),
+                            // child: Text((board.getBoughtSquares()*game.squareValue).toString(),
+                            //     textAlign: TextAlign.right),
                           ),
                         ),
                       ],

@@ -36,7 +36,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
     return StreamBuilder<FirestoreDoc>(
       stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocStream( key: bruceUser.uid ),
       builder: (context, snapshot) {
-        log('player_profile: ${snapshot.data}');
+        log('player_profile: ${snapshot.data}', name: "${runtimeType.toString()}:build()");
         if(snapshot.hasData) {
           Player player = snapshot.data! as Player;
           return Scaffold(
@@ -121,7 +121,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
             ),
           );
         } else {
-          log("No Player found ...");
+          log("No Player found ...", name: "${runtimeType.toString()}:build()");
           return const Loading();
         }
       }

@@ -97,8 +97,7 @@ class _GameBoardState extends State<GameBoard> {
       gridSize = gridSizeSmall;
     }
 
-    dev.log("Reload Game ... GameNo: ${game.docId} ",
-        name: "${runtimeType.toString()}:build");
+    dev.log("Reload Game ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:build()");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
     textStyle = Theme.of(context).textTheme.bodySmall!
@@ -173,9 +172,6 @@ class _GameBoardState extends State<GameBoard> {
                               width: 40,
                               child: ElevatedButton(
                                 onPressed: () {},
-                                // style: ElevatedButton.styleFrom(
-                                //   backgroundColor: Colors.amber[900],
-                                // ),
                                 child: const Icon(Icons.sports_football_outlined,
                                   // color: Colors.yellow,
                                   size: 24,
@@ -236,14 +232,12 @@ class _GameBoardState extends State<GameBoard> {
                                 }),
                             child: Center(
                               // child: BoardGrid(args: BruceArguments(players, games))
-                                child: GameBoardGrid(game: game, board: board)
+                                child: GameBoardGrid(game: game, board: board, series: series)
                             ),
                           )
                         ],
                       ),
-//              buildPoints(newScreenWidth),
                       buildPoints(board),
-//              buildScore(newScreenWidth),
                       buildScore(board),
                     ],
                   ),
@@ -251,7 +245,7 @@ class _GameBoardState extends State<GameBoard> {
               ),
             );
           } else {
-            dev.log("game_test: Error ${snapshot.error}");
+            dev.log("game_test: Error ${snapshot.error}", name: '${runtimeType.toString()}:build()' );
             return const Loading();
           }
         }
@@ -339,19 +333,19 @@ class _GameBoardState extends State<GameBoard> {
                 child: Text("Pts:"),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Container(
-                padding: const EdgeInsets.all(1.0),
-                width: 40,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.outline),
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                ),
-                child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
-                    textAlign: TextAlign.right),
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.all(2.0),
+            //   child: Container(
+            //     padding: const EdgeInsets.all(1.0),
+            //     width: 40,
+            //     decoration: BoxDecoration(
+            //       border: Border.all(color: Theme.of(context).colorScheme.outline),
+            //       color: Theme.of(context).colorScheme.surfaceVariant,
+            //     ),
+            //     child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
+            //         textAlign: TextAlign.right),
+            //   ),
+            // ),
             Padding(
               padding: const EdgeInsets.all(2.0),
               child: SizedBox(
@@ -365,7 +359,7 @@ class _GameBoardState extends State<GameBoard> {
                     if (score == null || score.isEmpty) {
                       return;
                     } else {
-                      dev.log("Loading Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore");
+                      dev.log("Loading Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore()");
                       //gameData.loadData(game.gameNo!);
                       if (score[0].isNotEmpty) {
                         board.rowResults[index] = int.parse(score[0]);
@@ -374,7 +368,7 @@ class _GameBoardState extends State<GameBoard> {
                         board.colResults[index] = int.parse(score[1]);
                       }
 
-                      dev.log("Saving Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore");
+                      dev.log("Saving Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore()");
                       //gameData.saveData(game.gameNo!);
                       setState(() {
                         dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
@@ -455,7 +449,8 @@ class _GameBoardState extends State<GameBoard> {
           dev.log("Split Data ... GameNo: ${game.docId}, Qtr Splits: $qtrPercents,  Total Splits: ${board.percentSplits[4]}", name: "${runtimeType.toString()}:buildScore");
 
           dev.log("Saving Game Data ... GameNo: ${game.docId}", name: "${runtimeType.toString()}:buildScore");
-          DatabaseService(FSDocType.board).fsDocUpdate(board); // ToDo: Fix this.
+          DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
+              .fsDocUpdate(board); // ToDo: Fix this.
           setState(() {
             dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
           });
@@ -578,24 +573,24 @@ class _GameBoardState extends State<GameBoard> {
 
     //log("Last Digits are $lastDigitOne : $lastDigitTwo",name: 'GameBoard');
 
-    // Get column and row indexes for given score digit
-    int row = gameData.rowScores.indexOf(lastDigitTwo);
-    int col = gameData.colScores.indexOf(lastDigitOne);
-    dev.log("Row : $row Col: $col", name: "${runtimeType.toString()}:getWinner");
-
-    if (col == -1 || row == -1) return "Lock scores";
-    // log("Row : Col are $row : $col",name: 'GameBoard');
-
-    // Find the player number on the board
-    int playerNo = gameData.boardData[row * 10 + col];
-
-    // If no player assigned to board return No Player
-    if (playerNo == -1) return "Not picked";
-
-    // if the playerNo cant be found return Player not found (should never happen) else return name.
-    // String displayName = players.searchPlayer(playerNo)?.fName ?? "??? $playerNo";
-    // displayName += " ";
-    // displayName += players.searchPlayer(playerNo)?.lName ?? "??? $playerNo";
+    // // Get column and row indexes for given score digit
+    // int row = gameData.rowScores.indexOf(lastDigitTwo);
+    // int col = gameData.colScores.indexOf(lastDigitOne);
+    // dev.log("Row : $row Col: $col", name: "${runtimeType.toString()}:getWinner");
+    //
+    // if (col == -1 || row == -1) return "Lock scores";
+    // // log("Row : Col are $row : $col",name: 'GameBoard');
+    //
+    // // Find the player number on the board
+    // int playerNo = gameData.boardData[row * 10 + col];
+    //
+    // // If no player assigned to board return No Player
+    // if (playerNo == -1) return "Not picked";
+    //
+    // // if the playerNo cant be found return Player not found (should never happen) else return name.
+    // // String displayName = players.searchPlayer(playerNo)?.fName ?? "??? $playerNo";
+    // // displayName += " ";
+    // // displayName += players.searchPlayer(playerNo)?.lName ?? "??? $playerNo";
     String displayName = "To Be Determined";
     return displayName;
   } // End _GameBoard:getWinners
@@ -634,8 +629,9 @@ class _GameBoardState extends State<GameBoard> {
                           border: Border.all(color: Theme.of(context).colorScheme.outline),
                           color: Theme.of(context).colorScheme.surfaceVariant,
                         ),
-                        child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
-                            textAlign: TextAlign.right),
+                        child: Text('Fix Me'),
+                        // child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
+                        //     textAlign: TextAlign.right),
                       ),
                     ),
                   ],
@@ -657,8 +653,9 @@ class _GameBoardState extends State<GameBoard> {
                               border: Border.all(color: Theme.of(context).colorScheme.outline),
                               color: Theme.of(context).colorScheme.surfaceVariant,
                             ),
-                            child: Text((board.getBoughtSquares()*game.squareValue).toString(),
-                                textAlign: TextAlign.right),
+                            child: Text('Fix Me'),
+                            // child: Text((board.getBoughtSquares()*game.squareValue).toString(),
+                            //     textAlign: TextAlign.right),
                           ),
                         ),
                       ],

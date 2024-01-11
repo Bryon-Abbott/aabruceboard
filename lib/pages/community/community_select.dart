@@ -88,7 +88,7 @@ class _CommunitySelectState extends State<CommunitySelect> {
                         trailing: IconButton(
                           icon: const Icon(Icons.check_circle_outline),
                           onPressed: () {
-                            log('Icon Pressed');
+                            log('Icon Pressed', name: '${runtimeType.toString()}:ListTile:onPressed()');
                             Navigator.of(context).pop([player, community[index]]);
                           },
                         ),

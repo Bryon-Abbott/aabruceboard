@@ -18,7 +18,7 @@ class Game implements FirestoreDoc {
   int pid; // Player ID
 //  String uid; // Owners UID
 
-  String name = "";
+  String name; // = "";
   int squareValue = 0;
   String teamOne = "";
   String teamTwo = "";

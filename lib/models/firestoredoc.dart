@@ -1,6 +1,7 @@
 // Firestore Document - BaseClass
 import 'dart:developer';
 import 'package:bruceboard/models/access.dart';
+import 'package:bruceboard/models/grid.dart';
 import 'package:intl/intl.dart';
 
 import 'package:bruceboard/models/community.dart';
@@ -16,7 +17,7 @@ import 'package:bruceboard/models/membership.dart';
 // enum ShapeType
 enum FSDocType {
   player,
-    series, access, game, board,
+    series, access, game, board, grid,
     community, member,
     membership,
     messageowner, message }
@@ -42,6 +43,8 @@ abstract class FirestoreDoc {
           return Game(data: data);
         case FSDocType.board:
           return Board(data: data);
+        case FSDocType.grid:
+          return Grid(data: data);
         case FSDocType.membership:
           return Membership(data: data);
         case FSDocType.member:

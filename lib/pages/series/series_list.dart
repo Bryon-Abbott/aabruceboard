@@ -1,14 +1,13 @@
 import 'dart:developer';
-
-import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/series/series_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:bruceboard/models/firestoredoc.dart';
+import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
+import 'package:bruceboard/pages/series/series_tile.dart';
 
 class SeriesList extends StatefulWidget {
   const SeriesList({super.key});
@@ -33,30 +32,30 @@ class _SeriesListState extends State<SeriesList> {
           List<Series> series = snapshots.data!.map((s) => s as Series).toList();
           return Scaffold(
             appBar: AppBar(
-      //            backgroundColor: Colors.blue[900],
-                title: Text('Manage Series - Count: ${series.length}'),
-                centerTitle: true,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  // if user presses back, cancels changes to list (order/deletes)
-                  onPressed: () {
-                    Navigator.of(context).pop();
+              title: Text('Manage Series - Count: ${series.length}'),
+              centerTitle: true,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                // if user presses back, cancels changes to list (order/deletes)
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.add_circle_outline),
+                  onPressed: () async {
+                    dynamic changes = await Navigator.pushNamed(context, '/series-maintain');
+                    if (changes != null) {
+                      log('Games $changes Changes Type : ${changes.runtimeType}', name: '${runtimeType.toString()}:build()');
+                    } else {
+                      log('**null** Changes Type : ${changes.runtimeType}', name: '${runtimeType.toString()}:build()');
+                    }
                   },
-                ),
-                actions: [
-                  IconButton(
-                    onPressed: () async {
-                      dynamic changes = await Navigator.pushNamed(context, '/series-maintain');
-                      if (changes != null) {
-                        log('series_list: Games $changes Changes Type : ${changes.runtimeType}');
-                      } else {
-                        log('series_list: **null** Changes Type : ${changes.runtimeType}');
-                      }
-                    },
-                    icon: const Icon(Icons.add_circle_outline),
-                  )
-                ]),
+                )
+              ]
+            ),
             body: ListView.builder(
               itemCount: series.length,
               itemBuilder: (context, index) {
@@ -65,10 +64,10 @@ class _SeriesListState extends State<SeriesList> {
             ),
           );
         } else {
-          log("series_list: Snapshot Error ${snapshots.error}");
+          log("Snapshot Error ${snapshots.error} ... loading", name: '${runtimeType.toString()}:build()');
           return const Loading();
         }
       }
     );
-    }
   }
+}

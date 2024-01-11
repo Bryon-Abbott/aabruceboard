@@ -52,7 +52,7 @@ class _PlayerSelectState extends State<PlayerSelect> {
                   trailing: IconButton(
                     icon: const Icon(Icons.check_circle_outline),
                     onPressed: () {
-                      log('Icon Pressed');
+                      log('Icon Pressed', name: '${runtimeType.toString()}:ListTile:onPressed()');
                       Navigator.of(context).pop(player[index]);
                     },
                   )

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
@@ -38,6 +40,7 @@ class _GameListState extends State<GameList> {
 
     CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context) ;
     Player communityPlayer = communityPlayerProvider.communityPlayer;
+    log('Game Owner: ${communityPlayer.docId}:${communityPlayer.fName}', name: "${runtimeType.toString()}:build()" );
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.game, uid: communityPlayer.uid, sidKey: series.key).fsDocListStream,
@@ -59,12 +62,12 @@ class _GameListState extends State<GameList> {
                 ),
                 actions: [
                   IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
                     onPressed: () async {
                       await Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => GameMaintain(series: series)));
                       setState(() {}); // Set state to refresh series changes.
                     },
-                    icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
             body: ListView.builder(

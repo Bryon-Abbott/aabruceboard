@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bruceboard/models/firestoredoc.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 // Todo: Convert this to a Database Factory
 class DatabaseService {
@@ -38,7 +40,7 @@ class DatabaseService {
     // If UID not passed in, try to calculate it from Firebase Auth.
     // In fact you should never need to pass in UID as long as you check
     // to ensure the user is signed in.
-    log('Database: DatabaseService: Player Collection ${playerCollection.path}', name: '${runtimeType.toString()}:...');
+    log('Player Collection ${playerCollection.path}', name: '${runtimeType.toString()}:Database()');
 
     if (uid == null) {
       final User? user = FirebaseAuth.instance.currentUser;
@@ -46,58 +48,58 @@ class DatabaseService {
       else uid = 'Anonymous';
     }
     if ( uid == null ) {
-      log("Database: DatabaseService: Didn't get UID!!!", name: '${runtimeType.toString()}:...');
+      log("Didn't get UID!!!", name: '${runtimeType.toString()}:Database()');
     }
     // if toUid not set ... set it to the current users uid.
     toUid ??= uid;
     // if toUid not set ... set it to the current users uid.
     fromUid ??= uid;
 
-    log('Database: DatabaseService: Class Type is > $fsDocType', name: '${runtimeType.toString()}:...');
+    log('Class Type is > $fsDocType', name: '${runtimeType.toString()}:Database()');
     switch (fsDocType) {
       case FSDocType.messageowner: {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid);  // Write stats to sending player?
         docCollection = playerCollection.doc(toUid).collection('MessageOwner');
         //.doc(uid).collection('Incoming');
-        log('Database: Found "MessageOwner" class', name: '${runtimeType.toString()}:...');
-        log(docCollection.path, name: '${runtimeType.toString()}:...');
+        log('Found "MessageOwner" class', name: '${runtimeType.toString()}:Database()');
+        log(docCollection.path, name: '${runtimeType.toString()}:Database()');
       }
       break;
       case FSDocType.message: {
         nextIdDocument = playerCollection.doc(uid);  // Next number in sender Player id
         statsDocument = playerCollection.doc(toUid).collection('MessageOwner').doc(fromUid);
         docCollection = playerCollection.doc(toUid).collection('MessageOwner').doc(fromUid).collection(messageLocation);
-        log('Database: DatabaseService: Found "Message" class : ${docCollection.path}', name: '${runtimeType.toString()}:...');
-        log(docCollection.path, name: '${runtimeType.toString()}:...');
+        log('Found "Message" class : ${docCollection.path}', name: '${runtimeType.toString()}:Database()');
+        log(docCollection.path, name: '${runtimeType.toString()}:Database()');
       }
       break;
       case FSDocType.player: {
         nextIdDocument = configCollection.doc('Production');
         statsDocument = configCollection.doc('Production');
         docCollection = playerCollection;
-        log('Database: DatabaseService: Found "Player" class', name: '${runtimeType.toString()}:...');
+        log('Found "Player" class', name: '${runtimeType.toString()}:Database()');
       }
       break;
       case FSDocType.series: {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid);
         docCollection = playerCollection.doc(uid).collection('Series');
-        log('Database: DatabaseService: Found "Series" class', name: '${runtimeType.toString()}:...');
+        log('Found "Series" class', name: '${runtimeType.toString()}:Database()');
       }
       break;
       case FSDocType.access: {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid).collection('Series').doc(sidKey);
         docCollection = playerCollection.doc(uid).collection('Series').doc(sidKey).collection('Access');
-        log('Database: DatabaseService: Found "Access" class', name: '${runtimeType.toString()}:...');
+        log('Found "Access" class', name: '${runtimeType.toString()}:Database()');
       }
       break;
       case FSDocType.game: {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid).collection('Series').doc(sidKey);
         docCollection = playerCollection.doc(uid).collection('Series').doc(sidKey).collection('Game');
-        log('Database: DatabaseService: Found "Game" class', name: '${runtimeType.toString()}:...');
+        log('Found "Game" class', name: '${runtimeType.toString()}:Database()');
       }
       break;
       case FSDocType.board: {
@@ -108,38 +110,49 @@ class DatabaseService {
         docCollection = playerCollection.doc(uid).collection('Series')
             .doc(sidKey).collection('Game')
             .doc(gidKey).collection('Board');
-        log('Database: DatabaseService: Found "Board" class', name: '${runtimeType.toString()}:...');
+        log('Found "Board" class', name: '${runtimeType.toString()}:Database()');
+      }
+      break;
+      case FSDocType.grid: {
+        nextIdDocument = playerCollection.doc(uid);
+        statsDocument = playerCollection.doc(uid).collection('Series')
+            .doc(sidKey).collection('Game')
+            .doc(gidKey);
+        docCollection = playerCollection.doc(uid).collection('Series')
+            .doc(sidKey).collection('Game')
+            .doc(gidKey).collection('Grid');
+        log('Found "Grid" class', name: '${runtimeType.toString()}:Database()');
       }
       break;
       case FSDocType.membership: {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid);
         docCollection = playerCollection.doc(uid).collection('Membership');
-        log('Database: DatabaseService: Found "Membership" class : ${docCollection.path}', name: '${runtimeType.toString()}:...');
-        log(docCollection.path, name: '${runtimeType.toString()}:...');
+        log('Found "Membership" class : ${docCollection.path}', name: '${runtimeType.toString()}:Database()');
+        log(docCollection.path, name: '${runtimeType.toString()}:Database()');
       }
       break;
       case FSDocType.community: {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid);
         docCollection = playerCollection.doc(uid).collection('Community');
-        log('Database: DatabaseService: Found "Membership" class', name: '${runtimeType.toString()}:...');
+        log('Found "Membership" class', name: '${runtimeType.toString()}:Database()');
       }
       break;
       case FSDocType.member: {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid).collection('Community').doc(cidKey);
         docCollection = playerCollection.doc(uid).collection('Community').doc(cidKey).collection('Member');
-        log('Database: DatabaseService: Found "Member" class', name: '${runtimeType.toString()}:...');
-        log(docCollection.path, name: '${runtimeType.toString()}:...');
+        log('Found "Member" class', name: '${runtimeType.toString()}:Database()');
+        log(docCollection.path, name: '${runtimeType.toString()}:Database()');
       }
       break;
       default: {
-        log('Database: MessageSerive: Undefined class $fsDocType', name: '${runtimeType.toString()}:...');
+        log('Undefined class $fsDocType', name: '${runtimeType.toString()}:Database()');
       }
       break;
     }
-    log('Database: DatabaseService:Setting up DatabaseService $uid', name: '${runtimeType.toString()}:...');
+    log('Setting up DatabaseService $uid', name: '${runtimeType.toString()}:Database()');
   }
 
 // =============================================================================
@@ -148,17 +161,17 @@ class DatabaseService {
   Future<void> fsDocAdd(FirestoreDoc fsDoc) async {
     int noDocs = -1;
     // If there is already a docId, use it vs getting the Next Number
-    log("Database: fsDocAdd: adding documnet : ${fsDoc.docId}", name: '${runtimeType.toString()}:...');
+    log("Adding documnet : ${fsDoc.docId}", name: '${runtimeType.toString()}:fsDocAdd');
     if (fsDoc.docId == -1) {
       // Get the next FirestoreDoc number for the player
-      log('Database: fsDocAdd: creating new key', name: '${runtimeType.toString()}:...');
-      log(nextIdDocument.path, name: '${runtimeType.toString()}:...');
+      log('Creating new key', name: '${runtimeType.toString()}:fsDocAdd');
+      log(nextIdDocument.path, name: '${runtimeType.toString()}:fsDocAdd');
       await nextIdDocument.get().then((DocumentSnapshot doc) {
         final data = doc.data() as Map<String, dynamic>;
         fsDoc.docId = data[fsDoc.nextIdField] ?? 0;  // If nextSid not found, start at 0.
       },
           onError: (e) {
-            log("Error getting Player Next Series ID: $e", name: '${runtimeType.toString()}:...');
+            log("Error getting Player Next Series ID: $e", name: '${runtimeType.toString()}:fsDocAdd');
             fsDoc.docId = 9999;
           }
       );
@@ -171,22 +184,22 @@ class DatabaseService {
       }
     }
     // log('Updating Firebase ${fsDoc.updateMap}');
-    log('Database: fsDocAdd: Adding document ${fsDoc.runtimeType} Key: ${fsDoc.key}', name: '${runtimeType.toString()}:...');
-    log(docCollection.path, name: '${runtimeType.toString()}:...');
+    log('Adding document ${fsDoc.runtimeType} Key: ${fsDoc.key}', name: '${runtimeType.toString()}:fsDocAdd');
+    log(docCollection.path, name: '${runtimeType.toString()}:fsDocAdd');
     await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
     await docCollection.count().get()
         .then((res) => noDocs = res.count,
     );
     if (fsDoc.totalField != 'NO-TOTALS') {
-      log('fsDocAdd: updating number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
-      log(statsDocument.path, name: '${runtimeType.toString()}:...');
+      log('Updating number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
+      log(statsDocument.path, name: '${runtimeType.toString()}:fsDocAdd');
       await statsDocument.update({ fsDoc.totalField: noDocs} );
-      log('updated number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
+      log('Updated number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
     }
   }
   // Update the FirestoreDoc with data in provided Series class.
   Future<void> fsDocUpdate(FirestoreDoc fsDoc) async {
-    log('fsDocUpdate: updating doc id ${fsDoc.docId}', name: '${runtimeType.toString()}:fsDocAdd()');
+    log('Updating doc id ${fsDoc.docId}', name: '${runtimeType.toString()}:fsDocAdd()');
     return await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
   }
 
@@ -194,8 +207,8 @@ class DatabaseService {
   // Note: Application is responsible to delete Games prior to this call!!
   Future<void> fsDocDelete(FirestoreDoc fsDoc) async {
     int noDocs = -1;
-    log('Database: fsDocDelete: path: ${docCollection.path} key: ${fsDoc.key} ', name: '${runtimeType.toString()}:...');
-    log(docCollection.path, name: '${runtimeType.toString()}:...');
+    log('Path: ${docCollection.path} key: ${fsDoc.key} ', name: '${runtimeType.toString()}:fsDocDelete');
+    log(docCollection.path, name: '${runtimeType.toString()}:fsDocDelete');
     await docCollection.doc(fsDoc.key).delete();
     // fsDoc = FirestoreDoc(data: {});  // Clear out the class?
 
@@ -220,14 +233,19 @@ class DatabaseService {
   // Get data from snapshots
   FirestoreDoc _fsDocFromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    log('Database: fsDocFromSnapshot: $data ... $fsDocType', name: '${runtimeType.toString()}:...');
+    // Comment/Uncomment to see data without trunkation.
+    // JsonEncoder encoder = new JsonEncoder.withIndent('  ');
+    // String prettyprint = encoder.convert(data);
+    // print(prettyprint);
+
+    log('Data: $data ... $fsDocType', name: '${runtimeType.toString()}:_fsDocFromSnapshot()');
     return FirestoreDoc( fsDocType, data: data );
   }
 
   // get FirestoreDoc stream
   Stream<FirestoreDoc> fsDocStream({String? key, int? docId}) {
-    log('Database fsDocStream: getting player for U: $key Path: ${playerCollection.path}', name: '${runtimeType.toString()}:...');
-    log('Database fsDocStream: Parent: ${docCollection.toString()} ', name: '${runtimeType.toString()}:...');
+    log('Getting player for U: $key Path: ${playerCollection.path}', name: '${runtimeType.toString()}:fsDocStream()');
+    log('Parent: ${docCollection.toString()} ', name: '${runtimeType.toString()}:fsDocStream()');
     Stream<FirestoreDoc> fsDocStream;
     if (key != null) {
       fsDocStream = docCollection.doc(key).snapshots()
@@ -246,12 +264,15 @@ class DatabaseService {
 //  Future<FirestoreDoc?> fsDoc({required String key}) async {
   Future<FirestoreDoc?> fsDoc({String? key, int? docId}) async {
     log('Getting key ($key), docId is ($docId)', name: '${runtimeType.toString()}:fsDoc()');
-    log(docCollection.path, name: '${runtimeType.toString()}:...');
+    log(docCollection.path, name: '${runtimeType.toString()}:fsDoc()');
+    // Set fsDoc to an invalid document
+    FirestoreDoc? fsDoc = FirestoreDoc(fsDocType, data: {'docID': -1} );
+
     if (uid == 'Anonymous') {
-      FirestoreDoc? empty = null;
-      return Future.value(null);
+      log('Return null as user ${uid}', name: '${runtimeType.toString()}:fsDoc()');
+      return fsDoc;
     }
-    FirestoreDoc? fsDoc;
+
     if (key != null ) {
       log('Getting doc by key: $key', name: '${runtimeType.toString()}:fsDoc()');
       await docCollection.doc(key).get()
@@ -271,8 +292,8 @@ class DatabaseService {
     } else if (docId != null ) {
       log('Getting doc by docId: $docId', name: '${runtimeType.toString()}:fsDoc()');
       await docCollection.where('docId', isEqualTo:docId ).get()
-          .then((querySnapshot) {
-        log('Doc collection from docId size: ${querySnapshot.size}', name: '${runtimeType.toString()}:...');
+        .then((querySnapshot) {
+        log('Doc collection from docId size: ${querySnapshot.size}', name: '${runtimeType.toString()}:fsDoc()');
         if (querySnapshot.size > 0) {
           final data = querySnapshot.docs.first.data() as Map<String, dynamic>;
           fsDoc = FirestoreDoc(fsDocType, data: data);
@@ -282,10 +303,10 @@ class DatabaseService {
           log('No Document by ID : $docId', name: '${runtimeType.toString()}:fsDoc()');
         }
       },
-          onError: (error) {
-            log("Error getting Player UID: $uid, Error: $error", name: '${runtimeType.toString()}:fsDoc()');
-            fsDoc = null;
-          });
+        onError: (error) {
+          log("Error getting Player UID: $uid, Error: $error", name: '${runtimeType.toString()}:fsDoc()');
+          fsDoc = null;
+        });
     } else {
       log('Error: Missing key?', name: '${runtimeType.toString()}:fsDoc()');
       fsDoc = null;
@@ -295,8 +316,8 @@ class DatabaseService {
 
   //get FirestoreDoc List stream
   Stream<List<FirestoreDoc>> get fsDocListStream {
-    log('Database: fsDocListStream: ', name: '${runtimeType.toString()}:...');
-    log(docCollection.path, name: '${runtimeType.toString()}:...');
+    log('Database: fsDocListStream: ', name: '${runtimeType.toString()}:get fsDocListStream');
+    log(docCollection.path, name: '${runtimeType.toString()}:get fsDocListStream');
     Stream<QuerySnapshot<Object?>> s001 = docCollection.snapshots();
     return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
     // return docCollection.snapshots()
@@ -306,7 +327,7 @@ class DatabaseService {
 
   //get FirestoreDoc List stream
   Stream<List<FirestoreDoc>> fsDocGroupListStream({ required int pid, required int cid} ) {
-    log('Database: fsDocGroupListStream: pid: ${pid} cid: ${cid} ', name: '${runtimeType.toString()}:...');
+    log('Database: fsDocGroupListStream: pid: ${pid} cid: ${cid} ', name: '${runtimeType.toString()}:fsDocGroupListStream()');
     Stream<QuerySnapshot<Object?>> s001 =
       db.collectionGroup("Access")
         .where('pid', isEqualTo: pid)
@@ -317,22 +338,22 @@ class DatabaseService {
   //get FirestoreDoc List
   //Future<List<FirestoreDoc>> get fsDocList async {
   Future<List<FirestoreDoc>> get fsDocList async {
-    log('Database: fsDocList: ', name: '${runtimeType.toString()}:...');
-    log(docCollection.path, name: '${runtimeType.toString()}:...');
+    log('Database: fsDocList: ', name: '${runtimeType.toString()}:get fsDocList');
+    log(docCollection.path, name: '${runtimeType.toString()}:get fsDocList');
     List<FirestoreDoc> fsDocList = [];
     await docCollection.get().then((snapshot) {
-      log('Database: fsDocList: Snapshot Size ${snapshot.size}', name: '${runtimeType.toString()}:...');
+      log('Snapshot Size ${snapshot.size}', name: '${runtimeType.toString()}:get fsDocList');
       for (QueryDocumentSnapshot<Object?> doc in snapshot.docs) {
-        log('Database: fsDocList: Snapshot Doc ID:  ${doc.id}', name: '${runtimeType.toString()}:...');
+        log('Snapshot Doc ID:  ${doc.id}', name: '${runtimeType.toString()}:get fsDocList');
         Map<String, dynamic> data =  doc.data()! as Map<String, dynamic>;
         FirestoreDoc fsDoc = FirestoreDoc( fsDocType, data: data );
         fsDocList.add(fsDoc);
       }
        // snapshot.docs.forEach((doc) {
        // });
-       log('database: fsDocList: return type ${fsDocList.runtimeType} Length: ${fsDocList.length}', name: '${runtimeType.toString()}:...');
+       log('Return type ${fsDocList.runtimeType} Length: ${fsDocList.length}', name: '${runtimeType.toString()}:get fsDocList');
       },
-      onError: (e) => log("Error getting document: $e", name: '${runtimeType.toString()}:...'),
+      onError: (e) => log("Error getting document: $e", name: '${runtimeType.toString()}:get fsDocList'),
     );
     return fsDocList;
   }
@@ -341,8 +362,8 @@ class DatabaseService {
   // ToDo: Fix this.
   Future<int> get fsDocCount async {
     int docCount=0;
-    log('Database: fsDocCount: ', name: '${runtimeType.toString()}:...');
-    log(docCollection.path, name: '${runtimeType.toString()}:...');
+    log('Database: fsDocCount: ', name: '${runtimeType.toString()}:get fsDocCount');
+    log(docCollection.path, name: '${runtimeType.toString()}:get fsDocCount');
 
     await docCollection.count().get().then((snapshot) {
       docCount = snapshot.count;

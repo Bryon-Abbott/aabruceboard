@@ -37,7 +37,7 @@ class MembershipTile extends StatelessWidget {
       builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot) {
         if (snapshot.hasData) {
           communityPlayer = snapshot.data as Player;
-          communityPlayerProvider.communityPlayer = communityPlayer; // Set the communityPlayerProvider for nested pages.
+//          communityPlayerProvider.communityPlayer = communityPlayer; // Set the communityPlayerProvider for nested pages.
           return FutureBuilder<FirestoreDoc?>(
             future: DatabaseService(FSDocType.community, uid: communityPlayer.uid)
                 .fsDoc(docId: membership.cid),

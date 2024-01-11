@@ -29,7 +29,6 @@ class Membership implements FirestoreDoc {
         cid = data['cid'] ?? -1,
         cpid = data['cpid'] ?? -1,
         pid = data['pid'] ?? -1,
-//        uid = data['uid'] ?? 'error',
         status = data['status'] ?? 'error';
 
   @override
