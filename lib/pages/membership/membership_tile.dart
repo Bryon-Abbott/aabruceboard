@@ -7,7 +7,7 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/pages/series/series_access_list.dart';
+import 'package:bruceboard/pages/access/access_list_series.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
@@ -59,15 +59,15 @@ class MembershipTile extends StatelessWidget {
                             onTap: () async {
                               log("Membership Tapped ... ${membership.cpid} ${membership.cid} ", name: '${runtimeType.toString()}:...');
                               // Set the CommunityPlayerProvider
-                              communityPlayerProvider.communityPlayer = communityPlayer!;
+                              communityPlayerProvider.communityPlayer = communityPlayer;
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SeriesAccessList(membership: membership)),
+                                  builder: (context) => AccessListSeries(membership: membership)),
                               );
                             },
                             title: Text('Membership Status: ${membership.status}'),
                             subtitle: Text(
                                 'Community: ${community?.name ?? '...'} (${membership.key})\n'
-                                    'Owner: ${communityPlayer?.fName ?? '...'} ${communityPlayer?.lName ?? ""}\n'
+                                    'Owner: ${communityPlayer.fName ?? '...'} ${communityPlayer.lName ?? ""}\n'
                                     'Credits: ${member?.credits ?? -1}'
                             ),
                             trailing: SizedBox(
@@ -95,13 +95,13 @@ class MembershipTile extends StatelessWidget {
                                                     FilteringTextInputFormatter.digitsOnly,
                                                   ],
                                                   autofocus: true,
-                                                  decoration: InputDecoration(hintText: '99'),
+                                                  decoration: const InputDecoration(hintText: '99'),
                                                   style: Theme.of(context).textTheme.bodyMedium,
                                                   controller: controller1,
                                                 ),
                                                 TextField(
                                                   autofocus: true,
-                                                  decoration: InputDecoration(hintText: 'Message'),
+                                                  decoration: const InputDecoration(hintText: 'Message'),
                                                   style: Theme.of(context).textTheme.bodyMedium,
                                                   controller: controller2,
                                                 ),
@@ -178,7 +178,7 @@ class MembershipTile extends StatelessWidget {
                                           await messageMembershipRemoveRequest(
                                               membership: membership,
                                               player: activePlayer,
-                                              communityPlayer: communityPlayer!,
+                                              communityPlayer: communityPlayer,
                                               description: '${activePlayer.fName} ${activePlayer
                                                   .lName} request to be removed from your <${community
                                                   ?.name ?? "Unknown"}> community',
@@ -199,7 +199,7 @@ class MembershipTile extends StatelessWidget {
                                           await messageMembershipRemoveRequest(
                                               membership: membership,
                                               player: activePlayer,
-                                              communityPlayer: communityPlayer!,
+                                              communityPlayer: communityPlayer,
                                               description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
                                                   'your <${community?.name ?? 'Unknown'}> community',
                                               comment: comment);

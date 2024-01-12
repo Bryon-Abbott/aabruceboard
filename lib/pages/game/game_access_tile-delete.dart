@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_maintain.dart';
-import 'package:bruceboard/pages/game/game_board_access.dart';
+import 'package:bruceboard/pages/game/game_board_access-delete.dart';
 import 'package:flutter/material.dart';
 
 class GameAccessTile extends StatelessWidget {

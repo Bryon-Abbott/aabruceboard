@@ -4,7 +4,6 @@ import 'dart:ui';
 
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_board_grid.dart';
@@ -49,7 +48,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
   void callback(int cells)
   {
     cellsPicked = cells;
-    dev.log('Callback to reset state: Bought Cells ${cellsPicked}', name:  '${runtimeType.toString()}:callback()');
+    dev.log('Callback to reset state: Bought Cells $cellsPicked', name:  '${runtimeType.toString()}:callback()');
     setState(() {});
   }
 
@@ -416,7 +415,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                           border: Border.all(color: Theme.of(context).colorScheme.outline),
                           color: Theme.of(context).colorScheme.surfaceVariant,
                         ),
-                        child: Text('Fix Me'),
+                        child: const Text('Fix Me'),
                         // child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
                         //     textAlign: TextAlign.right),
                       ),
@@ -440,7 +439,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                               border: Border.all(color: Theme.of(context).colorScheme.outline),
                               color: Theme.of(context).colorScheme.surfaceVariant,
                             ),
-                            child: Text('Fix Me'),
+                            child: const Text('Fix Me'),
                             // child: Text((board.getBoughtSquares()*game.squareValue).toString(),
                             //     textAlign: TextAlign.right),
                           ),

@@ -145,37 +145,24 @@ class MessageTile extends StatelessWidget {
         log('message_tile: case 00004:');
         Member? member = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
             .fsDoc(docId: message.pidFrom) as Member;
-        log('message_tile: case 00004: member: ${member?.docId ?? 'No Member'}');
-        if (member != null) {
-          // Update Credits and save to database.
-          if (message.data['creditDebit'] == 'credit') {
-            member.credits += message.data['credits'] as int;
-          } else {
-            member.credits -= message.data['credits'] as int;
-          }
-          await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocUpdate(member);
-          // Send Message back to Requester
-          Community? community = await DatabaseService(FSDocType.community).fsDoc(docId: message.data['cid']) as Community;
-          String? comment = await openDialogMessageComment(context) ?? "Credits were updated to your membership";
-          // Add Message to Archive
-          if (comment != null ) {
-            String desc = '${playerTo.fName} ${playerTo.lName} accepted your request to add/refund credits '
-                        '(Credits:${message.data['credits']} Balance:${member.credits} ) '
-                        'to your membership in the <${community.name ?? "No Name"}> community';
-            await messageMembershipCreditsAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
-                comment: comment, description: desc);
-          }
+        log('message_tile: case 00004: member: ${member.docId ?? 'No Member'}');
+        // Update Credits and save to database.
+        if (message.data['creditDebit'] == 'credit') {
+          member.credits += message.data['credits'] as int;
         } else {
-          // No Member? Send back message.
-          log("message_tile: ERROR: Can't find member record");
-          Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
-          String? comment = await openDialogMessageComment(context) ?? "Sorry cant find membership";
-          // Add Message to Archive
-          String desc = "${playerTo.fName} ${playerTo.lName} couldn't find your membership in the <${community.name}> community";
-          await messageMembershipCreditsAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
-              comment: comment, description: desc);
+          member.credits -= message.data['credits'] as int;
         }
-      }
+        await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocUpdate(member);
+        // Send Message back to Requester
+        Community? community = await DatabaseService(FSDocType.community).fsDoc(docId: message.data['cid']) as Community;
+        String? comment = await openDialogMessageComment(context) ?? "Credits were updated to your membership";
+        // Add Message to Archive
+        String desc = '${playerTo.fName} ${playerTo.lName} accepted your request to add/refund credits '
+                    '(Credits:${message.data['credits']} Balance:${member.credits} ) '
+                    'to your membership in the <${community.name ?? "No Name"}> community';
+        await messageMembershipCreditsAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
+            comment: comment, description: desc);
+                  }
       break;
     // ========================================================================
     // Response Messages

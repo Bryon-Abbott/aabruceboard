@@ -64,7 +64,7 @@ class _AccessListState extends State<AccessList> {
                         communityPlayer = results[0] as Player;
                         community = results[1] as Community;
                         // log('membership_list: Check if selected community already exists ... P:U:${communityPlayer.docId}:${community.docId} ');
-                        dynamic existingAccess = await DatabaseService(FSDocType.access, sidKey: series!.key).fsDoc(
+                        dynamic existingAccess = await DatabaseService(FSDocType.access, sidKey: series.key).fsDoc(
                             key: Access.KEY(communityPlayer.docId, community.docId));
                         if (existingAccess == null ) { // If not found, request membership from community owner.
                           Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;

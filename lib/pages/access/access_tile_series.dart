@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:bruceboard/pages/game/game_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,13 +8,13 @@ import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/game/game_access_list.dart';
+import 'package:bruceboard/pages/game/game_list.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
-class SeriesAccessTile extends StatelessWidget {
+class AccessTileSeries extends StatelessWidget {
   final Access access;
-  const SeriesAccessTile({super.key, required this.access});
+  const AccessTileSeries({super.key, required this.access});
 
   @override
   // Todo: Change to Future builder to set Series
@@ -41,7 +40,7 @@ class SeriesAccessTile extends StatelessWidget {
                   log("Series Tapped ... ${series?.name ?? '...'} ", name: '${runtimeType.toString()}:...');
                   Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => GameAccessList( series: series! )
+                      builder: (context) => GameList( series: series! )
                     ),
                   );
                 },

@@ -92,8 +92,9 @@ class _MemberMaintainState extends State<MemberMaintain> {
                     },
                     onSaved: (String? value) {
                       //debugPrint('Member name is: $value');
-                      if (value?.isNotEmpty ?? false )
+                      if (value?.isNotEmpty ?? false ) {
                         newCredits = int.parse(value ?? '0');
+                      }
                     },
                   ),
                   Text("Community  ID: ${community.key}"),

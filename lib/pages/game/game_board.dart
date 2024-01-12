@@ -1,6 +1,8 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
+import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -45,13 +47,14 @@ class _GameBoardState extends State<GameBoard> {
   late Series series;
   late String _uid;
 
+  late final bool isGameOwner;
   List<String?>? winners = List<String?>.filled(4, null);
 
   int cellsPicked=0;
   void callback(int cells)
   {
     cellsPicked = cells;
-    dev.log('Callback to reset state: Bought Cells ${cellsPicked}', name:  '${runtimeType.toString()}:callback()');
+    dev.log('Callback to reset state: Bought Cells $cellsPicked', name:  '${runtimeType.toString()}:callback()');
     setState(() {});
   }
 
@@ -107,7 +110,12 @@ class _GameBoardState extends State<GameBoard> {
     } else {
       gridSize = gridSizeSmall;
     }
-
+    final Player communityPlayer = Provider.of<CommunityPlayerProvider>(context).communityPlayer;
+    final Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
+    dev.log('Game Owner: ${communityPlayer.docId}:${communityPlayer.fName} Active Player: ${activePlayer.docId}:${activePlayer.fName}',
+        name: "${runtimeType.toString()}:build()" );
+    // If these Community Player is Equal to the Active Player it is the owner of the game and can update game/grid information,
+    isGameOwner = communityPlayer.docId == activePlayer.docId;
     dev.log("Reload Game ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:build()");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
@@ -115,7 +123,7 @@ class _GameBoardState extends State<GameBoard> {
         .copyWith(color: Colors.yellow);
 
     return StreamBuilder<FirestoreDoc>(
-        stream: DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key).fsDocStream(key: game.key),
+        stream: DatabaseService(FSDocType.board, uid: communityPlayer.uid, sidKey: series.key, gidKey: game.key).fsDocStream(key: game.key),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Board board = snapshot.data! as Board;
@@ -138,21 +146,22 @@ class _GameBoardState extends State<GameBoard> {
                                 onMenuSelected(context, item, board),
                             itemBuilder: (context) =>
                             [
-                              const PopupMenuItem<int>(
-                                  value: 0,
-                                  child: Row(
-                                      children: [
-                                        Icon(Icons.download_outlined,
-                                            color: Colors.white),
-                                        SizedBox(width: 8),
-                                        Text("Download Game Data"),
-                                      ]
-                                  )
-                              ),
-                              const PopupMenuDivider(),
-                              const PopupMenuItem<int>(
+                              // const PopupMenuItem<int>(
+                              //     value: 0,
+                              //     child: Row(
+                              //         children: [
+                              //           Icon(Icons.download_outlined,
+                              //               color: Colors.white),
+                              //           SizedBox(width: 8),
+                              //           Text("Download Game Data"),
+                              //         ]
+                              //     )
+                              // ),
+                              // const PopupMenuDivider(),
+                              PopupMenuItem<int>(
                                   value: 1,
-                                  child: Row(
+                                  enabled: isGameOwner,
+                                  child: const Row(
                                       children: [
                                         Icon(
                                             Icons.filter_list,
@@ -162,9 +171,10 @@ class _GameBoardState extends State<GameBoard> {
                                       ]
                                   )
                               ),
-                              const PopupMenuItem<int>(
+                              PopupMenuItem<int>(
                                   value: 2,
-                                  child: Row(
+                                  enabled: isGameOwner,
+                                  child: const Row(
                                       children: [
                                         Icon(Icons.percent_outlined,
                                             color: Colors.white),
@@ -395,7 +405,7 @@ class _GameBoardState extends State<GameBoard> {
                     width: 45,
                     child: ElevatedButton(
                       child: const Text('Score'),
-                      onPressed: () async {
+                      onPressed: isGameOwner ? () async {
                         dev.log("Getting Scores ... ", name: "${runtimeType.toString()}:buildScore");
                         final List<String>? score = await openDialogScores(index, board);
                         if (score == null || score.isEmpty) {
@@ -418,7 +428,7 @@ class _GameBoardState extends State<GameBoard> {
                           //   dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
                           // });
                         }
-                      },
+                      } : null,
                     ),
                   ),
                 ),
@@ -439,14 +449,14 @@ class _GameBoardState extends State<GameBoard> {
 //        widget.gameStorage.writeGameData(BruceArguments(players, games));
         break;
       case 1:
-        dev.log("Menu Select 1:Fill in remainder", name: "${this.runtimeType.toString()}:onMenuSelected");
-        dev.log("Filling scores-Before", name: "${this.runtimeType.toString()}:onMenuSelected");
+        dev.log("Menu Select 1:Fill in remainder", name: "${runtimeType.toString()}:onMenuSelected");
+        dev.log("Filling scores-Before", name: "${runtimeType.toString()}:onMenuSelected");
         Grid grid = await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
         dynamic result = await Navigator.pushNamed(
             context, '/player-select');
         if (result != null) {
           Player selectedPlayer = result as Player;
-          dev.log("Load Game Data ... GameNo: ${game.docId} ", name: "${this.runtimeType.toString()}:onMenuSelected");
+          dev.log("Load Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:onMenuSelected");
           int updated = 0;
           for (int i = 0; i < 100; i++) {
             if (grid.squarePlayer[i] == -1) {
@@ -455,11 +465,11 @@ class _GameBoardState extends State<GameBoard> {
               updated++;
             }
           }
-          dev.log("Saving Game Data ... Game Board ${game.docId}, Squares $updated", name: "${this.runtimeType.toString()}:onMenuSelected");
+          dev.log("Saving Game Data ... Game Board ${game.docId}, Squares $updated", name: "${runtimeType.toString()}:onMenuSelected");
           await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
           // setState(() { });
         } else {
-          dev.log("Return value was null", name: "${this.runtimeType.toString()}:onMenuSelected");
+          dev.log("Return value was null", name: "${runtimeType.toString()}:onMenuSelected");
         }
         break;
       case 2:
@@ -602,9 +612,7 @@ class _GameBoardState extends State<GameBoard> {
         continue;  // Go to next quarter.
       } else {
         // If grid no retrieved, get it.
-        if (grid == null ) {
-          grid = await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
-        }
+        grid ??= await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
         if (grid.scoresLocked == false) {
           winners[qtr] = "Set Scores";
           continue; // Go to next quarter
@@ -647,7 +655,7 @@ class _GameBoardState extends State<GameBoard> {
         ),
         child: Column(
           children: [
-             Row(
+             const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text('Credits'),

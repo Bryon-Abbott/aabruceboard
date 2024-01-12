@@ -1,10 +1,11 @@
+import 'dart:developer';
+
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/game/game_access_tile.dart';
+import 'package:bruceboard/pages/game/game_access_tile-delete.dart';
 import 'package:bruceboard/pages/game/game_maintain.dart';
-import 'package:bruceboard/pages/game/game_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -39,6 +40,7 @@ class _GameAccessListState extends State<GameAccessList> {
 
     CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context) ;
     Player communityPlayer = communityPlayerProvider.communityPlayer;
+    log('Game Owner: ${communityPlayer.docId}:${communityPlayer.fName}', name: "${runtimeType.toString()}:build()" );
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.game, uid: communityPlayer.uid, sidKey: series.key).fsDocListStream,

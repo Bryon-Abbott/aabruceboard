@@ -1,7 +1,4 @@
-import 'dart:developer' as dev;
-import 'dart:math';
 import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/utils/preferences.dart';
 import 'package:intl/intl.dart';
 
 class Board implements FirestoreDoc {

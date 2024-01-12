@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:bruceboard/models/activeplayerprovider.dart';
@@ -183,14 +182,6 @@ class _GameBoardGridState extends State<GameBoardGrid> {
           textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         onPressed: (scores[scoreIndex]) == -1 ? null : () {},
-        // onPressed: () {
-        //   print("Pressed score button ($scoreIndex: ${gameData.axisScores[scoreIndex]})");
-        // },
-        // style: ElevatedButton.styleFrom(
-        //   backgroundColor:
-        //   scores[scoreIndex] == -1 ? Colors.blue : Colors.grey,
-        // ),
-        //label: Text(""),
         child: (scores[scoreIndex] == -1)
             ? const Text("?")
             : Text( scores[scoreIndex].toString() ),
@@ -206,28 +197,17 @@ class _GameBoardGridState extends State<GameBoardGrid> {
           textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           disabledBackgroundColor: getSquareColor(grid, squareIndex),
         ),
-        onPressed: (gameOwner && (grid.squarePlayer[squareIndex] == -1)) ? () async {
-          dev.log("Pressed game button ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
-          // ToDo: need to filter Player-Select to only show players of Communities with Access
-            dynamic playerSelected = await Navigator.pushNamed(context, '/player-select');
-            if (playerSelected == null) {
-              dev.log("No Player Selected", name: "${this.runtimeType.toString()}:GameButton");
-            } else {
-              Player selectedPlayer = playerSelected as Player;
-              dev.log("Player Selected (${selectedPlayer.initials}) as Player)", name: "${this.runtimeType.toString()}:GameButton");
-              grid.squarePlayer[squareIndex] = selectedPlayer.docId;
-              grid.squareInitials[squareIndex] = selectedPlayer.initials;
-              await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
-              await DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
-                  .fsDocUpdateField(key: game.key , field: 'squaresPicked', ivalue: grid.getPickedSquares() );
-              dev.log("saving Data ... gameNo: ${game.docId} ", name: "${this.runtimeType.toString()}:GameButton");
-              //widget.callback(grid.getBoughtSquares());
-              // setState(() {
-              //   //gameData.saveData(games.getGame(games.currentGame).gameNo!);
-              // });
-              // ToDo: Send Message to user.
+        onPressed: (grid.squarePlayer[squareIndex] == -1)
+            ? () async {
+              dev.log("Pressed game button ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
+              if (gameOwner) {
+                dev.log("Owner Assign Square ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
+                assignSquare(grid, squareIndex);
+              } else {
+                dev.log("Player Request Square ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
+                requestSquare(grid, squareIndex);
+              }
             }
-        }
             : null,
         child: Text(grid.squareInitials[squareIndex]),
       ),
@@ -260,5 +240,36 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       }
     }
     return null;
+  }
+
+  void assignSquare(Grid grid, int squareIndex) async {
+    dev.log("Assign Square ($squareIndex)", name: "${runtimeType.toString()}:ownerAssignSquare()");
+    // ToDo: need to filter Player-Select to only show players of Communities with Access
+    dynamic playerSelected = await Navigator.pushNamed(context, '/player-select');
+    if (playerSelected == null) {
+      dev.log("No Player Selected",
+          name: "${runtimeType.toString()}:GameButton");
+    } else {
+      Player selectedPlayer = playerSelected as Player;
+      dev.log("Player Selected (${selectedPlayer.initials}) as Player)",
+          name: "${runtimeType.toString()}:GameButton");
+      grid.squarePlayer[squareIndex] = selectedPlayer.docId;
+      grid.squareInitials[squareIndex] = selectedPlayer.initials;
+
+      // No need to await here as updates will come via Firestore Streams.
+      DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key)
+          .fsDocUpdate(grid);
+      DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
+          .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
+      dev.log("saving Data ... gameNo: ${game.docId} ",
+          name: "${runtimeType.toString()}:GameButton");
+      // ToDo: Send Message to user.
+    }
+  }
+
+  // Todo: Complete this.
+  void requestSquare(Grid grid, int squareIndex) {
+    dev.log("Request Square ($squareIndex)", name: "${runtimeType.toString()}:ownerAssignSquare()");
+
   }
 }

@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:bruceboard/models/firestoredoc.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
 // Todo: Convert this to a Database Factory
 class DatabaseService {
@@ -44,8 +42,11 @@ class DatabaseService {
 
     if (uid == null) {
       final User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) uid = user.uid;
-      else uid = 'Anonymous';
+      if (user != null) {
+        uid = user.uid;
+      } else {
+        uid = 'Anonymous';
+      }
     }
     if ( uid == null ) {
       log("Didn't get UID!!!", name: '${runtimeType.toString()}:Database()');
@@ -281,7 +282,7 @@ class DatabaseService {
     FirestoreDoc? fsDoc = FirestoreDoc(fsDocType, data: {'docID': -1} );
 
     if (uid == 'Anonymous') {
-      log('Return null as user ${uid}', name: '${runtimeType.toString()}:fsDoc()');
+      log('Return null as user $uid', name: '${runtimeType.toString()}:fsDoc()');
       return fsDoc;
     }
 
@@ -339,7 +340,7 @@ class DatabaseService {
 
   //get FirestoreDoc List stream
   Stream<List<FirestoreDoc>> fsDocGroupListStream({ required int pid, required int cid} ) {
-    log('Database: fsDocGroupListStream: pid: ${pid} cid: ${cid} ', name: '${runtimeType.toString()}:fsDocGroupListStream()');
+    log('Database: fsDocGroupListStream: pid: $pid cid: $cid ', name: '${runtimeType.toString()}:fsDocGroupListStream()');
     Stream<QuerySnapshot<Object?>> s001 =
       db.collectionGroup("Access")
         .where('pid', isEqualTo: pid)

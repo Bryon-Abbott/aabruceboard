@@ -50,8 +50,8 @@ class Player implements FirestoreDoc {
         docId = data['docId'] ?? -1,
         uid = data['uid'] ?? 'Anonymous',
         pid = data['pid'] ?? -1,
-        fName = data['fName'] ?? 'FNAME',
-        lName = data['lName'] ?? 'LNAME',
+        fName = data['fName'] ?? 'Fname',
+        lName = data['lName'] ?? 'Lname',
         initials = data['initials'] ?? 'FL',
         noMemberships = data['noMemberships'] ?? 0,
         noCommunities = data['noCommunities'] ?? 0,
@@ -76,8 +76,8 @@ class Player implements FirestoreDoc {
     docId = data['docId'] ?? -1;
     uid = data['uid'] ?? 'Anonymous';
     pid = data['pid'] ?? -1;
-    fName = data['fName'] ?? 'FNAME';
-    lName = data['lName'] ?? 'LNAME';
+    fName = data['fName'] ?? 'Fname';
+    lName = data['lName'] ?? 'Lname';
     initials = data['initials'] ?? 'FL';
     noMemberships = data['noMemberships'] ?? 0;
     noCommunities = data['noCommunities'] ?? 0;

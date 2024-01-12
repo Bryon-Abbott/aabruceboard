@@ -4,8 +4,8 @@ import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/game/game_maintain.dart';
 import 'package:bruceboard/pages/game/game_tile.dart';
+import 'package:bruceboard/pages/game/game_maintain.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -3,9 +3,7 @@ import 'dart:developer';
 import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/membership.dart';
-import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/series/series_access_tile.dart';
-import 'package:bruceboard/pages/series/series_tile.dart';
+import 'package:bruceboard/pages/access/access_tile_series.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,15 +11,15 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
-class SeriesAccessList extends StatefulWidget {
+class AccessListSeries extends StatefulWidget {
   final Membership membership;
-  SeriesAccessList({super.key, required this.membership});
+  const AccessListSeries({super.key, required this.membership});
 
   @override
-  State<SeriesAccessList> createState() => _SeriesAccessListState();
+  State<AccessListSeries> createState() => _AccessListSeriesState();
 }
 
-class _SeriesAccessListState extends State<SeriesAccessList> {
+class _AccessListSeriesState extends State<AccessListSeries> {
 
   late BruceUser bruceUser;
 
@@ -59,7 +57,7 @@ class _SeriesAccessListState extends State<SeriesAccessList> {
             body: ListView.builder(
               itemCount: access.length,
               itemBuilder: (context, index) {
-                return SeriesAccessTile(access: access[index]);
+                return AccessTileSeries(access: access[index]);
               },
             ),
           );
