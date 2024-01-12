@@ -21,30 +21,35 @@ class Grid implements FirestoreDoc {
   List<String> squareInitials;
   List<int> rowScores;
   List<int> colScores;
+  bool scoresLocked = false;
 
 //  Board({ required this.gid, }) :
   Grid({ required Map<String, dynamic> data, }) :
-    docId = data['docId']                                  ?? -1,
+    docId = data['docId']                                   ?? -1,
     squarePlayer = data['squarePlayer']?.cast<int>()        ?? List<int>.filled(100, -1),       // 100
     squareInitials = data['squareInitials']?.cast<String>() ?? List<String>.filled(100, 'FS'),  // 100
     rowScores = data['rowScores']?.cast<int>()              ?? List<int>.filled(10, -1),        // 10
-    colScores = data['colScores']?.cast<int>()              ?? List<int>.filled(10, -1);        // 10
+    colScores = data['colScores']?.cast<int>()              ?? List<int>.filled(10, -1),        // 10
+    scoresLocked = data['scoresLocked']                     ?? false
+  ;
 
-  bool scoresLocked = false;
 
+  // Return the number of squares FREE (not PICKED or EXCLUDED)
   int getFreeSquares() {
     int free = squarePlayer.where((e) => e == -1).length;
     dev.log("Number of free squares is $free", name: "${runtimeType.toString()}:getFreeSquares");
     return free;
   }
 
-  int getPickedSquares() {
+  // Return the number of squares SELECTED (INcluding excluded squares)
+  int getSelectedSquares() {
     int picked = squarePlayer.where((e) => e != -1).length;
     dev.log("Number of picked squares is $picked", name: "${runtimeType.toString()}:getPickedSquares");
     return picked;
   }
 
-  int getBoughtSquares() {
+  // Return the number of squares PICKED (EXcluding excluded squares)
+  int getPickedSquares() {
     String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ??
         "-1";  // If no perferences saved for ExcludePlayerNo, default to -1
     int excludePlayerNo = int.parse(excludePlayerNoString);
@@ -84,6 +89,7 @@ class Grid implements FirestoreDoc {
     squareInitials = data['squareInitials'];  // 100
     rowScores = data['rowScores'];            // 10
     colScores = data['colScores'];            // 10
+    scoresLocked = data['scoresLocked'];
   }
 
   @override
@@ -95,6 +101,7 @@ class Grid implements FirestoreDoc {
       'squareInitials' : squareInitials,
       'rowScores' : rowScores,
       'colScores' : colScores,
+      'scoresLocked' : scoresLocked,
     };
   }
 }

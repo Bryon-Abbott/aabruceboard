@@ -17,15 +17,19 @@ class Board implements FirestoreDoc {
 
   int sid = -1;
   String uid = 'error' ;
-  List<int> rowResults = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
-  List<int> colResults = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
-  List<int> percentSplits = List<int>.filled(5, 20); // Q1, Q2, Q3, Q4, Community
+  List<int> rowResults;   // = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
+  List<int> colResults;   //  = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
+  List<int> percentSplits;//  = List<int>.filled(5, 20); // Q1, Q2, Q3, Q4, Community
+  int squaresPicked;      // =0;
   bool dirty = true;
 
 //  Board({ required this.gid, }) :
-  Board({ required Map<String, dynamic> data, }) {
-    docId = data['docId'] ?? -1;
-  }
+  Board({ required Map<String, dynamic> data, }) :
+    docId = data['docId']                              ?? -1,
+    rowResults = data['rowResults']?.cast<int>()       ?? List<int>.filled(4, -1),    // Team1-Q1, Q2, Q3, Q4
+    colResults = data['colResults']?.cast<int>()       ?? List<int>.filled(4, -1),    // Team1-Q1, Q2, Q3, Q4
+    percentSplits = data['percentSplits']?.cast<int>() ?? List<int>.filled(5, 20), // Q1, Q2, Q3, Q4, Community
+    squaresPicked = data['squaresPicked']              ?? 0;
 
   @override
   String get key {
@@ -39,6 +43,7 @@ class Board implements FirestoreDoc {
     rowResults = data['rowResults'];
     colResults = data['colResults'];
     percentSplits = data['percentSplits'];
+    squaresPicked = data['squaresPicked'];
   }
 
   @override
@@ -49,6 +54,7 @@ class Board implements FirestoreDoc {
       'rowResults' : rowResults,
       'colResults' : colResults,
       'percentSplits' : percentSplits,
+      'squaresPicked' : squaresPicked,
     };
   }
 }

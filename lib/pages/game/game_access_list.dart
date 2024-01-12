@@ -60,12 +60,12 @@ class _GameAccessListState extends State<GameAccessList> {
                 ),
                 actions: [
                   IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
                     onPressed: () async {
                       await Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => GameMaintain(series: series)));
                       setState(() {}); // Set state to refresh series changes.
                     },
-                    icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
             body: ListView.builder(

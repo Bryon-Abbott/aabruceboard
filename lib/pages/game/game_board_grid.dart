@@ -23,10 +23,12 @@ const double gridSizeSmall = 500;
 // Selection of squares and renumbering of Row/Column numbers
 // ============================================================================
 class GameBoardGrid extends StatefulWidget {
-  const GameBoardGrid({super.key, required this.game, required this.board, required this.series }); // : super(key: key);
   final Game game;
   final Board board;
   final Series series;
+  final Function(int cellPicked) callback;
+
+  const GameBoardGrid({super.key, required this.game, required this.board, required this.series, required this.callback}); // : super(key: key);
 
   @override
   State<GameBoardGrid> createState() => _GameBoardGridState();
@@ -63,6 +65,8 @@ class _GameBoardGridState extends State<GameBoardGrid> {
     // If these Community Player is Equal to the Active Player it is the owner of the game and can update game/grid information,
     gameOwner = communityPlayer.docId == activePlayer.docId;
 
+    board = widget.board; // add to Build so triggers a rebuild
+
     textStyle = Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.yellow);
     // Calculate screen size
     var padding = MediaQuery.of(context).padding;
@@ -86,6 +90,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
           Grid grid = snapshot.data! as Grid;
           dev.log('Building Grid Owner: ${communityPlayer.fName}, Grid ID: ${grid.docId} Initials[4]: ${grid.squareInitials[4]}',
               name: "${runtimeType.toString()}:build()");
+          // widget.callback(grid.getBoughtSquares());
           return SizedBox(
             height: max(min(screenHeight - 308, gridSize - 1), 100),
             width: min(screenWidth - 45, gridSize - 1),
@@ -142,14 +147,15 @@ class _GameBoardGridState extends State<GameBoardGrid> {
             ? null
             :
         //onPressed: (gameData.getFreeSquares() != 0) ? null :
-            () {
+            () async {
           if (grid.getFreeSquares() == 0) {
-            setState(() {
-              dev.log("Pressed Number button", name: "${runtimeType.toString()}:NumberButton");
-              grid.setScores();
-              dev.log("saving Data ... gameNo: ${game.docId} ", name: "${runtimeType.toString()}:NumberButton");
-              //board.saveData(games.getGame(games.currentGame).gameNo!);
-            });
+            dev.log("Pressed Number button", name: "${runtimeType.toString()}:NumberButton");
+            grid.setScores();
+            await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
+            dev.log("saving Data ... gameNo: ${game.docId} ", name: "${runtimeType.toString()}:NumberButton");
+            // setState(() {
+            //   //board.saveData(games.getGame(games.currentGame).gameNo!);
+            // });
           } else {
             dev.log("Can't set numbers until board is full", name: "${runtimeType.toString()}:NumberButton");
           }
@@ -212,10 +218,13 @@ class _GameBoardGridState extends State<GameBoardGrid> {
               grid.squarePlayer[squareIndex] = selectedPlayer.docId;
               grid.squareInitials[squareIndex] = selectedPlayer.initials;
               await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
+              await DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
+                  .fsDocUpdateField(key: game.key , field: 'squaresPicked', ivalue: grid.getPickedSquares() );
               dev.log("saving Data ... gameNo: ${game.docId} ", name: "${this.runtimeType.toString()}:GameButton");
-              setState(() {
-                //gameData.saveData(games.getGame(games.currentGame).gameNo!);
-              });
+              //widget.callback(grid.getBoughtSquares());
+              // setState(() {
+              //   //gameData.saveData(games.getGame(games.currentGame).gameNo!);
+              // });
               // ToDo: Send Message to user.
             }
         }
@@ -242,8 +251,8 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       if (board.rowResults[i] == -1 ||
           board.colResults[i] == -1) continue;
       // Get last digit of each score
-      lastDigitOne = board.rowResults[i] % 10; // Column Number = Team one
-      lastDigitTwo = board.colResults[i] % 10; // Row Number = Team two
+      lastDigitOne = board.colResults[i] % 10; // Column Number = Team one
+      lastDigitTwo = board.rowResults[i] % 10; // Row Number = Team two
       // Check if both are equal
       if ((grid.colScores[col] == lastDigitOne) &&
            grid.rowScores[row] == lastDigitTwo) {

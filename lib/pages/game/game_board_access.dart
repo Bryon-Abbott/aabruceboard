@@ -45,6 +45,14 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
   late Series series;
   //late String _uid;
 
+  int cellsPicked=0;
+  void callback(int cells)
+  {
+    cellsPicked = cells;
+    dev.log('Callback to reset state: Bought Cells ${cellsPicked}', name:  '${runtimeType.toString()}:callback()');
+    setState(() {});
+  }
+
   late TextStyle textStyle;
 
   // Todo: Refactor to bring all controllers into a list (or else improve).
@@ -210,7 +218,7 @@ class _GameBoardAccessState extends State<GameBoardAccess> {
                                 }),
                             child: Center(
                               // child: BoardGrid(args: BruceArguments(players, games))
-                                child: GameBoardGrid(game: game, board: board, series: series)
+                                child: GameBoardGrid(game: game, board: board, series: series, callback: callback)
                             ),
                           )
                         ],

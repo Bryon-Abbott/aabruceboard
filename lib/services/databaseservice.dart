@@ -203,6 +203,18 @@ class DatabaseService {
     return await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
   }
 
+  // Update single field in an FirestoreDoc
+  Future<void> fsDocUpdateField({
+    required String key,
+    required String field,
+    String? svalue,
+    int? ivalue,
+  }) async {
+    log('Database Update *field*: "$field" *value*: ${ivalue ?? svalue} uid: $uid');
+    return await docCollection.doc(key).update({
+      field: svalue ?? ivalue,
+    });
+  }
   // Delete given Series
   // Note: Application is responsible to delete Games prior to this call!!
   Future<void> fsDocDelete(FirestoreDoc fsDoc) async {

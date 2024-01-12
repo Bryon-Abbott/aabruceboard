@@ -1,6 +1,7 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
+import 'package:bruceboard/models/grid.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -43,6 +44,16 @@ class _GameBoardState extends State<GameBoard> {
   late Game game;
   late Series series;
   late String _uid;
+
+  List<String?>? winners = List<String?>.filled(4, null);
+
+  int cellsPicked=0;
+  void callback(int cells)
+  {
+    cellsPicked = cells;
+    dev.log('Callback to reset state: Bought Cells ${cellsPicked}', name:  '${runtimeType.toString()}:callback()');
+    setState(() {});
+  }
 
   late TextStyle textStyle;
   // Todo: Refactor to bring all controllers into a list (or else improve).
@@ -108,141 +119,160 @@ class _GameBoardState extends State<GameBoard> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Board board = snapshot.data! as Board;
-            return SafeArea(
-              child: Scaffold(
-                appBar: AppBar(
-                  title: const Text('Bruce Board'),
-                  actions: [
-                    PopupMenuButton<int>(
-                        onSelected: (item) => onMenuSelected(context, item, board),
-                        itemBuilder: (context) =>
-                        [
-                          const PopupMenuItem<int>(
-                              value: 0,
-                              child: Row(
-                                  children: [
-                                    Icon(Icons.download_outlined,
-                                        color: Colors.white),
-                                    SizedBox(width: 8),
-                                    Text("Download Game Data"),
-                                  ]
-                              )
-                          ),
-                          const PopupMenuDivider(),
-                          const PopupMenuItem<int>(
-                              value: 1,
-                              child: Row(
-                                  children: [
-                                    Icon(
-                                        Icons.filter_list, color: Colors.white),
-                                    SizedBox(width: 8),
-                                    Text("Fill remaining"),
-                                  ]
-                              )
-                          ),
-                          const PopupMenuItem<int>(
-                              value: 2,
-                              child: Row(
-                                  children: [
-                                    Icon(Icons.percent_outlined,
-                                        color: Colors.white),
-                                    SizedBox(width: 8),
-                                    Text("Update Splits"),
-                                  ]
-                              )
-                          ),
-                        ]
-                    )
-                  ],
-                  centerTitle: true,
-                  elevation: 0,
-                ),
-                body: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    //crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        //mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                child: const Icon(Icons.sports_football_outlined,
-                                  // color: Colors.yellow,
-                                  size: 24,
-                                ),
+            //winners = getWinners(board);
+            dev.log("Got Update Board: ${game.docId} ", name: "${runtimeType.toString()}:build()");
+            return FutureBuilder<List<String?>>(
+              future: getWinners(board),
+              initialData: List<String>.filled(4, '...'),
+              builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+                if (snapshot.hasData) {
+                  winners = snapshot.data;
+                }
+                return SafeArea(
+                  child: Scaffold(
+                    appBar: AppBar(
+                      title: const Text('Bruce Board'),
+                      actions: [
+                        PopupMenuButton<int>(
+                            onSelected: (item) =>
+                                onMenuSelected(context, item, board),
+                            itemBuilder: (context) =>
+                            [
+                              const PopupMenuItem<int>(
+                                  value: 0,
+                                  child: Row(
+                                      children: [
+                                        Icon(Icons.download_outlined,
+                                            color: Colors.white),
+                                        SizedBox(width: 8),
+                                        Text("Download Game Data"),
+                                      ]
+                                  )
                               ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: SizedBox(
-                              height: 40,
-                              width: min(screenWidth - 48, gridSize - 4),
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  textStyle: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold
-                                  ),
-                                ),
-                                child: Text(game.teamOne),
+                              const PopupMenuDivider(),
+                              const PopupMenuItem<int>(
+                                  value: 1,
+                                  child: Row(
+                                      children: [
+                                        Icon(
+                                            Icons.filter_list,
+                                            color: Colors.white),
+                                        SizedBox(width: 8),
+                                        Text("Fill remaining"),
+                                      ]
+                                  )
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                              const PopupMenuItem<int>(
+                                  value: 2,
+                                  child: Row(
+                                      children: [
+                                        Icon(Icons.percent_outlined,
+                                            color: Colors.white),
+                                        SizedBox(width: 8),
+                                        Text("Update Splits"),
+                                      ]
+                                  )
+                              ),
+                            ]
+                        )
+                      ],
+                      centerTitle: true,
+                      elevation: 0,
+                    ),
+                    body: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        //crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: SizedBox(
-                              height: max(
-                                  min(screenHeight - 308, gridSize - 4), 100),
-                              // not less than 100
-                              width: 40,
-                              child: RotatedBox(
-                                quarterTurns: 3,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    textStyle: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold
+                          Row(
+                            //mainAxisSize: MainAxisSize.max,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: SizedBox(
+                                  height: 40,
+                                  width: 40,
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    child: const Icon(
+                                      Icons.sports_football_outlined,
+                                      // color: Colors.yellow,
+                                      size: 24,
                                     ),
                                   ),
-                                  child: Text(game.teamTwo),
                                 ),
                               ),
-                            ),
+                              Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: SizedBox(
+                                  height: 40,
+                                  width: min(screenWidth - 48, gridSize - 4),
+                                  child: ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      textStyle: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold
+                                      ),
+                                    ),
+                                    child: Text(game.teamOne),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          ScrollConfiguration(
-                            behavior: ScrollConfiguration.of(context).copyWith(
-                                dragDevices: {
-                                  PointerDeviceKind.touch,
-                                  PointerDeviceKind.mouse,
-                                }),
-                            child: Center(
-                              // child: BoardGrid(args: BruceArguments(players, games))
-                                child: GameBoardGrid(game: game, board: board, series: series)
-                            ),
-                          )
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: SizedBox(
+                                  height: max(
+                                      min(screenHeight - 308, gridSize - 4),
+                                      100),
+                                  // not less than 100
+                                  width: 40,
+                                  child: RotatedBox(
+                                    quarterTurns: 3,
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        textStyle: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      child: Text(game.teamTwo),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              ScrollConfiguration(
+                                behavior: ScrollConfiguration.of(context)
+                                    .copyWith(
+                                    dragDevices: {
+                                      PointerDeviceKind.touch,
+                                      PointerDeviceKind.mouse,
+                                    }),
+                                child: Center(
+                                  // child: BoardGrid(args: BruceArguments(players, games))
+                                    child: GameBoardGrid(game: game,
+                                        board: board,
+                                        series: series,
+                                        callback: callback)
+                                ),
+                              )
+                            ],
+                          ),
+                          buildPoints(board),
+                          buildScore(board, winners),
                         ],
                       ),
-                      buildPoints(board),
-                      buildScore(board),
-                    ],
+                    ),
                   ),
-                ),
-              ),
+                );
+              }
             );
           } else {
             dev.log("game_test: Error ${snapshot.error}", name: '${runtimeType.toString()}:build()' );
@@ -257,7 +287,7 @@ class _GameBoardState extends State<GameBoard> {
   // results and display winners.
   // --------------------------------------------------------------------------
 //  Widget buildScore(double newScreenWidth) {
-  Widget buildScore(Board board) {
+  Widget buildScore(Board board, List<String?>? winners) {
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
@@ -271,127 +301,129 @@ class _GameBoardState extends State<GameBoard> {
 //          color: Colors.amber[900],
         ),
         child: Column(
-            children: List.generate(4, (index) {
-          return Wrap(children: [
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: SizedBox(
-                width: 35,
-                child: Text("Qtr${index + 1}:"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Container(
-                padding: const EdgeInsets.all(1.0),
-                width: 30,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.outline),
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                ),
-                child: Text(board.rowResults[index].toString(),
-                    textAlign: TextAlign.right),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: Container(
-                padding: const EdgeInsets.all(1.0),
-                width: 30,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.outline),
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                ),
-                child: Text(board.colResults[index].toString(),
-                    textAlign: TextAlign.right),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(2.0),
-              child: SizedBox(
-                width: 35,
-                child: Text("Won:"),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(1.0),
-              child: Container(
-                padding: const EdgeInsets.all(1.0),
-                width: 150,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).colorScheme.outline),
-                  color: Theme.of(context).colorScheme.surfaceVariant,
-                ),
-                child: Text(getWinners(board.rowResults[index],
-                    board.colResults[index], board)),
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(2.0),
-              child: SizedBox(
-                width: 35,
-                child: Text("Pts:"),
-              ),
-            ),
-            // Padding(
-            //   padding: const EdgeInsets.all(2.0),
-            //   child: Container(
-            //     padding: const EdgeInsets.all(1.0),
-            //     width: 40,
-            //     decoration: BoxDecoration(
-            //       border: Border.all(color: Theme.of(context).colorScheme.outline),
-            //       color: Theme.of(context).colorScheme.surfaceVariant,
-            //     ),
-            //     child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
-            //         textAlign: TextAlign.right),
-            //   ),
-            // ),
-            Padding(
-              padding: const EdgeInsets.all(2.0),
-              child: SizedBox(
-                height: 25,
-                width: 45,
-                child: ElevatedButton(
-                  child: const Text('Score'),
-                  onPressed: () async {
-                    dev.log("Getting Scores ... ", name: "${runtimeType.toString()}:buildScore");
-                    final List<String>? score = await openDialogScores(index, board);
-                    if (score == null || score.isEmpty) {
-                      return;
-                    } else {
-                      dev.log("Loading Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore()");
-                      //gameData.loadData(game.gameNo!);
-                      if (score[0].isNotEmpty) {
-                        board.rowResults[index] = int.parse(score[0]);
-                      }
-                      if (score[1].isNotEmpty) {
-                        board.colResults[index] = int.parse(score[1]);
-                      }
-
-                      dev.log("Saving Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore()");
-                      //gameData.saveData(game.gameNo!);
-                      setState(() {
-                        dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
-                      });
-                    }
-                  },
-                ),
-              ),
-            ),
-          ]);
-        }) +
-            [
-              Wrap(
-                alignment: WrapAlignment.end,
+          children:
+            List<Widget>.generate(1, (index) {
+              return const Row(
+                //crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                      });
-                    },
-                    child: const Text("Update")),
-              ],)
-            ]
+                  Text('Score'),
+                ],
+              );
+            }) +
+            List.generate(4, (index) {
+              return Wrap(children: [
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: SizedBox(
+                    width: 35,
+                    child: Text("Qtr${index + 1}:"),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(1.0),
+                    width: 30,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).colorScheme.outline),
+                      color: Theme.of(context).colorScheme.surfaceVariant,
+                    ),
+                    child: Text(board.colResults[index].toString(),
+                        textAlign: TextAlign.right),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(1.0),
+                    width: 30,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).colorScheme.outline),
+                      color: Theme.of(context).colorScheme.surfaceVariant,
+                    ),
+                    child: Text(board.rowResults[index].toString(),
+                        textAlign: TextAlign.right),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(2.0),
+                  child: SizedBox(
+                    width: 35,
+                    child: Text("Won:"),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(1.0),
+                    width: 150,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).colorScheme.outline),
+                      color: Theme.of(context).colorScheme.surfaceVariant,
+                    ),
+                    child: Text(winners?[index] ?? 'To Be Determined x'),
+                    // child: Text(getWinners(board.rowResults[index], board.colResults[index], board)
+                    //       .then((value) { return value; } )),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.all(2.0),
+                  child: SizedBox(
+                    width: 35,
+                    child: Text("Pts:"),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: Container(
+                    padding: const EdgeInsets.all(1.0),
+                    width: 40,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Theme.of(context).colorScheme.outline),
+                      color: Theme.of(context).colorScheme.surfaceVariant,
+                    ),
+                    // child: Text('Fix Me'),
+                    child: Text((board.squaresPicked*board.percentSplits[index]*game.squareValue~/100).toString(),
+                         textAlign: TextAlign.right),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: SizedBox(
+                    height: 25,
+                    width: 45,
+                    child: ElevatedButton(
+                      child: const Text('Score'),
+                      onPressed: () async {
+                        dev.log("Getting Scores ... ", name: "${runtimeType.toString()}:buildScore");
+                        final List<String>? score = await openDialogScores(index, board);
+                        if (score == null || score.isEmpty) {
+                          return;
+                        } else {
+                          dev.log("Loading Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore()");
+                          //gameData.loadData(game.gameNo!);
+                          if (score[0].isNotEmpty) {
+                            board.colResults[index] = int.parse(score[0]);
+                          }
+                          if (score[1].isNotEmpty) {
+                            board.rowResults[index] = int.parse(score[1]);
+                          }
+
+                          dev.log("Saving Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore()");
+                          DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
+                              .fsDocUpdate(board);
+                          //gameData.saveData(game.gameNo!);
+                          // setState(() {
+                          //   dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
+                          // });
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ]);
+        }),
         ),
       ),
     );
@@ -407,28 +439,28 @@ class _GameBoardState extends State<GameBoard> {
 //        widget.gameStorage.writeGameData(BruceArguments(players, games));
         break;
       case 1:
-        // dev.log("Menu Select 1:Fill in remainder", name: "${this.runtimeType.toString()}:onMenuSelected");
-        // dev.log("Filling scores-Before", name: "${this.runtimeType.toString()}:onMenuSelected");
-        // dynamic playerSelected = await Navigator.pushNamed(
-        //     context, '/manageplayers',
-        //     arguments: BruceArguments(players, games));
-        // if (playerSelected != null) {
-        //   dev.log("Load Game Data ... GameNo: ${game.gameNo} ", name: "${this.runtimeType.toString()}:onMenuSelected");
-        //   // gameData.loadData(games.getGame(games.currentGame).gameNo!);
-        //   int updated = 0;
-        //   for (int i = 0; i < 100; i++) {
-        //     if (gameData.boardData[i] == -1) {
-        //       gameData.boardData[i] = (playerSelected as Player)
-        //           .playerNo!; // set to the first player.:);
-        //       updated++;
-        //     }
-        //   }
-        //   dev.log("Saving Game Data ... Game Board ${game.gameNo}, Squares $updated", name: "${this.runtimeType.toString()}:onMenuSelected");
-        //   gameData.saveData(game.gameNo!);
-        //   setState(() { });
-        // } else {
-        //   dev.log("Return value was null", name: "${this.runtimeType.toString()}:onMenuSelected");
-        // }
+        dev.log("Menu Select 1:Fill in remainder", name: "${this.runtimeType.toString()}:onMenuSelected");
+        dev.log("Filling scores-Before", name: "${this.runtimeType.toString()}:onMenuSelected");
+        Grid grid = await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
+        dynamic result = await Navigator.pushNamed(
+            context, '/player-select');
+        if (result != null) {
+          Player selectedPlayer = result as Player;
+          dev.log("Load Game Data ... GameNo: ${game.docId} ", name: "${this.runtimeType.toString()}:onMenuSelected");
+          int updated = 0;
+          for (int i = 0; i < 100; i++) {
+            if (grid.squarePlayer[i] == -1) {
+              grid.squarePlayer[i] = selectedPlayer.docId;
+              grid.squareInitials[i] = selectedPlayer.initials;
+              updated++;
+            }
+          }
+          dev.log("Saving Game Data ... Game Board ${game.docId}, Squares $updated", name: "${this.runtimeType.toString()}:onMenuSelected");
+          await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
+          // setState(() { });
+        } else {
+          dev.log("Return value was null", name: "${this.runtimeType.toString()}:onMenuSelected");
+        }
         break;
       case 2:
         int qtrPercents = 0;
@@ -450,7 +482,7 @@ class _GameBoardState extends State<GameBoard> {
 
           dev.log("Saving Game Data ... GameNo: ${game.docId}", name: "${runtimeType.toString()}:buildScore");
           DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
-              .fsDocUpdate(board); // ToDo: Fix this.
+              .fsDocUpdate(board);
           setState(() {
             dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
           });
@@ -558,41 +590,43 @@ class _GameBoardState extends State<GameBoard> {
     }
   } // End _GameBoard:submit()
 
-  String getWinners(int scoreOne, int scoreTwo, Board gameData) {
-    //log("Scores are $scoreOne : $scoreTwo",name: 'GameBoard');
-
+  Future<List<String?>> getWinners(Board board) async {
+    Grid? grid;
+    List<String?> winners = List<String?>.filled(4, null);
     // If score is not set yet return TBD
     //dev.log("Score One : $scoreOne Score two: $scoreTwo", name: "${this.runtimeType.toString()}:getWinner");
-
-    if (scoreOne == -1 || scoreTwo == -1) return "Enter Score";
-
-    // Get last digit of each score
-    int lastDigitOne = scoreOne % 10; // Column Number = Team one
-    int lastDigitTwo = scoreTwo % 10; // Row Number = Team two
-    dev.log("Last digit One : $lastDigitOne Last digit two: $lastDigitTwo", name: "${runtimeType.toString()}:getWinner");
-
-    //log("Last Digits are $lastDigitOne : $lastDigitTwo",name: 'GameBoard');
-
-    // // Get column and row indexes for given score digit
-    // int row = gameData.rowScores.indexOf(lastDigitTwo);
-    // int col = gameData.colScores.indexOf(lastDigitOne);
-    // dev.log("Row : $row Col: $col", name: "${runtimeType.toString()}:getWinner");
-    //
-    // if (col == -1 || row == -1) return "Lock scores";
-    // // log("Row : Col are $row : $col",name: 'GameBoard');
-    //
-    // // Find the player number on the board
-    // int playerNo = gameData.boardData[row * 10 + col];
-    //
-    // // If no player assigned to board return No Player
-    // if (playerNo == -1) return "Not picked";
-    //
-    // // if the playerNo cant be found return Player not found (should never happen) else return name.
-    // // String displayName = players.searchPlayer(playerNo)?.fName ?? "??? $playerNo";
-    // // displayName += " ";
-    // // displayName += players.searchPlayer(playerNo)?.lName ?? "??? $playerNo";
-    String displayName = "To Be Determined";
-    return displayName;
+    for (int qtr=0; qtr<=3; qtr++) {
+      dev.log("$qtr:Getting Winner", name: "${runtimeType.toString()}:getWinner");
+      if (board.colResults[qtr] == -1 || board.colResults[qtr] == -1) {
+        winners[qtr] = "Enter Score";
+        continue;  // Go to next quarter.
+      } else {
+        // If grid no retrieved, get it.
+        if (grid == null ) {
+          grid = await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
+        }
+        if (grid.scoresLocked == false) {
+          winners[qtr] = "Set Scores";
+          continue; // Go to next quarter
+        } else {
+          // Get last digit of each score
+          int lastDigitRow = board.rowResults[qtr] % 10; // Row Number = Team two
+          int lastDigitCol = board.colResults[qtr] % 10; // Column Number = Team one
+          dev.log("$qtr:Last digit Row : $lastDigitRow Last digit Col: $lastDigitCol", name: "${runtimeType.toString()}:getWinner");
+          // Get the Row:Col of the winner.
+          int row = grid.rowScores.indexOf(lastDigitRow);
+          int col = grid.colScores.indexOf(lastDigitCol);
+          dev.log("$qtr:Row : $row Col: $col", name: "${runtimeType.toString()}:getWinner");
+          // Find the player number on the board
+          int playerNo = grid.squarePlayer[row * 10 + col];
+          Player player = await DatabaseService(FSDocType.player).fsDoc(docId: playerNo) as Player;
+          winners[qtr] = '${player.fName} ${player.lName}';
+          dev.log("$qtr:Player: ${player.docId}:${player.fName} ${player.lName}", name: "${runtimeType.toString()}:getWinner");
+        }
+      }
+      dev.log('$qtr:Winner: ${winners[qtr]}', name: "${runtimeType.toString()}:getWinner");
+    }
+    return winners;
   } // End _GameBoard:getWinners
 
   // --------------------------------------------------------------------------
@@ -611,39 +645,23 @@ class _GameBoardState extends State<GameBoard> {
           borderRadius: BorderRadius.circular(4.0),
        //   color: Colors.amber[900],
         ),
-        child: Wrap(
-          spacing: 2,
-          children:
-            List.generate(5, (index) {
-              return SizedBox(
-                width: 80,
-                child: Row(
-                  children: [
-                    Text((index < 4) ? "Qtr${index+1}:" : "Com:"),
-                    Padding(
-                      padding: const EdgeInsets.all(2.0),
-                      child: Container(
-                        padding: const EdgeInsets.all(1.0),
-                        width: 40,
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Theme.of(context).colorScheme.outline),
-                          color: Theme.of(context).colorScheme.surfaceVariant,
-                        ),
-                        child: Text('Fix Me'),
-                        // child: Text((board.getBoughtSquares()*board.percentSplits[index]*game.squareValue~/100).toString(),
-                        //     textAlign: TextAlign.right),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }) +
-                [
-                  SizedBox(
-                    width: 90,
+        child: Column(
+          children: [
+             Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text('Credits'),
+                ],
+              ),
+            Wrap(
+              spacing: 2,
+              children:
+                List.generate(5, (index) {
+                  return SizedBox(
+                    width: 80,
                     child: Row(
                       children: [
-                        const Text("Total:"),
+                        Text((index < 4) ? "Qtr${index+1}:" : "Com:"),
                         Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: Container(
@@ -653,15 +671,41 @@ class _GameBoardState extends State<GameBoard> {
                               border: Border.all(color: Theme.of(context).colorScheme.outline),
                               color: Theme.of(context).colorScheme.surfaceVariant,
                             ),
-                            child: Text('Fix Me'),
-                            // child: Text((board.getBoughtSquares()*game.squareValue).toString(),
-                            //     textAlign: TextAlign.right),
+            //                        child: Text('Fix Me'),
+                            child: Text((board.squaresPicked*board.percentSplits[index]*game.squareValue~/100).toString(),
+                                textAlign: TextAlign.right),
                           ),
                         ),
                       ],
                     ),
-                  )
-                ]
+                  );
+                }) +
+                    [
+                      SizedBox(
+                        width: 90,
+                        child: Row(
+                          children: [
+                            const Text("Total:"),
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Container(
+                                padding: const EdgeInsets.all(1.0),
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Theme.of(context).colorScheme.outline),
+                                  color: Theme.of(context).colorScheme.surfaceVariant,
+                                ),
+                                // child: Text('Fix Me'),
+                                child: Text((board.squaresPicked*game.squareValue).toString(),
+                                     textAlign: TextAlign.right),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ]
+            ),
+          ],
         ),
       ),
     );
