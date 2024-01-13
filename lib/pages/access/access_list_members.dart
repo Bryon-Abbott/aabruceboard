@@ -1,45 +1,51 @@
 import 'dart:developer';
-
-import 'package:bruceboard/models/access.dart';
-import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/models/membership.dart';
-import 'package:bruceboard/pages/access/access_tile_series.dart';
+import 'package:bruceboard/pages/access/access_tile_member.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
+import 'package:provider/provider.dart';
+import 'package:bruceboard/models/access.dart';
+import 'package:bruceboard/models/series.dart';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/pages/access/access_tile.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
+// Todo: Implement delete
 
-//
-
-class AccessListSeries extends StatefulWidget {
-  final Membership membership;
-  const AccessListSeries({super.key, required this.membership});
+class AccessListMembers extends StatefulWidget {
+  final Series series;
+  const AccessListMembers( {super.key, required this.series} );
 
   @override
-  State<AccessListSeries> createState() => _AccessListSeriesState();
+  State<AccessListMembers> createState() => _AccessListState();
 }
 
-class _AccessListSeriesState extends State<AccessListSeries> {
-
+class _AccessListState extends State<AccessListMembers> {
   late BruceUser bruceUser;
+  late Series series;
+
+  @override
+  void initState() {
+    super.initState();
+    series = widget.series;
+  }
 
   @override
   Widget build(BuildContext context) {
 
     bruceUser = Provider.of<BruceUser>(context);
+    Player? player;
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.access)
-          .fsDocGroupListStream(pid: widget.membership.cpid, cid: widget.membership.cid),   // as Stream<List<Series>>,
+      stream: DatabaseService(FSDocType.access, sidKey: series.key).fsDocListStream,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Access> access = snapshots.data!.map((a) => a as Access).toList();
+          List<Access> accessList = snapshots.data!.map((s) => s as Access).toList();
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Show Series Access - Count: ${access.length}'),
+                title: Text('Select Member - Series: ${series.name}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -51,23 +57,22 @@ class _AccessListSeriesState extends State<AccessListSeries> {
                 ),
                 actions: [
                   IconButton(
-                    onPressed: () {
-                    },
+                    onPressed: () {},
                     icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
             body: ListView.builder(
-              itemCount: access.length,
+              itemCount: accessList.length,
               itemBuilder: (context, index) {
-                return AccessTileSeries(access: access[index]);
+                return AccessTileMembers(access: accessList[index]);
               },
             ),
           );
         } else {
-          log("build: Snapshot is ${snapshots.error}", name: '${runtimeType.toString()}:...');
+          log("membership_list: Snapshot Error ${snapshots.error}");
           return const Loading();
         }
       }
     );
-    }
   }
+}

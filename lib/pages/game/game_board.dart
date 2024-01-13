@@ -277,6 +277,12 @@ class _GameBoardState extends State<GameBoard> {
                           ),
                           buildPoints(board),
                           buildScore(board, winners),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text('Owner:${Player.Key(game.pid)} Series:${Series.Key(series.docId)} Game: ${Game.Key(game.docId)}'),
+                            ],
+                          ),
                         ],
                       ),
                     ),

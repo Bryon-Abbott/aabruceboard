@@ -1,6 +1,7 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -245,10 +246,13 @@ class _GameBoardGridState extends State<GameBoardGrid> {
   void assignSquare(Grid grid, int squareIndex) async {
     dev.log("Assign Square ($squareIndex)", name: "${runtimeType.toString()}:ownerAssignSquare()");
     // ToDo: need to filter Player-Select to only show players of Communities with Access
-    dynamic playerSelected = await Navigator.pushNamed(context, '/player-select');
+    //dynamic playerSelected = await Navigator.pushNamed(context, '/player-select');
+    dynamic playerSelected = await Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => AccessListMembers(series: series)),
+    );
+
     if (playerSelected == null) {
-      dev.log("No Player Selected",
-          name: "${runtimeType.toString()}:GameButton");
+      dev.log("No Player Selected", name: "${runtimeType.toString()}:GameButton");
     } else {
       Player selectedPlayer = playerSelected as Player;
       dev.log("Player Selected (${selectedPlayer.initials}) as Player)",

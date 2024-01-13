@@ -11,7 +11,7 @@ class Game implements FirestoreDoc {
   @override
   final String totalField = 'noGames';
   @override
-  final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
+  static final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
   // Data Class Variables
 //  int gid; // Game ID
   int sid; // Series ID
@@ -36,6 +36,11 @@ class Game implements FirestoreDoc {
   String get key {
     String key = _keyFormat.format(docId);
     // log("Gettign Game key $key");
+    return key;
+  }
+
+  static String Key(int gid) {
+    String key = _keyFormat.format(gid);
     return key;
   }
 

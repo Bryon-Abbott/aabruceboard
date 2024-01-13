@@ -339,6 +339,7 @@ class DatabaseService {
   }
 
   //get FirestoreDoc List stream
+
   Stream<List<FirestoreDoc>> fsDocGroupListStream({ required int pid, required int cid} ) {
     log('Database: fsDocGroupListStream: pid: $pid cid: $cid ', name: '${runtimeType.toString()}:fsDocGroupListStream()');
     Stream<QuerySnapshot<Object?>> s001 =
