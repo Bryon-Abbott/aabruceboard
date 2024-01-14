@@ -42,6 +42,7 @@ class _CommunityListState extends State<CommunityList> {
                 ),
                 actions: [
                   IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
                     onPressed: () async {
                       dynamic changes = await Navigator.pushNamed(
                           context, '/community-maintain');
@@ -51,7 +52,6 @@ class _CommunityListState extends State<CommunityList> {
                         log('community_list: **null** Changes Type : ${changes.runtimeType}');
                       }
                     },
-                    icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
             body: ListView.builder(

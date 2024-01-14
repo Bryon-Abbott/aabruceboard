@@ -65,6 +65,7 @@ class _MemberListState extends State<MemberList> {
                 ),
                 actions: [
                   IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
                     onPressed: () async {
                       player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                       dynamic results = await Navigator.pushNamed(
@@ -77,7 +78,7 @@ class _MemberListState extends State<MemberList> {
                             key: Member.KEY(playerSelected!.pid));
                         if (existingMember == null ) {
                           // Add Member to Community
-                          String? comment = await openDialogMessageComment(context);
+                          String? comment = await openDialogMessageComment(context, defaultComment: "Welcome to the Team");
                           if (comment != null) {
                             Member member = Member(data:
                             { 'docId': playerSelected!.pid,   // Set the memberID to the pid of the selected player
@@ -101,7 +102,6 @@ class _MemberListState extends State<MemberList> {
                         log("member_list: No player selected");
                       }
                     },
-                    icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
             body: ListView.builder(

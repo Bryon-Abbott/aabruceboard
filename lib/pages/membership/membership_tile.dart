@@ -6,6 +6,7 @@ import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/membership.dart';
+import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/pages/access/access_list_series.dart';
 import 'package:bruceboard/services/databaseservice.dart';
@@ -27,6 +28,11 @@ class MembershipTile extends StatelessWidget {
     CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
     Player communityPlayer; // = communityPlayerProvider.communityPlayer;
     Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
+
+
+    // Set the Membership Provider to be user later.
+    MembershipProvider membershipProvider = Provider.of<MembershipProvider>(context);
+
     Member? member;
 
     // Player? player;
@@ -50,178 +56,183 @@ class MembershipTile extends StatelessWidget {
                   builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot3) {
                     if (snapshot3.hasData) {
                       member = snapshot3.data as Member;
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 1.0),
-                        child: Card(
-                          margin: const EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
-                          child: ListTile(
-                            leading: const Icon(Icons.list_alt_outlined),
-                            onTap: () async {
-                              log("Membership Tapped ... ${membership.cpid} ${membership.cid} ", name: '${runtimeType.toString()}:...');
-                              // Set the CommunityPlayerProvider
-                              communityPlayerProvider.communityPlayer = communityPlayer;
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => AccessListSeries(membership: membership)),
-                              );
-                            },
-                            title: Text('Membership Status: ${membership.status}'),
-                            subtitle: Text(
-                                'Community: ${community?.name ?? '...'} (${membership.key})\n'
-                                    'Owner: ${communityPlayer.fName ?? '...'} ${communityPlayer.lName ?? ""}\n'
-                                    'Credits: ${member?.credits ?? -1}'
-                            ),
-                            trailing: SizedBox(
-                              width: 80,
-                              child: Row(
-                                children: [
-                                  IconButton(
-                                    icon: const Icon(Icons.account_balance_outlined),
-                                    padding: const EdgeInsets.all(0),
-                                    //iconSize: 16,
-                                    onPressed: () async {
-                                      log('membership_tile: Build the Credit functionality', name: '${runtimeType.toString()}:...');
-                                      dynamic results = await showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          title: const Text("Add/Return Credits "),
-                                          titleTextStyle: Theme.of(context).textTheme.bodyLarge,
-                                          contentTextStyle: Theme.of(context).textTheme.bodyLarge,
-                                          content: SizedBox(
-                                            height: 300,
-                                            child: Column(
-                                              children: [
-                                                TextField(
-                                                  inputFormatters: [
-                                                    FilteringTextInputFormatter.digitsOnly,
-                                                  ],
-                                                  autofocus: true,
-                                                  decoration: const InputDecoration(hintText: '99'),
-                                                  style: Theme.of(context).textTheme.bodyMedium,
-                                                  controller: controller1,
-                                                ),
-                                                TextField(
-                                                  autofocus: true,
-                                                  decoration: const InputDecoration(hintText: 'Message'),
-                                                  style: Theme.of(context).textTheme.bodyMedium,
-                                                  controller: controller2,
-                                                ),
-                                              ],
-                                            ),
+                    } else {
+                      log('Member Snapshot has no data ... ', name: '${runtimeType.toString()}:build()');
+                    }
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 1.0),
+                      child: Card(
+                        margin: const EdgeInsets.fromLTRB(20.0, 1.0, 20.0, 1.0),
+                        child: ListTile(
+                          leading: const Icon(Icons.list_alt_outlined),
+                          onTap: () async {
+                            log("Membership Tapped ... ${membership.cpid} ${membership.cid} ", name: '${runtimeType.toString()}:...');
+                            membershipProvider.currentMembership = membership;
+                            log("*** Setting Membership to ${membership.key}", name: '${runtimeType.toString()}:build()');
+                            // Set the CommunityPlayerProvider
+                            communityPlayerProvider.communityPlayer = communityPlayer;
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => AccessListSeries(membership: membership)),
+                            );
+                          },
+                          title: Text('Membership Status: ${membership.status}'),
+                          subtitle: Text(
+                              'Community: ${community?.name ?? '...'} (${membership.key})\n'
+                                  'Owner: ${communityPlayer.fName ?? '...'} ${communityPlayer.lName ?? ""}\n'
+                                  'Credits: ${member?.credits ?? -1}'
+                          ),
+                          trailing: SizedBox(
+                            width: 80,
+                            child: Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.account_balance_outlined),
+                                  padding: const EdgeInsets.all(0),
+                                  //iconSize: 16,
+                                  onPressed: () async {
+                                    log('membership_tile: Build the Credit functionality', name: '${runtimeType.toString()}:...');
+                                    dynamic results = await showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: const Text("Add/Return Credits "),
+                                        titleTextStyle: Theme.of(context).textTheme.bodyLarge,
+                                        contentTextStyle: Theme.of(context).textTheme.bodyLarge,
+                                        content: SizedBox(
+                                          height: 300,
+                                          child: Column(
+                                            children: [
+                                              TextField(
+                                                inputFormatters: [
+                                                  FilteringTextInputFormatter.digitsOnly,
+                                                ],
+                                                autofocus: true,
+                                                decoration: const InputDecoration(hintText: '99'),
+                                                style: Theme.of(context).textTheme.bodyMedium,
+                                                controller: controller1,
+                                              ),
+                                              TextField(
+                                                autofocus: true,
+                                                decoration: const InputDecoration(hintText: 'Message'),
+                                                style: Theme.of(context).textTheme.bodyMedium,
+                                                controller: controller2,
+                                              ),
+                                            ],
                                           ),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.of(context).pop([controller1.text, controller2.text, 'credit']),
-                                              child: const Text('Add'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () => Navigator.of(context).pop([controller1.text, controller2.text, 'debit']),
-                                              child: const Text('Remove'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () => Navigator.of(context).pop(),
-                                              child: const Text('Cancel'),
-                                            ),
-                                          ],
                                         ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop([controller1.text, controller2.text, 'credit']),
+                                            child: const Text('Add'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop([controller1.text, controller2.text, 'debit']),
+                                            child: const Text('Remove'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () => Navigator.of(context).pop(),
+                                            child: const Text('Cancel'),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    if (results != null ) {
+                                      log('Credits Request ${results[0]}, Message: ${results[1]}, Credit/Debit: ${results[2]} PID: ${membership.pid} CID: ${membership.cid}', name: '${runtimeType.toString()}:...');
+                                      // Send Message to user
+                                      Player? communityPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: membership.cpid) as Player;
+                                      Community? community = await DatabaseService(FSDocType.community, uid: communityPlayer.uid).fsDoc(docId: membership.cid) as Community;
+                                      if (results[2] == 'credit') {
+                                        messageMembershipCreditRequest(credits: int.parse(results[0]), creditDebit: results[2],
+                                            cid: membership.cid,
+                                            playerFrom: activePlayer, playerTo: communityPlayer,
+                                            description: "Requiest to add ${results[0]} credits to membership.\n"
+                                                "Community: <${community.name}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
+                                            comment: results[1]);
+                                      } else {
+                                        messageMembershipCreditRequest(credits: int.parse(results[0]), creditDebit: results[2],
+                                            cid: membership.cid,
+                                            playerFrom: activePlayer, playerTo: communityPlayer,
+                                            description: "Request to refund ${results[0]} credits from membership.\n"
+                                                "Community: <${community.name}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
+                                            comment: results[1]);
+                                      }
+                                    } else {
+                                      log('Cancel Credit Request, PID: ${membership.pid} CID: ${membership.cid}', name: '${runtimeType.toString()}:...');
+                                    }
+                                    controller1.clear();
+                                    controller2.clear();
+                                  },
+                                ),
+                                // ====================
+                                IconButton(
+                                  icon: const Icon(Icons.delete),
+                                  onPressed: () async {
+                                    // Todo: Check status to determine what happens
+                                    // Approved -> Delete
+                                    // Requested --> Update "Rejected'
+                                    // Remove Requested --> block?
+                                    if (membership.status == 'Rejected' ||
+                                        membership.status == 'Removed') {
+                                      await DatabaseService(FSDocType.membership)
+                                          .fsDocDelete(membership);
+                                    } else if (membership.status == 'Approved') {
+                                      String? comment = await openDialogMessageComment(context);
+                                      log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
+                                      if (comment != null) {
+                                        log('membership_tile: Delete Membership. Key: ${membership.key} ... $comment', name: '${runtimeType.toString()}:...');
+                                        membership.status = 'Remove Requested';
+                                        // Note ... the database section is the current user but the Membership PID
+                                        // is the PID of the owner of the community.
+                                        await DatabaseService(
+                                            FSDocType.membership).fsDocUpdate(
+                                            membership);
+                                        // Todo: Review the code below, could be issues if network slow and user quick ... communityPlayer can be null?
+                                        await messageMembershipRemoveRequest(
+                                            membership: membership,
+                                            player: activePlayer,
+                                            communityPlayer: communityPlayer,
+                                            description: '${activePlayer.fName} ${activePlayer
+                                                .lName} request to be removed from your <${community
+                                                ?.name ?? "Unknown"}> community',
+                                            comment: comment);
+                                      }
+                                    } else if (membership.status == 'Requested') {
+                                      String? comment = await openDialogMessageComment( context );
+                                      log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
+                                      if (comment != null) {
+                                        log('membership_tile: Delete Membership. Key: ${membership.key} ... $comment', name: '${runtimeType.toString()}:...');
+                                        membership.status = 'Removed';
+                                        // Note ... the database section is the current user but the Membership PID
+                                        // is the PID of the owner of the community.
+                                        await DatabaseService(
+                                            FSDocType.membership).fsDocUpdate(
+                                            membership);
+                                        // Todo: Review the code below, could be issues if network slow and user quick ... communityPlayer can be null?
+                                        await messageMembershipRemoveRequest(
+                                            membership: membership,
+                                            player: activePlayer,
+                                            communityPlayer: communityPlayer,
+                                            description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
+                                                'your <${community?.name ?? 'Unknown'}> community',
+                                            comment: comment);
+                                      }
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(content: Text(
+                                              "Membership is in an invalid status to delete"))
                                       );
-                                      if (results != null ) {
-                                        log('Credits Request ${results[0]}, Message: ${results[1]}, Credit/Debit: ${results[2]} PID: ${membership.pid} CID: ${membership.cid}', name: '${runtimeType.toString()}:...');
-                                        // Send Message to user
-                                        Player? communityPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: membership.cpid) as Player;
-                                        Community? community = await DatabaseService(FSDocType.community, uid: communityPlayer.uid).fsDoc(docId: membership.cid) as Community;
-                                        if (results[2] == 'credit') {
-                                          messageMembershipCreditRequest(credits: int.parse(results[0]), creditDebit: results[2],
-                                              cid: membership.cid,
-                                              playerFrom: activePlayer, playerTo: communityPlayer,
-                                              description: "Requiest to add ${results[0]} credits to membership.\n"
-                                                  "Community: <${community.name}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
-                                              comment: results[1]);
-                                        } else {
-                                          messageMembershipCreditRequest(credits: int.parse(results[0]), creditDebit: results[2],
-                                              cid: membership.cid,
-                                              playerFrom: activePlayer, playerTo: communityPlayer,
-                                              description: "Request to refund ${results[0]} credits from membership.\n"
-                                                  "Community: <${community.name}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
-                                              comment: results[1]);
-                                        }
-                                      } else {
-                                        log('Cancel Credit Request, PID: ${membership.pid} CID: ${membership.cid}', name: '${runtimeType.toString()}:...');
-                                      }
-                                      controller1.clear();
-                                      controller2.clear();
-                                    },
-                                  ),
-                                  // ====================
-                                  IconButton(
-                                    icon: const Icon(Icons.delete),
-                                    onPressed: () async {
-                                      // Todo: Check status to determine what happens
-                                      // Approved -> Delete
-                                      // Requested --> Update "Rejected'
-                                      // Remove Requested --> block?
-                                      if (membership.status == 'Rejected' ||
-                                          membership.status == 'Removed') {
-                                        await DatabaseService(FSDocType.membership)
-                                            .fsDocDelete(membership);
-                                      } else if (membership.status == 'Approved') {
-                                        String? comment = await openDialogMessageComment(context);
-                                        log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
-                                        if (comment != null) {
-                                          log('membership_tile: Delete Membership. Key: ${membership.key} ... $comment', name: '${runtimeType.toString()}:...');
-                                          membership.status = 'Remove Requested';
-                                          // Note ... the database section is the current user but the Membership PID
-                                          // is the PID of the owner of the community.
-                                          await DatabaseService(
-                                              FSDocType.membership).fsDocUpdate(
-                                              membership);
-                                          // Todo: Review the code below, could be issues if network slow and user quick ... communityPlayer can be null?
-                                          await messageMembershipRemoveRequest(
-                                              membership: membership,
-                                              player: activePlayer,
-                                              communityPlayer: communityPlayer,
-                                              description: '${activePlayer.fName} ${activePlayer
-                                                  .lName} request to be removed from your <${community
-                                                  ?.name ?? "Unknown"}> community',
-                                              comment: comment);
-                                        }
-                                      } else if (membership.status == 'Requested') {
-                                        String? comment = await openDialogMessageComment( context );
-                                        log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
-                                        if (comment != null) {
-                                          log('membership_tile: Delete Membership. Key: ${membership.key} ... $comment', name: '${runtimeType.toString()}:...');
-                                          membership.status = 'Removed';
-                                          // Note ... the database section is the current user but the Membership PID
-                                          // is the PID of the owner of the community.
-                                          await DatabaseService(
-                                              FSDocType.membership).fsDocUpdate(
-                                              membership);
-                                          // Todo: Review the code below, could be issues if network slow and user quick ... communityPlayer can be null?
-                                          await messageMembershipRemoveRequest(
-                                              membership: membership,
-                                              player: activePlayer,
-                                              communityPlayer: communityPlayer,
-                                              description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
-                                                  'your <${community?.name ?? 'Unknown'}> community',
-                                              comment: comment);
-                                        }
-                                      } else {
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(content: Text(
-                                                "Membership is in an invalid status to delete"))
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ],
-                              ),
+                                    }
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      );
-                    } else {
-                      log('membership_tile: Member Snapshot has no data ... ', name: '${runtimeType.toString()}:...');
-                      return const Loading();
-                    }
+                      ),
+                    );
+                    // } else {
+                    //   log('membership_tile: Member Snapshot has no data ... ', name: '${runtimeType.toString()}:...');
+                    //   return const Loading();
+                    // }
                   }
                 );
               } else {

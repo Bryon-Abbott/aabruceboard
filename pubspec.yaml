@@ -22,7 +22,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #   Added Football Icon https://www.geeksforgeeks.org/flutter-changing-app-icon/
 # 4(0.0.12) : WIP
 #   Refactored code.
-version: 0.0.12+4
+version: 1.0.00+5
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

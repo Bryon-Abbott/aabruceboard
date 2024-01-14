@@ -27,7 +27,7 @@ class _MessageListState extends State<MessageList> {
   Widget build(BuildContext context) {
 
     final bruceUser = Provider.of<BruceUser>(context, listen: false);
-    log('message_list: Getting Player U:${widget.messageOwner.uid}');
+    log('Getting Player U:${widget.messageOwner.uid}', name: "${runtimeType.toString()}:build()");
     // Player player = DatabaseService(FSDocType.player).fsDoc(key: widget.messageOwner.uid) as Player;
 
     return StreamBuilder<FirestoreDoc>(
@@ -35,7 +35,7 @@ class _MessageListState extends State<MessageList> {
       builder: (context, snapshots) {
         if (snapshots.hasData) {
           Player player = snapshots.data as Player;
-          log('message_list: Got Player fName:${player.fName}');
+          log('message_list: Got Player fName:${player.fName}', name: "${runtimeType.toString()}:build()");
           return StreamBuilder<List<FirestoreDoc>>(
               stream: DatabaseService(FSDocType.message, toUid: bruceUser.uid,
                   fromUid: widget.messageOwner.uid).fsDocListStream,
@@ -59,13 +59,13 @@ class _MessageListState extends State<MessageList> {
                     ],
                   );
                 } else {
-                  log("message_list: Snapshot Error ${snapshots.error}");
+                  log("Snapshot Error ${snapshots.error}", name: "${runtimeType.toString()}:build()");
                   return const Loading();
                 }
               }
           );
         } else {
-          log("message_list: Snapshot Error ${snapshots.error}");
+          log("message_list: Snapshot Error ${snapshots.error}", name: "${runtimeType.toString()}:build()");
           return const Loading();
         }
       }

@@ -1,7 +1,15 @@
 import 'dart:developer' as dev;
+import 'dart:html';
 import 'dart:math';
+import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:bruceboard/models/community.dart';
+import 'package:bruceboard/models/member.dart';
+import 'package:bruceboard/models/membership.dart';
+import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/pages/access/access_list_members.dart';
+import 'package:bruceboard/services/messageservice.dart';
+import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -44,6 +52,10 @@ class _GameBoardGridState extends State<GameBoardGrid> {
   double screenWidth = gridSizeSmall; // Defaults value
   double screenHeight = gridSizeSmall; // Defaults value
 
+  late Player activePlayer;
+  late Player communityPlayer;
+  late Membership currentMembership;
+
   double gridSize = 500;
 
   @override
@@ -58,8 +70,10 @@ class _GameBoardGridState extends State<GameBoardGrid> {
   @override
   Widget build(BuildContext context) {
 
-    Player communityPlayer = Provider.of<CommunityPlayerProvider>(context).communityPlayer;
-    Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
+    communityPlayer = Provider.of<CommunityPlayerProvider>(context).communityPlayer;
+    activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
+    currentMembership = Provider.of<MembershipProvider>(context).currentMembership;
+
     dev.log('Game Owner: ${communityPlayer.docId}:${communityPlayer.fName} Active Player: ${activePlayer.docId}:${activePlayer.fName}',
         name: "${runtimeType.toString()}:build()" );
     // If these Community Player is Equal to the Active Player it is the owner of the game and can update game/grid information,
@@ -199,14 +213,14 @@ class _GameBoardGridState extends State<GameBoardGrid> {
           disabledBackgroundColor: getSquareColor(grid, squareIndex),
         ),
         onPressed: (grid.squarePlayer[squareIndex] == -1)
-            ? () async {
+            ? () {
               dev.log("Pressed game button ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
               if (gameOwner) {
                 dev.log("Owner Assign Square ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
-                assignSquare(grid, squareIndex);
+                assignSquare(game, grid, squareIndex);
               } else {
                 dev.log("Player Request Square ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
-                requestSquare(grid, squareIndex);
+                requestSquare(game, grid, squareIndex);
               }
             }
             : null,
@@ -243,37 +257,86 @@ class _GameBoardGridState extends State<GameBoardGrid> {
     return null;
   }
 
-  void assignSquare(Grid grid, int squareIndex) async {
+  void assignSquare(Game game, Grid grid, int squareIndex) async {
     dev.log("Assign Square ($squareIndex)", name: "${runtimeType.toString()}:ownerAssignSquare()");
     // ToDo: need to filter Player-Select to only show players of Communities with Access
     //dynamic playerSelected = await Navigator.pushNamed(context, '/player-select');
-    dynamic playerSelected = await Navigator.of(context).push(
+    dynamic result = await Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => AccessListMembers(series: series)),
     );
 
-    if (playerSelected == null) {
+    if (result == null) {
       dev.log("No Player Selected", name: "${runtimeType.toString()}:GameButton");
     } else {
-      Player selectedPlayer = playerSelected as Player;
-      dev.log("Player Selected (${selectedPlayer.initials}) as Player)",
-          name: "${runtimeType.toString()}:GameButton");
-      grid.squarePlayer[squareIndex] = selectedPlayer.docId;
-      grid.squareInitials[squareIndex] = selectedPlayer.initials;
-
-      // No need to await here as updates will come via Firestore Streams.
-      DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key)
-          .fsDocUpdate(grid);
-      DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
-          .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
-      dev.log("saving Data ... gameNo: ${game.docId} ",
-          name: "${runtimeType.toString()}:GameButton");
-      // ToDo: Send Message to user.
+      // Get Comment
+      String? comment = await openDialogMessageComment(context, defaultComment: "Good Luck with Square ${squareIndex}");
+      if (comment != null) {
+        Access selectedAccess = result[0] as Access; // Access Record used for player (contains 'cid' and 'pid'
+        Player selectedPlayer = result[1] as Player; // Player player
+        dev.log("Player Selected (${selectedPlayer.initials}) as Player)", name: "${runtimeType.toString()}:GameButton");
+        grid.squarePlayer[squareIndex] = selectedPlayer.docId;
+        grid.squareInitials[squareIndex] = selectedPlayer.initials;
+        // Get the member record for the player.
+        Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDoc(docId: selectedPlayer.pid ) as Member;
+        member.credits -= game.squareValue;
+        // No need to await here as updates will come via Firestore Streams.
+        DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key)
+            .fsDocUpdate(grid);
+        DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid))
+            .fsDocUpdate(member);
+        DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
+            .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
+        dev.log("saving Data ... gameNo: ${game.docId} ",
+            name: "${runtimeType.toString()}:GameButton");
+        // Send message to user
+        messageSquareAssignedNotification(cid: selectedAccess.cid, sid: game.sid, gid: game.docId, squareRequested: squareIndex,
+            playerFrom: activePlayer,
+            playerTo: selectedPlayer,
+            comment: comment,
+            description: "Square ${squareIndex} for Game '${game.name}' in Series '${series.name}' has been assigned to you for ${game.squareValue} credit(s)."
+                " Your Remaining credits in community are ${member.credits}"
+        );
+      }
     }
   }
 
   // Todo: Complete this.
-  void requestSquare(Grid grid, int squareIndex) {
-    dev.log("Request Square ($squareIndex)", name: "${runtimeType.toString()}:ownerAssignSquare()");
+  void requestSquare(Game game, Grid grid, int squareIndex) async {
+    dev.log("Request Square ($squareIndex) for Community ID ${currentMembership.cid}", name: "${runtimeType.toString()}:requestSquare()");
+
+    // Get Active Players Member Record from Community to Check Credits.
+    FirestoreDoc? fsDoc = await DatabaseService(FSDocType.member, uid: communityPlayer.uid, cidKey: Community.Key(currentMembership.cid))
+        .fsDoc(docId: activePlayer.docId);
+    if (fsDoc != null) {
+      Member member = fsDoc as Member;
+      if (member.credits >= game.squareValue) {  // Has Credits
+        // Get Comment
+        String? comment = await openDialogMessageComment(context, defaultComment: "Please assign me to Square ${squareIndex}");
+        if (comment != null) {
+          messageSquareSelectRequest(cid: currentMembership.cid, sid: game.sid, gid: game.docId, squareRequested: squareIndex,
+              playerFrom: activePlayer,
+              playerTo: communityPlayer,
+              comment: comment,
+              description: "Player '${activePlayer.fName} ${activePlayer.lName}' requested Square ${squareIndex} for Game '${game.name}' in Series '${series.name}'"
+          );
+        } else {
+          dev.log("Request Square Cancelled for ($squareIndex)", name: "${runtimeType.toString()}:requestSquare()");
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("You do not have enough Credits in your Community Membership (${member.credits}), Square Value ${game.squareValue}"),
+            )
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Cannot find Member Record, Ensure Membership request has been accepted"),
+          )
+      );
+      dev.log("No Member ... likey not accepted yet", name: "${runtimeType.toString()}:requestSquare()");
+    }
 
   }
 }

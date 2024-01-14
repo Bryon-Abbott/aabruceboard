@@ -63,7 +63,7 @@ abstract class FirestoreDoc {
   String get key
   { // Format Key for Document ID
     String key = _keyFormat.format(docId);
-    log("Retrieving member $key");
+    log("Retrieving Firestoredoc $key", name: '${runtimeType.toString()}:key');
     return key;
   }
 

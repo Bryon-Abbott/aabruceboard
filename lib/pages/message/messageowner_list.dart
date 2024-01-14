@@ -52,9 +52,9 @@ class _MessageListState extends State<MessageOwnerList> {
                         onPressed: () async {
                           dynamic changes = await Navigator.pushNamed(context, '/message-maintain');
                           if (changes != null) {
-                            log('message_list: Games $changes Changes Type : ${changes.runtimeType}');
+                            log('Games $changes Changes Type : ${changes.runtimeType}', name: "${runtimeType.toString()}:...");
                           } else {
-                            log('message_list: **null** Changes Type : ${changes.runtimeType}');
+                            log('**null** Changes Type : ${changes.runtimeType}', name: "${runtimeType.toString()}:...");
                           }
                         },
                         icon: const Icon(Icons.add_circle_outline),
@@ -68,7 +68,7 @@ class _MessageListState extends State<MessageOwnerList> {
                 ),
               );
             } else {
-              log("message_list: Snapshot Error ${snapshots.error}");
+              log("Snapshot Error ${snapshots.error}", name: "${runtimeType.toString()}:...");
               return const Loading();
             }
           }

@@ -44,7 +44,7 @@ class Member implements FirestoreDoc {
   String get key {
     // Format Key for Document ID
     String key = _keyFormat.format(docId);
-    log("Retrieving member $key");
+    log("Retrieving member $key", name: '${runtimeType.toString()}:key');
     return key;
   }
 

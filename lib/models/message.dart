@@ -27,7 +27,7 @@ class Message implements FirestoreDoc {
   String comment;
   String description;
 
-  Message({ required Map<String, dynamic> data, }) :
+  Message({ required Map<String, dynamic> data }) :
         docId = data['docId'] ?? -1,
         pidFrom = data['pidFrom'] ?? -1,
         pidTo = data['pidTo'] ?? -1,
@@ -62,7 +62,7 @@ class Message implements FirestoreDoc {
   String get key {
     // Format Key for Document ID
     String key = _keyFormat.format(docId);
-    log("Retrieving member $key");
+    log("Retrieving message $key", name: '${runtimeType.toString()}:key');
     return key;
   }
 

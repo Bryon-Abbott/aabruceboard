@@ -51,6 +51,7 @@ class _MembershipListState extends State<MembershipList> {
                 ),
                 actions: [
                   IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
                     onPressed: () async {
                       Community? community;
                       Player? communityPlayer;
@@ -64,7 +65,7 @@ class _MembershipListState extends State<MembershipList> {
                         if (existingMembership == null ) { // If not found, request membership from community owner.
                           // Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                           // Verify Request with Player.
-                          String? comment = await openDialogMessageComment(context);
+                          String? comment = await openDialogMessageComment(context, defaultComment: "Please add me to your <${community.name}> community.");
                           log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
                           if (comment != null ) {
                             Membership membership = Membership(
@@ -92,7 +93,6 @@ class _MembershipListState extends State<MembershipList> {
                         }
                       }
                     },
-                    icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
             body: ListView.builder(

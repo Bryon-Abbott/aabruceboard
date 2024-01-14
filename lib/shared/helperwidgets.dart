@@ -13,8 +13,8 @@ Widget addHorizontalSpace(double width){
 }
 // ===========================================================================
 // Dialog to get user Text for Messages.
-Future<String?> openDialogMessageComment(BuildContext context) {
-  TextEditingController controller1 = TextEditingController();
+Future<String?> openDialogMessageComment(BuildContext context, {String? defaultComment}) {
+  TextEditingController controller1 = TextEditingController( text: defaultComment);
   return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(

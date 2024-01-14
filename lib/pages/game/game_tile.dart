@@ -21,7 +21,7 @@ class GameTile extends StatelessWidget {
         margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
         child: ListTile(
           onTap: () async {
-            log("Game Tapped ... ${game.name} ");
+            log("Game Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
             await Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),
             );

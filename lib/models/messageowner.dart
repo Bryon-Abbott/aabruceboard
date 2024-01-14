@@ -28,11 +28,11 @@ class MessageOwner implements FirestoreDoc {
     uid = data['uid'] ?? 'error';
   }
 
-  // static String KEY(int id) {
-  //   NumberFormat intFormat = NumberFormat("MS00000000", "en_US");
-  //   String key = intFormat.format(id);
-  //   return key;
-  // }
+  static String Key(int docId) {
+    NumberFormat intFormat = NumberFormat("MS00000000", "en_US");
+    String key = intFormat.format(docId);
+    return key;
+  }
 
   // The key should be UID for Message keys???
   @override

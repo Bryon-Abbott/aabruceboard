@@ -29,9 +29,6 @@ class _MemberMaintainState extends State<MemberMaintain> {
   final _formMemberKey = GlobalKey<FormState>();
   late Member? member;
   late Community community;
-//  late String _cid;
-//   late String _pid;
-//   late String _uid;
 
   @override
   void initState() {
@@ -121,7 +118,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   // await DatabaseService(uid: _pid, cid: _cid).incrementCommunityNoMembers(1);
                                   widget.community.noMembers++;  // =widget.series.noMembers+1; // Update class to maintain alignment
                               } else {
-                                String? comment = await openDialogMessageComment(context);
+                                String? comment = await openDialogMessageComment(context, defaultComment: "Topped up Credits to ${newCredits} credits");
                                 log('member_maintain: Comment is $comment');
                                 if (comment != null ) {
                                   int prevCredits = member!.credits;

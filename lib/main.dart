@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
@@ -101,6 +102,7 @@ class LoadApp extends StatelessWidget {
         providers: [
           Provider<ActivePlayerProvider>(create: (_) => ActivePlayerProvider()),
           Provider<CommunityPlayerProvider>(create: (_) => CommunityPlayerProvider()),
+          Provider<MembershipProvider>(create: (_) => MembershipProvider()),
         ],
         child: AdaptiveTheme(
           light: lightTheme,

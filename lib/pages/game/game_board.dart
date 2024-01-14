@@ -47,7 +47,7 @@ class _GameBoardState extends State<GameBoard> {
   late Series series;
   late String _uid;
 
-  late final bool isGameOwner;
+  late bool isGameOwner;
   List<String?>? winners = List<String?>.filled(4, null);
 
   int cellsPicked=0;

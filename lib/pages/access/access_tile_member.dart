@@ -64,7 +64,7 @@ class AccessTileMembers extends StatelessWidget {
                                       icon: Icon(Icons.check_circle_outline),
                                       onPressed: (memberList[index].credits == 0) ? null : () {
                                         log('Pressed. ${player?.docId ?? 0}', name: '${runtimeType.toString()}:build()');
-                                        Navigator.of(context).pop(player);
+                                        Navigator.of(context).pop([access, player]);  // Return with Access & Player
                                         },
                                     )
                                   ],
