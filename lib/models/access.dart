@@ -46,7 +46,7 @@ class Access implements FirestoreDoc {
     String cKey = cFormat.format(cid);
     NumberFormat pFormat = NumberFormat("P00000000", "en_US");
     String pKey = pFormat.format(pid);
-    log("Access: key: Retrieving community $pKey$cKey");
+    log("Retrieving community $pKey$cKey", name: "${runtimeType.toString()}:key()");
     return "$pKey$cKey";
   }
 

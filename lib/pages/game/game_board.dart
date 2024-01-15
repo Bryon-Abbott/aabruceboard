@@ -1,9 +1,12 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
+import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/grid.dart';
+import 'package:bruceboard/models/member.dart';
+import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -15,7 +18,6 @@ import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_board_grid.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
-
 const double gridSizeLarge = 1000;
 const double gridSizeSmall = 500;
 // ===========================================================================
@@ -48,7 +50,7 @@ class _GameBoardState extends State<GameBoard> {
   late String _uid;
 
   late bool isGameOwner;
-  List<String?>? winners = List<String?>.filled(4, null);
+  List<Player?>? winners = List<Player?>.filled(4, null);
 
   int cellsPicked=0;
   void callback(int cells)
@@ -129,35 +131,34 @@ class _GameBoardState extends State<GameBoard> {
             Board board = snapshot.data! as Board;
             //winners = getWinners(board);
             dev.log("Got Update Board: ${game.docId} ", name: "${runtimeType.toString()}:build()");
-            return FutureBuilder<List<String?>>(
+            return FutureBuilder<List<Player?>>(
               future: getWinners(board),
-              initialData: List<String>.filled(4, '...'),
-              builder: (BuildContext context, AsyncSnapshot<List<String?>> snapshot) {
+              initialData: List<Player?>.filled(4, null),
+              builder: (BuildContext context, AsyncSnapshot<List<Player?>> snapshot) {
                 if (snapshot.hasData) {
                   winners = snapshot.data;
                 }
                 return SafeArea(
                   child: Scaffold(
                     appBar: AppBar(
-                      title: const Text('Bruce Board'),
+                      title: const Text('BruceBoard'),
                       actions: [
                         PopupMenuButton<int>(
                             onSelected: (item) =>
                                 onMenuSelected(context, item, board),
                             itemBuilder: (context) =>
                             [
-                              // const PopupMenuItem<int>(
-                              //     value: 0,
-                              //     child: Row(
-                              //         children: [
-                              //           Icon(Icons.download_outlined,
-                              //               color: Colors.white),
-                              //           SizedBox(width: 8),
-                              //           Text("Download Game Data"),
-                              //         ]
-                              //     )
-                              // ),
-                              // const PopupMenuDivider(),
+                              PopupMenuItem<int>(
+                                  value: 0,
+                                  enabled: isGameOwner && !board.creditsDistributed,
+                                  child: const Row(
+                                      children: [
+                                        Icon(Icons.filter_list, color: Colors.white),
+                                        SizedBox(width: 8),
+                                        Text("Distribute Credits"),
+                                      ]
+                                  )
+                              ),
                               PopupMenuItem<int>(
                                   value: 1,
                                   enabled: isGameOwner,
@@ -299,11 +300,11 @@ class _GameBoardState extends State<GameBoard> {
   } // end _GameBoard:build()
 
   // --------------------------------------------------------------------------
-  // _GameBoard member functions to display the scores, update quarterly
+  // _GameBoard member functions to display the scores, update quarterly209740
   // results and display winners.
   // --------------------------------------------------------------------------
 //  Widget buildScore(double newScreenWidth) {
-  Widget buildScore(Board board, List<String?>? winners) {
+  Widget buildScore(Board board, List<Player?>? winners) {
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
@@ -378,7 +379,7 @@ class _GameBoardState extends State<GameBoard> {
                       border: Border.all(color: Theme.of(context).colorScheme.outline),
                       color: Theme.of(context).colorScheme.surfaceVariant,
                     ),
-                    child: Text(winners?[index] ?? 'To Be Determined x'),
+                    child: !board.scoresLocked ? Text('Lock Score Digits') : Text("${winners?[index]?.fName ?? 'Enter Scores'} ${winners?[index]?.lName ?? ''}" ),
                     // child: Text(getWinners(board.rowResults[index], board.colResults[index], board)
                     //       .then((value) { return value; } )),
                   ),
@@ -451,7 +452,45 @@ class _GameBoardState extends State<GameBoard> {
   void onMenuSelected(BuildContext context, int item, Board board) async {
     switch (item) {
       case 0:
-        dev.log("Menu Select 0:Download Game", name: "${runtimeType.toString()}:onMenuSelected");
+        dev.log("Menu Select 0:Distribute Credits", name: "${runtimeType.toString()}:onMenuSelected");
+        // List<Player> w = List<Player>.filled(4, Player(data: {}));
+        // // Get Grid (need who's got what square.
+        // if (winners != null) {
+        //   for (int p=0; p < 4; p++) {
+        //     if (winners![p] != null) {
+        //       w[p] = winners![p]!;
+        //     } else {
+        //       ScaffoldMessenger.of(context).showSnackBar(
+        //           const SnackBar(content: Text("All scores must be set to distribute credits"))
+        //       );
+        //       return;
+        //     }
+        //   }
+        //   for (int i=0; i<4; i++) {
+        //     Access access = await DatabaseService(FSDocType.member, cidKey: Series.Key(series.)).fsDoc(docId:w[i].pid) as Access;
+        //     Member member = await DatabaseService(FSDocType.member, cidKey: Series.Key(series.)).fsDoc(docId:winners![i].pid) as Member;
+        //     int credits = board.squaresPicked*board.percentSplits[i]*game.squareValue~/100;
+        //     String? comment = await openDialogMessageComment(context, defaultComment: "Thanks for Playing.");
+        //     if (comment != null ) {
+        //       int prevCredits = member!.credits;
+        //       Map<String, dynamic> data = {
+        //         'credits' : newCredits,
+        //       };
+        //       member!.update(data: data);
+        //       await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocUpdate(member!);
+        //       // Send Message to user
+        //       Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+        //       Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
+        //       messageMemberAddCreditsNotification(credits: newCredits, fromPlayer: player, toPlayer: memberPlayer,
+        //         description: "Credits on your account were updated from $prevCredits to $newCredits : (${member!.credits-prevCredits})\n"
+        //             "Community: <${community.name}>, Owner: ${player.fName} ${player.lName}",
+        //         comment: comment,
+        //       );
+        //     }
+        //   }
+        //
+        //   dev.log("Winners ${winners![0]!.pid},${winners![1]!.pid},${winners![2]!.pid},${winners![3]!.pid} ");
+        // }
 //        widget.gameStorage.writeGameData(BruceArguments(players, games));
         break;
       case 1:
@@ -606,21 +645,21 @@ class _GameBoardState extends State<GameBoard> {
     }
   } // End _GameBoard:submit()
 
-  Future<List<String?>> getWinners(Board board) async {
+  Future<List<Player?>> getWinners(Board board) async {
     Grid? grid;
-    List<String?> winners = List<String?>.filled(4, null);
+    List<Player?> winners = List<Player?>.filled(4, null);
     // If score is not set yet return TBD
     //dev.log("Score One : $scoreOne Score two: $scoreTwo", name: "${this.runtimeType.toString()}:getWinner");
     for (int qtr=0; qtr<=3; qtr++) {
       dev.log("$qtr:Getting Winner", name: "${runtimeType.toString()}:getWinner");
       if (board.colResults[qtr] == -1 || board.colResults[qtr] == -1) {
-        winners[qtr] = "Enter Score";
+        winners[qtr] = null;
         continue;  // Go to next quarter.
       } else {
         // If grid no retrieved, get it.
         grid ??= await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
         if (grid.scoresLocked == false) {
-          winners[qtr] = "Set Scores";
+          winners[qtr] = null;
           continue; // Go to next quarter
         } else {
           // Get last digit of each score
@@ -634,7 +673,7 @@ class _GameBoardState extends State<GameBoard> {
           // Find the player number on the board
           int playerNo = grid.squarePlayer[row * 10 + col];
           Player player = await DatabaseService(FSDocType.player).fsDoc(docId: playerNo) as Player;
-          winners[qtr] = '${player.fName} ${player.lName}';
+          winners[qtr] = player;
           dev.log("$qtr:Player: ${player.docId}:${player.fName} ${player.lName}", name: "${runtimeType.toString()}:getWinner");
         }
       }

@@ -176,6 +176,7 @@ class MessageTile extends StatelessWidget {
               member.credits -= game.squareValue;
               grid.squarePlayer[squareRequested] = playerFrom.docId;
               grid.squareInitials[squareRequested] = playerFrom.initials;
+              grid.squareCommunity[squareRequested] = message.data['cid'];
               await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocUpdate(member);
               await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key).fsDocUpdate(grid);
               messageSquareSelectAcceptResponse(

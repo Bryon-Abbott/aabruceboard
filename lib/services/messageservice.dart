@@ -33,6 +33,7 @@ const messageDesc = {
   20004: "Remove Credit Notification",
   20005: "Assigned Square Notification",
   20006: "Accepted Square Request Notification",
+  20007: "Credit Distribution Notification",
 };
 
 enum messageRespType {
@@ -312,6 +313,32 @@ Future<void> messageMemberAddCreditsNotification(
   // Add Message (response) to senders messages.
   Message notification = Message(data:
   { 'messageType' : 20002,  // 20002 Edit Member notification
+    'pidFrom': fromPlayer.pid,
+    'pidTo': toPlayer.pid,
+    'responseCode': messageResp[messageRespType.notification],      // Notification ... No response expected.
+    'description': description,
+    'comment': comment,
+    'data': { 'credits': credits }
+  });
+  return await DatabaseService(FSDocType.message, toUid: toPlayer.uid).fsDocAdd(notification);
+}
+// ==========================================================================
+// Send messages to notify Player that Credits have been added to there membership from a game distribution.
+Future<void> messageMemberDistributedCreditsNotification(
+    {  required int credits,
+      required Player fromPlayer,
+      required Player toPlayer,
+      String description = 'No descriptions',
+      String comment = 'Please add me to your community'}) async {
+  // Add MemberOwner to Community Player for current Player
+  MessageOwner msgOwner = MessageOwner( data: {
+    'docId': fromPlayer.pid,  // Current Players PID (ie Player the message was sent to)
+    'uid': fromPlayer.uid,  // Current Players UID
+  });
+  await DatabaseService(FSDocType.messageowner, toUid: toPlayer.uid).fsDocAdd(msgOwner);
+  // Add Message (response) to senders messages.
+  Message notification = Message(data:
+  { 'messageType' : 20007,  // 20002 Edit Member notification
     'pidFrom': fromPlayer.pid,
     'pidTo': toPlayer.pid,
     'responseCode': messageResp[messageRespType.notification],      // Notification ... No response expected.

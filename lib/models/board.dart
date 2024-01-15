@@ -18,6 +18,9 @@ class Board implements FirestoreDoc {
   List<int> colResults;   //  = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
   List<int> percentSplits;//  = List<int>.filled(5, 20); // Q1, Q2, Q3, Q4, Community
   int squaresPicked;      // =0;
+  bool scoresLocked;
+  bool creditsDistributed = false;
+
   bool dirty = true;
 
 //  Board({ required this.gid, }) :
@@ -26,7 +29,9 @@ class Board implements FirestoreDoc {
     rowResults = data['rowResults']?.cast<int>()       ?? List<int>.filled(4, -1),    // Team1-Q1, Q2, Q3, Q4
     colResults = data['colResults']?.cast<int>()       ?? List<int>.filled(4, -1),    // Team1-Q1, Q2, Q3, Q4
     percentSplits = data['percentSplits']?.cast<int>() ?? List<int>.filled(5, 20), // Q1, Q2, Q3, Q4, Community
-    squaresPicked = data['squaresPicked']              ?? 0;
+    squaresPicked = data['squaresPicked']              ?? 0,
+    scoresLocked = data['scoresLocked']                ?? false,
+    creditsDistributed = data['creditsDistributed']    ?? false;
 
   @override
   String get key {
@@ -40,7 +45,9 @@ class Board implements FirestoreDoc {
     rowResults = data['rowResults'];
     colResults = data['colResults'];
     percentSplits = data['percentSplits'];
-    squaresPicked = data['squaresPicked'];
+    squaresPicked = data['squaresPicked'];  // From Grid
+    scoresLocked = data['scoresLocked'];    // From Grid
+    creditsDistributed = data['creditsDistributed'];
   }
 
   @override
@@ -52,6 +59,8 @@ class Board implements FirestoreDoc {
       'colResults' : colResults,
       'percentSplits' : percentSplits,
       'squaresPicked' : squaresPicked,
+      'scoresLocked' : scoresLocked,
+      'creditsDistributed' : creditsDistributed,
     };
   }
 }

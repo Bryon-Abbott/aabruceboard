@@ -164,8 +164,12 @@ class _GameBoardGridState extends State<GameBoardGrid> {
             () async {
           if (grid.getFreeSquares() == 0) {
             dev.log("Pressed Number button", name: "${runtimeType.toString()}:NumberButton");
+            // Set the Scores, Save the Grid with new Score Values and Propagate the ScoresLocked to the Board.
             grid.setScores();
-            await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
+            await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key)
+                .fsDocUpdate(grid);
+            await DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
+                .fsDocUpdateField(key: board.key, field: 'scoresLocked', bvalue: true);
             dev.log("saving Data ... gameNo: ${game.docId} ", name: "${runtimeType.toString()}:NumberButton");
             // setState(() {
             //   //board.saveData(games.getGame(games.currentGame).gameNo!);
@@ -275,6 +279,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
         Player selectedPlayer = result[1] as Player; // Player player
         dev.log("Player Selected (${selectedPlayer.initials}) as Player)", name: "${runtimeType.toString()}:GameButton");
         grid.squarePlayer[squareIndex] = selectedPlayer.docId;
+        grid.squareCommunity[squareIndex] = selectedAccess.cid;
         grid.squareInitials[squareIndex] = selectedPlayer.initials;
         // Get the member record for the player.
         Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDoc(docId: selectedPlayer.pid ) as Member;
@@ -294,7 +299,8 @@ class _GameBoardGridState extends State<GameBoardGrid> {
             playerTo: selectedPlayer,
             comment: comment,
             description: "Square ${squareIndex} for Game '${game.name}' in Series '${series.name}' has been assigned to you for ${game.squareValue} credit(s)."
-                " Your Remaining credits in community are ${member.credits}"
+//                " Your Remaining credits in community (${Community.Key(selectedAccess.cid)}) are ${member.credits}"
+                " Your Remaining credits in community (${selectedAccess.key}) are ${member.credits}."
         );
       }
     }

@@ -36,7 +36,7 @@ class Membership implements FirestoreDoc {
     // Format Key for Document ID
     String cKey = _cFormat.format(cid);
     String pKey = _pFormat.format(cpid);
-    log("Membership: KEY: Retrieving community $pKey$cKey", name: 'KEY:...');
+    log("Retrieving community $pKey$cKey", name: 'Membership:KEY:...');
     return "$pKey$cKey";
   }
 

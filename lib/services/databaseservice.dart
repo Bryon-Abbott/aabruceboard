@@ -210,10 +210,11 @@ class DatabaseService {
     required String field,
     String? svalue,
     int? ivalue,
+    bool? bvalue,
   }) async {
     log('Database Update *field*: "$field" *value*: ${ivalue ?? svalue} uid: $uid');
     return await docCollection.doc(key).update({
-      field: svalue ?? ivalue,
+      field: svalue ?? ivalue ?? bvalue,
     });
   }
   // Delete given Series

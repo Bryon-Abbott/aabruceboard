@@ -55,7 +55,7 @@ class _MembershipListState extends State<MembershipList> {
                     onPressed: () async {
                       Community? community;
                       Player? communityPlayer;
-                      dynamic results = await Navigator.pushNamed(context, '/community-select');
+                      dynamic results = await Navigator.pushNamed(context, '/community-select-owner');
                       if (results != null) {
                         communityPlayer = results[0] as Player;
                         community = results[1] as Community;

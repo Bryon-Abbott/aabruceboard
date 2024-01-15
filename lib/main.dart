@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/membershipprovider.dart';
-import 'package:bruceboard/pages/access/access_list_members.dart';
+//import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,6 +26,7 @@ import 'package:bruceboard/pages/membership/membership_list.dart';
 import 'package:bruceboard/pages/membership/membership_maintain.dart';
 import 'package:bruceboard/pages/player/player_profile.dart';
 import 'package:bruceboard/pages/community/community_select.dart';
+import 'package:bruceboard/pages/community/community_select_owner.dart';
 import 'package:bruceboard/pages/message/messageowner_list.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
 import 'package:bruceboard/pages/general/home.dart';
@@ -136,6 +137,7 @@ class LoadApp extends StatelessWidget {
                 '/community-list': (context) => const CommunityList(),
                 '/community-maintain': (context) => const CommunityMaintain(),
                 '/community-select': (context) => const CommunitySelect(),
+                '/community-select-owner': (context) => const CommunitySelectOwner(),
                 '/membership-list': (context) => const MembershipList(),
                 '/membership-maintain': (context) => const MembershipMaintain(),
                 '/settings': (context) => const SettingsMain(),

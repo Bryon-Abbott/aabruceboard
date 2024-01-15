@@ -17,20 +17,22 @@ class Grid implements FirestoreDoc {
 
   int sid = -1;
 //  String uid = 'error' ;
-  List<int> squarePlayer;
-  List<String> squareInitials;
+  List<int> squarePlayer;     // Player PID
+  List<int> squareCommunity;  // Community where Player Member record resides
+  List<String> squareInitials;// Player Initials
   List<int> rowScores;
   List<int> colScores;
-  bool scoresLocked = false;
+//  bool scoresLocked = false;
 
 //  Board({ required this.gid, }) :
   Grid({ required Map<String, dynamic> data, }) :
     docId = data['docId']                                   ?? -1,
     squarePlayer = data['squarePlayer']?.cast<int>()        ?? List<int>.filled(100, -1),       // 100
+    squareCommunity = data['squareCommunity']?.cast<int>()  ?? List<int>.filled(100, -1),  // 100
     squareInitials = data['squareInitials']?.cast<String>() ?? List<String>.filled(100, 'FS'),  // 100
     rowScores = data['rowScores']?.cast<int>()              ?? List<int>.filled(10, -1),        // 10
-    colScores = data['colScores']?.cast<int>()              ?? List<int>.filled(10, -1),        // 10
-    scoresLocked = data['scoresLocked']                     ?? false
+    colScores = data['colScores']?.cast<int>()              ?? List<int>.filled(10, -1)        // 10
+//    scoresLocked = data['scoresLocked']                     ?? false
   ;
 
 
@@ -61,9 +63,9 @@ class Grid implements FirestoreDoc {
 
   // Set the values of the score cells for the x and y axes
   void setScores() {
-    List<int> scores = [];
 
-    scores = [0,1,2,3,4,5,6,7,8,9];
+    List<int> scores = [0,1,2,3,4,5,6,7,8,9];
+
     for (int i=0; i<10; i++) {
       int pick = Random().nextInt(scores.length);
       rowScores[i] = scores.removeAt(pick);
@@ -73,7 +75,11 @@ class Grid implements FirestoreDoc {
       int pick = Random().nextInt(scores.length);
       colScores[i] = scores.removeAt(pick);
     }
-    scoresLocked = true;
+  //  scoresLocked = true;
+  }
+
+  bool get scoresLocked {
+    return ((colScores[0] != -1) && (rowScores[0] != -1));
   }
 
   @override
@@ -86,10 +92,12 @@ class Grid implements FirestoreDoc {
   void update({required Map<String, dynamic> data}) {
     docId = data['docId'] ?? docId;
     squarePlayer = data['squarePlayer'];      // 100
+    squareCommunity = data['squareCommunity'];      // 100
     squareInitials = data['squareInitials'];  // 100
     rowScores = data['rowScores'];            // 10
     colScores = data['colScores'];            // 10
-    scoresLocked = data['scoresLocked'];
+//    scoresLocked = data['scoresLocked'];
+
   }
 
   @override
@@ -98,6 +106,7 @@ class Grid implements FirestoreDoc {
     return {
       'docId': docId,
       'squarePlayer' : squarePlayer,
+      'squareCommunity' : squareCommunity,
       'squareInitials' : squareInitials,
       'rowScores' : rowScores,
       'colScores' : colScores,

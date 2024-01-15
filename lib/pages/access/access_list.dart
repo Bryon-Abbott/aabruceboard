@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -34,6 +36,8 @@ class _AccessListState extends State<AccessList> {
   Widget build(BuildContext context) {
 
     bruceUser = Provider.of<BruceUser>(context);
+    Player communityPlayer = Provider.of<CommunityPlayerProvider>(context).communityPlayer;
+    Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
     Player? player;
 
     return StreamBuilder<List<FirestoreDoc>>(
@@ -58,16 +62,16 @@ class _AccessListState extends State<AccessList> {
                   IconButton(
                     onPressed: () async {
                       Community? community;
-                      Player? communityPlayer;
+                      //Player? communityPlayer;
                       dynamic results = await Navigator.pushNamed(context, '/community-select');
                       if (results != null) {
-                        communityPlayer = results[0] as Player;
-                        community = results[1] as Community;
+                        //communityPlayer = results[0] as Player;
+                        community = results as Community;
                         // log('membership_list: Check if selected community already exists ... P:U:${communityPlayer.docId}:${community.docId} ');
                         dynamic existingAccess = await DatabaseService(FSDocType.access, sidKey: series.key).fsDoc(
                             key: Access.KEY(communityPlayer.docId, community.docId));
                         if (existingAccess == null ) { // If not found, request membership from community owner.
-                          Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+                          //Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                           // Verify Request with Player.
                             Access access = Access( data: {
                                 'cid': community.docId, // Community Owner CID
@@ -79,7 +83,7 @@ class _AccessListState extends State<AccessList> {
                             // is the PID of the owner of the community.
                             await DatabaseService(FSDocType.access, sidKey: series.key).fsDocAdd(access);
                             series.noAccesses++;
-                            log("access_list: Updating AID: ${access.docId ?? -600}");
+                            log("access_list: Updating AID: ${access.docId ?? -600}", name: "${runtimeType.toString()}:build()");
                             // Add MemberOwner to Community Player for current Player
                             // Process Messages
                             // await messageMembershipAddRequest(membership: membership, player: player, communityPlayer: communityPlayer,
@@ -104,7 +108,7 @@ class _AccessListState extends State<AccessList> {
             ),
           );
         } else {
-          log("membership_list: Snapshot Error ${snapshots.error}");
+          log("membership_list: Snapshot Error ${snapshots.error} ... Loading()", name: "${runtimeType.toString()}:build()");
           return const Loading();
         }
       }
