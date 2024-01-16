@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>UserManual.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="user-manual---bruceboard">User Manual - BruceBoard</h1>
+<p>BruceBoard is an application used to Create, Maintain and Play standard 10x10 Football Pools.
+The key functionality includes the following:</p>
+<ul>
+<li>Player Authentication allows users to create Player IDs, Signon and Signoff of the Application.</li>
+<li>Create Communities to allow access to their Games.</li>
+<li>Create Series to organise their Games.</li>
+<li>Create Games to be played,
+<ul>
+<li>Allowing access to their Communities.</li>
+<li>Allow Players to select Squares.</li>
+<li>Update Row/Column Digit Scores.</li>
+<li>Update Quarterly Splits.</li>
+<li>Update Quarterly Scores.</li>
+<li>Distribute Credits to winners.</li>
+</ul>
+</li>
+<li>Respond to Messages from other Players.</li>
+</ul>
+<p><strong>Note:</strong> A Player can be given access to their own community to enable them to play along.</p>
+<h2 id="data-model">Data Model</h2>
+<p>The following are key data model elements used within the BruceBoard Application.</p>
+<ul>
+<li>Player : Holds all data for the Player (ie Series, Memberships, Communities)</li>
+<li>Memberships : Players Memberships in Communities.</li>
+<li>Series: Collections of Games.
+<ul>
+<li>Games : Game Data including Squares, Scores and Splits.</li>
+</ul>
+</li>
+<li>Community : Collections of Players assigned access to Series of Games.</li>
+<li>Messages : List of Messages from other Players.</li>
+</ul>
+<p>Firebase is a service provided by google and provides Authentication and Data services.</p>
+<h2 id="home">Home</h2>
+<p>The Home pages is the launching point for the application. From here Players can:</p>
+<ul>
+<li>Manage Communities</li>
+<li>Mange Series and Games</li>
+<li>Manage Memberships in Communities</li>
+<li>Manage Messages</li>
+<li>Sign On / Sign Up</li>
+<li>Manage Settings via the Home Screen menue (Top Left '...')</li>
+</ul>
+<img src="images/AA0001-Home-Page.png" alt="images/AA0001-Home-Page.png" width="400"/>
+<h3 id="authentication">Authentication</h3>
+<p>BruceBoard uses Firebase to manage Application Authentication. Firebase Authentication contains key information such as:</p>
+<ul>
+<li>Login Email Name / Password</li>
+<li>Display Name</li>
+<li>Firestore UserID</li>
+</ul>
+<p>This data (except Password) is available to the Addministration Account to manage users (delete, disable, password reset)</p>
+<p>Firebase Authentication is provied by Google and is secure allowing Players to authenticate via a number of methods (ie email/password, facebook, etc).  Currently, only email/password has been enabled.</p>
+<img src="images/AA0000-General-Users.png" alt="AA0000-General-Users" width="400"/>
+<h3 id="player">Player</h3>
+<p>Players are stored in the database and are accessible by all users of the application.</p>
+<p>Players (Owner) can manages Communities, Series, Games etc as well as joining other Players(Player) games.</p>
+<p>Player Data consists of basic Personal Data such as:</p>
+<ul>
+<li>First Name, Last Name</li>
+<li>Initials</li>
+</ul>
+<h4 id="sign-up--sign-on">Sign Up / Sign On</h4>
+<p>Users can Sign On and Sign Up using the Sign-In button on the Home Page.
+If the user already has an id, they can use it to sign on.</p>
+<p>To sign up to use BruceBoard, click on the Sign-Up icon in the top left and enter your email and password. This will create an account that will be used to manage all functionality.</p>
+<img src="images/AA0100-User-SignUp.png" alt="AA0400-Series-List" width="400"/>
+<h4 id="update-profile">Update Profile</h4>
+<p>Once the account is created, the Player can udpate their Profile information (First Name, Last Name, etc) via the Update profile menu option from the Home page.
+From here the user can also see a summary of their Membership, Communities and Series.
+<img src="images/AA0100-User-UpdateProfile.png" alt="AA0400-Series-List" width="400"/></p>
+<h3 id="series">Series</h3>
+<p>Series are collections of games. This can be a weekly collection or a collection of futures games for a team.</p>
+<p>Series are owned and managed by the Player that created them.</p>
+<p>List Series:</p>
+<img src="images/AA0400-Series-List.png" alt="AA0400-Series-List" width="400"/>
+<p>Maintain the Series and associated access.
+Use the Access button to maintain what Communities have access to this Series.</p>
+<img src="images/AA0401-Series-Maintain.png" alt="AA0401-Series-Maintain" width="400"/>
+Manage the Communities that have access to this Series. Here you can and/delete access but this will not change any squares players wihtin the community have purchased. 
+<p>Adding and removing Players is handing under the Community Section.</p>
+<img src="images/AA0402-Series-Access.png" alt="AA0402-Series-Access" width="400"/>
+<h3 id="games">Games</h3>
+<p>Access the Games witin the Series by tapping on the Series Tile in the Series List.
+From here the Game can be edited or the Board can be viewed.</p>
+<img src="images/AA0600-Games-List.png" alt="AA0600-Games-List" width="400"/>
+<p>When a game is added or edited, basic information about the Game is captured includeing:</p>
+<ul>
+<li>Game Name</li>
+<li>Square Values (How many credits are take for each square)</li>
+<li>Team Names.
+Games may also be Deleted from here.</li>
+</ul>
+<img src="images/AA0602-Game-Edit.png" alt="AA0602-Game-Edit" width="400"/>
+<p>The Game Board is where the Owner manages the active game. Here the owner can complete the following:</p>
+<ul>
+<li>Assign Squares Individual : Click on desire square and select user.</li>
+<li>Assign Squares Remaining : Select Menus option and select user.</li>
+<li>Set Splits : Select Menu Option and enter desire splits.</li>
+<li>Set Scores : Select Score button beside desire quarter.</li>
+<li>Set the Row/Column numbers : Press the Lock Icon available when the Board is full.</li>
+</ul>
+<p>Players are able to View and Request Squares. The Square is not assigned until the Owner reviews and accepts the request. At this point the Square will be assigned and other users will not be able to select that square.</p>
+<img src="images/AA0601-Game-Board.png" alt="AA0601-Game-Board" width="400"/>
+<h3 id="communities">Communities</h3>
+<p>Communities are collections of Players that are provided access to specific Series.</p>
+<img src="images/AA0200-Community-List.png" alt="AA0200-Community-List" width="400"/>
+<p>Members can be added or deleted from the Members List.  The Credits can be updated by editing the Member record. Member will be notified of the addition to the Community.</p>
+<img src="images/AA0201-Community-Members.png" alt="AA0200-Community-List" width="400"/>
+<h3 id="memberships--members">Memberships / Members</h3>
+<p>Players can request to be a Member of a Community by selecting the add membership plus icon in the header. From here, the Player can Communities by other players.</p>
+<img src="images/AA0701-Membership-Request.png" alt="AA0701-Membership-Request" width="400"/>
+<p>In the list of memberships, a -1 in the credits indicates that your memberhsip request has not been accepted by the community owner yet.</p>
+<img src="images/AA0702-Membership-Waiting.png" alt="AA0702-Membership-Waiting" width="400"/>
+<h3 id="messages">Messages</h3>
+<p>Messages are manaaged thru the Message screen.</p>
+<img src="images/AA0900-Message-Maintain.png" alt="AA0900-Message-Maintain" width="400"/>
+<h2 id="screens">Screens</h2>
+<h3 id="home-screen">Home Screen</h3>
+<p>The following is the Home Page and Launching point for the application.</p>
+<img src="images/AA0001-Home-Page.png" alt="AA0001-Home-Page" width="400"/>
+<h4 id="settings">Settings</h4>
+<h4 id="sign-on">Sign on</h4>
+<img src="images/AA0002-Home-SignOn.png" alt="AA0002-Home-SignOn" width="400"/>
+<h3 id=""></h3>
+
+</body>
+</html>
