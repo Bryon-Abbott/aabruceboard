@@ -305,7 +305,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
     }
   }
 
-  // Todo: Complete this.
+  // Request Square from Series Owner.
   void requestSquare(Game game, Grid grid, int squareIndex) async {
     dev.log("Request Square ($squareIndex) for Community ID ${currentMembership.cid}", name: "${runtimeType.toString()}:requestSquare()");
 

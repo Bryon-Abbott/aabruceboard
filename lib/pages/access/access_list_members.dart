@@ -40,6 +40,7 @@ class _AccessListState extends State<AccessListMembers> {
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Access> accessList = snapshots.data!.map((s) => s as Access).toList();
+
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
@@ -59,7 +60,19 @@ class _AccessListState extends State<AccessListMembers> {
                     icon: const Icon(Icons.add_circle_outline),
                   )
                 ]),
-            body: ListView.builder(
+            body: accessList.isEmpty ?
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Text("Series Has No Communities Access defined.",
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                  ],
+                ),
+              )
+            :
+              ListView.builder(
               itemCount: accessList.length,
               itemBuilder: (context, index) {
                 return AccessTileMembers(access: accessList[index]);
