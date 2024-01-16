@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/member.dart';
-import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -61,7 +60,7 @@ class AccessTileMembers extends StatelessWidget {
                                   children: [
                                     Text("  Member: ${memberList[index].docId} ${player?.fName ?? '...'} ${player?.lName ?? ''} Credits: ${memberList[index].credits} "),
                                     IconButton(
-                                      icon: Icon(Icons.check_circle_outline),
+                                      icon: const Icon(Icons.check_circle_outline),
                                       onPressed: (memberList[index].credits == 0) ? null : () {
                                         log('Pressed. ${player?.docId ?? 0}', name: '${runtimeType.toString()}:build()');
                                         Navigator.of(context).pop([access, player]);  // Return with Access & Player
@@ -78,13 +77,13 @@ class AccessTileMembers extends StatelessWidget {
                 );
               } else {
                 log('membership_tile: CommunityPlayer Snapshot has no data ... ');
-                return Loading();
+                return const Loading();
               }
             }
           );
         } else {
           log('membership_tile: CommunityPlayer Snapshot has no data ... ');
-          return Loading();
+          return const Loading();
         }
       }
     );

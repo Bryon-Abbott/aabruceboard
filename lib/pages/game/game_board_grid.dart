@@ -1,5 +1,4 @@
 import 'dart:developer' as dev;
-import 'dart:html';
 import 'dart:math';
 import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
@@ -273,7 +272,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       dev.log("No Player Selected", name: "${runtimeType.toString()}:GameButton");
     } else {
       // Get Comment
-      String? comment = await openDialogMessageComment(context, defaultComment: "Good Luck with Square ${squareIndex}");
+      String? comment = await openDialogMessageComment(context, defaultComment: "Good Luck with Square $squareIndex");
       if (comment != null) {
         Access selectedAccess = result[0] as Access; // Access Record used for player (contains 'cid' and 'pid'
         Player selectedPlayer = result[1] as Player; // Player player
@@ -298,7 +297,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
             playerFrom: activePlayer,
             playerTo: selectedPlayer,
             comment: comment,
-            description: "Square ${squareIndex} for Game '${game.name}' in Series '${series.name}' has been assigned to you for ${game.squareValue} credit(s)."
+            description: "Square $squareIndex for Game '${game.name}' in Series '${series.name}' has been assigned to you for ${game.squareValue} credit(s)."
 //                " Your Remaining credits in community (${Community.Key(selectedAccess.cid)}) are ${member.credits}"
                 " Your Remaining credits in community (${selectedAccess.key}) are ${member.credits}."
         );
@@ -317,13 +316,13 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       Member member = fsDoc as Member;
       if (member.credits >= game.squareValue) {  // Has Credits
         // Get Comment
-        String? comment = await openDialogMessageComment(context, defaultComment: "Please assign me to Square ${squareIndex}");
+        String? comment = await openDialogMessageComment(context, defaultComment: "Please assign me to Square $squareIndex");
         if (comment != null) {
           messageSquareSelectRequest(cid: currentMembership.cid, sid: game.sid, gid: game.docId, squareRequested: squareIndex,
               playerFrom: activePlayer,
               playerTo: communityPlayer,
               comment: comment,
-              description: "Player '${activePlayer.fName} ${activePlayer.lName}' requested Square ${squareIndex} for Game '${game.name}' in Series '${series.name}'"
+              description: "Player '${activePlayer.fName} ${activePlayer.lName}' requested Square $squareIndex for Game '${game.name}' in Series '${series.name}'"
           );
         } else {
           dev.log("Request Square Cancelled for ($squareIndex)", name: "${runtimeType.toString()}:requestSquare()");
@@ -337,7 +336,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text("Cannot find Member Record, Ensure Membership request has been accepted"),
           )
       );

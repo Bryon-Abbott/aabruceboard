@@ -1,17 +1,18 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
-import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/member.dart';
-import 'package:bruceboard/shared/helperwidgets.dart';
+import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/services/messageservice.dart';
+import 'package:bruceboard/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/series.dart';
@@ -50,7 +51,8 @@ class _GameBoardState extends State<GameBoard> {
   late String _uid;
 
   late bool isGameOwner;
-  List<Player?>? winners = List<Player?>.filled(4, null);
+  List<Player> winnersPlayer = List<Player>.filled(4, Player(data: {}));
+  List<int> winnersCommunity = List<int>.filled(4, -1);
 
   int cellsPicked=0;
   void callback(int cells)
@@ -129,14 +131,15 @@ class _GameBoardState extends State<GameBoard> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Board board = snapshot.data! as Board;
-            //winners = getWinners(board);
             dev.log("Got Update Board: ${game.docId} ", name: "${runtimeType.toString()}:build()");
-            return FutureBuilder<List<Player?>>(
+            return FutureBuilder<List<List<dynamic>>>(
               future: getWinners(board),
-              initialData: List<Player?>.filled(4, null),
-              builder: (BuildContext context, AsyncSnapshot<List<Player?>> snapshot) {
+              // initialData: List<List<dynamic>>.filled(2, [Player(data: {}), -1]),
+              initialData: [[Player(data: {}),Player(data: {}),Player(data: {}),Player(data: {})], const [-1,-1,-1,-1 ]],
+              builder: (BuildContext context, AsyncSnapshot<List<List<dynamic>>> snapshot) {
                 if (snapshot.hasData) {
-                  winners = snapshot.data;
+                  winnersPlayer = snapshot.data![0].cast<Player>(); // as List<Player>;
+                  winnersCommunity = snapshot.data![1].cast<int>(); // as List<int>;
                 }
                 return SafeArea(
                   child: Scaffold(
@@ -145,12 +148,12 @@ class _GameBoardState extends State<GameBoard> {
                       actions: [
                         PopupMenuButton<int>(
                             onSelected: (item) =>
-                                onMenuSelected(context, item, board),
+                                onMenuSelected(context, item, board, series, activePlayer),
                             itemBuilder: (context) =>
                             [
                               PopupMenuItem<int>(
                                   value: 0,
-                                  enabled: isGameOwner && !board.creditsDistributed,
+                                  enabled: isGameOwner && !board.creditsDistributed && board.scoresLocked,
                                   child: const Row(
                                       children: [
                                         Icon(Icons.filter_list, color: Colors.white),
@@ -277,7 +280,7 @@ class _GameBoardState extends State<GameBoard> {
                             ],
                           ),
                           buildPoints(board),
-                          buildScore(board, winners),
+                          buildScore(board, winnersPlayer),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
@@ -304,7 +307,7 @@ class _GameBoardState extends State<GameBoard> {
   // results and display winners.
   // --------------------------------------------------------------------------
 //  Widget buildScore(double newScreenWidth) {
-  Widget buildScore(Board board, List<Player?>? winners) {
+  Widget buildScore(Board board, List<Player> winners) {
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
@@ -379,7 +382,11 @@ class _GameBoardState extends State<GameBoard> {
                       border: Border.all(color: Theme.of(context).colorScheme.outline),
                       color: Theme.of(context).colorScheme.surfaceVariant,
                     ),
-                    child: !board.scoresLocked ? Text('Lock Score Digits') : Text("${winners?[index]?.fName ?? 'Enter Scores'} ${winners?[index]?.lName ?? ''}" ),
+                    child: (!board.scoresLocked)
+                        ? const Text("Lock Score Digits")
+                        : (winners[index].pid == -1)
+                          ? const Text("Enter Scores")
+                          : Text("${winners[index].fName} ${winners[index].lName}"),
                     // child: Text(getWinners(board.rowResults[index], board.colResults[index], board)
                     //       .then((value) { return value; } )),
                   ),
@@ -411,7 +418,6 @@ class _GameBoardState extends State<GameBoard> {
                     height: 25,
                     width: 45,
                     child: ElevatedButton(
-                      child: const Text('Score'),
                       onPressed: isGameOwner ? () async {
                         dev.log("Getting Scores ... ", name: "${runtimeType.toString()}:buildScore");
                         final List<String>? score = await openDialogScores(index, board);
@@ -436,6 +442,7 @@ class _GameBoardState extends State<GameBoard> {
                           // });
                         }
                       } : null,
+                      child: const Text('Score'),
                     ),
                   ),
                 ),
@@ -445,60 +452,66 @@ class _GameBoardState extends State<GameBoard> {
       ),
     );
   } // end _gameBoard:buildScore()
-
   // --------------------------------------------------------------------------
   // Helper Functions
   // --------------------------------------------------------------------------
-  void onMenuSelected(BuildContext context, int item, Board board) async {
+  void onMenuSelected(BuildContext context, int item, Board board, Series series, Player activePlayer) async {
     switch (item) {
       case 0:
         dev.log("Menu Select 0:Distribute Credits", name: "${runtimeType.toString()}:onMenuSelected");
-        // List<Player> w = List<Player>.filled(4, Player(data: {}));
-        // // Get Grid (need who's got what square.
-        // if (winners != null) {
-        //   for (int p=0; p < 4; p++) {
-        //     if (winners![p] != null) {
-        //       w[p] = winners![p]!;
-        //     } else {
-        //       ScaffoldMessenger.of(context).showSnackBar(
-        //           const SnackBar(content: Text("All scores must be set to distribute credits"))
-        //       );
-        //       return;
-        //     }
-        //   }
-        //   for (int i=0; i<4; i++) {
-        //     Access access = await DatabaseService(FSDocType.member, cidKey: Series.Key(series.)).fsDoc(docId:w[i].pid) as Access;
-        //     Member member = await DatabaseService(FSDocType.member, cidKey: Series.Key(series.)).fsDoc(docId:winners![i].pid) as Member;
-        //     int credits = board.squaresPicked*board.percentSplits[i]*game.squareValue~/100;
-        //     String? comment = await openDialogMessageComment(context, defaultComment: "Thanks for Playing.");
-        //     if (comment != null ) {
-        //       int prevCredits = member!.credits;
-        //       Map<String, dynamic> data = {
-        //         'credits' : newCredits,
-        //       };
-        //       member!.update(data: data);
-        //       await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocUpdate(member!);
-        //       // Send Message to user
-        //       Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
-        //       Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
-        //       messageMemberAddCreditsNotification(credits: newCredits, fromPlayer: player, toPlayer: memberPlayer,
-        //         description: "Credits on your account were updated from $prevCredits to $newCredits : (${member!.credits-prevCredits})\n"
-        //             "Community: <${community.name}>, Owner: ${player.fName} ${player.lName}",
-        //         comment: comment,
-        //       );
-        //     }
-        //   }
-        //
-        //   dev.log("Winners ${winners![0]!.pid},${winners![1]!.pid},${winners![2]!.pid},${winners![3]!.pid} ");
-        // }
+        // Verify all winners are set.
+        for (Player p in winnersPlayer) {
+          if (p.pid == -1) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("All scores must be set to distribute credits"))
+            );
+            return;
+          }
+        }
+        // Update Credits and Send messages.
+        for (int i=0; i<4; i++) {
+          Player p = winnersPlayer[i];
+          int c = winnersCommunity[i];
+          // Get exclude Player Number. If no perferences saved for ExcludePlayerNo, default to -1
+          String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
+          int excludePlayerNo = int.parse(excludePlayerNoString);
+          dev.log("Got Exclude PID ($excludePlayerNo", name: "${runtimeType.toString()}:onMenuSelected");
+
+          // If Winner is a Player, transfer credits and send message.
+          if (p.docId != excludePlayerNo)  {
+            dev.log("Start Board (${board.docId} Player (${p.docId}) Community ($c)", name: "${runtimeType.toString()}:onMenuSelected");
+            Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(c))
+                .fsDoc(docId: p.pid) as Member;
+            dev.log("Got Member (${member.docId})", name: "${runtimeType.toString()}:onMenuSelected");
+            Community community = await DatabaseService(FSDocType.community, cidKey: Community.Key(c))
+                .fsDoc(docId:winnersCommunity[i]) as Community;
+            dev.log("Got Community (${community.docId})", name: "${runtimeType.toString()}:onMenuSelected");
+            int credits = board.squaresPicked*board.percentSplits[i]*game.squareValue~/100;
+            int prevCredits = member.credits;
+            member.credits += credits; // Add new Credits.
+            DatabaseService(FSDocType.member, cidKey: Community.Key(winnersCommunity[i])).fsDocUpdate(member);
+            // Send Message to user
+            messageMemberAddCreditsNotification(credits: credits, fromPlayer: activePlayer, toPlayer: winnersPlayer[i],
+              description: "You Won the Q${i+1} Score and received $credits credits. Your account was updated from $prevCredits to ${member.credits}) "
+                  "Community: <${community.name}>, Owner: ${activePlayer.fName} ${activePlayer.lName}",
+              comment: "Thanks for Playing.",
+            );
+          } else {
+            dev.log("Square one by 'No Player' ... ignore", name: "${runtimeType.toString()}:onMenuSelected");
+          }
+        }
+        DatabaseService(FSDocType.board, sidKey:series.key, gidKey:Game.Key(board.docId))
+            .fsDocUpdateField(key:Game.Key(board.docId), field: 'creditsDistributed', bvalue: true );
+
+        dev.log("Winners ${winnersPlayer[0].pid},${winnersPlayer[1].pid},${winnersPlayer[2].pid},${winnersPlayer[3].pid}");
+
 //        widget.gameStorage.writeGameData(BruceArguments(players, games));
         break;
       case 1:
         dev.log("Menu Select 1:Fill in remainder", name: "${runtimeType.toString()}:onMenuSelected");
         dev.log("Filling scores-Before", name: "${runtimeType.toString()}:onMenuSelected");
         Grid grid = await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
-        dynamic result = await Navigator.pushNamed(
-            context, '/player-select');
+        dynamic result = await Navigator.pushNamed(context, '/player-select');
         if (result != null) {
           Player selectedPlayer = result as Player;
           dev.log("Load Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:onMenuSelected");
@@ -645,21 +658,23 @@ class _GameBoardState extends State<GameBoard> {
     }
   } // End _GameBoard:submit()
 
-  Future<List<Player?>> getWinners(Board board) async {
+  Future<List<List>> getWinners(Board board) async {
+//  Future<List<Player>> getWinners(Board board) async {
     Grid? grid;
-    List<Player?> winners = List<Player?>.filled(4, null);
+    List<Player> winners = List<Player>.filled(4, Player(data: {}));
+    List<int> community = List<int>.filled(4, -1);
     // If score is not set yet return TBD
     //dev.log("Score One : $scoreOne Score two: $scoreTwo", name: "${this.runtimeType.toString()}:getWinner");
     for (int qtr=0; qtr<=3; qtr++) {
       dev.log("$qtr:Getting Winner", name: "${runtimeType.toString()}:getWinner");
       if (board.colResults[qtr] == -1 || board.colResults[qtr] == -1) {
-        winners[qtr] = null;
+        // Don't set the winner as Result are not set
         continue;  // Go to next quarter.
       } else {
         // If grid no retrieved, get it.
         grid ??= await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
         if (grid.scoresLocked == false) {
-          winners[qtr] = null;
+          // Don't set the winner as Scores are not set
           continue; // Go to next quarter
         } else {
           // Get last digit of each score
@@ -672,14 +687,17 @@ class _GameBoardState extends State<GameBoard> {
           dev.log("$qtr:Row : $row Col: $col", name: "${runtimeType.toString()}:getWinner");
           // Find the player number on the board
           int playerNo = grid.squarePlayer[row * 10 + col];
+          int playerCommunity = grid.squareCommunity[row * 10 + col];
           Player player = await DatabaseService(FSDocType.player).fsDoc(docId: playerNo) as Player;
           winners[qtr] = player;
-          dev.log("$qtr:Player: ${player.docId}:${player.fName} ${player.lName}", name: "${runtimeType.toString()}:getWinner");
+          community[qtr] = playerCommunity;
+
+          dev.log("$qtr:Player: ${player.docId}:${player.fName} ${player.lName}, Community: $playerCommunity", name: "${runtimeType.toString()}:getWinner");
         }
       }
       dev.log('$qtr:Winner: ${winners[qtr]}', name: "${runtimeType.toString()}:getWinner");
     }
-    return winners;
+    return [winners, community];
   } // End _GameBoard:getWinners
 
   // --------------------------------------------------------------------------

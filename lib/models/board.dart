@@ -12,7 +12,7 @@ class Board implements FirestoreDoc {
   final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
   String gid='none';
 
-  int sid = -1;
+//  int sid = -1;
   String uid = 'error' ;
   List<int> rowResults;   // = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4
   List<int> colResults;   //  = List<int>.filled(4, -1);    // Team1-Q1, Q2, Q3, Q4

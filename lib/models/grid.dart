@@ -35,7 +35,6 @@ class Grid implements FirestoreDoc {
 //    scoresLocked = data['scoresLocked']                     ?? false
   ;
 
-
   // Return the number of squares FREE (not PICKED or EXCLUDED)
   int getFreeSquares() {
     int free = squarePlayer.where((e) => e == -1).length;
@@ -108,9 +107,9 @@ class Grid implements FirestoreDoc {
       'squarePlayer' : squarePlayer,
       'squareCommunity' : squareCommunity,
       'squareInitials' : squareInitials,
+      'scoresLocked' : scoresLocked,
       'rowScores' : rowScores,
       'colScores' : colScores,
-      'scoresLocked' : scoresLocked,
     };
   }
 }

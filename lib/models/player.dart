@@ -97,3 +97,4 @@ class Player implements FirestoreDoc {
     };
   }
 }
+

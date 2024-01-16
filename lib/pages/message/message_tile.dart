@@ -177,24 +177,27 @@ class MessageTile extends StatelessWidget {
               grid.squarePlayer[squareRequested] = playerFrom.docId;
               grid.squareInitials[squareRequested] = playerFrom.initials;
               grid.squareCommunity[squareRequested] = message.data['cid'];
+              // Todo: Look at the need for awaits here
               await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocUpdate(member);
               await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key).fsDocUpdate(grid);
+              await DatabaseService(FSDocType.board, sidKey: Series.Key(message.data['sid']), gidKey: game.key)
+                  .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
               messageSquareSelectAcceptResponse(
                   data: message.data,
                   message: message,
                   playerFrom: playerFrom,
                   playerTo: playerTo,
                   comment: comment ?? "No Comment",
-                  description: '${playerTo.fName} ${playerTo.lName} accepted your request for Square ${squareRequested} from Game <${game.name}>'
+                  description: '${playerTo.fName} ${playerTo.lName} accepted your request for Square $squareRequested from Game <${game.name}>'
               );
             } else {
               log("Case 00003: Message Accept Cancelled", name: '${runtimeType.toString()}:messageAccept');
             }
           } else {
-            log("Case 00003: Square ${squareRequested} is taken. '${grid.squareInitials[squareRequested]}:${grid.squarePlayer[squareRequested]}'", name: '${runtimeType.toString()}:messageAccept');
+            log("Case 00003: Square $squareRequested is taken. '${grid.squareInitials[squareRequested]}:${grid.squarePlayer[squareRequested]}'", name: '${runtimeType.toString()}:messageAccept');
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text("Square ${squareRequested} is taken. '${grid.squareInitials[squareRequested]}:${grid.squarePlayer[squareRequested]}'"),
+                  content: Text("Square $squareRequested is taken. '${grid.squareInitials[squareRequested]}:${grid.squarePlayer[squareRequested]}'"),
                 )
             );
           }
@@ -220,7 +223,7 @@ class MessageTile extends StatelessWidget {
             .fsDoc(docId: message.pidFrom) as Member;
         log('message_tile: case 00004: member: ${member.docId ?? 'No Member'}');
         //
-        String? comment = await openDialogMessageComment(context, defaultComment: "Credits (${credits})were updated to your membership\n (New Balance: ${member.credits})");
+        String? comment = await openDialogMessageComment(context, defaultComment: "Credits ($credits) were updated to your membership\n (New Balance: ${member.credits+credits})");
         // Add Message to Archive
         if (comment != null) {
           // Update Credits and save to database.
@@ -427,7 +430,7 @@ class MessageTile extends StatelessWidget {
         messageSquareSelectRejectResponse(
             data: message.data, message: message,
             playerFrom: playerFrom, playerTo: playerTo, comment: comment,
-            description: '${playerTo.fName} ${playerTo.lName} rejected your request for Square ${squareRequested} from Game <${game.name}>'
+            description: '${playerTo.fName} ${playerTo.lName} rejected your request for Square $squareRequested from Game <${game.name}>'
         );
       } else {
         log("Case 00003: Message Reject Cancelled", name: '${runtimeType.toString()}:messageAccept');
