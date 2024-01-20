@@ -238,6 +238,7 @@ class DatabaseService {
   List<FirestoreDoc> _fsDocListFromSnapshot(QuerySnapshot snapshot) {
     // log('Collection Size is ${snapshot.size} UID: $uid');
     return snapshot.docs.map((doc) {
+     // log("maping docs", name: '${runtimeType.toString()}:fsDocStream()');
       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
       FirestoreDoc fsDoc = FirestoreDoc( fsDocType, data: data );
       return fsDoc;
@@ -341,14 +342,37 @@ class DatabaseService {
 
   //get FirestoreDoc List stream
 
-  Stream<List<FirestoreDoc>> fsDocGroupListStream({ required int pid, required int cid} ) {
-    log('Database: fsDocGroupListStream: pid: $pid cid: $cid ', name: '${runtimeType.toString()}:fsDocGroupListStream()');
-    Stream<QuerySnapshot<Object?>> s001 =
-      db.collectionGroup("Access")
-        .where('pid', isEqualTo: pid)
-        .where('cid', isEqualTo: cid)
-        .snapshots();
-    return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
+  Stream<List<FirestoreDoc>> fsDocGroupListStream({ required String group, int pid=0, int cid=0, int pidTo=0} ) {
+    Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
+    log('Database: fsDocGroupListStream: Group: $group, pid: $pid cid: $cid pidTo: $pidTo',name: '${runtimeType.toString()}:fsDocGroupListStream()');
+
+    switch (group) {
+      case "Access" :
+        log("Group: $group ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
+        streamQuerySnapshot = db.collectionGroup("Access")
+            .where('pid', isEqualTo: pid)
+            .where('cid', isEqualTo: cid)
+            .snapshots();
+        break;
+      case "Incoming" :
+        log("Group: $group ... pidTo: $pidTo", name: '${runtimeType.toString()}:fsDocGroupListStream()');
+        streamQuerySnapshot = db.collectionGroup("Incoming")
+            .where('pidTo', isEqualTo: pidTo)
+      //      .where('timestamp',isGreaterThan: 0)
+            .snapshots();
+        break;
+      default: {
+        log('Error: Undefined group $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
+      }
+      break;
+    }
+
+    if (streamQuerySnapshot != null) {
+      log('Returnign stream ... $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
+      return streamQuerySnapshot.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
+    } else {
+      return Stream<List<FirestoreDoc>>.empty();
+    }
   }
   //get FirestoreDoc List
   //Future<List<FirestoreDoc>> get fsDocList async {

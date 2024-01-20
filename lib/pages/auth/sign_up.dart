@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bruceboard/services/auth.dart';
 import 'package:bruceboard/shared/constants.dart';
 import 'package:bruceboard/shared/loading.dart';
@@ -22,6 +24,26 @@ class _SignUpState extends State<SignUp> {
   // text field state
   String email = '';
   String password = '';
+  String displayName = '';
+  String fName = '';
+  String lName = '';
+  String initials = '';
+  late TextEditingController displayNameController;
+  late TextEditingController initialsController;
+
+  @override
+  void initState() {
+    super.initState();
+    displayNameController = TextEditingController();
+    initialsController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    displayNameController.dispose();
+    initialsController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +66,10 @@ class _SignUpState extends State<SignUp> {
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const SizedBox(height: 20.0),
+              Text("Email Address"),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'email'),
                 validator: (val) => val!.isEmpty ? 'Enter an email' : null,
@@ -54,12 +78,55 @@ class _SignUpState extends State<SignUp> {
                 },
               ),
               const SizedBox(height: 20.0),
+              Text("Password"),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'password'),
                 obscureText: true,
                 validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
                 onChanged: (val) {
                   setState(() => password = val);
+                },
+              ),
+              const SizedBox(height: 20.0),
+              Text("First Name"),
+              TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'First Name'),
+                validator: (val) => val!.isEmpty ? 'Enter First Name' : null,
+                onChanged: (val) {
+                  displayNameController.text = "${val} ${lName}";
+                  initialsController.text = "${val.isEmpty ? '.' : val.substring(0,1)}${lName.isEmpty ? '.' : lName.substring(0,1)}";
+                  setState(() => fName = val);
+                },
+              ),
+              const SizedBox(height: 20.0),
+              Text("Last Name"),
+              TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'Last Name'),
+                validator: (val) => val!.isEmpty ? 'Enter Last Name' : null,
+                onChanged: (val) {
+                  displayNameController.text = "${fName} ${val}";
+                  initialsController.text = "${fName.isEmpty ? '.' : fName.substring(0,1)}${val.isEmpty ? '.' : val.substring(0,1)}";
+                  setState(() => lName = val);
+                },
+              ),
+              const SizedBox(height: 20.0),
+              Text("Initials"),
+              TextFormField(
+                controller: initialsController,
+                decoration: textInputDecoration.copyWith(hintText: 'Initials'),
+                validator: (val) => val!.isEmpty ? 'Must enter initials ...' : null,
+                onChanged: (val) {
+                  setState(() => initials = val);
+                },
+              ),
+              const SizedBox(height: 20.0),
+              Text("Display Name"),
+              TextFormField(
+                controller: displayNameController,
+                decoration: textInputDecoration.copyWith(hintText: 'Display Name'),
+                //  validator: (val) => 'Enter Display Name' : null,
+                onChanged: (val) {
+                  setState(() => displayName = val);
                 },
               ),
               const SizedBox(height: 20.0),
@@ -70,7 +137,11 @@ class _SignUpState extends State<SignUp> {
                 onPressed: () async {
                   if(_formKey.currentState!.validate()){
                     setState(() => loading = true);
-                    dynamic result = await _auth.registerWithEmailAndPassword(email, password);
+                    log("Adding User: F'$fName' L'$lName' I'$initials' D'$displayName'", name: "${runtimeType.toString()}:buildScore");
+                    dynamic result = await _auth.registerWithEmailAndPassword(email, password,
+                        displayName.isEmpty ? displayNameController.text : displayName,
+                        fName: fName, lName: lName,
+                        initials: initials.isEmpty ? initialsController.text : initials);
                     if(result == null) {
                       setState(() {
                         loading = false;

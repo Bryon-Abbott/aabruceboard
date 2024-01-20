@@ -1,9 +1,12 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/access.dart';
+import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/membership.dart';
+import 'package:bruceboard/models/message.dart';
 import 'package:bruceboard/pages/access/access_tile_series.dart';
+import 'package:bruceboard/pages/message/message_tile_incoming.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,35 +14,33 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
-//
-
-class AccessListSeries extends StatefulWidget {
-  final Membership membership;
-  const AccessListSeries({super.key, required this.membership});
+class MessageListIncoming extends StatefulWidget {
+  const MessageListIncoming({super.key});
 
   @override
-  State<AccessListSeries> createState() => _AccessListSeriesState();
+  State<MessageListIncoming> createState() => _MessageListIncomingState();
 }
 
-class _AccessListSeriesState extends State<AccessListSeries> {
+class _MessageListIncomingState extends State<MessageListIncoming> {
 
-  late BruceUser bruceUser;
+  late Player activePlayer;
+  late Message message;
 
   @override
   Widget build(BuildContext context) {
 
-    bruceUser = Provider.of<BruceUser>(context);
+    activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.access)
-          .fsDocGroupListStream(group: "Access", pid: widget.membership.cpid, cid: widget.membership.cid),   // as Stream<List<Series>>,
+      stream: DatabaseService(FSDocType.message, )
+          .fsDocGroupListStream(group: "Incoming", pidTo: activePlayer.pid),   // as Stream<List<Series>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
-          List<Access> access = snapshots.data!.map((a) => a as Access).toList();
+          List<Message> message = snapshots.data!.map((a) => a as Message).toList();
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Show Series Access - Count: ${access.length}'),
+                title: Text('Show Message - Count: ${message.length}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -57,14 +58,16 @@ class _AccessListSeriesState extends State<AccessListSeries> {
                   )
                 ]),
             body: ListView.builder(
-              itemCount: access.length,
+              itemCount: message.length,
               itemBuilder: (context, index) {
-                return AccessTileSeries(access: access[index]);
+                return MessageTileIncoming(message: message[index]);
               },
             ),
           );
         } else {
-          log("build: Snapshot is ${snapshots.error}", name: '${runtimeType.toString()}:...');
+          log("Incoming Message Snapshot has no data ... loading() ${snapshots.error}", name: '${runtimeType.toString()}:...');
+          log("${snapshots.error}", name: '${runtimeType.toString()}:...');
+          print("${snapshots.error}");
           return const Loading();
         }
       }

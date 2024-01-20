@@ -60,14 +60,15 @@ class AuthService {
   }
 
   // register with email and password
-  Future registerWithEmailAndPassword(String email, String password) async {
+  Future registerWithEmailAndPassword(String email, String password, String displayName,
+      {String fName='fName', String lName = 'lName', String initials='fl' }) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      await result.user!.updateDisplayName('Display Name');
+      await result.user!.updateDisplayName(displayName);
       User user = result.user!;
       // create a new document for the user with the uid
  //     Player player = Player(data: {'uid': user.uid, 'pid': -1, 'fName': 'FNAME', 'lName': 'LNAME', 'initials': 'FL'} );
-        Player player = Player(data: { 'uid': user.uid } );
+        Player player = Player(data: { 'uid': user.uid, 'fName': fName, 'lName': lName, 'initials': initials  } );
         log('Adding new player ... U:${player.uid}, P:${player.pid}, fName: ${player.fName} ');
       // Todo: Look to see if this can use the fsDoc database class
 //      await DatabaseService(FSDocType.player, uid: user.uid).updatePlayer(player);

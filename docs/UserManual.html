@@ -366,15 +366,16 @@ code {
     });
   </script>
 <h1 id="user-manual---bruceboard">User Manual - BruceBoard</h1>
+<p>Version: 1.0.01</p>
 <p>BruceBoard is an application used to Create, Maintain and Play standard 10x10 Football Pools.
 The key functionality includes the following:</p>
 <ul>
 <li>Player Authentication allows users to create Player IDs, Signon and Signoff of the Application.</li>
-<li>Create Communities to allow access to their Games.</li>
-<li>Create Series to organise their Games.</li>
+<li>Create Communities to allow access to Games.</li>
+<li>Create Series to organise Games.</li>
 <li>Create Games to be played,
 <ul>
-<li>Allowing access to their Communities.</li>
+<li>Allowing access to Communities.</li>
 <li>Allow Players to select Squares.</li>
 <li>Update Row/Column Digit Scores.</li>
 <li>Update Quarterly Splits.</li>
@@ -385,7 +386,7 @@ The key functionality includes the following:</p>
 <li>Respond to Messages from other Players.</li>
 </ul>
 <p><strong>Note:</strong> A Player can be given access to their own community to enable them to play along.</p>
-<h2 id="data-model">Data Model</h2>
+<h2 id="10-data-model">1.0 Data Model</h2>
 <p>The following are key data model elements used within the BruceBoard Application.</p>
 <ul>
 <li>Player : Holds all data for the Player (ie Series, Memberships, Communities)</li>
@@ -399,7 +400,7 @@ The key functionality includes the following:</p>
 <li>Messages : List of Messages from other Players.</li>
 </ul>
 <p>Firebase is a service provided by google and provides Authentication and Data services.</p>
-<h2 id="home">Home</h2>
+<h2 id="20-home">2.0 Home</h2>
 <p>The Home pages is the launching point for the application. From here Players can:</p>
 <ul>
 <li>Manage Communities</li>
@@ -410,7 +411,7 @@ The key functionality includes the following:</p>
 <li>Manage Settings via the Home Screen menue (Top Left '...')</li>
 </ul>
 <img src="images/AA0001-Home-Page.png" alt="images/AA0001-Home-Page.png" width="400"/>
-<h3 id="authentication">Authentication</h3>
+<h3 id="21-authentication">2.1 Authentication</h3>
 <p>BruceBoard uses Firebase to manage Application Authentication. Firebase Authentication contains key information such as:</p>
 <ul>
 <li>Login Email Name / Password</li>
@@ -420,7 +421,7 @@ The key functionality includes the following:</p>
 <p>This data (except Password) is available to the Addministration Account to manage users (delete, disable, password reset)</p>
 <p>Firebase Authentication is provied by Google and is secure allowing Players to authenticate via a number of methods (ie email/password, facebook, etc).  Currently, only email/password has been enabled.</p>
 <img src="images/AA0000-General-Users.png" alt="AA0000-General-Users" width="400"/>
-<h3 id="player">Player</h3>
+<h3 id="22-player">2.2 Player</h3>
 <p>Players are stored in the database and are accessible by all users of the application.</p>
 <p>Players (Owner) can manages Communities, Series, Games etc as well as joining other Players(Player) games.</p>
 <p>Player Data consists of basic Personal Data such as:</p>
@@ -428,24 +429,34 @@ The key functionality includes the following:</p>
 <li>First Name, Last Name</li>
 <li>Initials</li>
 </ul>
-<h4 id="sign-up--sign-on">Sign Up / Sign On</h4>
-<p>Users can Sign On and Sign Up using the Sign-In button on the Home Page.
-If the user already has an id, they can use it to sign on.</p>
+<h4 id="221-sign-in">2.2.1 Sign In</h4>
+<p>Users can Sign Up and Sign In using the Sign-In button on the Home Page.</p>
+<p>If the user already has an id, they can use it to sign in otherwise they need to Sign Up using the button on the right of the App Bar.</p>
+<img src="images/AA0100-User-SignIn.png" alt="AA0100-User-SignIn" width="400"/>
+<h4 id="222-sign-up">2.2.2 Sign Up</h4>
 <p>To sign up to use BruceBoard, click on the Sign-Up icon in the top left and enter your email and password. This will create an account that will be used to manage all functionality.</p>
-<img src="images/AA0100-User-SignUp.png" alt="AA0400-Series-List" width="400"/>
-<h4 id="update-profile">Update Profile</h4>
+<img src="images/AA0101-User-SignUp.png" alt="AA0100-User-SignUp" width="400"/>
+<h4 id="223-update-profile">2.2.3 Update Profile</h4>
 <p>Once the account is created, the Player can udpate their Profile information (First Name, Last Name, etc) via the Update profile menu option from the Home page.
-From here the user can also see a summary of their Membership, Communities and Series.
-<img src="images/AA0100-User-UpdateProfile.png" alt="AA0400-Series-List" width="400"/></p>
-<h3 id="series">Series</h3>
+From here the user can also see a summary of their Membership, Communities and Series.</p>
+<p>All fields are required with the Display Name and Initials defaulting from the First Name and Last Name. These can be over written if desired.</p>
+<img src="images/AA0102-User-UpdateProfile.png" alt="AA0400-Series-List" width="400"/>
+<h2 id="30-series">3.0 Series</h2>
 <p>Series are collections of games. This can be a weekly collection or a collection of futures games for a team.</p>
-<p>Series are owned and managed by the Player that created them.</p>
-<p>List Series:</p>
+<h3 id="31-series-list">3.1 Series List</h3>
+<p>Series are owned and managed by the Player that created them. The list of series owned by the active player is accessed by the Series button on the Home Screen.</p>
+<p>From this list the Player can do the following:</p>
+<ul>
+<li>Add new series (Press + on the AppBar)</li>
+<li>Edit existing series (change name, change access)</li>
+</ul>
 <img src="images/AA0400-Series-List.png" alt="AA0400-Series-List" width="400"/>
-<p>Maintain the Series and associated access.
-Use the Access button to maintain what Communities have access to this Series.</p>
+<h3 id="32-series-maintain">3.2 Series Maintain</h3>
+<p>By tapping a Series, the Player is taken to the Edit Series Screen where they can update the Series Name, Type and Access</p>
+<p>The Access button is used to maintain what Communities have access to this Series.</p>
 <img src="images/AA0401-Series-Maintain.png" alt="AA0401-Series-Maintain" width="400"/>
-Manage the Communities that have access to this Series. Here you can and/delete access but this will not change any squares players wihtin the community have purchased. 
+<h3 id="33-manage-community-access">3.3 Manage Community Access</h3>
+<p>Manage the Communities that have access to this Series. Here you can and/delete access but this will not change any squares players wihtin the community have purchased.</p>
 <p>Adding and removing Players is handing under the Community Section.</p>
 <img src="images/AA0402-Series-Access.png" alt="AA0402-Series-Access" width="400"/>
 <h3 id="games">Games</h3>
@@ -483,14 +494,6 @@ Games may also be Deleted from here.</li>
 <h3 id="messages">Messages</h3>
 <p>Messages are manaaged thru the Message screen.</p>
 <img src="images/AA0900-Message-Maintain.png" alt="AA0900-Message-Maintain" width="400"/>
-<h2 id="screens">Screens</h2>
-<h3 id="home-screen">Home Screen</h3>
-<p>The following is the Home Page and Launching point for the application.</p>
-<img src="images/AA0001-Home-Page.png" alt="AA0001-Home-Page" width="400"/>
-<h4 id="settings">Settings</h4>
-<h4 id="sign-on">Sign on</h4>
-<img src="images/AA0002-Home-SignOn.png" alt="AA0002-Home-SignOn" width="400"/>
-<h3 id=""></h3>
 
 </body>
 </html>

@@ -1,4 +1,6 @@
 # User Manual - BruceBoard
+Version: 1.0.01
+
 BruceBoard is an application used to Create, Maintain and Play standard 10x10 Football Pools. 
 The key functionality includes the following: 
 + Player Authentication allows users to create Player IDs, Signon and Signoff of the Application. 
@@ -59,19 +61,26 @@ Player Data consists of basic Personal Data such as:
 + First Name, Last Name
 + Initials
 
-#### 2.2.1 Sign Up / Sign On
-Users can Sign On and Sign Up using the Sign-In button on the Home Page. 
-If the user already has an id, they can use it to sign on. 
+#### 2.2.1 Sign In
+Users can Sign Up and Sign In using the Sign-In button on the Home Page. 
 
+If the user already has an id, they can use it to sign in otherwise they need to Sign Up using the button on the right of the App Bar. 
+
+<img src="images/AA0100-User-SignIn.png" alt="AA0100-User-SignIn" width="400"/>
+
+#### 2.2.2 Sign Up
 To sign up to use BruceBoard, click on the Sign-Up icon in the top left and enter your email and password. This will create an account that will be used to manage all functionality. 
 
-<img src="images/AA0100-User-SignUp.png" alt="AA0400-Series-List" width="400"/>
 
-#### 2.2.2 Update Profile
+<img src="images/AA0101-User-SignUp.png" alt="AA0100-User-SignUp" width="400"/>
+
+#### 2.2.3 Update Profile
 Once the account is created, the Player can udpate their Profile information (First Name, Last Name, etc) via the Update profile menu option from the Home page. 
 From here the user can also see a summary of their Membership, Communities and Series. 
 
-<img src="images/AA0100-User-UpdateProfile.png" alt="AA0400-Series-List" width="400"/>
+All fields are required with the Display Name and Initials defaulting from the First Name and Last Name. These can be over written if desired. 
+
+<img src="images/AA0102-User-UpdateProfile.png" alt="AA0400-Series-List" width="400"/>
 
 ## 3.0 Series 
 Series are collections of games. This can be a weekly collection or a collection of futures games for a team. 
@@ -147,17 +156,3 @@ Messages are manaaged thru the Message screen.
 
 <img src="images/AA0900-Message-Maintain.png" alt="AA0900-Message-Maintain" width="400"/>
 
-## Screens
-
-### Home Screen
-The following is the Home Page and Launching point for the application. 
-
-<img src="images/AA0001-Home-Page.png" alt="AA0001-Home-Page" width="400"/>
-
-#### Settings 
-
-#### Sign on
-
-<img src="images/AA0002-Home-SignOn.png" alt="AA0002-Home-SignOn" width="400"/>
-
-###

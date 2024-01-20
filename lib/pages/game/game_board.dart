@@ -475,7 +475,7 @@ class _GameBoardState extends State<GameBoard> {
           // Get exclude Player Number. If no perferences saved for ExcludePlayerNo, default to -1
           String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
           int excludePlayerNo = int.parse(excludePlayerNoString);
-          dev.log("Got Exclude PID ($excludePlayerNo", name: "${runtimeType.toString()}:onMenuSelected");
+          dev.log("Got Exclude PID ($excludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
 
           // If Winner is a Player, transfer credits and send message.
           if (p.docId != excludePlayerNo)  {
