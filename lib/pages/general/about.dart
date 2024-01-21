@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 // ==========
@@ -95,6 +96,9 @@ class _AboutState extends State<About> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const Spacer(),
+                Text("User Manual: https://www.abbottavenue.com/bruceboard/docs/index.html",
+                  textAlign: TextAlign.start,
+                  style: Theme.of(context).textTheme.titleSmall,                ),
                 Text("App Name: ${_packageInfo.appName}",
                     textAlign: TextAlign.start,
                   style: Theme.of(context).textTheme.titleSmall,

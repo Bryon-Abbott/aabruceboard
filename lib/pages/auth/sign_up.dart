@@ -24,6 +24,7 @@ class _SignUpState extends State<SignUp> {
   // text field state
   String email = '';
   String password = '';
+  String passwordVerification = '';
   String displayName = '';
   String fName = '';
   String lName = '';
@@ -85,6 +86,16 @@ class _SignUpState extends State<SignUp> {
                 validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
                 onChanged: (val) {
                   setState(() => password = val);
+                },
+              ),
+              const SizedBox(height: 20.0),
+              Text("Password Verification"),
+              TextFormField(
+                decoration: textInputDecoration.copyWith(hintText: 'reenter password'),
+                obscureText: true,
+                validator: (val) => val! != password ? 'Passwords entered are not the same' : null,
+                onChanged: (val) {
+                  setState(() => passwordVerification = val);
                 },
               ),
               const SizedBox(height: 20.0),

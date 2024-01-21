@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>TechnicalManual.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="bruce-board-build-setup">Bruce Board Build Setup</h1>
+<h2 id="add-firestore">Add Firestore</h2>
+<p>The following page provides details on setting up firestore for the application.
+<a href="https://firebase.google.com/docs/flutter/setup?platform=ioskhttps://firebase.google.com/docs/flutter/setup?platform=ios">Firestore Configure</a></p>
+<h2 id="firebase-structrue">Firebase Structrue</h2>
+<p>Messages Process
+Sender has &quot;Create&quot; access to /Player/{UID-Receiver}/Message/{UID-Sender}/Incoming/{Send-Msg-ID}</p>
+<p>Sender writes message to :
+/Player/{UID-Receiver}/Message/{UID-Sender}/Incoming/{Send-Msg-ID}</p>
+<p>Receiver reads message and processes it, copy to Processed and deleting from Request
+/Player/{UID-Receiver}/Message/{UID-Sender}/Processed/{Send-Msg-ID}</p>
+<p>Receiver send Response back to Sender
+/Player/{UID-Sender}/Message/{UID-Receiver}/Response/{Send-Msg-ID}</p>
+<p>Message Class:
+MSID = Message ID, Unique to Sender
+Type = {Community Join Request-M001, Square Select Request-M002}</p>
+<p>MessageClass
+Sender UID = Me
+Receiver UID = Recever</p>
+<h2 id="web-deploy">Web Deploy</h2>
+<h3 id="deploy-application">Deploy Application</h3>
+<ol>
+<li>Build Web</li>
+<li>Upload Web</li>
+<li>Move file to production</li>
+<li>Build UserManual.html</li>
+<li>Upload Manual</li>
+</ol>
+<p>From Android Studion, select Menu-&gt;Build-&gt;Flutter-&gt;Build Web</p>
+<p>Use SFTP to upload Web Files</p>
+<pre class="hljs"><code><div>sftp abbott01
+sftp&gt; put -r /home/bryon/Code/AbbottSource/StudioProjects/aabruceboard/build/web
+</div></code></pre>
+<p>Use SSH to move to Web server</p>
+<pre class="hljs"><code><div>bryon@abbott500:~$ ssh abbott01
+bryon@abbott01:~$ rm -Rf bruceboard
+bryon@abbott01:~$ mv web bruceboard
+
+</div></code></pre>
+<p>Edit the bruceboard/index.html and update the <strong>base href</strong> to the fllowing:</p>
+<pre class="hljs"><code><div>bryon@abbott01:~$ vi bruceboard/index.html 
+</div></code></pre>
+<p><code>&lt;base href=&quot;/bruceboard/&quot;&gt;</code></p>
+<p>Move the application to production.</p>
+<pre class="hljs"><code><div>bryon@abbott01:~$ cd /var/www/html
+bryon@abbott01:/var/www/html$ sudo mv bruceboard bruceboard-r2-001
+bryon@abbott01:/var/www/html$ sudo mkdir bruceboard
+bryon@abbott01:/var/www/html$ sudo chown bryon:bryon bruceboard
+bryon@abbott01:/var/www/html$ cd
+bryon@abbott01:~$ cp -r bruceboard /var/www/html
+bryon@abbott01:~$ cd /var/www/html
+bryon@abbott01:/var/www/html$ vi bruceboard/index.html
+</div></code></pre>
+<h3 id="deploy-documentation">Deploy Documentation</h3>
+<ol>
+<li>Upload Docs</li>
+<li>Move to Production</li>
+</ol>
+<p>Upload Docs</p>
+<pre class="hljs"><code><div>bryon@abbott01:~$ sftp abbott01
+sftp&gt; put -r /home/bryon/Code/AbbottSource/StudioProjects/aabruceboard/docs
+</div></code></pre>
+<p>Move to prodution</p>
+<pre class="hljs"><code><div>bryon@abbott01:cp -r docs /var/www/html/bruceboard/
+</div></code></pre>
+<p>The UserManual can be found on the server here: <a href="www.abbottavenue.com/bruceboard/docs/index.html">BruceBoard User Manual</a></p>
+<h2 id="deploy-to-android">Deploy to Android</h2>
+<p>The latest setup steps for building applications can be found here:<br>
+<a href="https://docs.flutter.dev/deployment/android">Build and release an Android app</a></p>
+<h3 id="localproperties">Local.Properties</h3>
+<p>Ensure [project]/android/local.properties
+It lools like the versionName and verionCode are updated from the values set in the pubspec.yaml <code>version: 1.0.02+5</code></p>
+<p>I revomed the min,target,compile options SdkVersion settings in recent build (2024/01/18)</p>
+<pre class="hljs"><code><div>sdk.dir=/home/bryon/Android/Sdk
+flutter.sdk=/opt/flutter-3.13.4-stable
+flutter.buildMode=debug
+flutter.versionName=0.0.12
+flutter.versionCode=4
+flutter.minSdkVersion=21
+flutter.targetSdkVersion=30
+flutter.compileSdkVersion=30```
+</div></code></pre>
+<h3 id="key-properties">Key Properties</h3>
+<p>Ensure the [project]/android/key.properties is setup. Password for the store &amp; key is the standard If you build password.</p>
+<pre class="hljs"><code><div>storePassword=******
+keyPassword=******
+keyAlias=upload
+storeFile=/home/bryon/keystore/upload-keystore.jks
+</div></code></pre>
+<h3 id="build">Build</h3>
+<p>Use Android Studio Menu-&gt;Build-&gt;Flutter-&gt;Build App Bundle to build the application.</p>
+<p>The ABB file can be found at [project]build/app/outputs/bundle/release/app-release.aab</p>
+<h3 id="upload">Upload</h3>
+<p>Sign onto Google Play Console using Dev0.Abbott Account.
+<a href="https://play.google.com/console/u/0/developers/7966432226099174690/app-list?pli=1">Google Play Consol</a></p>
+<p>Review Apps on the Play Console</p>
+<img src="images/TT0000-PlayConsole.png" alt="TT0000-PlayConsole" width="400"/>
+<p>Go to the Open Testing page to update releases.</p>
+<p>Select 'Create new release' to add a new releaase.
+Once added and sent for review, this can take a day or so to get moved to production.</p>
+<img src="images/TT0001-ClosedTesting.png" alt="TT0001-ClosedTesting" width="400"/>
+<h1 id="release-log">Release Log</h1>
+<h2 id="10047">1.0.04+7</h2>
+<p>Release 7
+Update Message Screen to list in Chronological order.</p>
+<h3 id="release-notes">Release Notes</h3>
+<p>Release 1.0.04</p>
+<ul>
+<li>Updated the Message screen to list messages chronologically.</li>
+</ul>
+<h2 id="10036">1.0.03+6</h2>
+<p>Release 6
+Quick Fixes to published release 5</p>
+<h3 id="release-notes">Release Notes</h3>
+<p>Release 1.0.03</p>
+<ul>
+<li>Blocked ability for the user to hit the Back button outside the application from the Home screen as this goes to an unknown state (before game start)</li>
+<li>Added football icon back to the android settings.</li>
+</ul>
+<h2 id="10025">1.0.02+5</h2>
+<p>Release 5
+First Deployment of Release 1 to Google Play Store</p>
+<h3 id="release-notes">Release Notes</h3>
+<p>~~Release 1.0.02</p>
+<ul>
+<li>First multi player release published to Android Play Store.</li>
+<li>Contains basic multi player functionality to manage and play BruceBoard games.~~</li>
+</ul>
+
+</body>
+</html>

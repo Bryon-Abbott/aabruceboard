@@ -9,6 +9,7 @@ import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
+import 'package:bruceboard/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -262,6 +263,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
 
   void assignSquare(Game game, Grid grid, int squareIndex) async {
     dev.log("Assign Square ($squareIndex)", name: "${runtimeType.toString()}:ownerAssignSquare()");
+
     // ToDo: need to filter Player-Select to only show players of Communities with Access
     //dynamic playerSelected = await Navigator.pushNamed(context, '/player-select');
     dynamic result = await Navigator.of(context).push(

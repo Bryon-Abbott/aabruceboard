@@ -69,8 +69,6 @@ bryon@abbott01:/var/www/html$ sudo mkdir bruceboard
 bryon@abbott01:/var/www/html$ sudo chown bryon:bryon bruceboard
 bryon@abbott01:/var/www/html$ cd
 bryon@abbott01:~$ cp -r bruceboard /var/www/html
-bryon@abbott01:~$ cd /var/www/html
-bryon@abbott01:/var/www/html$ vi bruceboard/index.html
 ```
 
 ### Deploy Documentation
@@ -86,8 +84,9 @@ sftp> put -r /home/bryon/Code/AbbottSource/StudioProjects/aabruceboard/docs
 
 Move to prodution 
 ```
-bryon@abbott01:cp -r doc /var/www/html/bruceboard/
+bryon@abbott01:cp -r docs /var/www/html/bruceboard/
 ```
+The UserManual can be found on the server here: [BruceBoard User Manual](www.abbottavenue.com/bruceboard/docs/index.html)
 
 ## Deploy to Android
 The latest setup steps for building applications can be found here:  
@@ -139,12 +138,33 @@ Once added and sent for review, this can take a day or so to get moved to produc
 
 
 # Release Log
+## 1.0.06+9
+Release 9
+Update after Alpha Testing
+### Release Notes
+
+Version 1.0.06
++ Fixed Winners Panel not showing winners for non-owner players..
+
+## 1.0.05+8
+Release 8
+Update after Alpha Testing
+### Release Notes
+
+Version 1.0.05
++ Added Password Verification to Setup Screen.
++ Updated Fill Remaining Squares to enable Excluded User 
++ Updated Fill Remaining Squares to update Member Credits.
++ Disable Fill Remaining when all squares are full.
++ Disable Update splits when Scores are locked. 
++ Other minor fixes.
+
 ## 1.0.04+7
 Release 7
 Update Message Screen to list in Chronological order.
 ### Release Notes
 
-Release 1.0.04
+Version 1.0.04
 + Updated the Message screen to list messages chronologically.
 
 ## 1.0.03+6
@@ -152,7 +172,7 @@ Release 6
 Quick Fixes to published release 5
 ### Release Notes
 
-Release 1.0.03
+Version 1.0.03
 + Blocked ability for the user to hit the Back button outside the application from the Home screen as this goes to an unknown state (before game start)
 + Added football icon back to the android settings.
 
@@ -160,6 +180,6 @@ Release 1.0.03
 Release 5
 First Deployment of Release 1 to Google Play Store
 ### Release Notes
-~~Release 1.0.02
+Version 1.0.02
 + First multi player release published to Android Play Store. 
 + Contains basic multi player functionality to manage and play BruceBoard games.~~

@@ -144,7 +144,7 @@ class MembershipTile extends StatelessWidget {
                                         messageMembershipCreditRequest(credits: int.parse(results[0]), creditDebit: results[2],
                                             cid: membership.cid,
                                             playerFrom: activePlayer, playerTo: communityPlayer,
-                                            description: "Requiest to add ${results[0]} credits to membership.\n"
+                                            description: "Request to add ${results[0]} credits to membership.\n"
                                                 "Community: <${community.name}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
                                             comment: results[1]);
                                       } else {

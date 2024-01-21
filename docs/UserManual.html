@@ -366,7 +366,7 @@ code {
     });
   </script>
 <h1 id="user-manual---bruceboard">User Manual - BruceBoard</h1>
-<p>Version: 1.0.01</p>
+<p>Version: 1.0.05</p>
 <p>BruceBoard is an application used to Create, Maintain and Play standard 10x10 Football Pools.
 The key functionality includes the following:</p>
 <ul>
@@ -473,13 +473,13 @@ Games may also be Deleted from here.</li>
 <img src="images/AA0602-Game-Edit.png" alt="AA0602-Game-Edit" width="400"/>
 <p>The Game Board is where the Owner manages the active game. Here the owner can complete the following:</p>
 <ul>
-<li>Assign Squares Individual : Click on desire square and select user.</li>
-<li>Assign Squares Remaining : Select Menus option and select user.</li>
-<li>Set Splits : Select Menu Option and enter desire splits.</li>
-<li>Set Scores : Select Score button beside desire quarter.</li>
-<li>Set the Row/Column numbers : Press the Lock Icon available when the Board is full.</li>
+<li><strong>Assign Squares Individual:</strong> Click on desire square and select Player from the desired community. Only Communities that have access to the series are shown in the selection list. Only Players that have a balance above 0 or the Excluded Player are selectable.</li>
+<li><strong>Assign Squares Remaining:</strong> Select Menus option and select Player to assign to the remaining squares. Squares will be assigned to the Player selected until the player has run out of credits.  If you want to exclude squares from the game (ie credits are not included in the totals), include the desired &quot;Exclude&quot; Player to the community and set the Exclude Player in the settings. When this player is selected, the associates squares are excluded from the totals.</li>
+<li><strong>Set Splits:</strong> Select Menu Option and enter desire splits. This option is disabled once the Scores are locked.</li>
+<li><strong>Set Scores:</strong> Select Score button beside desire quarter.</li>
+<li><strong>Set the Row/Column numbers:</strong> Press the Lock Icon available when the Board is full.</li>
 </ul>
-<p>Players are able to View and Request Squares. The Square is not assigned until the Owner reviews and accepts the request. At this point the Square will be assigned and other users will not be able to select that square.</p>
+<p>Players are able to View and Request Squares. The Square is not assigned until the Owner reviews and accepts the Message request. At this point the Square will be assigned and other users will not be able to select that square.</p>
 <img src="images/AA0601-Game-Board.png" alt="AA0601-Game-Board" width="400"/>
 <h3 id="communities">Communities</h3>
 <p>Communities are collections of Players that are provided access to specific Series.</p>
@@ -492,7 +492,17 @@ Games may also be Deleted from here.</li>
 <p>In the list of memberships, a -1 in the credits indicates that your memberhsip request has not been accepted by the community owner yet.</p>
 <img src="images/AA0702-Membership-Waiting.png" alt="AA0702-Membership-Waiting" width="400"/>
 <h3 id="messages">Messages</h3>
-<p>Messages are manaaged thru the Message screen.</p>
+<p>Messages are managed on the Message screen. They are presented from oldest to newest to allow them to be addressed in the order they came in.<br>
+The following informtion is contained in the messages:</p>
+<ul>
+<li><strong>From:</strong> User the message was sent from.</li>
+<li><strong>Type:</strong> Type of Message. Each message has a message type to identify where it came from and what actions are possible (ie Accept and/or Reject)</li>
+<li><strong>System Message:</strong> System Generated message</li>
+<li><strong>Sender Comment:</strong> Comment added by the sender.</li>
+<li><strong>Message Number:</strong> The message number is on the last line of the message. This is a system generated number unique to the Sender.  Everytime the Player creates a message, their message number is increased. For each Player, message number start at 0 and increase by 1.</li>
+<li><strong>Timestamp:</strong> The time the message was sent can be found in the timestamp on the last line of the message.</li>
+</ul>
+<p><strong>Note</strong>: The System Message and Sender Comments are indentified by the line prompt '&gt;'.</p>
 <img src="images/AA0900-Message-Maintain.png" alt="AA0900-Message-Maintain" width="400"/>
 
 </body>

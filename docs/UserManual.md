@@ -1,5 +1,5 @@
 # User Manual - BruceBoard
-Version: 1.0.01
+Version: 1.0.06
 
 BruceBoard is an application used to Create, Maintain and Play standard 10x10 Football Pools. 
 The key functionality includes the following: 
@@ -123,13 +123,13 @@ Games may also be Deleted from here.
 <img src="images/AA0602-Game-Edit.png" alt="AA0602-Game-Edit" width="400"/>
 
 The Game Board is where the Owner manages the active game. Here the owner can complete the following: 
-+ Assign Squares Individual : Click on desire square and select user. 
-+ Assign Squares Remaining : Select Menus option and select user. 
-+ Set Splits : Select Menu Option and enter desire splits. 
-+ Set Scores : Select Score button beside desire quarter. 
-+ Set the Row/Column numbers : Press the Lock Icon available when the Board is full.
++ **Assign Squares Individual:** Click on desire square and select Player from the desired community. Only Communities that have access to the series are shown in the selection list. Only Players that have a balance above 0 or the Excluded Player are selectable.   
++ **Assign Squares Remaining:** Select Menus option and select Player to assign to the remaining squares. Squares will be assigned to the Player selected until the player has run out of credits.  If you want to exclude squares from the game (ie credits are not included in the totals), include the desired "Exclude" Player to the community and set the Exclude Player in the settings. When this player is selected, the associates squares are excluded from the totals. 
++ **Set Splits:** Select Menu Option and enter desire splits. This option is disabled once the Scores are locked.
++ **Set Scores:** Select Score button beside desire quarter. 
++ **Set the Row/Column numbers:** Press the Lock Icon available when the Board is full.
 
-Players are able to View and Request Squares. The Square is not assigned until the Owner reviews and accepts the request. At this point the Square will be assigned and other users will not be able to select that square. 
+Players are able to View and Request Squares. The Square is not assigned until the Owner reviews and accepts the Message request. At this point the Square will be assigned and other users will not be able to select that square. 
 
 <img src="images/AA0601-Game-Board.png" alt="AA0601-Game-Board" width="400"/>
 
@@ -152,7 +152,15 @@ In the list of memberships, a -1 in the credits indicates that your memberhsip r
 <img src="images/AA0702-Membership-Waiting.png" alt="AA0702-Membership-Waiting" width="400"/>
 
 ### Messages
-Messages are manaaged thru the Message screen. 
+Messages are managed on the Message screen. They are presented from oldest to newest to allow them to be addressed in the order they came in.   
+The following informtion is contained in the messages:  
++ **From:** User the message was sent from.  
++ **Type:** Type of Message. Each message has a message type to identify where it came from and what actions are possible (ie Accept and/or Reject)  
++ **System Message:** System Generated message   
++ **Sender Comment:** Comment added by the sender.  
++ **Message Number:** The message number is on the last line of the message. This is a system generated number unique to the Sender.  Everytime the Player creates a message, their message number is increased. For each Player, message number start at 0 and increase by 1.  
++ **Timestamp:** The time the message was sent can be found in the timestamp on the last line of the message. 
+
+**Note**: The System Message and Sender Comments are indentified by the line prompt '>'.
 
 <img src="images/AA0900-Message-Maintain.png" alt="AA0900-Message-Maintain" width="400"/>
-

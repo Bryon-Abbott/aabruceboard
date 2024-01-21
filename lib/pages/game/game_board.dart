@@ -1,12 +1,14 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
+import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/utils/preferences.dart';
 import 'package:flutter/material.dart';
@@ -133,7 +135,7 @@ class _GameBoardState extends State<GameBoard> {
             Board board = snapshot.data! as Board;
             dev.log("Got Update Board: ${game.docId} ", name: "${runtimeType.toString()}:build()");
             return FutureBuilder<List<List<dynamic>>>(
-              future: getWinners(board),
+              future: getWinners(board, communityPlayer),
               // initialData: List<List<dynamic>>.filled(2, [Player(data: {}), -1]),
               initialData: [[Player(data: {}),Player(data: {}),Player(data: {}),Player(data: {})], const [-1,-1,-1,-1 ]],
               builder: (BuildContext context, AsyncSnapshot<List<List<dynamic>>> snapshot) {
@@ -164,7 +166,7 @@ class _GameBoardState extends State<GameBoard> {
                               ),
                               PopupMenuItem<int>(
                                   value: 1,
-                                  enabled: isGameOwner,
+                                  enabled: isGameOwner && !(board.squaresPicked<100),
                                   child: const Row(
                                       children: [
                                         Icon(
@@ -177,7 +179,7 @@ class _GameBoardState extends State<GameBoard> {
                               ),
                               PopupMenuItem<int>(
                                   value: 2,
-                                  enabled: isGameOwner,
+                                  enabled: isGameOwner && !board.scoresLocked,
                                   child: const Row(
                                       children: [
                                         Icon(Icons.percent_outlined,
@@ -510,17 +512,36 @@ class _GameBoardState extends State<GameBoard> {
       case 1:
         dev.log("Menu Select 1:Fill in remainder", name: "${runtimeType.toString()}:onMenuSelected");
         dev.log("Filling scores-Before", name: "${runtimeType.toString()}:onMenuSelected");
+        String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
+        int excludePlayerNo = int.parse(excludePlayerNoString);
+        dev.log("Got Exclude PID ($excludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
+
         Grid grid = await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
-        dynamic result = await Navigator.pushNamed(context, '/player-select');
+        dynamic result = await Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => AccessListMembers(series: series)));
+        //dynamic result = await Navigator.pushNamed(context, '/player-select');
         if (result != null) {
-          Player selectedPlayer = result as Player;
+          Access selectedAccess = result[0] as Access; // Access Record used for player (contains 'cid' and 'pid'
+          Player selectedPlayer = result[1] as Player; // Player player
+          Member selectedMember = await DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDoc(docId: selectedPlayer.docId ) as Member;
           dev.log("Load Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:onMenuSelected");
           int updated = 0;
           for (int i = 0; i < 100; i++) {
             if (grid.squarePlayer[i] == -1) {
-              grid.squarePlayer[i] = selectedPlayer.docId;
-              grid.squareInitials[i] = selectedPlayer.initials;
-              updated++;
+              if ((selectedMember.credits >= game.squareValue) || (selectedPlayer.docId == excludePlayerNo)) {
+                grid.squarePlayer[i] = selectedPlayer.docId;
+                grid.squareInitials[i] = selectedPlayer.initials;
+                if (selectedPlayer.docId != excludePlayerNo) {
+                  selectedMember.credits -= game.squareValue;
+                }
+                updated++;
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Member has run out of credits after ${updated} squares."))
+                );
+                DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(selectedMember);
+                break; // Exit the loop.
+              }
             }
           }
           dev.log("Saving Game Data ... Game Board ${game.docId}, Squares $updated", name: "${runtimeType.toString()}:onMenuSelected");
@@ -658,7 +679,7 @@ class _GameBoardState extends State<GameBoard> {
     }
   } // End _GameBoard:submit()
 
-  Future<List<List>> getWinners(Board board) async {
+  Future<List<List>> getWinners(Board board, Player communityPlayer) async {
 //  Future<List<Player>> getWinners(Board board) async {
     Grid? grid;
     List<Player> winners = List<Player>.filled(4, Player(data: {}));
@@ -672,7 +693,7 @@ class _GameBoardState extends State<GameBoard> {
         continue;  // Go to next quarter.
       } else {
         // If grid no retrieved, get it.
-        grid ??= await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
+        grid ??= await DatabaseService(FSDocType.grid, uid: communityPlayer.uid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
         if (grid.scoresLocked == false) {
           // Don't set the winner as Scores are not set
           continue; // Go to next quarter
