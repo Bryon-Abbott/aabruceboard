@@ -48,13 +48,13 @@ class MessageTileIncoming extends StatelessWidget {
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("From: ${messagePlayer.fName} ${messagePlayer.lName} Type: ${messageDesc[message.messageType]}"),
+                    Text("From: ${messagePlayer.fName} ${messagePlayer.lName} Type: ${messageDesc[message.messageCode]}"),
                     Text('> ${message.description}'),
                     Text('> ${message.comment}'),
                   ],
                 ),
                 subtitle:
-                Text('${message.key}:${message.timestamp.toDate()}:${message.messageType.toString().padLeft(5, '0')}'),
+                Text('${message.key}:${message.timestamp.toDate()}:${message.messageCode.toString().padLeft(5, '0')}'),
                 trailing: Padding(
                   padding: const EdgeInsets.all(1.0),
                   child: SizedBox(
@@ -66,7 +66,7 @@ class MessageTileIncoming extends StatelessWidget {
                           icon: const Icon(Icons.check_circle_outline),
                         ),
                         IconButton(
-                          onPressed: (message.responseCode == messageResp[messageRespType.request])
+                          onPressed: (message.messageType == messageType[MessageTypeOption.request])
                               ? () => messageReject(context)
                               : null,
                           icon: const Icon(Icons.cancel_outlined),
@@ -91,8 +91,8 @@ class MessageTileIncoming extends StatelessWidget {
   Future<void> messageAccept (BuildContext context) async {
     Player playerFrom = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidFrom) as Player;
     Player playerTo = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidTo) as Player;
-    log('message_tile: messageAccept: Type: ${message.messageType} From: ${playerFrom.fName} To: ${playerTo.fName}');
-    switch (message.messageType) {
+    log('message_tile: messageAccept: Type: ${message.messageCode} From: ${playerFrom.fName} To: ${playerTo.fName}');
+    switch (message.messageCode) {
     // ========================================================================
     // ------------------------------------------------------------------------
     // *** Message Processing
@@ -280,10 +280,10 @@ class MessageTileIncoming extends StatelessWidget {
           'pid': message.data['pid'],     // PID of Player
         });
         // Todo: Should not be updating Membership in Message System.
-        if (message.responseCode == messageResp[messageRespType.accepted]) {
+        if (message.messageType == messageType[MessageTypeOption.acceptance]) {
           membership.status = 'Approved' ;
           await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
-        } else if (message.responseCode == messageResp[messageRespType.rejected]) {
+        } else if (message.messageType == messageType[MessageTypeOption.rejection]) {
           // Update membership with Status back to Approved if Removal was rejected
           membership.status = 'Rejected' ;
           await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
@@ -306,9 +306,9 @@ class MessageTileIncoming extends StatelessWidget {
 
           'status': "Approved",
         });
-        if (message.responseCode == messageResp[messageRespType.accepted]) {
+        if (message.messageType == messageType[MessageTypeOption.acceptance]) {
           await DatabaseService(FSDocType.membership).fsDocDelete(membership);
-        } else if (message.responseCode == messageResp[messageRespType.rejected]) {
+        } else if (message.messageType == messageType[MessageTypeOption.rejection]) {
           // Update membership with Status back to Approved if Removal was rejected
           membership.status = 'Approved';
           await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
@@ -331,44 +331,91 @@ class MessageTileIncoming extends StatelessWidget {
       }
       break;
     // ------------------------------------------------------------------------
-    // *** Add Credits Notification Message
-    // 1. No action - Archive Message
+    // *** Add Member to community Notification Message
       case 20001: {
-        log('message_tile: Add Member Notification from: ${playerFrom.fName} to: ${playerTo.fName}');
-        Membership membership = Membership(data:
-        { // 'docId': message.data['msid'],  // No docId so use membershipNextNo.
-          'cid': message.data['cid'],     // Community ID
-          'cpid': playerFrom.pid,   // PID of Community
-          'pid': playerTo.pid, // PID of Player
-          'status': 'Approved',
-        });
-        await DatabaseService(FSDocType.membership).fsDocAdd(membership);
-        // Archive the message
-        await messageArchive(message: message, playerFrom: playerFrom);
+        log('message_tile: Add Member to Community Notification from: ${playerFrom.fName} to: ${playerTo.fName}');
+        // Get Achnowledgement comment
+        String? comment = await openDialogMessageComment(context, defaultComment: "Thank You");
+        // Add Message to Archive
+        if (comment != null) {
+          // Add membership to active players Membership list.
+          Membership membership = Membership(data:
+          { // 'docId': message.data['msid'],  // No docId so use membershipNextNo.
+            'cid': message.data['cid'],     // Community ID
+            'cpid': playerFrom.pid,   // PID of Community
+            'pid': playerTo.pid, // PID of Player
+            'status': 'Approved',
+          });
+          await DatabaseService(FSDocType.membership).fsDocAdd(membership);
+          // Send Acknowledgement Message back to Notifier (community owner)
+          Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(docId: message.data['cid']) as Community;
+          String desc = '${playerTo.fName} ${playerTo.lName} acknowledged your notification to add them '
+              'to your community <${community.name ?? "No Name"}>';
+          // await messageMembershipCreditsAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
+          //     comment: comment, description: desc);
+          messageSend(30001, messageType[MessageTypeOption.acknowledgment]!,
+            playerFrom: playerTo,
+            playerTo: playerFrom,
+            description: desc,
+            comment: comment,
+            data: {'cid': community.docId }
+          );
+          // Archive the message
+          messageArchive(message: message, playerFrom: playerFrom);
+        }
       }
       break;
     // ------------------------------------------------------------------------
-    // *** Add Credits Notification Message
-    // 1. No action - Archive Message
+    // *** Update Member Record Notification Message
       case 20002: {
-        log('message_tile: Edit Member Notification from: ${playerFrom.fName} to: ${playerTo.fName}');
-        await messageArchive(message: message, playerFrom: playerFrom);
+        log('message_tile: Update Member Notification from: ${playerFrom.fName} to: ${playerTo.fName}');
+        String? comment = await openDialogMessageComment(context, defaultComment: "Ok, Thank You");
+        // Add Message to Archive
+        if (comment != null) {
+          // Send community owner remove acknowledgement
+          Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(docId: message.data['cid']) as Community;
+          String desc = '${playerTo.fName} ${playerTo.lName} acknowledged your update member record notification '
+              'for community <${community.name ?? "No Name"}>';
+          messageSend(30003, messageType[MessageTypeOption.acknowledgment]!,
+            playerFrom: playerTo,
+            playerTo: playerFrom,
+            description: desc,
+            comment: comment,
+          );
+          // Archive Message
+          await messageArchive(message: message, playerFrom: playerFrom);
+        }
       }
+      break;
     // ------------------------------------------------------------------------
-    // *** Add Credits Notification Message
-    // 1. No action - Archive Message
+    // *** Member Removed Notification Message
       case 20003: {
         log('message_tile: Remove Member Notification from: ${playerFrom.fName} to: ${playerTo.fName}');
-        Membership membership = Membership(data:
-        { // 'docId': message.data['msid'],  // No docId so use membershipNextNo.
-          'cid': message.data['cid'],     // Community ID
-          'cpid': playerFrom.pid,   // PID of Community
-          'pid': playerTo.pid, // PID of Player
-          'status': 'Removed',
-        });
-        await DatabaseService(FSDocType.membership).fsDocAdd(membership);
-        // Archive Message
-        await messageArchive(message: message, playerFrom: playerFrom);
+        String? comment = await openDialogMessageComment(context, defaultComment: "Ok, Thank You");
+        // Add Message to Archive
+        if (comment != null) {
+          // Remove players Membership record
+          Membership membership = Membership(data:
+          { // 'docId': message.data['msid'],  // No docId so use membershipNextNo.
+            'cid': message.data['cid'], // Community ID
+            'cpid': playerFrom.pid, // PID of Community
+            'pid': playerTo.pid, // PID of Player
+            'status': 'Removed',
+          });
+          await DatabaseService(FSDocType.membership).fsDocAdd(membership);
+          // Send community owner remove acknowledgement
+          Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(docId: message.data['cid']) as Community;
+          String desc = '${playerTo.fName} ${playerTo.lName} acknowledged your notification to remove them '
+              'to your community <${community.name ?? "No Name"}>';
+          messageSend(30002, messageType[MessageTypeOption.acknowledgment]!,
+            playerFrom: playerTo,
+            playerTo: playerFrom,
+            description: desc,
+            comment: comment,
+          );
+          // Archive Message
+          await messageArchive(message: message, playerFrom: playerFrom);
+        }
       }
       break;
     // ------------------------------------------------------------------------
@@ -387,8 +434,30 @@ class MessageTileIncoming extends StatelessWidget {
         await messageArchive(message: message, playerFrom: playerFrom);
       }
       break;
+    // ------------------------------------------------------------------------
+    // *** Add Member Notification Acknowledgement
+      case 30001: {
+        log('Add Member Notification Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+        await messageArchive(message: message, playerFrom: playerFrom);
+      }
+      break;
+    // ------------------------------------------------------------------------
+    // *** Remove Member Notification Acknowledgement
+      case 30002: {
+        log('Remove Member Notification Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+        await messageArchive(message: message, playerFrom: playerFrom);
+      }
+      break;
+    // ------------------------------------------------------------------------
+    // *** Edit Member Notification Acknowledgement
+      case 30003: {
+        log('Edit Member Notification Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+        await messageArchive(message: message, playerFrom: playerFrom);
+      }
+      break;
+    // ------------------------------------------------------------------------
       default:
-        log('message_tile: Error ... invalid Message Type ${message.messageType}');
+        log('message_tile: Error ... invalid Message Type ${message.messageCode}');
     }
   }
   // ==========================================================================
@@ -398,7 +467,7 @@ class MessageTileIncoming extends StatelessWidget {
     log('message_tile: reject');
     Player playerFrom = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidFrom) as Player;
     Player playerTo = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidTo) as Player;
-    switch (message.messageType) {
+    switch (message.messageCode) {
     // ========================================================================
     // ------------------------------------------------------------------------
       case 00000: {   // Comment
@@ -528,7 +597,7 @@ class MessageTileIncoming extends StatelessWidget {
       }
       break;
       default:
-        log('message_tile: Error ... invalid Message Type ${message.messageType}');
+        log('message_tile: Error ... invalid Message Type ${message.messageCode}');
     }
   }
 }

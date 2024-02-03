@@ -138,21 +138,21 @@ class MembershipTile extends StatelessWidget {
                                     if (results != null ) {
                                       log('Credits Request ${results[0]}, Message: ${results[1]}, Credit/Debit: ${results[2]} PID: ${membership.pid} CID: ${membership.cid}', name: '${runtimeType.toString()}:...');
                                       // Send Message to user
-                                      Player? communityPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: membership.cpid) as Player;
-                                      Community? community = await DatabaseService(FSDocType.community, uid: communityPlayer.uid).fsDoc(docId: membership.cid) as Community;
+                                      // Player? communityPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: membership.cpid) as Player;
+                                      // Community? community = await DatabaseService(FSDocType.community, uid: communityPlayer.uid).fsDoc(docId: membership.cid) as Community;
                                       if (results[2] == 'credit') {
                                         messageMembershipCreditRequest(credits: int.parse(results[0]), creditDebit: results[2],
                                             cid: membership.cid,
                                             playerFrom: activePlayer, playerTo: communityPlayer,
                                             description: "Request to add ${results[0]} credits to membership.\n"
-                                                "Community: <${community.name}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
+                                                "Community: <${community?.name ?? "Unknown"}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
                                             comment: results[1]);
                                       } else {
                                         messageMembershipCreditRequest(credits: int.parse(results[0]), creditDebit: results[2],
                                             cid: membership.cid,
                                             playerFrom: activePlayer, playerTo: communityPlayer,
                                             description: "Request to refund ${results[0]} credits from membership.\n"
-                                                "Community: <${community.name}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
+                                                "Community: <${community?.name ?? "Unknonwn"}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
                                             comment: results[1]);
                                       }
                                     } else {
@@ -166,54 +166,59 @@ class MembershipTile extends StatelessWidget {
                                 IconButton(
                                   icon: const Icon(Icons.delete),
                                   onPressed: () async {
-                                    // Todo: Check status to determine what happens
-                                    // Approved -> Delete
-                                    // Requested --> Update "Rejected'
-                                    // Remove Requested --> block?
-                                    if (membership.status == 'Rejected' ||
-                                        membership.status == 'Removed') {
-                                      await DatabaseService(FSDocType.membership)
-                                          .fsDocDelete(membership);
+                                    if (membership.status == 'Rejected' || membership.status == 'Removed') {
+                                      // Delete Membership Record
+                                      await DatabaseService(FSDocType.membership).fsDocDelete(membership);
                                     } else if (membership.status == 'Approved') {
-                                      String? comment = await openDialogMessageComment(context);
+                                      String? comment = await openDialogMessageComment(context, defaultComment: "Please remove me from community <${community?.name ?? "Unknown"}>");
                                       log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
                                       if (comment != null) {
                                         log('membership_tile: Delete Membership. Key: ${membership.key} ... $comment', name: '${runtimeType.toString()}:...');
                                         membership.status = 'Remove Requested';
                                         // Note ... the database section is the current user but the Membership PID
                                         // is the PID of the owner of the community.
-                                        await DatabaseService(
-                                            FSDocType.membership).fsDocUpdate(
-                                            membership);
+                                        await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
                                         // Todo: Review the code below, could be issues if network slow and user quick ... communityPlayer can be null?
-                                        await messageMembershipRemoveRequest(
-                                            membership: membership,
-                                            player: activePlayer,
-                                            communityPlayer: communityPlayer,
-                                            description: '${activePlayer.fName} ${activePlayer
-                                                .lName} request to be removed from your <${community
-                                                ?.name ?? "Unknown"}> community',
-                                            comment: comment);
+                                        messageSend(00002, messageType[MessageTypeOption.request]!,
+                                            playerFrom: activePlayer,
+                                            playerTo: communityPlayer,
+                                            description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
+                                                'your <${community?.name ?? 'Unknown'}> community',
+                                            comment: comment,
+                                            data:
+                                            { 'cpid': membership.cpid,     // Community Player ID
+                                              'cid': membership.cid,     // Community ID of Community Player
+                                            }
+                                        );
                                       }
                                     } else if (membership.status == 'Requested') {
-                                      String? comment = await openDialogMessageComment( context );
+                                      String? comment = await openDialogMessageComment( context, defaultComment: "Please remove me from community <${community?.name ?? "Unknown"}>" );
                                       log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
                                       if (comment != null) {
                                         log('membership_tile: Delete Membership. Key: ${membership.key} ... $comment', name: '${runtimeType.toString()}:...');
                                         membership.status = 'Removed';
                                         // Note ... the database section is the current user but the Membership PID
                                         // is the PID of the owner of the community.
-                                        await DatabaseService(
-                                            FSDocType.membership).fsDocUpdate(
-                                            membership);
+                                        await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
                                         // Todo: Review the code below, could be issues if network slow and user quick ... communityPlayer can be null?
-                                        await messageMembershipRemoveRequest(
-                                            membership: membership,
-                                            player: activePlayer,
-                                            communityPlayer: communityPlayer,
+                                        messageSend(00002, messageType[MessageTypeOption.request]!,
+                                            playerFrom: activePlayer,
+                                            playerTo: communityPlayer,
                                             description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
                                                 'your <${community?.name ?? 'Unknown'}> community',
-                                            comment: comment);
+                                            comment: comment,
+                                            data:
+                                              { 'cpid': membership.cpid,     // Community Player ID
+                                                'cid': membership.cid,     // Community ID of Community Player
+                                              }
+                                        );
+                                        // await messageMembershipRemoveRequest(
+                                        //     membership: membership,
+                                        //     player: activePlayer,
+                                        //     communityPlayer: communityPlayer,
+                                        //     description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
+                                        //         'your <${community?.name ?? 'Unknown'}> community',
+                                        //     comment: comment);
                                       }
                                     } else {
                                       ScaffoldMessenger.of(context).showSnackBar(

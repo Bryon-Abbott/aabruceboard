@@ -358,6 +358,7 @@ class DatabaseService {
         log("Group: $group ... pidTo: $pidTo", name: '${runtimeType.toString()}:fsDocGroupListStream()');
         streamQuerySnapshot = db.collectionGroup("Incoming")
             .where('pidTo', isEqualTo: pidTo)
+            .orderBy('timestamp')
       //      .where('timestamp',isGreaterThan: 0)
             .snapshots();
         break;

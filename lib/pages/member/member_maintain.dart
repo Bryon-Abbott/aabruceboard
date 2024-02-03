@@ -130,11 +130,17 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   // Send Message to user
                                   Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                                   Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
-                                  messageMemberAddCreditsNotification(credits: newCredits, fromPlayer: player, toPlayer: memberPlayer,
-                                    description: "Credits on your account were updated from $prevCredits to $newCredits : (${member!.credits-prevCredits})\n"
-                                    "Community: <${community.name}>, Owner: ${player.fName} ${player.lName}",
+                                  messageSend( 20002, messageType[MessageTypeOption.notification]!,
+                                    playerFrom: player, playerTo: memberPlayer,
                                     comment: comment,
+                                    description: "Credits on your account were updated from $prevCredits to $newCredits : (${member!.credits-prevCredits})",
+                                    data: { 'cid': community.docId, 'credits' : member?.credits ?? 0 },
                                   );
+                                  // messageMemberAddCreditsNotification(credits: newCredits, fromPlayer: player, toPlayer: memberPlayer,
+                                  //   description: "Credits on your account were updated from $prevCredits to $newCredits : (${member!.credits-prevCredits})\n"
+                                  //   "Community: <${community.name}>, Owner: ${player.fName} ${player.lName}",
+                                  //   comment: comment,
+                                  // );
                                 }
                               }
                               // Save Updates to Shared Preferences
@@ -170,7 +176,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                 ),
                               );
                               if (results) {
-                                String? comment = await openDialogMessageComment(context);
+                                String? comment = await openDialogMessageComment(context, defaultComment: "Thanks for playing ... ");
                                 if (comment != null) {
                                   log('Delete Member ... C:${community.key}, U:${bruceUser.uid}');
                                   await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key)
@@ -179,12 +185,20 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                   log('member_maintain: Comment is $comment');
                                   Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                                   Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
-                                  messageMemberRemoveNotification(credits: member!.credits, fromPlayer: player, toPlayer: memberPlayer,
-                                    description: "Your membership has been removed\n"
-                                        "Community <${community.name}> Owner: ${player.fName} ${player.lName} \n"
-                                        "Credits Released ${member!.credits}",
-                                    comment: comment
+                                  String desc = "Your membership has been removed. "
+                                     "Community <${community.name}> Owner: ${player.fName} ${player.lName} \n"
+                                     "Credits Released ${member!.credits}";
+                                  messageSend( 20003, messageType[MessageTypeOption.notification]!,
+                                      playerFrom: player, playerTo: memberPlayer,
+                                      comment: comment, description: desc,
+                                      data: { 'cid': community.docId, 'credits' : member?.credits ?? 0 },
                                   );
+                                  // messageMemberRemoveNotification(credits: member!.credits, fromPlayer: player, toPlayer: memberPlayer,
+                                  //   description: "Your membership has been removed\n"
+                                  //       "Community <${community.name}> Owner: ${player.fName} ${player.lName} \n"
+                                  //       "Credits Released ${member!.credits}",
+                                  //   comment: comment
+                                  // );
                                   Navigator.of(context).pop();
                                 }
                               } else {

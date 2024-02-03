@@ -1,8 +1,8 @@
 import 'dart:developer';
 
+import 'package:bruceboard/archive/message_list.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/messageowner.dart';
-import 'package:bruceboard/pages/message/message_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

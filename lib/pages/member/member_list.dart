@@ -88,7 +88,8 @@ class _MemberListState extends State<MemberList> {
                             // Add Message to Archive
                             String desc = '${player!.fName} ${player!.lName} added you to the <${community.name}> community';
                             // 20001: "Add Member Notification",
-                            await messageSend( 20001, playerFrom: player!, playerTo: playerSelected!,
+                            await messageSend( 20001, messageType[MessageTypeOption.notification]!,
+                                playerFrom: player!, playerTo: playerSelected!,
                                 data: {'cid': community.docId},
                                 comment: comment, description: desc);
                             log('member_list: Player Selected ${player?.fName ?? 'No Player?'}');

@@ -19,8 +19,9 @@ class Message implements FirestoreDoc {
   // int docId;
   int pidFrom;  // /Player/{UID-REC}/Message/{UID-SEND}/Incoming/{MSID-KEY}
   int pidTo;
+  int messageCode;
   int messageType;
-  int responseCode;
+//  int responseCode;
   Timestamp timestamp; // Time the class was created
   Map<String, dynamic> data = {};
   // Map<String, dynamic> respnose = {};
@@ -31,10 +32,11 @@ class Message implements FirestoreDoc {
         docId = data['docId'] ?? -1,
         pidFrom = data['pidFrom'] ?? -1,
         pidTo = data['pidTo'] ?? -1,
+        messageCode = data['messageCode'] ?? -1,
         messageType = data['messageType'] ?? -1,
         timestamp = data['timestamp'] ?? Timestamp.now(),
         data = data['data'] ?? {},
-        responseCode = data['responseCode'] ?? -1,
+  //      responseCode = data['responseCode'] ?? -1,
         description = data['description'] ?? 'No Message Description',
         comment = data['comment'] ?? 'No Message Comment Provided';
 
@@ -43,10 +45,11 @@ class Message implements FirestoreDoc {
     docId = data['docId'] ?? docId;  // From Super
     pidFrom = data['pidFrom'] ?? pidFrom;
     pidTo = data['pidTo'] ?? pidTo;
+    messageCode = data['messageType'] ?? messageCode;
     messageType = data['messageType'] ?? messageType;
     timestamp = data['timestamp'] ?? timestamp;
     data = data['data'] ?? data;
-    responseCode = data['responseCode'] ?? responseCode;
+//    responseCode = data['responseCode'] ?? responseCode;
     description = data['description'] ?? description;
     comment = data['comment'] ?? comment;
   }
@@ -73,10 +76,11 @@ class Message implements FirestoreDoc {
       'docId': docId,
       'pidFrom': pidFrom,
       'pidTo': pidTo,
+      'messageCode': messageCode,
       'messageType': messageType,
       'timestamp': timestamp,
       'data': data,
-      'responseCode': responseCode,
+//      'responseCode': responseCode,
       'description': description,
       'comment': comment,
     };

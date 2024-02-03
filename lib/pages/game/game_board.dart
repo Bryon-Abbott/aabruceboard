@@ -494,11 +494,18 @@ class _GameBoardState extends State<GameBoard> {
             member.credits += credits; // Add new Credits.
             DatabaseService(FSDocType.member, cidKey: Community.Key(winnersCommunity[i])).fsDocUpdate(member);
             // Send Message to user
-            messageMemberAddCreditsNotification(credits: credits, fromPlayer: activePlayer, toPlayer: winnersPlayer[i],
-              description: "You Won the Q${i+1} Score and received $credits credits. Your account was updated from $prevCredits to ${member.credits}) "
-                  "Community: <${community.name}>, Owner: ${activePlayer.fName} ${activePlayer.lName}",
+            messageSend( 20002, messageType[MessageTypeOption.notification]!,
+              playerFrom: activePlayer, playerTo: winnersPlayer[i],
               comment: "Thanks for Playing.",
+              description: "You Won the Q${i+1} Score and received $credits credits. Your account was updated from $prevCredits to ${member.credits}) "
+                     "Community: <${community.name}>, Owner: ${activePlayer.fName} ${activePlayer.lName}",
+              data: { 'cid': community.docId, 'credits' : member.credits ?? 0 },
             );
+            // messageMemberAddCreditsNotification(credits: credits, fromPlayer: activePlayer, toPlayer: winnersPlayer[i],
+            //   description: "You Won the Q${i+1} Score and received $credits credits. Your account was updated from $prevCredits to ${member.credits}) "
+            //       "Community: <${community.name}>, Owner: ${activePlayer.fName} ${activePlayer.lName}",
+            //   comment: "Thanks for Playing.",
+            // );
           } else {
             dev.log("Square one by 'No Player' ... ignore", name: "${runtimeType.toString()}:onMenuSelected");
           }

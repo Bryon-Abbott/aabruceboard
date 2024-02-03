@@ -35,13 +35,13 @@ class MessageTile extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Message: ${messageDesc[message.messageType]}'),
+              Text('Message: ${messageDesc[message.messageCode]}'),
               Text('>: ${message.description}'),
               Text('>: ${message.comment}'),
             ],
           ),
           subtitle:
-            Text('${message.key}:${message.timestamp.toDate()}:${message.messageType.toString().padLeft(5, '0')}'),
+            Text('${message.key}:${message.timestamp.toDate()}:${message.messageCode.toString().padLeft(5, '0')}'),
           trailing: Padding(
             padding: const EdgeInsets.all(1.0),
             child: SizedBox(
@@ -53,7 +53,7 @@ class MessageTile extends StatelessWidget {
                     icon: const Icon(Icons.check_circle_outline),
                   ),
                   IconButton(
-                    onPressed: (message.responseCode == messageResp[messageRespType.request])
+                    onPressed: (message.messageType == messageType[MessageTypeOption.request])
                         ? () => messageReject(context)
                         : null,
                     icon: const Icon(Icons.cancel_outlined),
@@ -72,8 +72,8 @@ class MessageTile extends StatelessWidget {
   Future<void> messageAccept (BuildContext context) async {
     Player playerFrom = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidFrom) as Player;
     Player playerTo = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidTo) as Player;
-    log('message_tile: messageAccept: Type: ${message.messageType} From: ${playerFrom.fName} To: ${playerTo.fName}');
-    switch (message.messageType) {
+    log('message_tile: messageAccept: Type: ${message.messageCode} From: ${playerFrom.fName} To: ${playerTo.fName}');
+    switch (message.messageCode) {
     // ========================================================================
     // ------------------------------------------------------------------------
     // *** Message Processing
@@ -261,10 +261,10 @@ class MessageTile extends StatelessWidget {
           'pid': message.data['pid'],     // PID of Player
         });
         // Todo: Should not be updating Membership in Message System.
-        if (message.responseCode == messageResp[messageRespType.accepted]) {
+        if (message.messageType == messageType[MessageTypeOption.acceptance]) {
           membership.status = 'Approved' ;
           await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
-        } else if (message.responseCode == messageResp[messageRespType.rejected]) {
+        } else if (message.messageType == messageType[MessageTypeOption.rejection]) {
           // Update membership with Status back to Approved if Removal was rejected
           membership.status = 'Rejected' ;
           await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
@@ -287,9 +287,9 @@ class MessageTile extends StatelessWidget {
 
           'status': "Approved",
         });
-        if (message.responseCode == messageResp[messageRespType.accepted]) {
+        if (message.messageType == messageType[MessageTypeOption.acceptance]) {
           await DatabaseService(FSDocType.membership).fsDocDelete(membership);
-        } else if (message.responseCode == messageResp[messageRespType.rejected]) {
+        } else if (message.messageType== messageType[MessageTypeOption.rejection]) {
           // Update membership with Status back to Approved if Removal was rejected
           membership.status = 'Approved';
           await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
@@ -369,7 +369,7 @@ class MessageTile extends StatelessWidget {
       }
       break;
       default:
-        log('message_tile: Error ... invalid Message Type ${message.messageType}');
+        log('message_tile: Error ... invalid Message Type ${message.messageCode}');
     }
   }
   // ==========================================================================
@@ -379,7 +379,7 @@ class MessageTile extends StatelessWidget {
     log('message_tile: reject');
     Player playerFrom = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidFrom) as Player;
     Player playerTo = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidTo) as Player;
-    switch (message.messageType) {
+    switch (message.messageCode) {
     // ========================================================================
     // ------------------------------------------------------------------------
       case 00000: {   // Comment
@@ -509,7 +509,7 @@ class MessageTile extends StatelessWidget {
       }
       break;
       default:
-        log('message_tile: Error ... invalid Message Type ${message.messageType}');
+        log('message_tile: Error ... invalid Message Type ${message.messageCode}');
     }
   }
 }
