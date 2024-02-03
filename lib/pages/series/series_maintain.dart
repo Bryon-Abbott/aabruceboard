@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'dart:ui';
+//import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,6 +10,12 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
+import 'package:flutter_any_logo/flutter_logo.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+// Sports by Becris from <a href="https://thenounproject.com/browse/icons/term/sports/" target="_blank" title="Sports Icons">Noun Project</a> (CC BY 3.0)
+
+// This is the type used by the popup menu below.
+enum SeriesTypeItem { itemNFL, itemCFL, itemNBA, itemOther }
 
 // Create a Form widget.
 class SeriesMaintain extends StatefulWidget {
@@ -24,40 +32,54 @@ class SeriesMaintainState extends State<SeriesMaintain> {
   late Series? series;
   Player? player;
   late BruceUser bruceUser;
+  Map<SeriesTypeItem, List<dynamic>> seriesTypeData = {
+    SeriesTypeItem.itemNFL :  ["NFL", "assets/noun-football-1043960.png", Icon(Icons.sports_football_outlined)],
+    SeriesTypeItem.itemCFL :  ["CFL", "assets/noun-football-1043960.png", Icon(Icons.sports_football_outlined)],
+    SeriesTypeItem.itemNBA :  ["NBA", "assets/noun-basketball-6464615.png", Icon(Icons.sports_basketball_outlined)],
+    SeriesTypeItem.itemOther :  ["Other", "assets/noun-sports-1176751.png", Icon(Icons.cabin_outlined)],
+    // SeriesTypeItem.itemCFL :  ["CFL", AnyLogo.values.elementAt(7)],
+    // SeriesTypeItem.itemNBA :  ["NBA", AnyLogo.values.elementAt(9)],
+    // SeriesTypeItem.itemOther :  ["Other", AnyLogo.values.elementAt(10)],
+  };
+  String currentSeriesType = "Other";
+  String currentSeriesPng = "assets/noun-sports-1176751.png";
+  Icon currentSeriesIcon = Icon(Icons.cabin_outlined);
+  String currentSeriesName = "";
+  int currentSeriesNoGames = 0;
 
   @override
   void initState() {
     series = widget.series;
     // BruceUser bruceUser = Provider.of<BruceUser>(context);
-    super.initState();
+    if ( series != null ) {
+      currentSeriesName = series?.name ?? 'xxx';
+      currentSeriesType = series?.type ?? 'xxx';
+      currentSeriesNoGames = series?.noGames ?? 0;
+      SeriesTypeItem sti = seriesTypeData.keys.firstWhere((k) => seriesTypeData[k]?[0] == currentSeriesType,
+          orElse: () =>  SeriesTypeItem.itemOther);
+      currentSeriesPng = seriesTypeData[sti]![1];
+      currentSeriesIcon = seriesTypeData[sti]![2];
+    }    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     //cid = ModalRoute.of(context)!.settings.arguments as String;
     bruceUser = Provider.of<BruceUser>(context);
-    log('series_maintain build:  ${bruceUser.uid}');
+    log('Current User:  ${bruceUser.uid}', name: '${runtimeType.toString()}:build()');
     String uid = bruceUser.uid;
     late String sid;
 
-    String currentSeriesName = "";
-    String currentSeriesType = "";
-    int currentSeriesNoGames = 0;
     int noGames = 0;
 
     // Todo: Remove this
     if (series != null) {
-      log('Got Series ${series!.name}');
+      log('Got Series ${series!.name}', name: '${runtimeType.toString()}:build()');
     } else {
-      log('No Series found ... New series, dont use until created?');
+      log('No Series found ... New series, dont use until created?', name: '${runtimeType.toString()}:build()');
     }
 
-    if ( series != null ) {
-      //_sid = series.sid;
-      currentSeriesName = series?.name ?? 'xxx';
-      currentSeriesType = series?.type ?? 'xxx';
-      currentSeriesNoGames = series?.noGames ?? 0;
-    }
+
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
       child: Scaffold(
@@ -84,6 +106,54 @@ class SeriesMaintainState extends State<SeriesMaintain> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  const Text("Type: "),
+                  PopupMenuButton<SeriesTypeItem>(
+                    tooltip: "Select League",
+                    initialValue: seriesTypeData.keys.firstWhere((k) => seriesTypeData[k]?[0] == currentSeriesType,
+                                                      orElse: () =>  SeriesTypeItem.itemOther),  //currentSeriesType,
+                    // Callback that sets the selected popup menu item.
+                    onSelected: (SeriesTypeItem item) {
+                      setState(() {
+                        currentSeriesType = seriesTypeData[item]![0];
+                        currentSeriesPng = seriesTypeData[item]![1];
+                        currentSeriesIcon = seriesTypeData[item]![2];
+                        log("Current Series Type: '$item' Text: ${seriesTypeData[item]![0]} Current: ${currentSeriesType}", name: '${runtimeType.toString()}:build()');
+                      });
+                      // currentSeriesType = seriesTypeText[item]!;
+                      // log("Current Series Type: '$item' Text: ${seriesTypeText[item]} Current: ${currentSeriesType}", name: '${runtimeType.toString()}:build()');
+                    },
+                    itemBuilder: (BuildContext context) => <PopupMenuEntry<SeriesTypeItem>>[
+                      const PopupMenuItem<SeriesTypeItem>(
+                        value: SeriesTypeItem.itemNFL,
+                        child: Text('NFL'),
+                      ),
+                      const PopupMenuItem<SeriesTypeItem>(
+                        value: SeriesTypeItem.itemCFL,
+                        child: Text('CFL'),
+                      ),
+                      const PopupMenuItem<SeriesTypeItem>(
+                        value: SeriesTypeItem.itemNBA,
+                        child: Text('NBA'),
+                      ),
+                      const PopupMenuItem<SeriesTypeItem>(
+                        value: SeriesTypeItem.itemOther,
+                        child: Text('Other'),
+                      ),
+                    ],
+                    child: ListTile(
+//                      leading: Icon(Icons.layers_rounded),
+//                      leading: ImageIcon(AssetImage(currentSeriesPng)),
+                      leading: currentSeriesIcon,
+                      // leading: SvgPicture.asset(
+                      //     currentSeriesPng,
+                      //     width: 60,
+                      //     colorFilter: ColorFilter. .mode(Colors.green, BlendMode.srcIn),
+                      //     semanticsLabel: 'League'
+                      // ),
+                      trailing: Icon(Icons.menu),
+                      title: Text("Type: ${currentSeriesType}"),
+                    ),
+                  ),
                   const Text("Series Name: "),
                   TextFormField(
                     initialValue: currentSeriesName,
@@ -99,21 +169,6 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       currentSeriesName = value ?? 'Series 000';
                     },
                   ),
-                  const Text("Type: "),
-                  TextFormField(
-                    initialValue: currentSeriesType,
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter type';
-                      }
-                      return null;
-                    },
-                    onSaved: (String? value) {
-                      //debugPrint('Email is: $value');
-                      currentSeriesType = value ?? 'auto-approve';
-                    },
-                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text("Number of Games: ${series?.noGames ?? 'N/A'}, Number of Community Accesses ${series?.noAccesses ?? 0}"),
@@ -126,15 +181,15 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                           onPressed: () async {
                             // Validate returns true if the form is valid, or false otherwise.
                             if (player == null) {
-                              log('series_maintain: Getting Player ... ');
+                              log('Getting Player ... ', name: '${runtimeType.toString()}:build()');
                               FirestoreDoc? fsDoc = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid);
                               if (fsDoc != null) {
                                 player = fsDoc as Player;
                               } else {
-                                log('Waiting for Player');
+                                log('Waiting for Player', name: '${runtimeType.toString()}:build()');
                               }
                             }
-                            log('series_maintain: Player is ... ${player!.fName}');
+                            log('Player is ... ${player!.fName}', name: '${runtimeType.toString()}:build()');
                             if (_formSeriesKey.currentState!.validate()) {
                               // If the form is valid, display a snackbar. In the real world,
                               // you'd often call a server or save the information in a database.
@@ -165,7 +220,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                 await DatabaseService(FSDocType.series, uid: uid).fsDocUpdate(series!);
                               }
                               // Save Updates to Shared Preferences
-                              log("series_maintain: Added/Updated series ${series?.noGames}");
+                              log("Added/Updated series ${series?.noGames}", name: '${runtimeType.toString()}:build()');
                               Navigator.of(context).pop(series);
                             }
                           },
@@ -196,7 +251,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                               );
                             } else {
                               // log('Delete Series ... ${_sid}');
-                              log('Delete Series ... ${series!.key}');
+                              log('Delete Series ... ${series!.key}', name: '${runtimeType.toString()}:build()');
                               DatabaseService(FSDocType.series, uid: uid).fsDocDelete(series!);
                               Navigator.of(context).pop();
 
@@ -213,9 +268,9 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                               );
                               series = await DatabaseService(FSDocType.series).fsDoc(key: series!.key) as Series;
                               setState(() {
-                                log('series_maintain: setting State: ${series!.noAccesses}');
+                                log('setting State: ${series!.noAccesses}', name: '${runtimeType.toString()}:build()');
                               });
-                            log('series_maintain: Back from AccessList, No Access ${series!.noAccesses}');
+                            log('Back from AccessList, No Access ${series!.noAccesses}', name: '${runtimeType.toString()}:build()');
                             },
                             child: const Text("Access")),
                       ),

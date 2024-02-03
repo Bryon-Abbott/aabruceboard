@@ -166,7 +166,7 @@ class _GameBoardState extends State<GameBoard> {
                               ),
                               PopupMenuItem<int>(
                                   value: 1,
-                                  enabled: isGameOwner && !(board.squaresPicked<100),
+                                  enabled: isGameOwner && board.squaresPicked<100,
                                   child: const Row(
                                       children: [
                                         Icon(
@@ -281,7 +281,7 @@ class _GameBoardState extends State<GameBoard> {
                               )
                             ],
                           ),
-                          buildPoints(board),
+                          buildCredits(board),
                           buildScore(board, winnersPlayer),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -310,6 +310,7 @@ class _GameBoardState extends State<GameBoard> {
   // --------------------------------------------------------------------------
 //  Widget buildScore(double newScreenWidth) {
   Widget buildScore(Board board, List<Player> winners) {
+
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
@@ -550,6 +551,9 @@ class _GameBoardState extends State<GameBoard> {
         } else {
           dev.log("Return value was null", name: "${runtimeType.toString()}:onMenuSelected");
         }
+        // Resync the Board.squaresPicked to the Grid.squaresPicked.
+        DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
+            .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
         break;
       case 2:
         int qtrPercents = 0;
@@ -724,8 +728,19 @@ class _GameBoardState extends State<GameBoard> {
   // --------------------------------------------------------------------------
   // _GameBoard member functions to display the points and point distribution
   // --------------------------------------------------------------------------
-  // Widget buildPoints(double newScreenWidth) {
-  Widget buildPoints(Board board) {
+  // Widget buildCredits(double newScreenWidth) {
+  Widget buildCredits(Board board) {
+    List<int> credits = [0,0,0,0,0,0];
+    int totalCredits = 0;
+
+    for (int i = 0; i<4; i++) {
+     credits[i] = board.squaresPicked*board.percentSplits[i]*game.squareValue~/100;
+     totalCredits += credits[i];
+    }
+
+    credits[5] = board.squaresPicked * game.squareValue;  // Total Credits collected
+    credits[4] = credits[5] - totalCredits;               // calculate the remainder and assign to the community
+
     return Align(
       alignment: Alignment.topLeft,
       child: Container(
@@ -749,11 +764,12 @@ class _GameBoardState extends State<GameBoard> {
               spacing: 2,
               children:
                 List.generate(5, (index) {
+                  dev.log("List.gnerage Index $index");
                   return SizedBox(
                     width: 80,
                     child: Row(
                       children: [
-                        Text((index < 4) ? "Qtr${index+1}:" : "Com:"),
+                        Text((index < 4) ? "Qtr${index+1}:" : (index == 4) ? "Com:" : "Total"),
                         Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: Container(
@@ -764,38 +780,14 @@ class _GameBoardState extends State<GameBoard> {
                               color: Theme.of(context).colorScheme.surfaceVariant,
                             ),
             //                        child: Text('Fix Me'),
-                            child: Text((board.squaresPicked*board.percentSplits[index]*game.squareValue~/100).toString(),
+                            child: Text((credits[index]).toString(),
                                 textAlign: TextAlign.right),
                           ),
                         ),
                       ],
                     ),
                   );
-                }) +
-                    [
-                      SizedBox(
-                        width: 90,
-                        child: Row(
-                          children: [
-                            const Text("Total:"),
-                            Padding(
-                              padding: const EdgeInsets.all(2.0),
-                              child: Container(
-                                padding: const EdgeInsets.all(1.0),
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Theme.of(context).colorScheme.outline),
-                                  color: Theme.of(context).colorScheme.surfaceVariant,
-                                ),
-                                // child: Text('Fix Me'),
-                                child: Text((board.squaresPicked*game.squareValue).toString(),
-                                     textAlign: TextAlign.right),
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ]
+                })
             ),
           ],
         ),

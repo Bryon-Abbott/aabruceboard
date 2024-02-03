@@ -81,9 +81,19 @@ class _MembershipListState extends State<MembershipList> {
                             log("membership_list: Updating MSID: ${membership.docId ?? -600}", name: '${runtimeType.toString()}:...');
                             // Add MemberOwner to Community Player for current Player
                             // Process Messages
-                            await messageMembershipAddRequest(membership: membership, player: activePlayer, communityPlayer: communityPlayer,
+                            await messageSend(00001, playerFrom: activePlayer, playerTo: communityPlayer,
                                 description: '${activePlayer.fName} ${activePlayer.lName} requested to be added to your <${community.name}> community',
-                                comment: comment);
+                                comment: comment,
+                                data: {
+                                  'msid': membership.docId, // Membership ID of requesting player
+                                  'cpid': membership.cpid,  // Community Player ID
+                                  'cid': membership.cid,    // Community ID of Community Player
+                                  'pid': membership.pid,
+                                },
+                            );
+                            // await messageMembershipAddRequest(membership: membership, player: activePlayer, communityPlayer: communityPlayer,
+                            //     description: '${activePlayer.fName} ${activePlayer.lName} requested to be added to your <${community.name}> community',
+                            //     comment: comment);
                           }
                         } else {
                           // Error: Membership request already exists ... display message

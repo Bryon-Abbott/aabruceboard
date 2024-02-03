@@ -23,7 +23,7 @@ class SeriesTile extends StatelessWidget {
           },
           leading: const Icon(Icons.list_alt_outlined),
           title: Text('Series: ${series.name}'),
-          subtitle: Text('Games: ${series.noGames}, SID: ${series.key}'),
+          subtitle: Text('Type: ${series.type}'),
           trailing: IconButton(
               onPressed: (){
                 Navigator.of(context).push(

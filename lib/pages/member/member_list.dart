@@ -87,7 +87,9 @@ class _MemberListState extends State<MemberList> {
                             await DatabaseService(FSDocType.member, cidKey: community.key).fsDocAdd(member);
                             // Add Message to Archive
                             String desc = '${player!.fName} ${player!.lName} added you to the <${community.name}> community';
-                            await messageMemberAddNotification(cid: community.docId, playerFrom: player!, playerTo: playerSelected!,
+                            // 20001: "Add Member Notification",
+                            await messageSend( 20001, playerFrom: player!, playerTo: playerSelected!,
+                                data: {'cid': community.docId},
                                 comment: comment, description: desc);
                             log('member_list: Player Selected ${player?.fName ?? 'No Player?'}');
                           } else {
