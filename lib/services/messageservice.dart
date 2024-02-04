@@ -11,12 +11,12 @@ import 'package:bruceboard/services/databaseservice.dart';
 // Notifiaction --> Acknowledgement
 //
 // Message Rules:
-// Request Requires a Response          (00000 - 09999)
-// Response is the result of a Request  (10000 - 19999)
-// Notification is a one way message    (20000 - 29999)
-// Query Requires a Query Response      (30000 - 39999)
-// Query Requires a Query Response      (30000 - 39999)
-// Query Response is the result of a Query Response (40000 - 49999)
+// Request Requires a Response                (00000 - 09999)
+// Response is the result of a Request        (10000 - 19999)
+// Notification is a one way message          (20000 - 29999)
+// Acknowledgemnet to a Resp or Notification  (30000 - 39999)
+// Query Requires a Query Response            (40000 - 49999)
+// Query Response is the result of a Query Response (50000 - 59999)
 
 const messageDesc = {
   00000: "Message",                   // Desc(General Message) (Response: Optional: Text Response)
@@ -42,6 +42,8 @@ const messageDesc = {
   30001: "Add Member Acknowledgement",                 // Data: {cid: }
   30002: "Remove Member Acknowledgement",              // Data: {credits: }
   30003: "Update Member Record Acknowledgement",       // Data: {credits: }
+  30004: "Community Add Request Accept Acknowledgement",                 // Data: {cid: }
+  30005: "Community Add Request Reject Acknowledgement",                 // Data: {cid: }
 
 };
 
@@ -83,7 +85,6 @@ Future<void> messageSend(
           'messageType' : messageType,
           'pidFrom': playerFrom.pid,
           'pidTo': playerTo.pid,
-//          'responseCode': responseCode,      // *Accept*
           'description': description,
           'comment': comment,
           'data': data,
@@ -164,68 +165,68 @@ Future<void> messageSend(
 // 1. Create Copy of Message to 'Processed' message queue
 // 2. Delete Message
 // 3. Create Respnose message (and MessageOwner)
-Future<void> messageMembershipAddAcceptResponse(
-    {  required Message message,
-      required Player playerFrom,
-      required Player playerTo,
-      String description = 'No descriptions',
-      String comment = 'Please add me to your community'}) async {
-  await DatabaseService(FSDocType.message, fromUid: playerFrom.uid, messageLocation: 'Processed').fsDocAdd(message);
-  // Delete Message
-  await DatabaseService(FSDocType.message, fromUid: playerFrom.uid ).fsDocDelete(message);
-  // Add MemberOwner to Community Player for current Player
-  MessageOwner msgOwner = MessageOwner( data: {
-    'docId': playerTo.pid,  // Current Players PID (ie Player the message was sent to)
-    'uid': playerTo.uid,  // Current Players UID
-  });
-  await DatabaseService(FSDocType.messageowner, toUid: playerFrom.uid).fsDocAdd(msgOwner);
-  // Add Message (response) to senders messages.
-  Message response = Message(data:
-  { 'messageCode' : 10001,  // 10001,  // 10001=Community Add Response
-    'messageType': messageType[MessageTypeOption.acceptance],      // *Accept*
-    'pidFrom': message.pidTo,
-    'pidTo': message.pidFrom,
-    'description': description,
-    'comment': comment,
-    'data': { 'cpid': message.data['cpid'], 'cid': message.data['cid'],
-              'msid': message.data['msid'], 'pid': message.data['pid'] }
-  });
-  return await DatabaseService(FSDocType.message, toUid: playerFrom.uid).fsDocAdd(response);
-}
-// ==========================================================================
-// Send messages to request to be added to Community
-// Steps:
-// 1. Create Copy of Message to 'Processed' message queue
-// 2. Delete Message
-// 3. Create Respnose message (and MessageOwner)
-Future<void> messageMembershipAddRejectResponse(
-    {  required Message message,
-      required Player playerFrom,
-      required Player playerTo,
-      String description = 'No descriptions',
-      String comment = 'Please add me to your community'}) async {
-  await DatabaseService(FSDocType.message, fromUid: playerFrom.uid, messageLocation: 'Processed').fsDocAdd(message);
-  // Delete Message
-  await DatabaseService(FSDocType.message, fromUid: playerFrom.uid ).fsDocDelete(message);
-  // Add MemberOwner to Community Player for current Player
-  MessageOwner msgOwner = MessageOwner( data: {
-    'docId': playerTo.pid,  // Current Players PID (ie Player the message was sent to)
-    'uid': playerTo.uid,  // Current Players UID
-  });
-  await DatabaseService(FSDocType.messageowner, toUid: playerFrom.uid).fsDocAdd(msgOwner);
-  // Add Message (response) to senders messages.
-  Message response = Message(data:
-  { 'messageCode' : 10001,  // 10002,  // 10002=Community Add Response
-    'messageType': messageType[MessageTypeOption.rejection],      // Rejected
-    'pidFrom': message.pidTo,
-    'pidTo': message.pidFrom,
-    'description': description,
-    'comment': comment,
-    'data': { 'cpid': message.data['cpid'], 'cid': message.data['cid'],
-              'msid': message.data['msid'], 'pid': message.data['pid'] }
-  });
-  return await DatabaseService(FSDocType.message, toUid: playerFrom.uid).fsDocAdd(response);
-}
+// Future<void> messageMembershipAddAcceptResponse(
+//     {  required Message message,
+//       required Player playerFrom,
+//       required Player playerTo,
+//       String description = 'No descriptions',
+//       String comment = 'Please add me to your community'}) async {
+//   await DatabaseService(FSDocType.message, fromUid: playerFrom.uid, messageLocation: 'Processed').fsDocAdd(message);
+//   // Delete Message
+//   await DatabaseService(FSDocType.message, fromUid: playerFrom.uid ).fsDocDelete(message);
+//   // Add MemberOwner to Community Player for current Player
+//   MessageOwner msgOwner = MessageOwner( data: {
+//     'docId': playerTo.pid,  // Current Players PID (ie Player the message was sent to)
+//     'uid': playerTo.uid,  // Current Players UID
+//   });
+//   await DatabaseService(FSDocType.messageowner, toUid: playerFrom.uid).fsDocAdd(msgOwner);
+//   // Add Message (response) to senders messages.
+//   Message response = Message(data:
+//   { 'messageCode' : 10001,  // 10001,  // 10001=Community Add Response
+//     'messageType': messageType[MessageTypeOption.acceptance],      // *Accept*
+//     'pidFrom': message.pidTo,
+//     'pidTo': message.pidFrom,
+//     'description': description,
+//     'comment': comment,
+//     'data': { 'cpid': message.data['cpid'], 'cid': message.data['cid'],
+//               'msid': message.data['msid'], 'pid': message.data['pid'] }
+//   });
+//   return await DatabaseService(FSDocType.message, toUid: playerFrom.uid).fsDocAdd(response);
+// }
+// // ==========================================================================
+// // Send messages to request to be added to Community
+// // Steps:
+// // 1. Create Copy of Message to 'Processed' message queue
+// // 2. Delete Message
+// // 3. Create Respnose message (and MessageOwner)
+// Future<void> messageMembershipAddRejectResponse(
+//     {  required Message message,
+//       required Player playerFrom,
+//       required Player playerTo,
+//       String description = 'No descriptions',
+//       String comment = 'Please add me to your community'}) async {
+//   await DatabaseService(FSDocType.message, fromUid: playerFrom.uid, messageLocation: 'Processed').fsDocAdd(message);
+//   // Delete Message
+//   await DatabaseService(FSDocType.message, fromUid: playerFrom.uid ).fsDocDelete(message);
+//   // Add MemberOwner to Community Player for current Player
+//   MessageOwner msgOwner = MessageOwner( data: {
+//     'docId': playerTo.pid,  // Current Players PID (ie Player the message was sent to)
+//     'uid': playerTo.uid,  // Current Players UID
+//   });
+//   await DatabaseService(FSDocType.messageowner, toUid: playerFrom.uid).fsDocAdd(msgOwner);
+//   // Add Message (response) to senders messages.
+//   Message response = Message(data:
+//   { 'messageCode' : 10001,  // 10002,  // 10002=Community Add Response
+//     'messageType': messageType[MessageTypeOption.rejection],      // Rejected
+//     'pidFrom': message.pidTo,
+//     'pidTo': message.pidFrom,
+//     'description': description,
+//     'comment': comment,
+//     'data': { 'cpid': message.data['cpid'], 'cid': message.data['cid'],
+//               'msid': message.data['msid'], 'pid': message.data['pid'] }
+//   });
+//   return await DatabaseService(FSDocType.message, toUid: playerFrom.uid).fsDocAdd(response);
+// }
 // ********** REMOVE REQ:00002 / RESP:10002 **********
 // ==========================================================================
 // Send messages to request to be *REMOVED* from Community

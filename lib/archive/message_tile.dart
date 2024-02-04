@@ -99,8 +99,8 @@ class MessageTile extends StatelessWidget {
           await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocAdd(member);
           // Add Message to Archive
           String desc = '${playerTo.fName} ${playerTo.lName} accepted your request to be added to the <${community.name}> community';
-          await messageMembershipAddAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
-              comment: comment, description: desc);
+          // await messageMembershipAddAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
+          //     comment: comment, description: desc);
         } else {
           log('Case 00001: Cancelled accepting Add to Community.', name: '${runtimeType.toString()}:messageAccept');
         }
@@ -394,8 +394,8 @@ class MessageTile extends StatelessWidget {
         // Add Message to Archive
         String? comment = await openDialogMessageComment(context) ?? "Sorry your request has been rejected";
         String desc = '${playerTo.fName} ${playerTo.lName} rejected your request to be added to the <${community.name}> community';
-        await messageMembershipAddRejectResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
-        comment: comment, description: desc);
+        // await messageMembershipAddRejectResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
+        // comment: comment, description: desc);
       }
       break;
     // ------------------------------------------------------------------------
