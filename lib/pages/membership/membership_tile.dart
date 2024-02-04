@@ -141,19 +141,29 @@ class MembershipTile extends StatelessWidget {
                                       // Player? communityPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: membership.cpid) as Player;
                                       // Community? community = await DatabaseService(FSDocType.community, uid: communityPlayer.uid).fsDoc(docId: membership.cid) as Community;
                                       if (results[2] == 'credit') {
-                                        messageMembershipCreditRequest(credits: int.parse(results[0]), creditDebit: results[2],
-                                            cid: membership.cid,
-                                            playerFrom: activePlayer, playerTo: communityPlayer,
+                                        messageSend(00004, messageType[MessageTypeOption.request]!,
+                                            playerFrom: activePlayer,
+                                            playerTo: communityPlayer,
                                             description: "Request to add ${results[0]} credits to membership.\n"
-                                                "Community: <${community?.name ?? "Unknown"}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
-                                            comment: results[1]);
+                                                     "Community: <${community?.name ?? "Unknown"}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
+                                            comment: results[1],
+                                            data: {
+                                              'credits':  int.parse(results[0]),
+                                              'creditDebit': results[2],
+                                              'cid': membership.cid }
+                                        );
                                       } else {
-                                        messageMembershipCreditRequest(credits: int.parse(results[0]), creditDebit: results[2],
-                                            cid: membership.cid,
-                                            playerFrom: activePlayer, playerTo: communityPlayer,
+                                        messageSend(00004, messageType[MessageTypeOption.request]!,
+                                            playerFrom: activePlayer,
+                                            playerTo: communityPlayer,
                                             description: "Request to refund ${results[0]} credits from membership.\n"
-                                                "Community: <${community?.name ?? "Unknonwn"}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
-                                            comment: results[1]);
+                                                     "Community: <${community?.name ?? "Unknonwn"}>\nRequester: ${activePlayer.fName} ${activePlayer.lName}",
+                                            comment: results[1],
+                                            data: {
+                                              'credits':  int.parse(results[0]),
+                                              'creditDebit': results[2],
+                                              'cid': membership.cid }
+                                        );
                                       }
                                     } else {
                                       log('Cancel Credit Request, PID: ${membership.pid} CID: ${membership.cid}', name: '${runtimeType.toString()}:...');

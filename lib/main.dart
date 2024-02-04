@@ -28,14 +28,14 @@ import 'package:bruceboard/pages/membership/membership_maintain.dart';
 import 'package:bruceboard/pages/player/player_profile.dart';
 import 'package:bruceboard/pages/community/community_select.dart';
 import 'package:bruceboard/pages/community/community_select_owner.dart';
-import 'package:bruceboard/archive/messageowner_list.dart';
+//import 'package:bruceboard/archive/messageowner_list.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
 import 'package:bruceboard/pages/general/home.dart';
 import 'package:bruceboard/pages/general/about.dart';
 // import 'package:bruceboard/pages/manage_players.dart';
 // import 'package:bruceboard/pages/maintain_player.dart';
 // import 'package:bruceboard/pages/manage_games.dart';
-import 'package:bruceboard/archive/maintain_game.dart';
+//import 'package:bruceboard/archive/maintain_game.dart';
 import 'package:bruceboard/pages/settings/settings_main.dart';
 import 'package:bruceboard/pages/settings/settings_scoring.dart';
 
@@ -127,7 +127,7 @@ class LoadApp extends StatelessWidget {
                 // '/manageplayers': (context) => const ManagePlayers(),
                 // '/maintainplayer': (context) => const MaintainPlayer(),
                 // '/managegames': (context) => const ManageGames(),
-                '/maintaingame': (context) => const MaintainGame(),
+                // '/maintaingame': (context) => const MaintainGame(),
                 '/about': (context) => const About(),
                 '/authenticate': (contexct) => const Authenticate(),
                 '/player-profile': (context) => const PlayerProfile(),

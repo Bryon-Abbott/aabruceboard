@@ -54,10 +54,10 @@ class Membership implements FirestoreDoc {
   @override
   void update({ required Map<String, dynamic> data, }) {
     docId = data['docId'] ?? docId;
-    cid = data['cid'] ?? -1;
-    cpid = data['cpid'] ?? -1;
-    pid = data['pid'] ?? -1;
-    status = data['status'] ?? 'error';
+    cid = data['cid'] ?? cid;
+    cpid = data['cpid'] ?? cpid;
+    pid = data['pid'] ?? pid;
+    status = data['status'] ?? status;
   }
 
   // Returns a Map<String, dynamic> of all member veriables.

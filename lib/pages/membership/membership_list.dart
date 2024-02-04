@@ -86,10 +86,10 @@ class _MembershipListState extends State<MembershipList> {
                               description: '${activePlayer.fName} ${activePlayer.lName} requested to be added to your <${community.name}> community',
                               comment: comment,
                               data: {
-//                                'msid': membership.docId, // Membership ID of requesting player   // Not Required?
+                                'msid': membership.docId, // Membership ID of requesting player   // Not Required?
                                 'cpid': membership.cpid,  // Community Player ID                  // Is the playerTo but include for completenesss
                                 'cid': membership.cid,    // Community ID of Community Player
-//                                'pid': membership.pid,                                            // Not Required?
+                                'pid': membership.pid,                                            // Not Required?
                               },
                             );
                             // await messageMembershipAddRequest(membership: membership, player: activePlayer, communityPlayer: communityPlayer,
