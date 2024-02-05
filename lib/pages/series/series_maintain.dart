@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:ui';
 //import 'dart:ffi';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +9,6 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
-import 'package:flutter_any_logo/flutter_logo.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 // Sports by Becris from <a href="https://thenounproject.com/browse/icons/term/sports/" target="_blank" title="Sports Icons">Noun Project</a> (CC BY 3.0)
 
 // This is the type used by the popup menu below.
@@ -33,17 +30,17 @@ class SeriesMaintainState extends State<SeriesMaintain> {
   Player? player;
   late BruceUser bruceUser;
   Map<SeriesTypeItem, List<dynamic>> seriesTypeData = {
-    SeriesTypeItem.itemNFL :  ["NFL", "assets/noun-football-1043960.png", Icon(Icons.sports_football_outlined)],
-    SeriesTypeItem.itemCFL :  ["CFL", "assets/noun-football-1043960.png", Icon(Icons.sports_football_outlined)],
-    SeriesTypeItem.itemNBA :  ["NBA", "assets/noun-basketball-6464615.png", Icon(Icons.sports_basketball_outlined)],
-    SeriesTypeItem.itemOther :  ["Other", "assets/noun-sports-1176751.png", Icon(Icons.cabin_outlined)],
+    SeriesTypeItem.itemNFL :  ["NFL", "assets/noun-football-1043960.png", const Icon(Icons.sports_football_outlined)],
+    SeriesTypeItem.itemCFL :  ["CFL", "assets/noun-football-1043960.png", const Icon(Icons.sports_football_outlined)],
+    SeriesTypeItem.itemNBA :  ["NBA", "assets/noun-basketball-6464615.png", const Icon(Icons.sports_basketball_outlined)],
+    SeriesTypeItem.itemOther :  ["Other", "assets/noun-sports-1176751.png", const Icon(Icons.cabin_outlined)],
     // SeriesTypeItem.itemCFL :  ["CFL", AnyLogo.values.elementAt(7)],
     // SeriesTypeItem.itemNBA :  ["NBA", AnyLogo.values.elementAt(9)],
     // SeriesTypeItem.itemOther :  ["Other", AnyLogo.values.elementAt(10)],
   };
   String currentSeriesType = "Other";
   String currentSeriesPng = "assets/noun-sports-1176751.png";
-  Icon currentSeriesIcon = Icon(Icons.cabin_outlined);
+  Icon currentSeriesIcon = const Icon(Icons.cabin_outlined);
   String currentSeriesName = "";
   int currentSeriesNoGames = 0;
 
@@ -117,7 +114,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                         currentSeriesType = seriesTypeData[item]![0];
                         currentSeriesPng = seriesTypeData[item]![1];
                         currentSeriesIcon = seriesTypeData[item]![2];
-                        log("Current Series Type: '$item' Text: ${seriesTypeData[item]![0]} Current: ${currentSeriesType}", name: '${runtimeType.toString()}:build()');
+                        log("Current Series Type: '$item' Text: ${seriesTypeData[item]![0]} Current: $currentSeriesType", name: '${runtimeType.toString()}:build()');
                       });
                       // currentSeriesType = seriesTypeText[item]!;
                       // log("Current Series Type: '$item' Text: ${seriesTypeText[item]} Current: ${currentSeriesType}", name: '${runtimeType.toString()}:build()');
@@ -150,8 +147,8 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       //     colorFilter: ColorFilter. .mode(Colors.green, BlendMode.srcIn),
                       //     semanticsLabel: 'League'
                       // ),
-                      trailing: Icon(Icons.menu),
-                      title: Text("Type: ${currentSeriesType}"),
+                      trailing: const Icon(Icons.menu),
+                      title: Text("Type: $currentSeriesType"),
                     ),
                   ),
                   const Text("Series Name: "),

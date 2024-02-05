@@ -9,13 +9,11 @@ import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/game/game_list.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
@@ -42,7 +40,7 @@ class MessageTileIncoming extends StatelessWidget {
               margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
               child: ListTile(
                 onTap: () {
-                  log("Message Tapped ... ${message.docId} ", name: '${runtimeType.toString()}');
+                  log("Message Tapped ... ${message.docId} ", name: runtimeType.toString());
                 },
                 leading: const Icon(Icons.message_outlined),
                 title: Column(
@@ -79,7 +77,7 @@ class MessageTileIncoming extends StatelessWidget {
             ),
           );
         } else {
-          log('Player has no data ... loading()', name: '${runtimeType.toString()}');
+          log('Player has no data ... loading()', name: runtimeType.toString());
           return const Loading();
         }
       }
@@ -140,17 +138,19 @@ class MessageTileIncoming extends StatelessWidget {
         FirestoreDoc? result = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
             .fsDoc(docId: message.pidFrom);
         log('message_tile: case 00002: member: ${result?.docId ?? 'No member'}');
-        if (result == null) {
-          // Member? member = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
-          //   .fsDoc(docId: message.pidFrom) as Member;
-          // if (member == null) {  // Didn't find the member in the community? Maybe not registered yet.
+        if (result == null) {  // Didn't find the member in the community ... not accepted yet.
           Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
-          String? comment = await openDialogMessageComment(context, defaultComment:"Were not registered to our community" );
-          // Add Message to Archive
+          String? comment = await openDialogMessageComment(context, defaultComment:"You were not registered to our community" );
           if (comment != null ) {
-            String desc = '${playerTo.fName} ${playerTo.lName} accepted your request to be removed from the <${community.name ?? "No Name"}> community';
-            await messageMembershipRemoveAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
-                comment: comment, description: desc);
+            messageSend(10002, messageType[MessageTypeOption.acceptance]!,
+              playerFrom: playerTo,
+              playerTo: playerFrom,
+              description: '${playerTo.fName} ${playerTo.lName} accepted your request to be removed from the <${community.name ?? "No Name"}> community',
+              comment: comment,
+              data: message.data,
+            );
+            // Add Message to Archive
+            messageArchive(message: message, playerFrom: playerFrom);
           }
         } else {
           Member member = result as Member;
@@ -159,10 +159,15 @@ class MessageTileIncoming extends StatelessWidget {
             String? comment = await openDialogMessageComment(context, defaultComment: "Sorry to see you leave our community");
             if (comment != null ) {
               await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocDelete(member);
+              messageSend(10002, messageType[MessageTypeOption.acceptance]!,
+                playerFrom: playerTo,
+                playerTo: playerFrom,
+                description: '${playerTo.fName} ${playerTo.lName} accepted your request to be removed from the <${community.name}> community',
+                comment: comment,
+                data: message.data,
+              );
               // Add Message to Archive
-              String desc = '${playerTo.fName} ${playerTo.lName} accepted your request to be removed from the <${community.name}> community';
-              await messageMembershipRemoveAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
-                  comment: comment, description: desc);
+              messageArchive(message: message, playerFrom: playerFrom);
             }
           } else {
             // Error: Member has credits ... display message
@@ -283,10 +288,11 @@ class MessageTileIncoming extends StatelessWidget {
         Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(key: Community.Key(message.data['cid'])) as Community;
         // Update Community Add Request to Approved / Rejected
         String? comment;
-        if (message.messageType == messageType[MessageTypeOption.acceptance])
+        if (message.messageType == messageType[MessageTypeOption.acceptance]) {
           comment = await openDialogMessageComment(context, defaultComment: "Thank you for adding me to the community <${community.name}>");
-        else
+        } else {
           comment = await openDialogMessageComment(context, defaultComment: "Ok for rejecting to add me to the community <${community.name}>");
+        }
 
         if (comment != null) {
           Membership membership = Membership(data: {
@@ -304,10 +310,7 @@ class MessageTileIncoming extends StatelessWidget {
                 playerTo: playerFrom,
                 description: '${playerTo.fName} ${playerTo.lName} acknowledged your *acceptance* to add them to <${community.name}> community',
                 comment: comment,
-                data: {
-                  'cid': community.docId,
-                  'cpid': playerFrom.pid,
-                }
+                data: message.data,
             );
           } else if (message.messageType == messageType[MessageTypeOption.rejection]) {
             // Update membership with Status back to Approved if Removal was rejected
@@ -318,10 +321,7 @@ class MessageTileIncoming extends StatelessWidget {
                 playerTo: playerFrom,
                 description: '${playerTo.fName} ${playerTo.lName} acknowledged your *rejection* to add them to <${community.name}> community',
                 comment: comment,
-                data: {
-                  'cid': community.docId,
-                  'cpid': playerFrom.pid,
-                }
+                data: message.data,
             );
           }
           messageArchive(message: message, playerFrom: playerFrom);
@@ -330,26 +330,38 @@ class MessageTileIncoming extends StatelessWidget {
       break;
     // ------------------------------------------------------------------------
     // *** Community Remove Response Message
-    // 1. Update Membership to "Rejected"
-    // 2. Add message to Archive  (Processed)
-    // 3. Delete active message
       case 10002: {
-        log('message_tile: Community Add Response from: ${playerFrom.fName} to: ${playerTo.fName}');
-        Membership membership = Membership(data:
-        { 'docId': message.data['msid'],
-          'cid': message.data['cid'],
-          'cpid': message.data['cpid'],
-          'pid': message.data['pid'],
-          'status': "Approved",
-        });
-        if (message.messageType == messageType[MessageTypeOption.acceptance]) {
-          DatabaseService(FSDocType.membership).fsDocDelete(membership);
-        } else if (message.messageType == messageType[MessageTypeOption.rejection]) {
-          // Update membership with Status back to Approved if Removal was rejected
-          membership.status = 'Approved';
-          DatabaseService(FSDocType.membership).fsDocUpdate(membership);
+        log('message_tile: Community Remove Response from: ${playerFrom.fName} to: ${playerTo.fName}');
+
+        Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(key: Community.Key(message.data['cid'])) as Community;
+        String? comment = await openDialogMessageComment(context, defaultComment: "Ok for accepting/rejecting to remveo me to the community <${community.name}>");
+        if (comment != null) {
+          if (message.messageType == messageType[MessageTypeOption.acceptance]) {
+            // Update membership with Status back to Approved if Removal was rejected
+            DatabaseService(FSDocType.membership)
+                .fsDocUpdateField(key: Membership.KEY(message.data['cpid'], message.data['cid']), field: 'status', svalue: 'Removed');
+            // DatabaseService(FSDocType.membership).fsDocDelete(membership);
+            messageSend(30002, messageType[MessageTypeOption.acknowledgment]!,
+                playerFrom: playerTo,
+                playerTo: playerFrom,
+                description: '${playerTo.fName} ${playerTo.lName} acknowledged your *acceptance* to remove them to <${community.name}> community',
+                comment: comment,
+                data: message.data,
+            );
+          } else if (message.messageType == messageType[MessageTypeOption.rejection]) {
+            // Update membership with Status back to Approved if Removal was rejected
+            DatabaseService(FSDocType.membership)
+                .fsDocUpdateField(key: Membership.KEY(message.data['cpid'], message.data['cid']), field: 'status', svalue: 'Approved');
+            messageSend(30002, messageType[MessageTypeOption.acknowledgment]!,
+                playerFrom: playerTo,
+                playerTo: playerFrom,
+                description: '${playerTo.fName} ${playerTo.lName} acknowledged your *rejection* to remove them to <${community.name}> community',
+                comment: comment,
+                data: message.data,
+            );
+          }
+          messageArchive(message: message, playerFrom: playerFrom);
         }
-        messageArchive(message: message, playerFrom: playerFrom);
       }
       break;
     // ------------------------------------------------------------------------
@@ -574,8 +586,18 @@ class MessageTileIncoming extends StatelessWidget {
         String? comment = await openDialogMessageComment(context, defaultComment: "Sorry your request has been rejected");
         if (comment  != null) {
           String desc = '${playerTo.fName} ${playerTo.lName} rejected your request to be removed from the <${community.name}> community';
-          await messageMembershipRemoveRejectResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
-              comment: comment, description: desc);
+          messageSend(10002, messageType[MessageTypeOption.rejection]!,
+            playerFrom: playerTo,
+            playerTo: playerFrom,
+            description: '${playerTo.fName} ${playerTo.lName} *rejected* your request to be removed from the <${community.name ?? "No Name"}> community',
+            comment: comment,
+            data: message.data,
+          );
+          // Add Message to Archive
+          messageArchive(message: message, playerFrom: playerFrom);
+
+          // await messageMembershipRemoveRejectResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
+          //     comment: comment, description: desc);
         }
       }
       break;

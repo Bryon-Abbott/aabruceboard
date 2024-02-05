@@ -372,7 +372,7 @@ class DatabaseService {
       log('Returnign stream ... $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
       return streamQuerySnapshot.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
     } else {
-      return Stream<List<FirestoreDoc>>.empty();
+      return const Stream<List<FirestoreDoc>>.empty();
     }
   }
   //get FirestoreDoc List

@@ -70,7 +70,7 @@ class _SignUpState extends State<SignUp> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               const SizedBox(height: 20.0),
-              Text("Email Address"),
+              const Text("Email Address"),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'email'),
                 validator: (val) => val!.isEmpty ? 'Enter an email' : null,
@@ -79,7 +79,7 @@ class _SignUpState extends State<SignUp> {
                 },
               ),
               const SizedBox(height: 20.0),
-              Text("Password"),
+              const Text("Password"),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'password'),
                 obscureText: true,
@@ -89,7 +89,7 @@ class _SignUpState extends State<SignUp> {
                 },
               ),
               const SizedBox(height: 20.0),
-              Text("Password Verification"),
+              const Text("Password Verification"),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'reenter password'),
                 obscureText: true,
@@ -99,29 +99,29 @@ class _SignUpState extends State<SignUp> {
                 },
               ),
               const SizedBox(height: 20.0),
-              Text("First Name"),
+              const Text("First Name"),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'First Name'),
                 validator: (val) => val!.isEmpty ? 'Enter First Name' : null,
                 onChanged: (val) {
-                  displayNameController.text = "${val} ${lName}";
+                  displayNameController.text = "$val $lName";
                   initialsController.text = "${val.isEmpty ? '.' : val.substring(0,1)}${lName.isEmpty ? '.' : lName.substring(0,1)}";
                   setState(() => fName = val);
                 },
               ),
               const SizedBox(height: 20.0),
-              Text("Last Name"),
+              const Text("Last Name"),
               TextFormField(
                 decoration: textInputDecoration.copyWith(hintText: 'Last Name'),
                 validator: (val) => val!.isEmpty ? 'Enter Last Name' : null,
                 onChanged: (val) {
-                  displayNameController.text = "${fName} ${val}";
+                  displayNameController.text = "$fName $val";
                   initialsController.text = "${fName.isEmpty ? '.' : fName.substring(0,1)}${val.isEmpty ? '.' : val.substring(0,1)}";
                   setState(() => lName = val);
                 },
               ),
               const SizedBox(height: 20.0),
-              Text("Initials"),
+              const Text("Initials"),
               TextFormField(
                 controller: initialsController,
                 decoration: textInputDecoration.copyWith(hintText: 'Initials'),
@@ -131,7 +131,7 @@ class _SignUpState extends State<SignUp> {
                 },
               ),
               const SizedBox(height: 20.0),
-              Text("Display Name"),
+              const Text("Display Name"),
               TextFormField(
                 controller: displayNameController,
                 decoration: textInputDecoration.copyWith(hintText: 'Display Name'),

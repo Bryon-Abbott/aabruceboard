@@ -545,7 +545,7 @@ class _GameBoardState extends State<GameBoard> {
                 updated++;
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Member has run out of credits after ${updated} squares."))
+                    SnackBar(content: Text("Member has run out of credits after $updated squares."))
                 );
                 DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(selectedMember);
                 break; // Exit the loop.

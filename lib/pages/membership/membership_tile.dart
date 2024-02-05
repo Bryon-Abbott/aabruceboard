@@ -102,9 +102,7 @@ class MembershipTile extends StatelessWidget {
                                           child: Column(
                                             children: [
                                               TextField(
-                                                inputFormatters: [
-                                                  FilteringTextInputFormatter.digitsOnly,
-                                                ],
+                                                inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
                                                 autofocus: true,
                                                 decoration: const InputDecoration(hintText: '99'),
                                                 style: Theme.of(context).textTheme.bodyMedium,
@@ -190,15 +188,16 @@ class MembershipTile extends StatelessWidget {
                                         await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
                                         // Todo: Review the code below, could be issues if network slow and user quick ... communityPlayer can be null?
                                         messageSend(00002, messageType[MessageTypeOption.request]!,
-                                            playerFrom: activePlayer,
-                                            playerTo: communityPlayer,
-                                            description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
-                                                'your <${community?.name ?? 'Unknown'}> community',
-                                            comment: comment,
-                                            data:
-                                            { 'cpid': membership.cpid,     // Community Player ID
-                                              'cid': membership.cid,     // Community ID of Community Player
-                                            }
+                                          playerFrom: activePlayer,
+                                          playerTo: communityPlayer,
+                                          description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
+                                              'your <${community?.name ?? 'Unknown'}> community',
+                                          comment: comment,
+                                          data: {
+                                            'msid': membership.docId,
+                                            'cpid': membership.cpid,     // Community Player ID
+                                            'cid': membership.cid,     // Community ID of Community Player
+                                          }
                                         );
                                       }
                                     } else if (membership.status == 'Requested') {
@@ -217,18 +216,12 @@ class MembershipTile extends StatelessWidget {
                                             description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
                                                 'your <${community?.name ?? 'Unknown'}> community',
                                             comment: comment,
-                                            data:
-                                              { 'cpid': membership.cpid,     // Community Player ID
-                                                'cid': membership.cid,     // Community ID of Community Player
+                                            data: {
+                                              'msid': membership.docId,
+                                              'cpid': membership.cpid,     // Community Player ID
+                                              'cid': membership.cid,     // Community ID of Community Player
                                               }
                                         );
-                                        // await messageMembershipRemoveRequest(
-                                        //     membership: membership,
-                                        //     player: activePlayer,
-                                        //     communityPlayer: communityPlayer,
-                                        //     description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
-                                        //         'your <${community?.name ?? 'Unknown'}> community',
-                                        //     comment: comment);
                                       }
                                     } else {
                                       ScaffoldMessenger.of(context).showSnackBar(

@@ -9,7 +9,6 @@ import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
-import 'package:bruceboard/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
