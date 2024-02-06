@@ -20,30 +20,36 @@ import 'package:bruceboard/services/databaseservice.dart';
 const messageDesc = {
   00000: "Message",                   // Desc(General Message) (Response: Optional: Text Response)
 // Requests
-  00001: "Community Add Request",     // Data:{cid: }
-  00002: "Community Remove Request",  // Desc(Request to be Removed from Community) Input(Community) Response(Required: Accept / Reject)
-  00003: "Square Select Request",     // Desc(Request Square) Input(Board, Square), Response(Required: Accept/Reject)
-  00004: "Credit Adjust Request",     // Desc(Request Credits) Input(Community, Amount, Debit/Credit), Response(Required: Accept/Reject)
+  00010: "Member Add Request",     // Data:{cid: }
+  00020: "Member Update Request",     // Desc(Request Credits) Input(Community, Amount, Debit/Credit), Response(Required: Accept/Reject)
+  00030: "Member Remove Request",  // Desc(Request to be Removed from Community) Input(Community) Response(Required: Accept / Reject)
+  00040: "Square Select Request",     // Desc(Request Square) Input(Board, Square), Response(Required: Accept/Reject)
 // Responses
-  10001: "Community Add Response",
-  10002: "Community Remove Response",
-  10003: "Square Request Response",
-  10004: "Credit Adjust Response",
+  10010: "Member Add Accept Response",
+  10011: "Member Add Reject Response",
+  10020: "Member Adjust Accept Response",
+  10021: "Member Adjust Reject Response",
+  10030: "Member Remove Accept Response",
+  10031: "Member Remove Reject Response",
+  10040: "Square Request Response",
 // Notifications
-  20001: "Add Member Notification",                 // Data: {cid: }
-  20002: "Edited Member Notification",
-  20003: "Removed Member Notification",
-  20004: "Remove Credit Notification",
-  20005: "Assigned Square Notification",
-  20006: "Accepted Square Request Notification",
-  20007: "Credit Distribution Notification",
+  20010: "Add Member Notification",                 // Data: {cid: }
+  20020: "Update Member Notification",
+  20030: "Removed Member Notification",
+  20040: "Remove Credit Notification",  // ?? How is this diferent from Update Member Notifiaction?
+  20050: "Assigned Square Notification",
+  20060: "Accepted Square Request Notification",
+  20070: "Credit Distribution Notification",
 // Acknowledgement
-  30001: "Add Member Acknowledgement",                    // Data: {cid: }
-  30002: "Remove Member Acknowledgement",                 // Data: {credits: }
-  30003: "Update Member Record Acknowledgement",          // Data: {credits: }
-  30004: "Community Add Request Accept Acknowledgement",  // Data: {cid: }
-  30005: "Community Add Request Reject Acknowledgement",  // Data: {cid: }
-  30006: "Credit Adjust Acknowledgement, "
+  30010: "Add Member Accept Acknowledgement",                    // Data: {cid: }
+  30011: "Add Member Reject Acknowledgement",                    // Data: {cid: }
+  30020: "Update Member Accept Acknowledgement",                 // Data: {credits: }
+  30021: "Update Member Reject Acknowledgement",                 // Data: {credits: }
+  30030: "Remove Member Accept Acknowledgement",                 // Data: {credits: }
+  30031: "Remove Member Reject Acknowledgement",                 // Data: {credits: }
+  // 30040: "Community Add Request Accept Acknowledgement",  // Data: {cid: }
+  // 30050: "Community Add Request Reject Acknowledgement",  // Data: {cid: }
+  // 30060: "Credit Adjust Acknowledgement, "
 };
 
 enum MessageTypeOption {

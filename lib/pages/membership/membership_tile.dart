@@ -139,7 +139,7 @@ class MembershipTile extends StatelessWidget {
                                       // Player? communityPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: membership.cpid) as Player;
                                       // Community? community = await DatabaseService(FSDocType.community, uid: communityPlayer.uid).fsDoc(docId: membership.cid) as Community;
                                       if (results[2] == 'credit') {
-                                        messageSend(00004, messageType[MessageTypeOption.request]!,
+                                        messageSend(00020, messageType[MessageTypeOption.request]!,
                                             playerFrom: activePlayer,
                                             playerTo: communityPlayer,
                                             description: "Request to add ${results[0]} credits to membership.\n"
@@ -151,7 +151,7 @@ class MembershipTile extends StatelessWidget {
                                               'cid': membership.cid }
                                         );
                                       } else {
-                                        messageSend(00004, messageType[MessageTypeOption.request]!,
+                                        messageSend(00020, messageType[MessageTypeOption.request]!,
                                             playerFrom: activePlayer,
                                             playerTo: communityPlayer,
                                             description: "Request to refund ${results[0]} credits from membership.\n"
@@ -187,7 +187,7 @@ class MembershipTile extends StatelessWidget {
                                         // is the PID of the owner of the community.
                                         await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
                                         // Todo: Review the code below, could be issues if network slow and user quick ... communityPlayer can be null?
-                                        messageSend(00002, messageType[MessageTypeOption.request]!,
+                                        messageSend(00030, messageType[MessageTypeOption.request]!,
                                           playerFrom: activePlayer,
                                           playerTo: communityPlayer,
                                           description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '
@@ -210,7 +210,7 @@ class MembershipTile extends StatelessWidget {
                                         // is the PID of the owner of the community.
                                         await DatabaseService(FSDocType.membership).fsDocUpdate(membership);
                                         // Todo: Review the code below, could be issues if network slow and user quick ... communityPlayer can be null?
-                                        messageSend(00002, messageType[MessageTypeOption.request]!,
+                                        messageSend(00030, messageType[MessageTypeOption.request]!,
                                             playerFrom: activePlayer,
                                             playerTo: communityPlayer,
                                             description: '${activePlayer.fName} ${activePlayer.lName} request to be removed from '

@@ -81,7 +81,7 @@ class _MembershipListState extends State<MembershipList> {
                             log("membership_list: Updating MSID: ${membership.docId ?? -600}", name: '${runtimeType.toString()}:...');
                             // Add MemberOwner to Community Player for current Player
                             // Process Messages
-                            await messageSend(00001, messageType[MessageTypeOption.request]!,
+                            await messageSend(00010, messageType[MessageTypeOption.request]!,
                               playerFrom: activePlayer, playerTo: communityPlayer,
                               description: '${activePlayer.fName} ${activePlayer.lName} requested to be added to your <${community.name}> community',
                               comment: comment,

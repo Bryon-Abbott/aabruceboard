@@ -89,21 +89,22 @@ class MessageTileIncoming extends StatelessWidget {
   Future<void> messageAccept (BuildContext context) async {
     Player playerFrom = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidFrom) as Player;
     Player playerTo = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidTo) as Player;
-    log('message_tile: messageAccept: Type: ${message.messageCode} From: ${playerFrom.fName} To: ${playerTo.fName}');
+    log('Type: ${message.messageCode} From: ${playerFrom.fName} To: ${playerTo.fName}',
+        name: '${runtimeType.toString()}:messageAccept()');
     switch (message.messageCode) {
     // ========================================================================
     // ------------------------------------------------------------------------
     // *** Message Processing
     // *** Comment Message
       case 00000: {   // Comment
-        log("Pressed Message Accept - Comment");
+        log("00000: Pressed Message Accept - Comment", name: '${runtimeType.toString()}:messageAccept()');
       }
       break;
     // ------------------------------------------------------------------------
     // *** Community Add Request Message
-      case 00001: {   // Community Add Request Message
+      case 00010: {   // Community Add Request Message
         Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
-        String? comment = await openDialogMessageComment(context, defaultComment: "Welcom to the community <${community.name}>");
+        String? comment = await openDialogMessageComment(context, defaultComment: "Welcome to the community <${community.name}>");
         if (comment != null) {
           // Add Member to Community
           Member member = Member(data:
@@ -112,37 +113,70 @@ class MessageTileIncoming extends StatelessWidget {
           });
           DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocAdd(member);
           // Send Acceptance note to player
-          messageSend(10001, messageType[MessageTypeOption.acceptance]!,
+          messageSend(10010, messageType[MessageTypeOption.acceptance]!,
               playerFrom: playerTo,
               playerTo: playerFrom,
               description: '${playerTo.fName} ${playerTo.lName} accepted your request to be added to the <${community.name}> community',
               comment: comment,
               data: message.data,
-              // data: {
-              //   'msid': message.data['msid'],
-              //   'cpid': message.data['cpid'],
-              //   'cid': message.data['cid'],
-              //   'pid': message.data['pid'],
-              // }
           );
           messageArchive(message: message, playerFrom: playerFrom);
         } else {
-          log('Case 00001: Cancelled accepting Add to Community.', name: '${runtimeType.toString()}:messageAccept');
+          log('00001: Cancelled accepting Add to Community.', name: '${runtimeType.toString()}:messageAccept');
+        }
+      }
+      break;
+    // ------------------------------------------------------------------------
+    // *** Credits Request Message
+      case 00020: {   // Membership Credit Request Message
+        log('00020:', name: '${runtimeType.toString()}:messageAccept');
+        int credits = message.data['credits'];
+        Member? member = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
+            .fsDoc(docId: message.pidFrom) as Member;
+        log('00020: member: ${member.docId ?? 'No Member'}', name: '${runtimeType.toString()}:messageAccept');
+        //
+        String? comment = await openDialogMessageComment(context, defaultComment: "Credits ($credits) were updated to your membership\n (New Balance: ${member.credits+credits})");
+        // Add Message to Archive
+        if (comment != null) {
+          // Update Credits and save to database.
+          if (message.data['creditDebit'] == 'credit') {
+            member.credits += message.data['credits'] as int;
+          } else {
+            member.credits -= message.data['credits'] as int;
+          }
+          await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocUpdate(member);
+          // Send Message back to Requester
+          Community? community = await DatabaseService(FSDocType.community).fsDoc(docId: message.data['cid']) as Community;
+          String desc = '${playerTo.fName} ${playerTo.lName} accepted your request to add/refund credits '
+              '(Credits:${message.data['credits']} Balance:${member.credits} ) '
+              'to your membership in the <${community.name ?? "No Name"}> community';
+          messageSend(10020, messageType[MessageTypeOption.acceptance]!,
+            playerFrom: playerTo,
+            playerTo: playerFrom,
+            description: '${playerTo.fName} ${playerTo.lName} accepted your request to add/refund credits '
+                '(Credits:${message.data['credits']} Balance:${member.credits} ) '
+                'to your membership in the <${community.name ?? "No Name"}> community',
+            comment: comment,
+            data: message.data,
+          );
+          messageArchive(message: message, playerFrom: playerFrom);
+          // await messageMembershipCreditsAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
+          //     comment: comment, description: desc);
         }
       }
       break;
     // ------------------------------------------------------------------------
     // *** Community Remove Request Message
-      case 00002: {   // Community Remove Request Message
-        log('message_tile: case 00002:');
+      case 00030: {   // Community Remove Request Message
+        log('00030:');
         FirestoreDoc? result = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
             .fsDoc(docId: message.pidFrom);
-        log('message_tile: case 00002: member: ${result?.docId ?? 'No member'}');
+        log('00030: member: ${result?.docId ?? 'No member'}', name: '${runtimeType.toString()}:messageAccept');
         if (result == null) {  // Didn't find the member in the community ... not accepted yet.
           Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
           String? comment = await openDialogMessageComment(context, defaultComment:"You were not registered to our community" );
           if (comment != null ) {
-            messageSend(10002, messageType[MessageTypeOption.acceptance]!,
+            messageSend(10030, messageType[MessageTypeOption.acceptance]!,
               playerFrom: playerTo,
               playerTo: playerFrom,
               description: '${playerTo.fName} ${playerTo.lName} accepted your request to be removed from the <${community.name ?? "No Name"}> community',
@@ -159,7 +193,7 @@ class MessageTileIncoming extends StatelessWidget {
             String? comment = await openDialogMessageComment(context, defaultComment: "Sorry to see you leave our community");
             if (comment != null ) {
               await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocDelete(member);
-              messageSend(10002, messageType[MessageTypeOption.acceptance]!,
+              messageSend(10030, messageType[MessageTypeOption.acceptance]!,
                 playerFrom: playerTo,
                 playerTo: playerFrom,
                 description: '${playerTo.fName} ${playerTo.lName} accepted your request to be removed from the <${community.name}> community',
@@ -180,23 +214,23 @@ class MessageTileIncoming extends StatelessWidget {
       break;
     // ------------------------------------------------------------------------
     // *** Square Request Message
-      case 00003: {
+      case 00040: {
         String? comment = "Good luck ${playerFrom.fName}";
         String desc = "No Message";
         int squareRequested = message.data['squareRequested'];
-        log('Case 00003:', name: '${runtimeType.toString()}:messageAccept');
+        log('00040:', name: '${runtimeType.toString()}:messageAccept');
 
         Game? game = await DatabaseService(FSDocType.game, sidKey: Series.Key(message.data['sid']))
             .fsDoc(docId: message.data['gid']) as Game;
-        log('case 00003: square value: ${game.squareValue}', name: '${runtimeType.toString()}:messageAccept');
+        log('00040: square value: ${game.squareValue}', name: '${runtimeType.toString()}:messageAccept');
 
         Grid? grid = await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key)
             .fsDoc(docId: message.data['gid']) as Grid;
-        log("case 00003: grid player: ${grid.squarePlayer}, '${grid.squareInitials}' ", name: '${runtimeType.toString()}:messageAccept');
+        log("00040: grid player: ${grid.squarePlayer}, '${grid.squareInitials}' ", name: '${runtimeType.toString()}:messageAccept');
 
         Member? member = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
             .fsDoc(docId: message.pidFrom) as Member;
-        log('Case 00003: Credits: ${member.credits}', name: '${runtimeType.toString()}:messageAccept');
+        log('00040: Credits: ${member.credits}', name: '${runtimeType.toString()}:messageAccept');
 
         if (member.credits >= game.squareValue) {  // Member has enough
           if (grid.squarePlayer[squareRequested] == -1) {  // Square is open
@@ -220,10 +254,11 @@ class MessageTileIncoming extends StatelessWidget {
                   description: '${playerTo.fName} ${playerTo.lName} accepted your request for Square $squareRequested from Game <${game.name}>'
               );
             } else {
-              log("Case 00003: Message Accept Cancelled", name: '${runtimeType.toString()}:messageAccept');
+              log("00040: Message Accept Cancelled", name: '${runtimeType.toString()}:messageAccept');
             }
           } else {
-            log("Case 00003: Square $squareRequested is taken. '${grid.squareInitials[squareRequested]}:${grid.squarePlayer[squareRequested]}'", name: '${runtimeType.toString()}:messageAccept');
+            log("00040: Square $squareRequested is taken. '${grid.squareInitials[squareRequested]}:${grid.squarePlayer[squareRequested]}'",
+                name: '${runtimeType.toString()}:messageAccept');
             ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text("Square $squareRequested is taken. '${grid.squareInitials[squareRequested]}:${grid.squarePlayer[squareRequested]}'"),
@@ -231,7 +266,8 @@ class MessageTileIncoming extends StatelessWidget {
             );
           }
         } else {
-          log("Case 00003: Not enough Credits: ${member.credits} for square value ${game.squareValue}", name: '${runtimeType.toString()}:messageAccept');
+          log("00040: Not enough Credits: ${member.credits} for square value ${game.squareValue}",
+              name: '${runtimeType.toString()}:messageAccept');
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text("Not enough Credits: ${member.credits} for square value ${game.squareValue}"),
@@ -240,98 +276,101 @@ class MessageTileIncoming extends StatelessWidget {
         }
       }
       break;
-    // ------------------------------------------------------------------------
-    // *** Credits Request Message
-      case 00004: {   // Membership Credit Request Message
-        log('message_tile: case 00004:');
-        int credits = message.data['credits'];
-        Member? member = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
-            .fsDoc(docId: message.pidFrom) as Member;
-        log('message_tile: case 00004: member: ${member.docId ?? 'No Member'}');
-        //
-        String? comment = await openDialogMessageComment(context, defaultComment: "Credits ($credits) were updated to your membership\n (New Balance: ${member.credits+credits})");
-        // Add Message to Archive
-        if (comment != null) {
-          // Update Credits and save to database.
-          if (message.data['creditDebit'] == 'credit') {
-            member.credits += message.data['credits'] as int;
-          } else {
-            member.credits -= message.data['credits'] as int;
-          }
-          await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocUpdate(member);
-          // Send Message back to Requester
-          Community? community = await DatabaseService(FSDocType.community).fsDoc(docId: message.data['cid']) as Community;
-          String desc = '${playerTo.fName} ${playerTo.lName} accepted your request to add/refund credits '
-              '(Credits:${message.data['credits']} Balance:${member.credits} ) '
-              'to your membership in the <${community.name ?? "No Name"}> community';
-          messageSend(10004, messageType[MessageTypeOption.acceptance]!,
-              playerFrom: playerTo,
-              playerTo: playerFrom,
-              description: '${playerTo.fName} ${playerTo.lName} accepted your request to add/refund credits '
-                  '(Credits:${message.data['credits']} Balance:${member.credits} ) '
-                  'to your membership in the <${community.name ?? "No Name"}> community',
-              comment: comment,
-              data: message.data,
-          );
-          messageArchive(message: message, playerFrom: playerFrom);
-          // await messageMembershipCreditsAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
-          //     comment: comment, description: desc);
-        }
-      }
-      break;
     // ========================================================================
     // Response Messages
     // ------------------------------------------------------------------------
-    // *** Community Add Response Message
-      case 10001: {
-        log('message_tile: Community Add Response from: ${playerFrom.fName} to: ${playerTo.fName}');
-        Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(key: Community.Key(message.data['cid'])) as Community;
-        // Update Community Add Request to Approved / Rejected
-        String? comment;
+    // *** Community Add Response Message - Acceptance
+      case 10010: {
+        log('10010: Community Add Response from: ${playerFrom.fName} to: ${playerTo.fName}',
+            name: '${runtimeType.toString()}:messageAccept');
         if (message.messageType == messageType[MessageTypeOption.acceptance]) {
-          comment = await openDialogMessageComment(context, defaultComment: "Thank you for adding me to the community <${community.name}>");
-        } else {
-          comment = await openDialogMessageComment(context, defaultComment: "Ok for rejecting to add me to the community <${community.name}>");
-        }
+          Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(key: Community.Key(message.data['cid'])) as Community;
+          // Update Community Add Request to Approved / Rejected
+          String? comment = await openDialogMessageComment(context,
+              defaultComment: "Thank you for adding me to the community <${community.name}>");
+          if (comment != null) {
+            // Update membership with Status back to Approved if Removal was rejected
 
-        if (comment != null) {
-          Membership membership = Membership(data: {
-            'docId': message.data['msid'],
-            'cid': message.data['cid'], // Community ID
-            'cpid': message.data['cpid'], // PID of Community
-            'pid': message.data['pid']
-          });
-          // Todo: Should not be updating Membership in Message System.
-          if (message.messageType == messageType[MessageTypeOption.acceptance]) {
-            membership.status = 'Approved';
-            DatabaseService(FSDocType.membership).fsDocUpdate(membership);
-            messageSend(30004, messageType[MessageTypeOption.acknowledgment]!,
+            log('10010: Updating Membership with (${message.data['cpid']}, ${message.data['cid']}) Key: ${Membership.KEY(message.data['cpid'], message.data['cid'])}',
+                name: '${runtimeType.toString()}:messageAccept');
+
+            DatabaseService(FSDocType.membership)
+                .fsDocUpdateField(key: Membership.KEY(message.data['cpid'], message.data['cid']), field: 'status', svalue: 'Approved');
+            messageSend(30010, messageType[MessageTypeOption.acknowledgment]!,
                 playerFrom: playerTo,
                 playerTo: playerFrom,
                 description: '${playerTo.fName} ${playerTo.lName} acknowledged your *acceptance* to add them to <${community.name}> community',
                 comment: comment,
                 data: message.data,
             );
-          } else if (message.messageType == messageType[MessageTypeOption.rejection]) {
+            messageArchive(message: message, playerFrom: playerFrom);
+          }
+        } else {
+          log('10010: Error ... Message Code mismatch : ${playerFrom.fName} to: ${playerTo.fName}',
+              name: '${runtimeType.toString()}:messageAccept');
+        }
+      }
+      break;
+    // ------------------------------------------------------------------------
+    // *** Community Add Response Message - Rejections
+      case 10011: {
+        log('10011: Community Add Response from: ${playerFrom.fName} to: ${playerTo.fName}',
+            name: '${runtimeType.toString()}:messageAccept');
+        Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(key: Community.Key(message.data['cid'])) as Community;
+        // Update Community Add Request to Approved / Rejected
+        if (message.messageType == messageType[MessageTypeOption.rejection]) {
+          String? comment = await openDialogMessageComment(
+              context, defaultComment: "Ok for rejecting to add me to the community <${community.name}>");
+          if (comment != null) {
+            Membership membership = Membership(data: {
+              'docId': message.data['msid'],
+              'cid': message.data['cid'], // Community ID
+              'cpid': message.data['cpid'], // PID of Community
+              'pid': message.data['pid'],
+              'status': 'Rejected'
+            });
             // Update membership with Status back to Approved if Removal was rejected
-            membership.status = 'Rejected';
             DatabaseService(FSDocType.membership).fsDocUpdate(membership);
-            messageSend(30005, messageType[MessageTypeOption.acknowledgment]!,
-                playerFrom: playerTo,
-                playerTo: playerFrom,
-                description: '${playerTo.fName} ${playerTo.lName} acknowledged your *rejection* to add them to <${community.name}> community',
-                comment: comment,
-                data: message.data,
+            messageSend(30011, messageType[MessageTypeOption.acknowledgment]!,
+              playerFrom: playerTo,
+              playerTo: playerFrom,
+              description: '${playerTo.fName} ${playerTo
+                  .lName} acknowledged your *rejection* to add them to <${community.name}> community',
+              comment: comment,
+              data: message.data,
             );
           }
+          messageArchive(message: message, playerFrom: playerFrom);
+        } else {
+          log('10011: Error ... Message Code mismatch : ${playerFrom.fName} to: ${playerTo.fName}',
+              name: '${runtimeType.toString()}:messageAccept');
+        }
+      }
+      break;
+    // ------------------------------------------------------------------------
+    // *** Credit Request Response Message
+      case 10020: {
+        log('10020: Credit Request Accept/Reject Response from: ${playerFrom.fName} to: ${playerTo.fName}',
+            name: "${runtimeType.toString()}:messageAccept()");
+        Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(key: Community.Key(message.data['cid'])) as Community;
+        String? comment = await openDialogMessageComment(context, defaultComment: "Thanks for adjusting my credits");
+        if (comment != null) {
+          messageSend(30020, messageType[MessageTypeOption.acknowledgment]!,
+            playerFrom: playerTo,
+            playerTo: playerFrom,
+            description: '${playerTo.fName} ${playerTo.lName} acknowledged the update of their credits for membership in '
+                ' your community <${community.name ?? "No Name"}>',
+            comment: comment,
+            data: message.data,
+          );
           messageArchive(message: message, playerFrom: playerFrom);
         }
       }
       break;
     // ------------------------------------------------------------------------
     // *** Community Remove Response Message
-      case 10002: {
-        log('message_tile: Community Remove Response from: ${playerFrom.fName} to: ${playerTo.fName}');
+      case 10030: {
+        log('10030: Community Remove Response from: ${playerFrom.fName} to: ${playerTo.fName}', name: '${runtimeType.toString()}:messageAccept');
 
         Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(key: Community.Key(message.data['cid'])) as Community;
         String? comment = await openDialogMessageComment(context, defaultComment: "Ok for accepting/rejecting to remveo me to the community <${community.name}>");
@@ -341,23 +380,23 @@ class MessageTileIncoming extends StatelessWidget {
             DatabaseService(FSDocType.membership)
                 .fsDocUpdateField(key: Membership.KEY(message.data['cpid'], message.data['cid']), field: 'status', svalue: 'Removed');
             // DatabaseService(FSDocType.membership).fsDocDelete(membership);
-            messageSend(30002, messageType[MessageTypeOption.acknowledgment]!,
-                playerFrom: playerTo,
-                playerTo: playerFrom,
-                description: '${playerTo.fName} ${playerTo.lName} acknowledged your *acceptance* to remove them to <${community.name}> community',
-                comment: comment,
-                data: message.data,
+            messageSend(30030, messageType[MessageTypeOption.acknowledgment]!,
+              playerFrom: playerTo,
+              playerTo: playerFrom,
+              description: '${playerTo.fName} ${playerTo.lName} acknowledged your *acceptance* to remove them to <${community.name}> community',
+              comment: comment,
+              data: message.data,
             );
           } else if (message.messageType == messageType[MessageTypeOption.rejection]) {
             // Update membership with Status back to Approved if Removal was rejected
             DatabaseService(FSDocType.membership)
                 .fsDocUpdateField(key: Membership.KEY(message.data['cpid'], message.data['cid']), field: 'status', svalue: 'Approved');
-            messageSend(30002, messageType[MessageTypeOption.acknowledgment]!,
-                playerFrom: playerTo,
-                playerTo: playerFrom,
-                description: '${playerTo.fName} ${playerTo.lName} acknowledged your *rejection* to remove them to <${community.name}> community',
-                comment: comment,
-                data: message.data,
+            messageSend(30030, messageType[MessageTypeOption.acknowledgment]!,
+              playerFrom: playerTo,
+              playerTo: playerFrom,
+              description: '${playerTo.fName} ${playerTo.lName} acknowledged your *rejection* to remove them to <${community.name}> community',
+              comment: comment,
+              data: message.data,
             );
           }
           messageArchive(message: message, playerFrom: playerFrom);
@@ -365,35 +404,47 @@ class MessageTileIncoming extends StatelessWidget {
       }
       break;
     // ------------------------------------------------------------------------
-    // *** Square Request Response Message
-      case 10003: {
-        log('10003: Square Request Accept Response from: ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
-        messageArchive(message: message, playerFrom: playerFrom);
-      }
-      break;
-    // ------------------------------------------------------------------------
-    // *** Square Request Response Message
-      case 10004: {
-        log('10004: Credit Request Accept/Reject Response from: ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
-        Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(key: Community.Key(message.data['cid'])) as Community;
-        String? comment = await openDialogMessageComment(context, defaultComment: "Thanks for adjusting my credits");
-        if (comment != null) {
-          messageSend(30006, messageType[MessageTypeOption.acknowledgment]!,
+    // *** Community Remove Response Message
+      case 10031: {
+        log('10031: Community Remove Response from: ${playerFrom.fName} to: ${playerTo.fName}', name: '${runtimeType.toString()}:messageAccept');
+
+        if (message.messageType == messageType[MessageTypeOption.rejection]) {
+          Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(key: Community.Key(message.data['cid'])) as Community;
+          String? comment = await openDialogMessageComment(context, defaultComment: "Ok for accepting/rejecting to remveo me to the community <${community.name}>");
+          if (comment != null) {
+            // Update membership with Status back to Approved if Removal was rejected
+            DatabaseService(FSDocType.membership)
+                .fsDocUpdateField(key: Membership.KEY(message.data['cpid'], message.data['cid']), field: 'status', svalue: 'Approved');
+            messageSend(30031, messageType[MessageTypeOption.acknowledgment]!,
               playerFrom: playerTo,
               playerTo: playerFrom,
-              description: '${playerTo.fName} ${playerTo.lName} acknowledged the update of their credits for membership in '
-                  ' your community <${community.name ?? "No Name"}>',
+              description: '${playerTo.fName} ${playerTo.lName} acknowledged your *rejection* to remove them to <${community.name}> community',
               comment: comment,
               data: message.data,
-          );
+            );
+          }
           messageArchive(message: message, playerFrom: playerFrom);
+        } else {
+          log('10031: Error ... Message Code mismatch : ${playerFrom.fName} to: ${playerTo.fName}',
+              name: '${runtimeType.toString()}:messageAccept');
         }
       }
       break;
     // ------------------------------------------------------------------------
+    // *** Square Request Response Message
+      case 10003: {
+        log('10003: Square Request Accept Response from: ${playerFrom.fName} to: ${playerTo.fName}',
+            name: "${runtimeType.toString()}:messageAccept()");
+        messageArchive(message: message, playerFrom: playerFrom);
+      }
+      break;
+    // ========================================================================
+    // Notification Messages
+    // ------------------------------------------------------------------------
     // *** Add Member to community Notification Message
-      case 20001: {
-        log('message_tile: Add Member to Community Notification from: ${playerFrom.fName} to: ${playerTo.fName}');
+      case 20010: {
+        log('20010: Add Member to Community Notification from: ${playerFrom.fName} to: ${playerTo.fName}',
+            name: '${runtimeType.toString()}:messageAccept');
         // Get Achnowledgement comment
         String? comment = await openDialogMessageComment(context, defaultComment: "Thank You");
         // Add Message to Archive
@@ -413,7 +464,7 @@ class MessageTileIncoming extends StatelessWidget {
               'to your community <${community.name ?? "No Name"}>';
           // await messageMembershipCreditsAcceptResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
           //     comment: comment, description: desc);
-          messageSend(30001, messageType[MessageTypeOption.acknowledgment]!,
+          messageSend(30010, messageType[MessageTypeOption.acknowledgment]!,
             playerFrom: playerTo,
             playerTo: playerFrom,
             description: desc,
@@ -427,8 +478,9 @@ class MessageTileIncoming extends StatelessWidget {
       break;
     // ------------------------------------------------------------------------
     // *** Update Member Record Notification Message
-      case 20002: {
-        log('message_tile: Update Member Notification from: ${playerFrom.fName} to: ${playerTo.fName}');
+      case 20020: {
+        log('20020: Update Member Notification from: ${playerFrom.fName} to: ${playerTo.fName}',
+            name: '${runtimeType.toString()}:messageAccept');
         String? comment = await openDialogMessageComment(context, defaultComment: "Ok, Thank You");
         // Add Message to Archive
         if (comment != null) {
@@ -436,7 +488,7 @@ class MessageTileIncoming extends StatelessWidget {
           Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(docId: message.data['cid']) as Community;
           String desc = '${playerTo.fName} ${playerTo.lName} acknowledged your update member record notification '
               'for community <${community.name ?? "No Name"}>';
-          messageSend(30003, messageType[MessageTypeOption.acknowledgment]!,
+          messageSend(30020, messageType[MessageTypeOption.acknowledgment]!,
             playerFrom: playerTo,
             playerTo: playerFrom,
             description: desc,
@@ -449,8 +501,9 @@ class MessageTileIncoming extends StatelessWidget {
       break;
     // ------------------------------------------------------------------------
     // *** Member Removed Notification Message
-      case 20003: {
-        log('message_tile: Remove Member Notification from: ${playerFrom.fName} to: ${playerTo.fName}');
+      case 20030: {
+        log('20030: message_tile: Remove Member Notification from: ${playerFrom.fName} to: ${playerTo.fName}',
+            name: '${runtimeType.toString()}:messageAccept');
         String? comment = await openDialogMessageComment(context, defaultComment: "Ok, Thank You");
         // Add Message to Archive
         if (comment != null) {
@@ -467,7 +520,7 @@ class MessageTileIncoming extends StatelessWidget {
           Community? community = await DatabaseService(FSDocType.community, uid: playerFrom.uid).fsDoc(docId: message.data['cid']) as Community;
           String desc = '${playerTo.fName} ${playerTo.lName} acknowledged your notification to remove them '
               'to your community <${community.name ?? "No Name"}>';
-          messageSend(30002, messageType[MessageTypeOption.acknowledgment]!,
+          messageSend(30003, messageType[MessageTypeOption.acknowledgment]!,
             playerFrom: playerTo,
             playerTo: playerFrom,
             description: desc,
@@ -481,8 +534,9 @@ class MessageTileIncoming extends StatelessWidget {
     // ------------------------------------------------------------------------
     // *** Add Credits Notification Message
     // 1. No action - Archive Message
-      case 20004: {
-        log('message_tile: Remove Credit Request Notification from: ${playerFrom.fName} to: ${playerTo.fName}');
+      case 20040: {
+        log('20040: Remove Credit Request Notification from: ${playerFrom.fName} to: ${playerTo.fName}',
+            name: '${runtimeType.toString()}:messageAccept');
         messageArchive(message: message, playerFrom: playerFrom);
       }
       break;
@@ -490,48 +544,59 @@ class MessageTileIncoming extends StatelessWidget {
     // *** Add Credits Notification Message
     // 1. No action - Archive Message
       case 20005: {
-        log('Square assiged from : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+        log('20005: Square assiged from : ${playerFrom.fName} to: ${playerTo.fName}',
+            name: "${runtimeType.toString()}:messageAccept()");
         messageArchive(message: message, playerFrom: playerFrom);
       }
       break;
     // ------------------------------------------------------------------------
     // *** Add Member Notification Acknowledgement
-      case 30001: {
-        log('Add Member Notification Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+      case 30010:
+      case 30011:
+      {
+        log('Add Member Notification (accept/reject) Acknowledgement : Code: ${message.messageCode} ${playerFrom.fName} to: ${playerTo.fName}',
+            name: "${runtimeType.toString()}:messageAccept()");
         messageArchive(message: message, playerFrom: playerFrom);
       }
       break;
     // ------------------------------------------------------------------------
     // *** Remove Member Notification Acknowledgement
-      case 30002: {
-        log('Remove Member Notification Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+      case 30020: {
+        log('Remove Member Notification Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}',
+            name: "${runtimeType.toString()}:messageAccept()");
         messageArchive(message: message, playerFrom: playerFrom);
       }
       break;
     // ------------------------------------------------------------------------
     // *** Edit Member Notification Acknowledgement
-      case 30003: {
-        log('Edit Member Notification Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+      case 30030:
+      case 30031:
+      {
+        log('Edit Member Notification (accept/reject) Acknowledgement : Code: ${message.messageCode} ${playerFrom.fName} to: ${playerTo.fName}',
+            name: "${runtimeType.toString()}:messageAccept()");
         messageArchive(message: message, playerFrom: playerFrom);
       }
       break;
     // ------------------------------------------------------------------------
     // *** Edit Member Notification Acknowledgement
-      case 30004: {
-        log('Add to Community *accept* Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+      case 30040: {
+        log('Add to Community *accept* Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}',
+            name: "${runtimeType.toString()}:messageAccept()");
         messageArchive(message: message, playerFrom: playerFrom);
       }
       break;
     // ------------------------------------------------------------------------
     // *** Edit Member Notification Acknowledgement
-      case 30005: {
-        log('Add to Community *reject* Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+      case 30050: {
+        log('Add to Community *reject* Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}',
+            name: "${runtimeType.toString()}:messageAccept()");
         messageArchive(message: message, playerFrom: playerFrom);
       }
     // ------------------------------------------------------------------------
     // *** Edit Member Credit adjust Notification Acknowledgement
-      case 30006: {
-        log('Edit Membership Credit adjust Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}', name: "${runtimeType.toString()}:messageAccept()");
+      case 30060: {
+        log('Edit Membership Credit adjust Acknowledgement : ${playerFrom.fName} to: ${playerTo.fName}',
+            name: "${runtimeType.toString()}:messageAccept()");
         messageArchive(message: message, playerFrom: playerFrom);
       }
       break;
@@ -545,25 +610,25 @@ class MessageTileIncoming extends StatelessWidget {
   // Switch to run when Player selects "REJECT" on card
   // ==========================================================================
   void messageReject (BuildContext context) async {
-    log('message_tile: reject');
+    log('Reject', name: '${runtimeType.toString()}:messageReject()');
     Player playerFrom = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidFrom) as Player;
     Player playerTo = await DatabaseService(FSDocType.player).fsDoc(docId: message.pidTo) as Player;
     switch (message.messageCode) {
     // ========================================================================
     // ------------------------------------------------------------------------
       case 00000: {   // Comment
-        log("Pressed Message Reject - Comment");
+        log("Pressed Message Reject - Comment", name: '${runtimeType.toString()}:messageReject()');
       }
       break;
     // ------------------------------------------------------------------------
     // *** Community Add Reject Response Message
-      case 00001: {   // Community Add Request Message
-        log("Pressed Message Reject - Community Add");
+      case 00010: {   // Community Add Request Message
+        log("00010: Community Add", name: '${runtimeType.toString()}:messageReject()');
         Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
         // Add Message to Archive
         String? comment = await openDialogMessageComment(context, defaultComment:  "Sorry, your request has been rejected");
         if (comment != null) {
-          messageSend(10001, messageType[MessageTypeOption.rejection]!,
+          messageSend(10011, messageType[MessageTypeOption.rejection]!,
               playerFrom: playerTo,
               playerTo: playerFrom,
               description: '${playerTo.fName} ${playerTo.lName} rejected your request to be added to the <${community.name}> community',
@@ -578,15 +643,35 @@ class MessageTileIncoming extends StatelessWidget {
         }
       break;
     // ------------------------------------------------------------------------
+    // *** Credit Request Reject Response Message
+      case 00020: {
+        log("00020: Credit Request", name: '${runtimeType.toString()}:messageReject()');
+        Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
+        // Add Message to Archive
+        String? comment = await openDialogMessageComment(context, defaultComment: "Sorry your request has been rejected");
+        if ( comment != null ) {
+          messageSend(10021, messageType[MessageTypeOption.rejection]!,
+            playerFrom: playerTo,
+            playerTo: playerFrom,
+            description: '${playerTo.fName} ${playerTo.lName} rejected your request to adjust your credits for the <${community.name}> community',
+            comment: comment,
+            data: message.data,
+          );
+          // await messageMembershipCreditsRejectResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
+          //     comment: comment, description: desc);
+        }
+      }
+      break;
+    // ------------------------------------------------------------------------
     // *** Community Remove Reject Response Message
-      case 00002: {   // Community Remove Request Message
-        log("Pressed Message Reject - Community Remove");
+      case 00030: {   // Community Remove Request Message
+        log("00030: Community Remove", name: '${runtimeType.toString()}:messageReject()');
         Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
         // Add Message to Archive
         String? comment = await openDialogMessageComment(context, defaultComment: "Sorry your request has been rejected");
         if (comment  != null) {
           String desc = '${playerTo.fName} ${playerTo.lName} rejected your request to be removed from the <${community.name}> community';
-          messageSend(10002, messageType[MessageTypeOption.rejection]!,
+          messageSend(10031, messageType[MessageTypeOption.rejection]!,
             playerFrom: playerTo,
             playerTo: playerFrom,
             description: '${playerTo.fName} ${playerTo.lName} *rejected* your request to be removed from the <${community.name ?? "No Name"}> community',
@@ -603,13 +688,13 @@ class MessageTileIncoming extends StatelessWidget {
       break;
     // ------------------------------------------------------------------------
     // *** Credit Request Reject Response Message
-      case 00003: {
+      case 00040: {
         int squareRequested = message.data['squareRequested'];
-        log('Case 00003:', name: '${runtimeType.toString()}:messageAccept');
+        log('00040:', name: '${runtimeType.toString()}:messageReject()');
 
         Game? game = await DatabaseService(FSDocType.game, sidKey: Series.Key(message.data['sid']))
             .fsDoc(docId: message.data['gid']) as Game;
-        log('case 00003: square value: ${game.squareValue}', name: '${runtimeType.toString()}:messageAccept');
+        log('000040: square value: ${game.squareValue}', name: '${runtimeType.toString()}:messageReject()');
 
         String? comment = "Sorry, rejected ${playerFrom.fName}";
         String desc = "No Message";
@@ -622,27 +707,7 @@ class MessageTileIncoming extends StatelessWidget {
               description: '${playerTo.fName} ${playerTo.lName} rejected your request for Square $squareRequested from Game <${game.name}>'
           );
         } else {
-          log("Case 00003: Message Reject Cancelled", name: '${runtimeType.toString()}:messageAccept');
-        }
-      }
-      break;
-    // ------------------------------------------------------------------------
-    // *** Credit Request Reject Response Message
-      case 00004: {
-        log("Pressed Message Reject - Credit Request");
-        Community? community = await DatabaseService(FSDocType.community).fsDoc(key: Community.Key(message.data['cid'])) as Community;
-        // Add Message to Archive
-        String? comment = await openDialogMessageComment(context, defaultComment: "Sorry your request has been rejected");
-        if ( comment != null ) {
-          messageSend(10004, messageType[MessageTypeOption.rejection]!,
-            playerFrom: playerTo,
-            playerTo: playerFrom,
-            description: '${playerTo.fName} ${playerTo.lName} rejected your request to adjust your credits for the <${community.name}> community',
-            comment: comment,
-            data: message.data,
-          );
-          // await messageMembershipCreditsRejectResponse(message: message, playerFrom: playerFrom, playerTo: playerTo,
-          //     comment: comment, description: desc);
+          log("00041: Message Reject Cancelled", name: '${runtimeType.toString()}:messageReject()');
         }
       }
       break;
@@ -650,8 +715,8 @@ class MessageTileIncoming extends StatelessWidget {
     // Todo: Clean up these invalid responses (disable / remove reject icon)
     // ------------------------------------------------------------------------
       case 10001: {   // Community Add Request Accept Respnose Message
-        log('message_tile: Pressed Message Reject - Community Add Accept Response');
-        log("message_tile: *** Cant Reject a Response message");
+        log('10001: Pressed Message Reject - Community Add Accept Response', name: '${runtimeType.toString()}:messageReject()');
+        log("10001: *** Cant Reject a Response message", name: '${runtimeType.toString()}:messageReject()');
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Can't Reject a Response message, accept"),
@@ -661,8 +726,8 @@ class MessageTileIncoming extends StatelessWidget {
       break;
     // ------------------------------------------------------------------------
       case 10002: {   // Community Remove Request Message
-        log('message_tile: Pressed Message Reject - Community Remove Reject Response');
-        log("message_tile: *** Cant Reject a Response message");
+        log('10002: Pressed Message Reject - Community Remove Reject Response', name: '${runtimeType.toString()}:messageReject()');
+        log("10002: *** Cant Reject a Response message", name: '${runtimeType.toString()}:messageReject()');
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Can't Reject a Response message, accept"),
@@ -672,8 +737,8 @@ class MessageTileIncoming extends StatelessWidget {
       break;
     // ------------------------------------------------------------------------
       case 20001: {   // Community Remove Request Message
-        log('message_tile: Pressed Message Reject - Add Credits Notification');
-        log("message_tile: *** Cant Reject a Notification message");
+        log('20001: Pressed Message Reject - Add Credits Notification', name: '${runtimeType.toString()}:messageReject()');
+        log("20001: *** Cant Reject a Notification message", name: '${runtimeType.toString()}:messageReject()');
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Can't Reject a Response message, accept"),
@@ -683,8 +748,8 @@ class MessageTileIncoming extends StatelessWidget {
       break;
     // ------------------------------------------------------------------------
       case 20002: {   // Community Remove Request Message
-        log('message_tile: Pressed Message Reject - Remove Membership Notification');
-        log("message_tile: *** Cant Reject a Notification message");
+        log('20002: Pressed Message Reject - Remove Membership Notification', name: '${runtimeType.toString()}:messageReject()');
+        log("20002: *** Cant Reject a Notification message", name: '${runtimeType.toString()}:messageReject()');
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Can't Reject a Response message, accept"),
@@ -694,8 +759,8 @@ class MessageTileIncoming extends StatelessWidget {
       break;
     // ------------------------------------------------------------------------
       case 20004: {   // Community Remove Request Message
-        log('message_tile: Pressed Message Reject - Credit Request Notification');
-        log("message_tile: *** Cant Reject a Notification message");
+        log('20004: Pressed Message Reject - Credit Request Notification', name: '${runtimeType.toString()}:messageReject()');
+        log("20004: *** Cant Reject a Notification message", name: '${runtimeType.toString()}:messageReject()');
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Can't Reject a Response message, accept"),
@@ -704,7 +769,7 @@ class MessageTileIncoming extends StatelessWidget {
       }
       break;
       default:
-        log('message_tile: Error ... invalid Message Type ${message.messageCode}');
+        log('Default: Error ... invalid Message Type ${message.messageCode}', name: '${runtimeType.toString()}:messageReject()');
     }
   }
 }

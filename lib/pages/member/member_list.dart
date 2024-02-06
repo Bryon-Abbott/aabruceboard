@@ -78,7 +78,7 @@ class _MemberListState extends State<MemberList> {
                             key: Member.KEY(playerSelected!.pid));
                         if (existingMember == null ) {
                           // Add Member to Community
-                          String? comment = await openDialogMessageComment(context, defaultComment: "Welcome to the Team");
+                          String? comment = await openDialogMessageComment(context, defaultComment: "Inviting you to the Team");
                           if (comment != null) {
                             Member member = Member(data:
                             { 'docId': playerSelected!.pid,   // Set the memberID to the pid of the selected player
@@ -88,7 +88,7 @@ class _MemberListState extends State<MemberList> {
                             // Add Message to Archive
                             String desc = '${player!.fName} ${player!.lName} added you to the <${community.name}> community';
                             // 20001: "Add Member Notification",
-                            await messageSend( 20001, messageType[MessageTypeOption.notification]!,
+                            await messageSend( 20010, messageType[MessageTypeOption.notification]!,
                                 playerFrom: player!, playerTo: playerSelected!,
                                 data: {'cid': community.docId},
                                 comment: comment, description: desc);
