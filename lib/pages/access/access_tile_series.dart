@@ -61,7 +61,7 @@ class AccessTileSeries extends StatelessWidget {
             );
           } else {
             // Drop any series that are not "1:Active" or "2:Complete"
-            return SizedBox();
+            return const SizedBox();
             //return Text("Not Active ...");
           }
         } else {

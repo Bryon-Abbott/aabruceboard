@@ -71,7 +71,7 @@ class _GameMaintainState extends State<GameMaintain> {
     } else if (series.type == "CFL") {
       leagueTeamData = cflTeamData;
     } else if (series.type == "Other") {
-      leagueTeamData = Map<String, TeamData>();
+      leagueTeamData = <String, TeamData>{};
     }
 
     gameNameController = TextEditingController();
@@ -161,7 +161,7 @@ class _GameMaintainState extends State<GameMaintain> {
                         onSaved: (String? value) {
                           //debugPrint('Email is: $value');
                           currentTeamOne = value ?? '';
-                          gameNameController.text = "${currentTeamOne} vs ${currentTeamTwo}";
+                          gameNameController.text = "$currentTeamOne vs $currentTeamTwo";
                         },
                       )
                   : PopupMenuButtonTeamData(
@@ -190,7 +190,7 @@ class _GameMaintainState extends State<GameMaintain> {
                         onSaved: (String? value) {
                           //debugPrint('Email is: $value');
                           currentTeamTwo = value ?? '';
-                          gameNameController.text = "${currentTeamOne} vs ${currentTeamTwo}";
+                          gameNameController.text = "$currentTeamOne vs $currentTeamTwo";
                         },
                       )
                     : PopupMenuButtonTeamData(
@@ -278,7 +278,6 @@ class _GameMaintainState extends State<GameMaintain> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                            child: const Text("Delete"),
                             onPressed: (game == null)
                               ? null
                               : () async {
@@ -319,6 +318,7 @@ class _GameMaintainState extends State<GameMaintain> {
                                 log('Game Delete Action Cancelled', name: '${runtimeType.toString()}:build()');
                               }
                             },
+                            child: const Text("Delete"),
                         ),
                       ),
                       Padding(

@@ -67,7 +67,7 @@ class _PlayerSelectState extends State<PlayerSelect> {
                       SizedBox(
                         width: 200,
                         child: TextField(
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'First Name',
                           ),
@@ -89,7 +89,7 @@ class _PlayerSelectState extends State<PlayerSelect> {
                       SizedBox(
                         width: 200,
                         child: TextField(
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Last Name',
                           ),
@@ -98,9 +98,9 @@ class _PlayerSelectState extends State<PlayerSelect> {
                           },
                         ),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       IconButton(
-                        icon: Icon(Icons.filter_alt),
+                        icon: const Icon(Icons.filter_alt),
                         onPressed: () {
                           setState(() {
 

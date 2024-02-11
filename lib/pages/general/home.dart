@@ -265,7 +265,7 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 8,),
+                              const SizedBox(height: 8,),
                               Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(color: Colors.green[800]!),

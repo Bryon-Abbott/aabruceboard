@@ -96,7 +96,7 @@ class _GameBoardState extends State<GameBoard> {
     } else if (series.type == "CFL") {
       leagueTeamData = cflTeamData;
     } else if (series.type == "Other") {
-      leagueTeamData = Map<String, TeamData>();
+      leagueTeamData = <String, TeamData>{};
     }
   }
 
@@ -247,11 +247,11 @@ class _GameBoardState extends State<GameBoard> {
                                     ),
                                       child: Row(
                                           children: [
-                                            SizedBox(width: 10),
+                                            const SizedBox(width: 10),
                                             (leagueTeamData[game.teamOne] != null)
                                                 ? Image(image: AssetImage(leagueTeamData[game.teamOne]!.teamLogo.path))
-                                                : Image(image: AssetImage('assets/ball.png'), width: 30,),
-                                            SizedBox(width: 10),
+                                                : const Image(image: AssetImage('assets/ball.png'), width: 30,),
+                                            const SizedBox(width: 10),
                                             Text(leagueTeamData[game.teamOne]?.teamName ?? game.teamOne), //Text(game.teamTwo),
                                           ]
                                       )
@@ -287,13 +287,13 @@ class _GameBoardState extends State<GameBoard> {
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
                                           Text(leagueTeamData[game.teamTwo]?.teamName ?? game.teamTwo), //Text(game.teamTwo),
-                                          SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                                           (leagueTeamData[game.teamTwo] != null)
                                               ? RotatedBox(
                                                   quarterTurns: 1,
                                                   child: Image(image: AssetImage(leagueTeamData[game.teamTwo]!.teamLogo.path)))
-                                              : Image(image: AssetImage('assets/ball.png'), width: 30,),
-                                          SizedBox(width: 10),
+                                              : const Image(image: AssetImage('assets/ball.png'), width: 30,),
+                                          const SizedBox(width: 10),
                                         ]
                                       )
                                     ),
