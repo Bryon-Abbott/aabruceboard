@@ -151,6 +151,10 @@ Release 11
 + Fixes from previous releases
 + Disabled Game Edit on Game List for non-owner
 + Added Status to Game (0=Prep, 1=Active, 2=Compelte, 3=Archived)
++ Filter out Games that are not Active/Complete for non-owners
++ Added Status to Series 0=Prep, 1=Active, 2=Compelte, 3=Archived)
++ Filter out Series that are not Active/Complete for non-owners
+
 
 ## 1.0.08+10
 Release 10

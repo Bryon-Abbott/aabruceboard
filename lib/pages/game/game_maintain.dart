@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:bruceboard/menus/popupmenubutton_status.dart';
 import 'package:bruceboard/menus/popupmenubutton_teamdata.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class _GameMaintainState extends State<GameMaintain> {
   String currentTeamOne = "";
   String currentTeamTwo = "";
   int currentSquareValue = 0;
+  int currentStatus = 0;
 
   @override
   void initState() {
@@ -58,6 +60,7 @@ class _GameMaintainState extends State<GameMaintain> {
       currentTeamOne = game?.teamOne ?? "Select-Away-Team";
       currentTeamTwo = game?.teamTwo ?? "Select-Home-Team";
       currentSquareValue = game?.squareValue ?? 0;
+      currentStatus = game?.status ?? 0;
 //    }
 
     // Set League Data
@@ -74,7 +77,6 @@ class _GameMaintainState extends State<GameMaintain> {
     gameNameController = TextEditingController();
     gameNameController.text = "${leagueTeamData[currentTeamOne]?.teamName ?? currentTeamOne} "
         "vs ${leagueTeamData[currentTeamTwo]?.teamName ?? currentTeamTwo}";
-
   }
 
   @override
@@ -203,6 +205,17 @@ class _GameMaintainState extends State<GameMaintain> {
                           });
                         },
                       ),
+                  PopupMenuButtonStatus(
+                    initialValue: StatusValues.values[currentStatus],
+                    // initialValue: StatusValues.Prepare,
+                    onSelected: (StatusValues selectValue) {
+                      log("Got Selected Value ${selectValue.index} ${selectValue.name}",name: '${runtimeType.toString()}:build()' );
+                      setState(() {
+                        currentStatus = selectValue.index;
+                      });
+                    },
+                  ),
+
                   Text("Series ID: ${series.key} " "Game ID: ${game?.key ?? 'Not Set '} " "Game ID: ${activePlayer.docId}"),
                   // Text("Game ID: ${game?.key ?? 'No Set'}"),
                   Row(
@@ -223,6 +236,7 @@ class _GameMaintainState extends State<GameMaintain> {
                                   'teamOne': currentTeamOne,
                                   'teamTwo': currentTeamTwo,
                                   'squareValue': currentSquareValue,
+                                  'status': currentStatus,
                                 };
                                 game = Game(data: data);
                                 await DatabaseService(FSDocType.game, sidKey: series.key).fsDocAdd(game!);
@@ -245,10 +259,12 @@ class _GameMaintainState extends State<GameMaintain> {
                                 // Update existing game
                                 log('Update Game ${game!.key}', name: '${runtimeType.toString()}:builid()');
                                 Map<String, dynamic> data =
-                                { 'name': currentGameName,
+                                { 'pid': activePlayer.pid,
+                                  'name': currentGameName,
                                   'teamOne': currentTeamOne,
                                   'teamTwo': currentTeamTwo,
                                   'squareValue': currentSquareValue,
+                                  'status': currentStatus,
                                 };
                                 game!.update(data: data);
                                 await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocUpdate(game!);

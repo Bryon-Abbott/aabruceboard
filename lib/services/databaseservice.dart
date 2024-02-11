@@ -386,7 +386,6 @@ class DatabaseService {
         streamQuerySnapshot = db.collectionGroup("Access")
             .where('pid', isEqualTo: pid)
             .where('cid', isEqualTo: cid)
-//            .where('status', whereIn: [1,2])
             .snapshots();
         break;
       case "Incoming" :

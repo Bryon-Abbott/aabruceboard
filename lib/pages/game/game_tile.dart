@@ -21,33 +21,38 @@ class GameTile extends StatelessWidget {
   Widget build(BuildContext context) {
 
     Player activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: Card(
-        margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
-        child: ListTile(
-          onTap: () async {
-            log("Game Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
-            await Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),
-            );
-          },
-          leading: const Icon(Icons.sports_football_outlined),
-          title: Text('Game: ${game.name}'),
-          subtitle: Text(' SID: ${series.key} GID: ${game.key}'),
-          trailing: IconButton(
-            onPressed: (game.pid == activePlayer.pid)
-              ? () async {
-                  await Navigator.of(context).push(
+    // Exclude games for non-owners where game status is Prepare or Archived.
+    if ((activePlayer.pid == game.pid) || (game.status == 1) || (game.status == 2) ){
+      return Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Card(
+          margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
+          child: ListTile(
+            onTap: () async {
+              log("Game Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
+              await Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),
+              );
+            },
+            leading: const Icon(Icons.sports_football_outlined),
+            title: Text('Game: ${game.name}'),
+            subtitle: Text(' SID: ${series.key} GID: ${game.key} Status: ${game.status}'),
+            trailing: IconButton(
+              onPressed: (game.pid == activePlayer.pid)
+                  ? () async {
+                await Navigator.of(context).push(
                     MaterialPageRoute(builder: (context) => GameMaintain(series: series, game: game)));
-                  callback();
-                }
-              : null,
-            icon: const Icon(Icons.edit),
+                callback();
+              }
+                  : null,
+              icon: const Icon(Icons.edit),
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } else {
+      return SizedBox();
+    }
+
   }
 }

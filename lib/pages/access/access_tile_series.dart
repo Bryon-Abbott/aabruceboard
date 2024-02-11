@@ -30,34 +30,40 @@ class AccessTileSeries extends StatelessWidget {
       builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot) {
         if (snapshot.hasData) {
           series = snapshot.data as Series;
-          return Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: Card(
-              margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
-              child: ListTile(
-                leading: const Icon(Icons.list_alt_outlined),
-                onTap: () {
-                  log("Series Tapped ... ${series?.name ?? '...'} ", name: '${runtimeType.toString()}:...');
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => GameList( series: series! )
-                    ),
-                  );
-                },
-                title: Text('Name: ${series?.name ?? '...'}'),
-                subtitle: Text(
-                    'Series: ${Player.Key(access.pid)}:${Community.Key(access.cid)}:${Series.Key(access.sid)} (${series?.noGames ?? '..'}) Type: ${series?.type ?? "Unknown"}'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.question_mark_outlined),
-                  onPressed: () {
-                    log('Trailing Icon Pressed.', name: '${runtimeType.toString()}:? Pressed');
-                    //   Navigator.of(context).push(
-                    //       MaterialPageRoute(builder: (context) => SeriesMaintain(series: series)));
+          if ( (1 <= series!.status) && (series!.status <= 2) ) {
+            return Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: Card(
+                margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
+                child: ListTile(
+                  leading: const Icon(Icons.list_alt_outlined),
+                  onTap: () {
+                    log("Series Tapped ... ${series?.name ?? '...'} ", name: '${runtimeType.toString()}:...');
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                          builder: (context) => GameList( series: series! )
+                      ),
+                    );
                   },
+                  title: Text('Name: ${series?.name ?? '...'}'),
+                  subtitle: Text(
+                      'Series: ${Player.Key(access.pid)}:${Community.Key(access.cid)}:${Series.Key(access.sid)} (${series?.noGames ?? '..'}) Type: ${series?.type ?? "Unknown"} Status:${series?.status ?? "??"} '),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.question_mark_outlined),
+                    onPressed: () {
+                      log('Trailing Icon Pressed.', name: '${runtimeType.toString()}:? Pressed');
+                      //   Navigator.of(context).push(
+                      //       MaterialPageRoute(builder: (context) => SeriesMaintain(series: series)));
+                    },
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+          } else {
+            // Drop any series that are not "1:Active" or "2:Complete"
+            return SizedBox();
+            //return Text("Not Active ...");
+          }
         } else {
           log('series_access_tile: AccessPlayer Snapshot has no data ... ', name: '${runtimeType.toString()}:...');
           return const Loading();
