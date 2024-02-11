@@ -161,39 +161,37 @@ class _HomeState extends State<Home> {
                 color: Theme.of(context).colorScheme.background,
                 child: SingleChildScrollView(
                   child: Column(children: <Widget>[
-                    const SizedBox(
-                      height: 80,
-                    ),
-                    Text(
-                      'Welcome',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.displayLarge,
-                    ),
+                    const SizedBox(height: 20,),
+                    // Text(
+                    //   'Welcome',
+                    //   textAlign: TextAlign.center,
+                    //   style: Theme.of(context).textTheme.displayLarge,
+                    // ),
                     Text(
                       'BruceBoard Squares',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.displayLarge,
                     ),
                     Text(
-                      'Football Pool App',
+                      'a Football Pool App',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    const SizedBox(height: 50.0),
+                    const SizedBox(height: 20.0),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: SizedBox(
-                            height: 300,
-                            width: 150,
-                            child: Image(
-                              image: AssetImage(
-                                  'assets/AdobeStock_55757786-vert.jpeg'),
-                            ),
-                          ),
-                        ),
+                        // const Padding(
+                        //   padding: EdgeInsets.all(8.0),
+                        //   child: SizedBox(
+                        //     height: 300,
+                        //     width: 150,
+                        //     child: Image(
+                        //       image: AssetImage(
+                        //           'assets/AdobeStock_55757786-vert.jpeg'),
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(
                           width: 260,
                           child: Column(
@@ -205,7 +203,7 @@ class _HomeState extends State<Home> {
                                 ),
                                 //padding: const EdgeInsets.all(8.0),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(4.0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.stretch,
                                     children: [
@@ -229,8 +227,7 @@ class _HomeState extends State<Home> {
                                                 ?.color ??
                                                 Colors.red,
                                           ),
-                                          label: Text(
-                                            'Join Communities & Play Games',
+                                          label: Text('Join Communities & Play Games',
                                             style:
                                             Theme.of(context).textTheme.titleMedium,
                                           ),
@@ -254,10 +251,8 @@ class _HomeState extends State<Home> {
                                                 ?.color ??
                                                 Colors.red,
                                           ),
-                                          label: Text(
-                                            'View & Respond to Messages',
-                                            style:
-                                            Theme.of(context).textTheme.titleMedium,
+                                          label: Text('View & Respond to Messages',
+                                            style: Theme.of(context).textTheme.titleMedium,
                                           ),
                                         ),
                                       ),
@@ -271,7 +266,7 @@ class _HomeState extends State<Home> {
                                   border: Border.all(color: Colors.green[800]!),
                                 ),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(4.0),
                                   child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: [
@@ -336,7 +331,7 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(4.0),
                                 child: ElevatedButton.icon(
                                   onPressed: (bruceUser.uid != 'Anonymous')
                                       ? null
@@ -363,7 +358,7 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
                                 child: ElevatedButton.icon(
                                   onPressed: () {
                                     Navigator.pushNamed(context, '/about');
@@ -389,14 +384,25 @@ class _HomeState extends State<Home> {
                         )
                       ],
                     ),
-                    const SizedBox(height: 50.0),
-                    Text(
-                      "... Enjoy ...",
+                    const SizedBox(height: 8.0),
+//                     const Padding(
+//                       padding: EdgeInsets.all(8.0),
+//                       child: SizedBox(
+//                         height: 150,
+//                         width: 300,
+//                         child: Image(
+//                           image: AssetImage(
+//                               'assets/AdobeStock_118223983.jpeg'),
+// //                              'assets/AdobeStock_55757786-horizontal-bw.jpeg'),
+//                         ),
+//                       ),
+//                     ),
+                    Text("... Enjoy ...",
                       // data['time'],
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                     // Spacer(),
-                    const SizedBox(height: 50.0),
+                    const SizedBox(height: 20.0),
                     Text(
                       "Welcome '${bruceUser == null ? "????" : bruceUser.displayName}'",
                       textAlign: TextAlign.end,

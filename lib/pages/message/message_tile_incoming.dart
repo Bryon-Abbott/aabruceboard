@@ -37,7 +37,7 @@ class MessageTileIncoming extends StatelessWidget {
           return Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Card(
-              margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
+              margin: const EdgeInsets.fromLTRB(8.0, 4.0, 8.0, 0.0),
               child: ListTile(
                 onTap: () {
                   log("Message Tapped ... ${message.docId} ", name: runtimeType.toString());
@@ -56,19 +56,33 @@ class MessageTileIncoming extends StatelessWidget {
                 trailing: Padding(
                   padding: const EdgeInsets.all(1.0),
                   child: SizedBox(
-                    width: 80,
-                    child: Row(
+                    width: 20,
+                    height: 200,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        IconButton(
-                          onPressed: () => messageAccept(context),
-                          icon: const Icon(Icons.check_circle_outline),
+                        InkWell(
+                          onTap: () => messageAccept(context),
+                          child: const Icon(Icons.check_circle_outline),
                         ),
-                        IconButton(
-                          onPressed: (message.messageType == messageType[MessageTypeOption.request])
-                              ? () => messageReject(context)
-                              : null,
-                          icon: const Icon(Icons.cancel_outlined),
-                        ),
+                        SizedBox(height: 5,),
+                        (message.messageType == messageType[MessageTypeOption.request])
+                          ? InkWell(
+                            onTap: () => messageReject(context),
+                            child: const Icon(Icons.cancel_outlined),
+                          )
+                          : SizedBox(),
+                        // IconButton(
+                        //   onPressed: () => messageAccept(context),
+                        //   icon: const Icon(Icons.check_circle_outline),
+                        // ),
+                        // SizedBox(height: 5,),
+                        // IconButton(
+                        //   onPressed: (message.messageType == messageType[MessageTypeOption.request])
+                        //       ? () => messageReject(context)
+                        //       : null,
+                        //   icon: const Icon(Icons.cancel_outlined),
+                        // ),
                       ],
                     ),
                   ),

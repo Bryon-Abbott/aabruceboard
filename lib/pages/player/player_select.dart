@@ -48,92 +48,77 @@ class _PlayerSelectState extends State<PlayerSelect> {
                   },
                 ),
             ),
-            body: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: 80,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("First Name",
-                            textAlign: TextAlign.end,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 200,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'First Name',
-                          ),
-                          onChanged: (String value) {
-                            filterFName = value;
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        width: 80,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Last Name",
-                            textAlign: TextAlign.end,
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 200,
-                        child: TextField(
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: 'Last Name',
-                          ),
-                          onChanged: (String value) {
-                            filterLName = value;
-                          },
-                        ),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        icon: const Icon(Icons.filter_alt),
-                        onPressed: () {
-                          setState(() {
-
-                          });
-                          log("Filter Pressed ... SetState() Fname: $filterFName, Lname: $filterLName");
-                        }, )
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 500,
-                  child: ListView.builder(
-                    itemCount: player.length,
-                    itemBuilder: (context, index) {
+            body: ListView(
+                  // itemCount: player.length,
+                  // itemBuilder: (context, index) {
+                  children:
+                    List<Widget>.generate(1, (index) {
                       return ListTile(
-                        leading: const Icon(Icons.person_outline),
-                        title: Text("${player[index].fName} ${player[index].lName}"),
-                        subtitle: Text(player[index].uid),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.check_circle_outline),
+                        leading: IconButton(
+                          icon: const Icon(Icons.filter_alt),
                           onPressed: () {
-                            log('Icon Pressed', name: '${runtimeType.toString()}:ListTile:onPressed()');
-                            Navigator.of(context).pop(player[index]);
+                            setState(() {});
+                            log("Filter Pressed ... SetState() Fname: $filterFName, Lname: $filterLName");
                           },
-                        )
-                        ,
-                        );
-                    },
+                        ),
+                        title: Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: SizedBox(
+                                width: 130,
+                                height: 40,
+                                child: TextField(
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'First Name',
+                                  ),
+                                  onChanged: (String value) {
+                                    filterFName = value;
+                                  },
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: SizedBox(
+                                width: 130,
+                                height: 40,
+                                child: TextField(
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Last Name',
+                                  ),
+                                  onChanged: (String value) {
+                                    filterLName = value;
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }) +
+                    List<Widget>.generate(
+                    player.length,
+                      (int index) {
+                          return ListTile(
+                            leading: const Icon(Icons.person_outline),
+                            title: Text("${player[index].fName} ${player[index].lName}"),
+                            subtitle: Text(player[index].uid),
+                            trailing: IconButton(
+                              icon: const Icon(Icons.check_circle_outline),
+                              onPressed: () {
+                                log('Icon Pressed', name: '${runtimeType.toString()}:ListTile:onPressed()');
+                                Navigator.of(context).pop(player[index]);
+                              },
+                            ),
+                          );
+                      },
                   ),
                 ),
-              ],
-            ),
-          );
+
+           );
         } else {
           log("player_select: Snapshot Error ... ${snapshots.error}");
           return const Loading();

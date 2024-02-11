@@ -142,12 +142,32 @@ The CFL Logos were obtained from sportslogo.net (https://www.sportslogos.net/tea
 Need to link back to this site for references.
 
 
+
 # Release Log
+
+## 1.0.12+13
+Release 13
+
+### Release Notes
+Release 13
+Version: 1.0.12
++ Fixed Player Select filter screen.
+
+## 1.0.11+12
+Release 12
+
+### Release Notes
+Release 12
+Version: 1.0.11
++ Fixed home screen to not overflow rithg
++ Fixed message Tile to not overflow Accept/Reject
+
 ## 1.0.10+11
 Release 11
 
 ### Release Notes
 Release 11
+Version: 1.0.10+11
 + Fixes from previous releases
 + Disabled Game Edit on Game List for non-owner
 + Added Status to Game (0=Prep, 1=Active, 2=Compelte, 3=Archived)
