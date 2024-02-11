@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
@@ -40,6 +41,7 @@ class _GameListState extends State<GameList> {
 
     CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context) ;
     Player communityPlayer = communityPlayerProvider.communityPlayer;
+    Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
     log('Game Owner: ${communityPlayer.docId}:${communityPlayer.fName}', name: "${runtimeType.toString()}:build()" );
 
     return StreamBuilder<List<FirestoreDoc>>(
@@ -63,7 +65,7 @@ class _GameListState extends State<GameList> {
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),
-                    onPressed: () async {
+                    onPressed: (activePlayer.pid != communityPlayer.pid) ? null : () async {
                       await Navigator.of(context).push(
                           MaterialPageRoute(builder: (context) => GameMaintain(series: series)));
                       setState(() {}); // Set state to refresh series changes.

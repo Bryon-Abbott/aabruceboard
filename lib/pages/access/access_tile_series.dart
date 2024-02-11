@@ -46,7 +46,7 @@ class AccessTileSeries extends StatelessWidget {
                 },
                 title: Text('Name: ${series?.name ?? '...'}'),
                 subtitle: Text(
-                    'Series: ${Player.Key(access.pid)}:${Community.Key(access.cid)}:${Series.Key(access.sid)} (${series?.noGames ?? '..'}) *'),
+                    'Series: ${Player.Key(access.pid)}:${Community.Key(access.cid)}:${Series.Key(access.sid)} (${series?.noGames ?? '..'}) Type: ${series?.type ?? "Unknown"}'),
                 trailing: IconButton(
                   icon: const Icon(Icons.question_mark_outlined),
                   onPressed: () {

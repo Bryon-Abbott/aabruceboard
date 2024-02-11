@@ -1,4 +1,10 @@
 import 'dart:developer';
+import 'package:bruceboard/menus/popupmenubutton_teamdata.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_any_logo/gen/assets.gen.dart';
+import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
@@ -6,14 +12,12 @@ import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import 'package:provider/provider.dart';
-
 import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/utils/league_list.dart';
 import 'package:bruceboard/services/databaseservice.dart';
+
 // Todo: Look at provider for Series ID (sid) vs passing as parameter.
+
 // Create a Form widget.
 class GameMaintain extends StatefulWidget {
   final Series series;
@@ -29,49 +33,68 @@ class _GameMaintainState extends State<GameMaintain> {
   final _formGameKey = GlobalKey<FormState>();
   late Game? game;
   late Series series;
-//  late int _sid;
   late int _gid;
   late String _uid;
   late Board board;
   late Grid grid;
   late Player activePlayer;
+  late Map<String, TeamData> leagueTeamData;
+  late TextEditingController gameNameController;
+
+  String currentGameName = "";
+  String currentTeamOne = "";
+  String currentTeamTwo = "";
+  int currentSquareValue = 0;
 
   @override
   void initState() {
     super.initState();
     series = widget.series;
     game = widget.game;
-//    _sid = series.sid;
     _gid = game?.docId ?? -1;
-//    _uid = game?.pid ?? -1;
+
+//    if ( game != null ) {
+      currentGameName = game?.name ?? "";
+      currentTeamOne = game?.teamOne ?? "Select-Away-Team";
+      currentTeamTwo = game?.teamTwo ?? "Select-Home-Team";
+      currentSquareValue = game?.squareValue ?? 0;
+//    }
+
+    // Set League Data
+    if (series.type == "NFL") {
+      leagueTeamData = nflTeamData;
+    } else if (series.type == "NBA") {
+      leagueTeamData = nbaTeamData;
+    } else if (series.type == "CFL") {
+      leagueTeamData = cflTeamData;
+    } else if (series.type == "Other") {
+      leagueTeamData = Map<String, TeamData>();
+    }
+
+    gameNameController = TextEditingController();
+    gameNameController.text = "${leagueTeamData[currentTeamOne]?.teamName ?? currentTeamOne} "
+        "vs ${leagueTeamData[currentTeamTwo]?.teamName ?? currentTeamTwo}";
+
   }
 
+  @override
+  void dispose() {
+    gameNameController.dispose();
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
     _uid = bruceUser.uid;
-    //Game? game = widget.game;
-    String currentGameName = "";
-    String currentTeamOne = "";
-    String currentTeamTwo = "";
-    int currentSquareValue = 0;
 
     activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     int noGames = 0;
 
-    if ( game != null ) {
-      currentGameName = game?.name ?? 'Name';
-      currentTeamOne = game?.teamOne ?? 'Team One';
-      currentTeamTwo = game?.teamTwo ?? 'Team Two';
-      currentSquareValue= game?.squareValue ?? 0;
-    }
-
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
-//            backgroundColor: Colors.blue[900],
             title: Text((game != null ) ? 'Edit Game' : 'Add Game'),
             centerTitle: true,
             elevation: 0,
@@ -94,27 +117,22 @@ class _GameMaintainState extends State<GameMaintain> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text("Game Name: "),
-                  TextFormField(
-                    initialValue: currentGameName,
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter Game Name';
-                      }
-                      return null;
-                    },
-                    onSaved: (String? value) {
-                      //debugPrint('Game name is: $value');
-                      currentGameName = value ?? 'Game 000';
-                    },
+                  TextField(
+                    enabled: false,
+                    controller: gameNameController,
                   ),
                   const Text("Square Value: "),
                   TextFormField(
                     initialValue: currentSquareValue.toString(),
                     // The validator receives the text that the user has entered.
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Enter Initials (<3 chars)';
+                        return 'Enter Integer Value';
+                      } else if (currentTeamOne=="" || currentTeamTwo == "") {
+                        return 'Select Teams';
+                      } else if (currentTeamOne == currentTeamTwo) {
+                        return 'Teams can be the same' ;
                       }
                       return null;
                     },
@@ -127,36 +145,64 @@ class _GameMaintainState extends State<GameMaintain> {
                       }
                     },
                   ),
-                  const Text("Team One: "),
-                  TextFormField(
-                    initialValue: currentTeamOne,
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter Team One Name';
-                      }
-                      return null;
-                    },
-                    onSaved: (String? value) {
-                      //debugPrint('Email is: $value');
-                      currentTeamOne = value ?? '';
-                    },
+                  const Text("Away Team:"),
+                  (series.type == "Other")
+                    ? TextFormField(
+                        initialValue: currentTeamOne,
+                        // The validator receives the text that the user has entered.
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter Away Team Name';
+                          }
+                          return null;
+                        },
+                        onSaved: (String? value) {
+                          //debugPrint('Email is: $value');
+                          currentTeamOne = value ?? '';
+                          gameNameController.text = "${currentTeamOne} vs ${currentTeamTwo}";
+                        },
+                      )
+                  : PopupMenuButtonTeamData(
+                      initialValue: leagueTeamData[currentTeamOne] ?? TeamData("None", "None", "None", const AssetGenImage('assets/question-mark.png')),
+                      leagueTeamData: leagueTeamData,
+                      onSelected: (TeamData selectedValue) {
+                        setState(() {
+                          currentTeamOne = selectedValue.teamKey;
+                          gameNameController.text = "${leagueTeamData[currentTeamOne]?.teamName ?? 'Select-Away-Team'} "
+                                      "vs ${leagueTeamData[currentTeamTwo]?.teamName ?? 'Select-Home-Team'}";
+                          currentGameName = gameNameController.text;
+                        });
+                      },
                   ),
-                  const Text("Team Two: "),
-                  TextFormField(
-                    initialValue: currentTeamTwo,
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter Team Two Name';
-                      }
-                      return null;
-                    },
-                    onSaved: (String? value) {
-                      //debugPrint('Email is: $value');
-                      currentTeamTwo = value ?? '';
-                    },
-                  ),
+                  const Text("Home Team:"),
+                  (series.type == "Other")
+                    ?  TextFormField(
+                        initialValue: currentTeamTwo,
+                        // The validator receives the text that the user has entered.
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter Home Team Name';
+                          }
+                          return null;
+                        },
+                        onSaved: (String? value) {
+                          //debugPrint('Email is: $value');
+                          currentTeamTwo = value ?? '';
+                          gameNameController.text = "${currentTeamOne} vs ${currentTeamTwo}";
+                        },
+                      )
+                    : PopupMenuButtonTeamData(
+                        initialValue: leagueTeamData[currentTeamTwo] ?? TeamData("None", "None", "None", const AssetGenImage('assets/question-mark.png')),
+                        leagueTeamData: leagueTeamData,
+                        onSelected: (TeamData selectedValue) {
+                          setState(() {
+                            currentTeamTwo = selectedValue.teamKey;
+                            gameNameController.text = "${leagueTeamData[currentTeamOne]?.teamName ?? 'Select-Away-Team'} "
+                                "vs ${leagueTeamData[currentTeamTwo]?.teamName ?? 'Select-Home-Team'}";
+                            currentGameName = gameNameController.text;
+                          });
+                        },
+                      ),
                   Text("Series ID: ${series.key} " "Game ID: ${game?.key ?? 'Not Set '} " "Game ID: ${activePlayer.docId}"),
                   // Text("Game ID: ${game?.key ?? 'No Set'}"),
                   Row(
@@ -164,6 +210,7 @@ class _GameMaintainState extends State<GameMaintain> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         child: ElevatedButton(
+                          child: const Text('Save'),
                           onPressed: () async {
                             if (_formGameKey.currentState!.validate()) {
                               if ( game == null ) {
@@ -210,13 +257,13 @@ class _GameMaintainState extends State<GameMaintain> {
                               Navigator.of(context).pop();
                             }
                           },
-                          child: const Text('Save'),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
-                            onPressed: (game==null)
+                            child: const Text("Delete"),
+                            onPressed: (game == null)
                               ? null
                               : () async {
                               bool results = await showDialog(
@@ -256,8 +303,9 @@ class _GameMaintainState extends State<GameMaintain> {
                                 log('Game Delete Action Cancelled', name: '${runtimeType.toString()}:build()');
                               }
                             },
-                            child: const Text("Delete")),
-                      ),                      Padding(
+                        ),
+                      ),
+                      Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
                             onPressed: () {

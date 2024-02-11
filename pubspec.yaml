@@ -22,7 +22,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #   Added Football Icon https://www.geeksforgeeks.org/flutter-changing-app-icon/
 # 4(0.0.12) : WIP
 #   Refactored code.
-version: 1.0.06+9
+version: 1.0.10+11
 
 environment:
   sdk: '>=3.1.2 <4.0.0'
@@ -85,6 +85,8 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - assets/
+    - assets/cfl/
+
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
 

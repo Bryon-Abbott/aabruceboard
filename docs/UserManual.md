@@ -71,8 +71,9 @@ If the user already has an id, they can use it to sign in otherwise they need to
 #### 2.2.2 Sign Up
 To sign up to use BruceBoard, click on the Sign-Up icon in the top left and enter your email and password. This will create an account that will be used to manage all functionality. 
 
-
 <img src="images/AA0101-User-SignUp.png" alt="AA0100-User-SignUp" width="400"/>
+
+**Note:** The password must be entered the same twice to ensure the users has entered the password correctly. 
 
 #### 2.2.3 Update Profile
 Once the account is created, the Player can udpate their Profile information (First Name, Last Name, etc) via the Update profile menu option from the Home page. 
@@ -95,32 +96,52 @@ From this list the Player can do the following:
 <img src="images/AA0400-Series-List.png" alt="AA0400-Series-List" width="400"/>
 
 ### 3.2 Series Maintain
-By tapping a Series, the Player is taken to the Edit Series Screen where they can update the Series Name, Type and Access
-
-The Access button is used to maintain what Communities have access to this Series.
+By tapping a Series Edit Icon, the Player is taken to the Edit Series Screen where they can update the Series Name, Type and Access.
 
 <img src="images/AA0401-Series-Maintain.png" alt="AA0401-Series-Maintain" width="400"/>
 
+The Type field is a drop down menu that allows the player to select the League for all the Games defined for the series. 
+
+If these are not associated with a known league (NFL, NBA, CFL) then the player can select "Other" to allow the entry of text value for the Home and Away teams for games within the series. 
+
+<img src="images/AA0402-Series-Maintain.png" alt="AA0402-Series-Maintain" width="400"/>
+
 ### 3.3 Manage Community Access
+The Access button is used to maintain what Communities have access to this Series.
+
 Manage the Communities that have access to this Series. Here you can and/delete access but this will not change any squares players wihtin the community have purchased. 
 
 Adding and removing Players is handing under the Community Section. 
 
-<img src="images/AA0402-Series-Access.png" alt="AA0402-Series-Access" width="400"/>
+<img src="images/AA0403-Series-Access.png" alt="AA0403-Series-Access" width="400"/>
 
-### Games
+## Games
 Access the Games witin the Series by tapping on the Series Tile in the Series List. 
+
+If the Series Type is a known League (NFL, NBA, CFL, etc) then the Player is able to select the Home / Away
+
 From here the Game can be edited or the Board can be viewed. 
 
 <img src="images/AA0600-Games-List.png" alt="AA0600-Games-List" width="400"/>
 
+### Edit Games 
+
 When a game is added or edited, basic information about the Game is captured includeing: 
-+ Game Name
++ Enter / Select Home and Away teams 
 + Square Values (How many credits are take for each square)
-+ Team Names. 
++ The Game Name is determined from the Onwers input as "Away Team Name vs Home Team Name".
+
 Games may also be Deleted from here. 
 
 <img src="images/AA0602-Game-Edit.png" alt="AA0602-Game-Edit" width="400"/>
+
+If the series is a known League (NFL, NBA, CFL), then the Team Home/Away input is a drop down box with a list of the teams. Selecting teams from the list will update the Game name with associated teams. 
+
+<img src="images/AA0603-Game-Edit.png" alt="AA0603-Game-Edit" width="400"/>
+
+
+
+### Game Board 
 
 The Game Board is where the Owner manages the active game. Here the owner can complete the following: 
 + **Assign Squares Individual:** Click on desire square and select Player from the desired community. Only Communities that have access to the series are shown in the selection list. Only Players that have a balance above 0 or the Excluded Player are selectable.   

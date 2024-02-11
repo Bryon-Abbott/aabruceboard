@@ -21,6 +21,8 @@ import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_board_grid.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
+import 'package:bruceboard/utils/league_list.dart';
+
 const double gridSizeLarge = 1000;
 const double gridSizeSmall = 500;
 // ===========================================================================
@@ -53,6 +55,8 @@ class _GameBoardState extends State<GameBoard> {
   late String _uid;
 
   late bool isGameOwner;
+  late Map<String, TeamData> leagueTeamData;
+
   List<Player> winnersPlayer = List<Player>.filled(4, Player(data: {}));
   List<int> winnersCommunity = List<int>.filled(4, -1);
 
@@ -75,6 +79,7 @@ class _GameBoardState extends State<GameBoard> {
 
   @override
   void initState() {
+    super.initState();
     game = widget.game;
     series = widget.series;
     controller1 = TextEditingController();
@@ -83,7 +88,16 @@ class _GameBoardState extends State<GameBoard> {
     for (int i=0; i<4; i++) {
       controllers.add(TextEditingController());
     }
-    super.initState();
+
+    if (series.type == "NFL") {
+      leagueTeamData = nflTeamData;
+    } else if (series.type == "NBA") {
+      leagueTeamData = nbaTeamData;
+    } else if (series.type == "CFL") {
+      leagueTeamData = cflTeamData;
+    } else if (series.type == "Other") {
+      leagueTeamData = Map<String, TeamData>();
+    }
   }
 
   @override
@@ -231,7 +245,17 @@ class _GameBoardState extends State<GameBoard> {
                                           fontWeight: FontWeight.bold
                                       ),
                                     ),
-                                    child: Text(game.teamOne),
+                                      child: Row(
+                                          children: [
+                                            SizedBox(width: 10),
+                                            (leagueTeamData[game.teamOne] != null)
+                                                ? Image(image: AssetImage(leagueTeamData[game.teamOne]!.teamLogo.path))
+                                                : Image(image: AssetImage('assets/ball.png'), width: 30,),
+                                            SizedBox(width: 10),
+                                            Text(leagueTeamData[game.teamOne]?.teamName ?? game.teamOne), //Text(game.teamTwo),
+                                          ]
+                                      )
+                                    // child: Text(leagueTeamData[game.teamOne]?.teamName ?? game.teamOne),
                                   ),
                                 ),
                               ),
@@ -259,7 +283,19 @@ class _GameBoardState extends State<GameBoard> {
                                             fontWeight: FontWeight.bold
                                         ),
                                       ),
-                                      child: Text(game.teamTwo),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text(leagueTeamData[game.teamTwo]?.teamName ?? game.teamTwo), //Text(game.teamTwo),
+                                          SizedBox(width: 10),
+                                          (leagueTeamData[game.teamTwo] != null)
+                                              ? RotatedBox(
+                                                  quarterTurns: 1,
+                                                  child: Image(image: AssetImage(leagueTeamData[game.teamTwo]!.teamLogo.path)))
+                                              : Image(image: AssetImage('assets/ball.png'), width: 30,),
+                                          SizedBox(width: 10),
+                                        ]
+                                      )
                                     ),
                                   ),
                                 ),

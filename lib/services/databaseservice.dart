@@ -341,6 +341,40 @@ class DatabaseService {
   }
 
   //get FirestoreDoc List stream
+  Stream<List<FirestoreDoc>> fsDocQueryListStream(
+      { required String filterField1, required String filterValue1,
+        required String filterField2, required String filterValue2}) {
+    log('fsDocListStream: ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
+    log(docCollection.path, name: '${runtimeType.toString()}:fsDocQueryListStream()');
+
+    Stream<QuerySnapshot<Object?>> s001;
+    if (filterField1.isNotEmpty && filterValue1.isNotEmpty) {
+      if (filterField2.isNotEmpty && filterValue2.isNotEmpty) {
+        s001 = docCollection
+            .where(filterField1, isEqualTo: filterValue1)
+            .where(filterField2, isEqualTo: filterValue2)
+            .snapshots();
+      } else {
+        s001 = docCollection
+            .where(filterField1, isEqualTo: filterValue1)
+            .snapshots();
+      }
+    } else if (filterField2.isNotEmpty && filterValue2.isNotEmpty) {
+      s001 = docCollection
+          .where(filterField2, isEqualTo: filterValue2)
+          .snapshots();
+    } else {
+      s001 = docCollection
+          .snapshots();
+    }
+    //Stream<QuerySnapshot<Object?>> s001 = docCollection.where(filterField1, isEqualTo: filterValue1).snapshots();
+    return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
+    // return docCollection.snapshots()
+    //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
+//        .map(_fsDocListFromSnapshot);
+  }
+
+  //get FirestoreDoc List stream
 
   Stream<List<FirestoreDoc>> fsDocGroupListStream({ required String group, int pid=0, int cid=0, int pidTo=0} ) {
     Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
@@ -352,6 +386,7 @@ class DatabaseService {
         streamQuerySnapshot = db.collectionGroup("Access")
             .where('pid', isEqualTo: pid)
             .where('cid', isEqualTo: cid)
+//            .where('status', whereIn: [1,2])
             .snapshots();
         break;
       case "Incoming" :

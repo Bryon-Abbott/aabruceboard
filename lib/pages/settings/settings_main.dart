@@ -72,7 +72,7 @@ class _SettingsMainState extends State<SettingsMain> {
               title: const Text("Exclude Player"),
               trailing: const IntegerFormField(
                 sharedPreferenceKey: Preferences.keyExcludePlayerNo,
-                initialValue: '1000',
+                initialValue: '0000',
               ),
             ),
             SettingsTile.navigation(

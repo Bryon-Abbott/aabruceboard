@@ -195,109 +195,143 @@ class _HomeState extends State<Home> {
                           ),
                         ),
                         SizedBox(
-                          width: 220,
+                          width: 260,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton.icon(
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                          Navigator.pushNamed(
-                                              context, '/community-list');
-                                        },
-                                  icon: Icon(
-                                    Icons.person,
-                                    size: 32,
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.color ??
-                                        Colors.red,
-                                  ),
-                                  label: Text(
-                                    'Communities',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.green[800]!),
+                                ),
+                                //padding: const EdgeInsets.all(8.0),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                                    children: [
+                                      Text("Play Games",
+                                        style: Theme.of(context).textTheme.titleMedium,),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ElevatedButton.icon(
+                                          onPressed: (bruceUser.uid == 'Anonymous')
+                                              ? null
+                                              : () {
+                                            Navigator.pushNamed(
+                                                context, '/membership-list');
+                                          },
+                                          icon: Icon(
+                                            Icons.collections_outlined,
+                                            size: 32,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.color ??
+                                                Colors.red,
+                                          ),
+                                          label: Text(
+                                            'Join Communities & Play Games',
+                                            style:
+                                            Theme.of(context).textTheme.titleMedium,
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: ElevatedButton.icon(
+                                          onPressed: (bruceUser.uid == 'Anonymous')
+                                              ? null
+                                              : () {
+                                            Navigator.pushNamed(
+                                                context, '/message-list-incoming');
+                                          },
+                                          icon: Icon(
+                                            Icons.message_outlined,
+                                            size: 32,
+                                            color: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.color ??
+                                                Colors.red,
+                                          ),
+                                          label: Text(
+                                            'View & Respond to Messages',
+                                            style:
+                                            Theme.of(context).textTheme.titleMedium,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton.icon(
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                          Navigator.pushNamed(
-                                              //  context, '/manageplayers', arguments: BruceArguments(players, games));
-                                              context,
-                                              '/series-list');
-                                        },
-                                  icon: Icon(
-                                    Icons.sports_football_outlined,
-                                    size: 32,
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.color ??
-                                        Colors.red,
-                                  ),
-                                  label: Text(
-                                    'Series',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
+                              SizedBox(height: 8,),
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.green[800]!),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton.icon(
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                          Navigator.pushNamed(
-                                              context, '/membership-list');
-                                        },
-                                  icon: Icon(
-                                    Icons.collections_outlined,
-                                    size: 32,
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.color ??
-                                        Colors.red,
-                                  ),
-                                  label: Text(
-                                    'Memberships',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: ElevatedButton.icon(
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                          Navigator.pushNamed(
-                                              context, '/message-list-incoming');
-                                        },
-                                  icon: Icon(
-                                    Icons.message_outlined,
-                                    size: 32,
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.color ??
-                                        Colors.red,
-                                  ),
-                                  label: Text(
-                                    'Messages',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        Text("Run Games",
+                                          style: Theme.of(context).textTheme.titleMedium,
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ElevatedButton.icon(
+                                            onPressed: (bruceUser.uid == 'Anonymous')
+                                                ? null
+                                                : () {
+                                              Navigator.pushNamed(
+                                                  context, '/community-list');
+                                            },
+                                            icon: Icon(
+                                              Icons.person,
+                                              size: 32,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium
+                                                  ?.color ??
+                                                  Colors.red,
+                                            ),
+                                            label: Text(
+                                              'Create & Edit Communities',
+                                              style:
+                                              Theme.of(context).textTheme.titleMedium,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: ElevatedButton.icon(
+                                            onPressed: (bruceUser.uid == 'Anonymous')
+                                                ? null
+                                                : () {
+                                              Navigator.pushNamed(
+                                                //  context, '/manageplayers', arguments: BruceArguments(players, games));
+                                                  context,
+                                                  '/series-list');
+                                            },
+                                            icon: Icon(
+                                              Icons.sports_football_outlined,
+                                              size: 32,
+                                              color: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium
+                                                  ?.color ??
+                                                  Colors.red,
+                                            ),
+                                            label: Text(
+                                              'Build Series & Manage Games',
+                                              style:
+                                              Theme.of(context).textTheme.titleMedium,
+                                            ),
+                                          ),
+                                        ),
+
+                                      ]
                                   ),
                                 ),
                               ),

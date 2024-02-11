@@ -1,5 +1,7 @@
 import 'dart:developer';
 //import 'dart:ffi';
+import 'package:bruceboard/menus/popupmenubutton_status.dart';
+import 'package:bruceboard/utils/league_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -10,9 +12,6 @@ import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 // Sports by Becris from <a href="https://thenounproject.com/browse/icons/term/sports/" target="_blank" title="Sports Icons">Noun Project</a> (CC BY 3.0)
-
-// This is the type used by the popup menu below.
-enum SeriesTypeItem { itemNFL, itemCFL, itemNBA, itemOther }
 
 // Create a Form widget.
 class SeriesMaintain extends StatefulWidget {
@@ -29,17 +28,10 @@ class SeriesMaintainState extends State<SeriesMaintain> {
   late Series? series;
   Player? player;
   late BruceUser bruceUser;
-  Map<SeriesTypeItem, List<dynamic>> seriesTypeData = {
-    SeriesTypeItem.itemNFL :  ["NFL", "assets/noun-football-1043960.png", const Icon(Icons.sports_football_outlined)],
-    SeriesTypeItem.itemCFL :  ["CFL", "assets/noun-football-1043960.png", const Icon(Icons.sports_football_outlined)],
-    SeriesTypeItem.itemNBA :  ["NBA", "assets/noun-basketball-6464615.png", const Icon(Icons.sports_basketball_outlined)],
-    SeriesTypeItem.itemOther :  ["Other", "assets/noun-sports-1176751.png", const Icon(Icons.cabin_outlined)],
-    // SeriesTypeItem.itemCFL :  ["CFL", AnyLogo.values.elementAt(7)],
-    // SeriesTypeItem.itemNBA :  ["NBA", AnyLogo.values.elementAt(9)],
-    // SeriesTypeItem.itemOther :  ["Other", AnyLogo.values.elementAt(10)],
-  };
+
   String currentSeriesType = "Other";
   String currentSeriesPng = "assets/noun-sports-1176751.png";
+  int currentStatus = 0;
   Icon currentSeriesIcon = const Icon(Icons.cabin_outlined);
   String currentSeriesName = "";
   int currentSeriesNoGames = 0;
@@ -52,10 +44,11 @@ class SeriesMaintainState extends State<SeriesMaintain> {
       currentSeriesName = series?.name ?? 'xxx';
       currentSeriesType = series?.type ?? 'xxx';
       currentSeriesNoGames = series?.noGames ?? 0;
-      SeriesTypeItem sti = seriesTypeData.keys.firstWhere((k) => seriesTypeData[k]?[0] == currentSeriesType,
-          orElse: () =>  SeriesTypeItem.itemOther);
-      currentSeriesPng = seriesTypeData[sti]![1];
-      currentSeriesIcon = seriesTypeData[sti]![2];
+      currentStatus = series?.status ?? 0;
+      SeriesType sti = seriesData.keys.firstWhere((k) => seriesData[k]?.seriesText == currentSeriesType,
+          orElse: () =>  SeriesType.itemOther);
+     // currentSeriesPng = seriesTypeData[sti]![1];
+      currentSeriesIcon = seriesData[sti]!.seriesIcon;
     }    super.initState();
   }
 
@@ -104,49 +97,32 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text("Type: "),
-                  PopupMenuButton<SeriesTypeItem>(
+                  PopupMenuButton<SeriesType>(
                     tooltip: "Select League",
-                    initialValue: seriesTypeData.keys.firstWhere((k) => seriesTypeData[k]?[0] == currentSeriesType,
-                                                      orElse: () =>  SeriesTypeItem.itemOther),  //currentSeriesType,
+                    initialValue: seriesData.keys.firstWhere((k) => seriesData[k]?.seriesText == currentSeriesType,
+                                                      orElse: () =>  SeriesType.itemOther),  //currentSeriesType,
                     // Callback that sets the selected popup menu item.
-                    onSelected: (SeriesTypeItem item) {
+                    onSelected: (SeriesType item) {
                       setState(() {
-                        currentSeriesType = seriesTypeData[item]![0];
-                        currentSeriesPng = seriesTypeData[item]![1];
-                        currentSeriesIcon = seriesTypeData[item]![2];
-                        log("Current Series Type: '$item' Text: ${seriesTypeData[item]![0]} Current: $currentSeriesType", name: '${runtimeType.toString()}:build()');
+                        currentSeriesType = seriesData[item]!.seriesText;
+                        currentSeriesIcon = seriesData[item]!.seriesIcon;
+                        log("Current Series Type: '$item' Text: ${seriesData[item]!.seriesText} Current: $currentSeriesType", name: '${runtimeType.toString()}:build()');
                       });
                       // currentSeriesType = seriesTypeText[item]!;
                       // log("Current Series Type: '$item' Text: ${seriesTypeText[item]} Current: ${currentSeriesType}", name: '${runtimeType.toString()}:build()');
                     },
-                    itemBuilder: (BuildContext context) => <PopupMenuEntry<SeriesTypeItem>>[
-                      const PopupMenuItem<SeriesTypeItem>(
-                        value: SeriesTypeItem.itemNFL,
-                        child: Text('NFL'),
-                      ),
-                      const PopupMenuItem<SeriesTypeItem>(
-                        value: SeriesTypeItem.itemCFL,
-                        child: Text('CFL'),
-                      ),
-                      const PopupMenuItem<SeriesTypeItem>(
-                        value: SeriesTypeItem.itemNBA,
-                        child: Text('NBA'),
-                      ),
-                      const PopupMenuItem<SeriesTypeItem>(
-                        value: SeriesTypeItem.itemOther,
-                        child: Text('Other'),
-                      ),
-                    ],
+                    itemBuilder: (BuildContext context) {
+                      List<PopupMenuEntry<SeriesType>> menuItems = <PopupMenuEntry<SeriesType>>[];
+
+                      for (SeriesType e in SeriesType.values ) {
+                        menuItems.add(PopupMenuItem<SeriesType>(
+                            value: e,
+                            child: Text(seriesData[e]!.seriesText)));
+                      }
+                      return menuItems;
+                    } ,
                     child: ListTile(
-//                      leading: Icon(Icons.layers_rounded),
-//                      leading: ImageIcon(AssetImage(currentSeriesPng)),
                       leading: currentSeriesIcon,
-                      // leading: SvgPicture.asset(
-                      //     currentSeriesPng,
-                      //     width: 60,
-                      //     colorFilter: ColorFilter. .mode(Colors.green, BlendMode.srcIn),
-                      //     semanticsLabel: 'League'
-                      // ),
                       trailing: const Icon(Icons.menu),
                       title: Text("Type: $currentSeriesType"),
                     ),
@@ -166,6 +142,17 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       currentSeriesName = value ?? 'Series 000';
                     },
                   ),
+                  const Text("Series Status"),
+                  PopupMenuButtonStatus(
+                    initialValue: StatusValues.values[currentStatus],
+                    // initialValue: StatusValues.Prepare,
+                    onSelected: (StatusValues selectValue) {
+                      log("Got Selected Value ${selectValue.index} ${selectValue.name}",name: '${runtimeType.toString()}:build()' );
+                      setState(() {
+                        currentStatus = selectValue.index;
+                      });
+                    },
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text("Number of Games: ${series?.noGames ?? 'N/A'}, Number of Community Accesses ${series?.noAccesses ?? 0}"),
@@ -175,6 +162,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(
+                          child: const Text('Save'),
                           onPressed: () async {
                             // Validate returns true if the form is valid, or false otherwise.
                             if (player == null) {
@@ -196,6 +184,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                 { 'pid': player!.pid,
                                   'name': currentSeriesName,
                                   'type': currentSeriesType,
+                                  'status': currentStatus,
                                   'noGames': currentSeriesNoGames,
                                 };
                                 series = Series( data: data );
@@ -208,6 +197,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                 Map<String, dynamic> data =
                                 { 'name': currentSeriesName,
                                   'type': currentSeriesType,
+                                  'status': currentStatus,
                                   'noGames': currentSeriesNoGames,  // Todo: Delete this and let default? Add noAccesses?
                                 };
                                 series!.update(data: data);
@@ -221,7 +211,6 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                               Navigator.of(context).pop(series);
                             }
                           },
-                          child: const Text('Save'),
                         ),
                       ),
                       Padding(

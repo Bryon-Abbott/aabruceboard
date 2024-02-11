@@ -1,24 +1,24 @@
 import 'dart:developer' as dev;
 import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/models/membershipprovider.dart';
-import 'package:bruceboard/pages/access/access_list_members.dart';
-import 'package:bruceboard/services/messageservice.dart';
-import 'package:bruceboard/shared/helperwidgets.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import 'package:bruceboard/models/communityplayerprovider.dart';
-import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/game.dart';
+import 'package:bruceboard/pages/access/access_list_members.dart';
+import 'package:bruceboard/services/messageservice.dart';
+import 'package:bruceboard/shared/helperwidgets.dart';
+import 'package:bruceboard/models/communityplayerprovider.dart';
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
@@ -262,8 +262,6 @@ class _GameBoardGridState extends State<GameBoardGrid> {
 
   void assignSquare(Game game, Grid grid, int squareIndex) async {
     dev.log("Assign Square ($squareIndex)", name: "${runtimeType.toString()}:ownerAssignSquare()");
-
-    // ToDo: need to filter Player-Select to only show players of Communities with Access
     //dynamic playerSelected = await Navigator.pushNamed(context, '/player-select');
     dynamic result = await Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => AccessListMembers(series: series)),
@@ -285,22 +283,18 @@ class _GameBoardGridState extends State<GameBoardGrid> {
         Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDoc(docId: selectedPlayer.pid ) as Member;
         member.credits -= game.squareValue;
         // No need to await here as updates will come via Firestore Streams.
-        DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key)
-            .fsDocUpdate(grid);
-        DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid))
-            .fsDocUpdate(member);
+        DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
+        DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(member);
         DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
             .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
-        dev.log("saving Data ... gameNo: ${game.docId} ",
-            name: "${runtimeType.toString()}:GameButton");
+        dev.log("saving Data ... gameNo: ${game.docId} ", name: "${runtimeType.toString()}:GameButton");
         // Send message to user
-        messageSquareAssignedNotification(cid: selectedAccess.cid, sid: game.sid, gid: game.docId, squareRequested: squareIndex,
-            playerFrom: activePlayer,
-            playerTo: selectedPlayer,
-            comment: comment,
-            description: "Square $squareIndex for Game '${game.name}' in Series '${series.name}' has been assigned to you for ${game.squareValue} credit(s)."
-//                " Your Remaining credits in community (${Community.Key(selectedAccess.cid)}) are ${member.credits}"
-                " Your Remaining credits in community (${selectedAccess.key}) are ${member.credits}."
+        await messageSend(20040, messageType[MessageTypeOption.notification]!,
+          playerFrom: activePlayer, playerTo: selectedPlayer,
+          comment: comment,
+          description: "Square $squareIndex for Game <${game.name}> in Series <${series.name}> has been assigned to you for ${game.squareValue} credit(s)."
+            " Your Remaining credits in community <${selectedAccess.key}> are ${member.credits}.",
+          data: { 'cid': selectedAccess.docId, 'sid': game.sid, 'gid': game.docId, 'squareRequested': squareIndex },
         );
       }
     }
@@ -319,11 +313,12 @@ class _GameBoardGridState extends State<GameBoardGrid> {
         // Get Comment
         String? comment = await openDialogMessageComment(context, defaultComment: "Please assign me to Square $squareIndex");
         if (comment != null) {
-          messageSquareSelectRequest(cid: currentMembership.cid, sid: game.sid, gid: game.docId, squareRequested: squareIndex,
-              playerFrom: activePlayer,
-              playerTo: communityPlayer,
-              comment: comment,
-              description: "Player '${activePlayer.fName} ${activePlayer.lName}' requested Square $squareIndex for Game '${game.name}' in Series '${series.name}'"
+          // Send message to user
+          await messageSend(00040, messageType[MessageTypeOption.request]!,
+            playerFrom: activePlayer, playerTo: communityPlayer,
+            comment: comment,
+            description: "${activePlayer.fName} ${activePlayer.lName} requested Square $squareIndex for Game <${game.name}> in Series <${series.name}>",
+            data: { 'cid': currentMembership.cid, 'sid': game.sid, 'gid': game.docId, 'squareRequested': squareIndex },
           );
         } else {
           dev.log("Request Square Cancelled for ($squareIndex)", name: "${runtimeType.toString()}:requestSquare()");

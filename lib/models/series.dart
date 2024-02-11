@@ -17,6 +17,7 @@ class Series implements FirestoreDoc {
 //  int sid;  // Numeric 0000-9999
   String name;
   String type;
+  int status; // Prep=0, Active=1; Complete=2; Archive=3;
   int noGames;
   int noAccesses;
 
@@ -24,6 +25,7 @@ class Series implements FirestoreDoc {
     docId = data['docId'] ?? -1,
     name = data['name'] ?? 'NAME',
     type = data['type'] ?? 'TYPE',
+    status = data['status'] ?? 0,
     noGames = data['noGames'] ?? 0,
     noAccesses = data['noAccesses'] ?? 0;
 
@@ -32,6 +34,7 @@ class Series implements FirestoreDoc {
     docId = data['docId'] ?? docId;
     name = data['name'] ?? name;
     type = data['type'] ?? type;
+    status = data['status'] ?? 0;
     noGames = data['noGames'] ?? noGames;
     noAccesses = data['noAccesses'] ?? noAccesses;
   }
@@ -56,6 +59,7 @@ class Series implements FirestoreDoc {
       'docId': docId,
       'name': name,
       'type': type,
+      'status': status,
       'noGames': noGames,
       'noAccesses': noAccesses,
     };

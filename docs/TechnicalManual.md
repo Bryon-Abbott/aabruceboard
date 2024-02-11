@@ -136,8 +136,32 @@ Once added and sent for review, this can take a day or so to get moved to produc
 
 <img src="images/TT0001-ClosedTesting.png" alt="TT0001-ClosedTesting" width="400"/>
 
+## Logos
+### CFL 
+The CFL Logos were obtained from sportslogo.net (https://www.sportslogos.net/teams/list_by_league/8/canadian_football_league/cfl/logos/)
+Need to link back to this site for references.
+
 
 # Release Log
+## 1.0.10+11
+Release 11
+
+### Release Notes
+Release 11
++ Fixes from previous releases
++ Disabled Game Edit on Game List for non-owner
++ Added Status to Game (0=Prep, 1=Active, 2=Compelte, 3=Archived)
+
+## 1.0.08+10
+Release 10
+Added Icons/Dropdowns for Series Types and Teams.
+Update Game to display icons.
+### Release Notes 
+Version 1.0.08 
++ Added dropdown for Series connect to select NFL,CFL,NBA,Others
++ Update Game Maintain to use Drop Downs with Icons for NFL, NBA and CFL.
++ Updated board to display Team Logo Icons.
+
 ## 1.0.06+9
 Release 9
 Update after Alpha Testing

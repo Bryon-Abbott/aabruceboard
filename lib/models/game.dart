@@ -22,6 +22,7 @@ class Game implements FirestoreDoc {
   int squareValue = 0;
   String teamOne = "";
   String teamTwo = "";
+  int status = 0; // Prep=0, Active=1; Complete=2; Archive=3;
 
   Game({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
@@ -30,7 +31,8 @@ class Game implements FirestoreDoc {
         name = data['name'] ?? 'NAME',
         teamOne = data['teamOne'] ?? 'ONE',
         teamTwo = data['teamTwo'] ?? 'TWO',
-        squareValue = data['squareValue'] ?? 0;
+        squareValue = data['squareValue'] ?? 0,
+        status = data['status'] ?? 0;
 
   @override
   String get key {
@@ -53,6 +55,7 @@ class Game implements FirestoreDoc {
     teamOne = data['teamOne'] ?? teamOne;
     teamTwo = data['teamTwo'] ?? teamTwo;
     squareValue = data['squareValue'] ?? squareValue;
+    status = data['status'] ?? 0;
   }
 
   // Returns a Map<String, dynamic> of all member veriables.
@@ -66,6 +69,7 @@ class Game implements FirestoreDoc {
       'teamOne': teamOne,
       'teamTwo': teamTwo,
       'squareValue': squareValue,
+      'status' : status,
     };
   }
 }

@@ -31,13 +31,14 @@ const messageDesc = {
   10021: "Member Adjust Reject Response",
   10030: "Member Remove Accept Response",
   10031: "Member Remove Reject Response",
-  10040: "Square Request Response",
+  10040: "Square Accept Response",
+  10041: "Square Reject Response",
 // Notifications
   20010: "Add Member Notification",                 // Data: {cid: }
   20020: "Update Member Notification",
   20030: "Removed Member Notification",
-  20040: "Remove Credit Notification",  // ?? How is this diferent from Update Member Notifiaction?
-  20050: "Assigned Square Notification",
+//  20040: "Remove Credit Notification",  // ?? How is this diferent from Update Member Notifiaction?
+  20040: "Assigned Square Notification",
   20060: "Accepted Square Request Notification",
   20070: "Credit Distribution Notification",
 // Acknowledgement
@@ -47,6 +48,8 @@ const messageDesc = {
   30021: "Update Member Reject Acknowledgement",                 // Data: {credits: }
   30030: "Remove Member Accept Acknowledgement",                 // Data: {credits: }
   30031: "Remove Member Reject Acknowledgement",                 // Data: {credits: }
+  30040: "Assigned Square Accept Acknowledgement",
+  30041: "Assigned Square Reject Acknowledgement",
   // 30040: "Community Add Request Accept Acknowledgement",  // Data: {cid: }
   // 30050: "Community Add Request Reject Acknowledgement",  // Data: {cid: }
   // 30060: "Credit Adjust Acknowledgement, "
