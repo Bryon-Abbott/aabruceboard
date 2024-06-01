@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -72,10 +69,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyAcUHz0oWt4aX8tGRHv3HDf0ersF-1KuHQ',
-    appId: '1:339334468602:ios:7fa87b090a5786d0988a43',
+    appId: '1:339334468602:ios:f6e4e152c7ccb74a988a43',
     messagingSenderId: '339334468602',
     projectId: 'aabruceboard',
     storageBucket: 'aabruceboard.appspot.com',
-    iosBundleId: 'com.abbottavenue.aabruceboard.RunnerTests',
+    iosBundleId: 'com.abbottavenue.aabruceboard',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAvZeVjt0Rx9oCGVOcfO1CmC-tg3RXNpr4',
+    appId: '1:339334468602:web:1a465e40a29ae60e988a43',
+    messagingSenderId: '339334468602',
+    projectId: 'aabruceboard',
+    authDomain: 'aabruceboard.firebaseapp.com',
+    storageBucket: 'aabruceboard.appspot.com',
+    measurementId: 'G-19NTMDX37Q',
+  );
+
 }

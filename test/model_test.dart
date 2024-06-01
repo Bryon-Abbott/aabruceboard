@@ -13,7 +13,7 @@ void main() {
     Series series = Series(data: data);
 
     test('sid should start at -1', () {
-      expect(series.sid, -1);
+      expect(series.docId, -1);
     });
 
     test('noGames should start at 0', () {
@@ -33,7 +33,7 @@ void main() {
     Community community = Community(data: data);
 
     test('sid should start at -1', () {
-      expect(community.cid, -1);
+      expect(community.docId, -1);
     });
 
     test('noGames should start at 0', () {

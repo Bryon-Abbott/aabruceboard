@@ -189,7 +189,7 @@ class DatabaseService {
     log(docCollection.path, name: '${runtimeType.toString()}:fsDocAdd');
     await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
     await docCollection.count().get()
-        .then((res) => noDocs = res.count,
+        .then((res) => noDocs = res.count ?? -1,
     );
     if (fsDoc.totalField != 'NO-TOTALS') {
       log('Updating number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
@@ -228,7 +228,7 @@ class DatabaseService {
 
     if (fsDoc.totalField != 'NO-TOTALS') {
       await docCollection.count().get()
-          .then((res) => noDocs = res.count,
+          .then((res) => noDocs = res.count ?? -1,
       );
       await statsDocument.update({ fsDoc.totalField: noDocs} );
     }
@@ -440,7 +440,7 @@ class DatabaseService {
     log(docCollection.path, name: '${runtimeType.toString()}:get fsDocCount');
 
     await docCollection.count().get().then((snapshot) {
-      docCount = snapshot.count;
+      docCount = snapshot.count ?? -1;
     });
     return Future<int>.value(docCount);
   }
