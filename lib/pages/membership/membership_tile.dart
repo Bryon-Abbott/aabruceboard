@@ -82,7 +82,7 @@ class MembershipTile extends StatelessWidget {
                                   'Credits: ${member?.credits ?? -1}'
                           ),
                           trailing: SizedBox(
-                            width: 80,
+                            width: 100,
                             child: Row(
                               children: [
                                 IconButton(
