@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+// Can remove this  ... simplified input fields using Themes.
 const textInputDecoration = InputDecoration(
   fillColor: Colors.white,
   filled: true,

@@ -57,7 +57,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
                         const Text("First Name"),
                         TextFormField(
                           initialValue: player.fName,
-                          decoration: textInputDecoration,
+//                          decoration: textInputDecoration,
                           validator: (val) => val!.isEmpty ? 'Please enter your first name' : null,
                           onChanged: (val) => setState(() => _currentFName = val),
                         ),
@@ -65,7 +65,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
                         const Text("Last Name"),
                         TextFormField(
                           initialValue: player.lName,
-                          decoration: textInputDecoration,
+//                          decoration: textInputDecoration,
                           validator: (val) => val!.isEmpty ? 'Please enter your last name' : null,
                           onChanged: (val) => setState(() => _currentLName = val),
                         ),
@@ -73,7 +73,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
                         const Text("Initials"),
                         TextFormField(
                           initialValue: player.initials,
-                          decoration: textInputDecoration,
+//                          decoration: textInputDecoration,
                           validator: (val) => val!.isEmpty ? 'Please enter your desired initials' : null,
                           onChanged: (val) => setState(() => _currentInitials = val),
                         ),
@@ -81,7 +81,7 @@ class _PlayerProfileState extends State<PlayerProfile> {
                         const Text("Display Name"),
                         TextFormField(
                           initialValue: AuthService().displayName,
-                          decoration: textInputDecoration,
+//                          decoration: textInputDecoration,
                           validator: (val) => val!.isEmpty ? 'Please enter your desired Display Name' : null,
                           onChanged: (val) => setState(() => _currentDisplayName = val),
                         ),

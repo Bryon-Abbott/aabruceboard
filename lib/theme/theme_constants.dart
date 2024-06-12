@@ -172,7 +172,6 @@ ThemeData darkTheme = ThemeData(
       filled: true,
       fillColor: Colors.grey.withOpacity(0.1)),
 
-
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
       textStyle: MaterialStateProperty.all(

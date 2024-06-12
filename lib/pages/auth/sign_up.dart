@@ -74,7 +74,8 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 10.0),
                   const Text("Email Address"),
                   TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'email'),
+                    decoration: InputDecoration(hintText: 'email@domain.com'),
+//                    decoration: textInputDecoration.copyWith(hintText: 'email'),
                     validator: (val) => val!.isEmpty ? 'Enter an email' : null,
                     onChanged: (val) {
                       setState(() => email = val);
@@ -83,7 +84,8 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 10.0),
                   const Text("Password"),
                   TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'password'),
+                    decoration: InputDecoration(hintText: 'password'),
+//                    decoration: textInputDecoration.copyWith(hintText: 'password'),
                     obscureText: true,
                     validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
                     onChanged: (val) {
@@ -93,7 +95,8 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 10.0),
                   const Text("Password Verification"),
                   TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'reenter password'),
+                    decoration: InputDecoration(hintText: 'reenter password'),
+//                    decoration: textInputDecoration.copyWith(hintText: 'reenter password'),
                     obscureText: true,
                     validator: (val) => val! != password ? 'Passwords entered are not the same' : null,
                     onChanged: (val) {
@@ -103,7 +106,8 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 10.0),
                   const Text("First Name"),
                   TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'First Name'),
+                    decoration: const InputDecoration(hintText: 'Enter First Name'),
+//                    decoration: textInputDecoration.copyWith(hintText: 'First Name'),
                     validator: (val) => val!.isEmpty ? 'Enter First Name' : null,
                     onChanged: (val) {
                       displayNameController.text = "$val $lName";
@@ -114,7 +118,8 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 10.0),
                   const Text("Last Name"),
                   TextFormField(
-                    decoration: textInputDecoration.copyWith(hintText: 'Last Name'),
+                    decoration: const InputDecoration(hintText: 'Enter Last Name'),
+//                    decoration: textInputDecoration.copyWith(hintText: 'Last Name'),
                     validator: (val) => val!.isEmpty ? 'Enter Last Name' : null,
                     onChanged: (val) {
                       displayNameController.text = "$fName $val";
@@ -126,7 +131,8 @@ class _SignUpState extends State<SignUp> {
                   const Text("Initials"),
                   TextFormField(
                     controller: initialsController,
-                    decoration: textInputDecoration.copyWith(hintText: 'Initials'),
+                    decoration: const InputDecoration(hintText: 'Initials'),
+//                    decoration: textInputDecoration.copyWith(hintText: 'Initials'),
                     validator: (val) => val!.isEmpty ? 'Must enter initials ...' : null,
                     onChanged: (val) {
                       setState(() => initials = val);
@@ -136,7 +142,8 @@ class _SignUpState extends State<SignUp> {
                   const Text("Display Name"),
                   TextFormField(
                     controller: displayNameController,
-                    decoration: textInputDecoration.copyWith(hintText: 'Display Name'),
+                    decoration: const InputDecoration(hintText: 'Display Name'),
+//                    decoration: textInputDecoration.copyWith(hintText: 'Display Name'),
                     //  validator: (val) => 'Enter Display Name' : null,
                     onChanged: (val) {
                       setState(() => displayName = val);
