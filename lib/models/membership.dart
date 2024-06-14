@@ -11,8 +11,8 @@ class Membership implements FirestoreDoc {
   final String nextIdField = 'nextMsid';
   @override
   final String totalField = 'noMemberships';
-  @override
-  final NumberFormat _keyFormat = NumberFormat("C0000", "en_US");
+
+  // final NumberFormat _keyFormat = NumberFormat("C0000", "en_US");
   // Data Class Variables
   int cid;  // Community ID
   int cpid;  // Community PID
@@ -31,7 +31,6 @@ class Membership implements FirestoreDoc {
         pid = data['pid'] ?? -1,
         status = data['status'] ?? 'error';
 
-  @override
   static String KEY(int cpid, int cid) {
     // Format Key for Document ID
     String cKey = _cFormat.format(cid);

@@ -76,7 +76,7 @@ class _IntegerFormFieldState extends State<IntegerFormField> {
               }
               currentValue = newValue;
               updateDisabled = true;
-              Preferences.setPreferenceString(widget.sharedPreferenceKey ?? Preferences.keyUndefinedString, newValue);
+              Preferences.setPreferenceString(widget.sharedPreferenceKey, newValue);
             });
             },
         )

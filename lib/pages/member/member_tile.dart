@@ -32,7 +32,7 @@ class MemberTile extends StatelessWidget {
                     log("Member Tapped ... ${member.credits} : ${member.docId} ");
                   },
                   leading: const Icon(Icons.sports_football_outlined),
-                  title: Text('Member: ${memberPlayer.fName ?? "Error"} ${memberPlayer.lName ?? "Error"} (Credits: ${member.credits})'),
+                  title: Text('Member: ${memberPlayer.fName} ${memberPlayer.lName} (Credits: ${member.credits})'),
                   subtitle: Text(' MID: ${member.docId} CID: ${community.docId}'),
                   trailing: IconButton(
                     onPressed: () async {

@@ -42,7 +42,7 @@ class AuthService {
       User user = result.user!;
       return _userFromFirebaseUser(user);
     } catch (e) {
-      print(e.toString());
+      log(e.toString());
       return null;
     }
   }
@@ -54,7 +54,7 @@ class AuthService {
       User user = result.user!;
       return user;
     } catch (error) {
-      print(error.toString());
+      log(error.toString());
       return null;
     } 
   }
@@ -78,7 +78,7 @@ class AuthService {
       //await DatabaseService(player, uid: user.uid).fsDocUpdate();
       return _userFromFirebaseUser(user);
     } catch (error) {
-      print(error.toString());
+      log(error.toString());
       return null;
     } 
   }
@@ -88,7 +88,7 @@ class AuthService {
     try {
       return await _auth.signOut();
     } catch (error) {
-      print(error.toString());
+      log(error.toString());
       return null;
     }
   }

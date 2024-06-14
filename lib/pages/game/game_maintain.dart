@@ -34,7 +34,7 @@ class _GameMaintainState extends State<GameMaintain> {
   final _formGameKey = GlobalKey<FormState>();
   late Game? game;
   late Series series;
-  late int _gid;
+//  late int _gid;
   late String _uid;
   late Board board;
   late Grid grid;
@@ -53,7 +53,7 @@ class _GameMaintainState extends State<GameMaintain> {
     super.initState();
     series = widget.series;
     game = widget.game;
-    _gid = game?.docId ?? -1;
+//    _gid = game?.docId ?? -1;
 
 //    if ( game != null ) {
       currentGameName = game?.name ?? "";
@@ -91,7 +91,7 @@ class _GameMaintainState extends State<GameMaintain> {
 
     activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
 
-    int noGames = 0;
+//    int noGames = 0;
 
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
@@ -143,7 +143,7 @@ class _GameMaintainState extends State<GameMaintain> {
                       if (value == null || value.isEmpty) {
                         currentSquareValue = 0;
                       } else {
-                        currentSquareValue = int.parse(value ?? '0');
+                        currentSquareValue = int.parse(value);
                       }
                     },
                   ),
@@ -270,6 +270,7 @@ class _GameMaintainState extends State<GameMaintain> {
                                 await DatabaseService(FSDocType.game, uid: _uid, sidKey: series.key).fsDocUpdate(game!);
                               }
                               // Save Updates to Shared Preferences
+                              if (!context.mounted) return;
                               Navigator.of(context).pop();
                             }
                           },
@@ -313,6 +314,7 @@ class _GameMaintainState extends State<GameMaintain> {
                                 await DatabaseService(FSDocType.game, sidKey: series.key).fsDocDelete(game!);
                                 // await DatabaseService(uid: _uid, sid: series.sid).incrementSeriesNoGames(-1);
                                 series.noGames  = series.noGames -1;
+                                if (!context.mounted) return;
                                 Navigator.of(context).pop();
                               } else {
                                 log('Game Delete Action Cancelled', name: '${runtimeType.toString()}:build()');

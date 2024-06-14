@@ -1,4 +1,4 @@
-import 'package:bruceboard/utils/MyLogo.dart';
+import 'package:bruceboard/utils/mylogo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_any_logo/flutter_logo.dart';
 import 'package:flutter_any_logo/gen/assets.gen.dart';

@@ -58,9 +58,9 @@ class SeriesMaintainState extends State<SeriesMaintain> {
     bruceUser = Provider.of<BruceUser>(context);
     log('Current User:  ${bruceUser.uid}', name: '${runtimeType.toString()}:build()');
     String uid = bruceUser.uid;
-    late String sid;
+//    late String sid;
 
-    int noGames = 0;
+//    int noGames = 0;
 
     // Todo: Remove this
     if (series != null) {
@@ -208,6 +208,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                               }
                               // Save Updates to Shared Preferences
                               log("Added/Updated series ${series?.noGames}", name: '${runtimeType.toString()}:build()');
+                              if (!context.mounted) return;
                               Navigator.of(context).pop(series);
                             }
                           },

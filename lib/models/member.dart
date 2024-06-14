@@ -12,7 +12,7 @@ class Member implements FirestoreDoc {
   final String nextIdField = 'nextMid';
   @override
   final String totalField = 'noMembers';
-  @override
+
   static final NumberFormat _keyFormat = NumberFormat("P00000000", "en_US");
   // Data Class Variables
   int credits;
@@ -29,7 +29,6 @@ class Member implements FirestoreDoc {
     credits = data['credits'] ?? credits;
   }
 
-  @override
   static String KEY(int cid) {
     String key = _keyFormat.format(cid);
     return key;

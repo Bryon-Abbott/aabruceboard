@@ -7,7 +7,8 @@ import 'package:bruceboard/services/databaseservice.dart';
 // ============================================================================
 // Desc: Function to review and update all Communities with correct noMembers.
 void updateCounts({required String collection}) async {
-  int actualCount = 0, collectionCount = 0;
+  int actualCount = 0;
+//  int collectionCount = 0;
   List<FirestoreDoc> firestoreDocs = await DatabaseService(FSDocType.community).fsDocList;
   for (FirestoreDoc f in firestoreDocs) {
     Community c = f as Community;

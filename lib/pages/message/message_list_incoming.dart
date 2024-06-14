@@ -64,7 +64,7 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
         } else {
           log("Incoming Message Snapshot has no data ... loading() ${snapshots.error}", name: '${runtimeType.toString()}:...');
           log("${snapshots.error}", name: '${runtimeType.toString()}:...');
-          print("${snapshots.error}");
+          log("${snapshots.error}");
           return const Loading();
         }
       }

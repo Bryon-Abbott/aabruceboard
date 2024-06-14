@@ -28,7 +28,7 @@ class _MembershipListState extends State<MembershipList> {
   @override
   Widget build(BuildContext context) {
 
-    BruceUser bruceUser = Provider.of<BruceUser>(context);
+//    BruceUser bruceUser = Provider.of<BruceUser>(context);
     Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(
@@ -65,6 +65,7 @@ class _MembershipListState extends State<MembershipList> {
                         if (existingMembership == null ) { // If not found, request membership from community owner.
                           // Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                           // Verify Request with Player.
+                          if (!context.mounted) return;
                           String? comment = await openDialogMessageComment(context, defaultComment: "Please add me to your <${community.name}> community.");
                           log('membership_list: Comment is $comment', name: '${runtimeType.toString()}:...');
                           if (comment != null ) {
@@ -78,7 +79,7 @@ class _MembershipListState extends State<MembershipList> {
                             // Note ... the database section is the current user but the Membership PID
                             // is the PID of the owner of the community.
                             await DatabaseService(FSDocType.membership).fsDocAdd(membership);
-                            log("membership_list: Updating MSID: ${membership.docId ?? -600}", name: '${runtimeType.toString()}:...');
+                            log("membership_list: Updating MSID: ${membership.docId}", name: '${runtimeType.toString()}:...');
                             // Add MemberOwner to Community Player for current Player
                             // Process Messages
                             await messageSend(00010, messageType[MessageTypeOption.request]!,
@@ -98,6 +99,7 @@ class _MembershipListState extends State<MembershipList> {
                           }
                         } else {
                           // Error: Membership request already exists ... display message
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text("Membership Request already exist ... delete to re-request"))
                           );

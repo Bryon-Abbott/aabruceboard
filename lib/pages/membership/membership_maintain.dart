@@ -122,6 +122,7 @@ class MembershipMaintainState extends State<MembershipMaintain> {
                               }
                               // Save Updates to Shared Preferences
                               log("membership_maintain: Added/Updated membership ${membership?.cid}");
+                              if (!context.mounted) return;
                               Navigator.of(context).pop(widget.membership);
                             }
                           },

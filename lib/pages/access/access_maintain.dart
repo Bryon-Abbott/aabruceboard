@@ -33,7 +33,7 @@ class AccessMaintainState extends State<AccessMaintain> {
     //cid = ModalRoute.of(context)!.settings.arguments as String;
     BruceUser bruceUser = Provider.of<BruceUser>(context);
     String uid = bruceUser.uid;
-    late int cid;
+//    late int cid;
 //    Membership membership = Provider.of<Membership>(context);
     String currentStatus = "";
 
@@ -113,6 +113,7 @@ class AccessMaintainState extends State<AccessMaintain> {
                               }
                               // Save Updates to Shared Preferences
                               log("membership_maintain: Added/Updated membership ${access?.cid}");
+                              if (!context.mounted) return;
                               Navigator.of(context).pop(widget.access);
                             }
                           },

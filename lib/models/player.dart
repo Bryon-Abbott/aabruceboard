@@ -27,7 +27,7 @@ class Player implements FirestoreDoc {
   final String nextIdField = 'nextPid';
   @override
   final String totalField = 'noPlayers';
-  @override
+
   static final NumberFormat _keyFormat = NumberFormat("P00000000", "en_US");
   // Data Class Variables
   String uid;

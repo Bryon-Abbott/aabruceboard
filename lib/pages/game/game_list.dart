@@ -20,7 +20,7 @@ class GameList extends StatefulWidget {
   const GameList({super.key, required this.series});
 
   @override
-  _GameListState createState() => _GameListState();
+  State<GameList> createState() => _GameListState();
 }
 
 class _GameListState extends State<GameList> {

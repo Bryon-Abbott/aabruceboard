@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:bruceboard/models/activeplayerprovider.dart';
+// import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:flutter/material.dart';
 
@@ -37,8 +37,8 @@ class _AccessListState extends State<AccessList> {
 
     bruceUser = Provider.of<BruceUser>(context);
     Player communityPlayer = Provider.of<CommunityPlayerProvider>(context).communityPlayer;
-    Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
-    Player? player;
+//    Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
+//    Player? player;
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.access, sidKey: series.key).fsDocListStream,
@@ -83,7 +83,7 @@ class _AccessListState extends State<AccessList> {
                             // is the PID of the owner of the community.
                             await DatabaseService(FSDocType.access, sidKey: series.key).fsDocAdd(access);
                             series.noAccesses++;
-                            log("access_list: Updating AID: ${access.docId ?? -600}", name: "${runtimeType.toString()}:build()");
+                            log("access_list: Updating AID: ${access.docId}", name: "${runtimeType.toString()}:build()");
                             // Add MemberOwner to Community Player for current Player
                             // Process Messages
                             // await messageMembershipAddRequest(membership: membership, player: player, communityPlayer: communityPlayer,
@@ -91,6 +91,7 @@ class _AccessListState extends State<AccessList> {
                             //     comment: comment);
                         } else {
                           // Error: Membership request already exists ... display message
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(content: Text("Access already exist ... "))
                           );

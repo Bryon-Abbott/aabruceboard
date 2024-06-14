@@ -26,7 +26,7 @@ abstract class FirestoreDoc {
   final String nextIdField = 'nextFsid';    // Stored in Player
   final String totalField = 'noDocuments';  // Strored in Parent
   int docId = -1;
-  final NumberFormat _keyFormat = NumberFormat("FS00000000", "en_US");
+  static final NumberFormat _keyFormat = NumberFormat("FS00000000", "en_US");
 
   factory FirestoreDoc(FSDocType fsDocType, { required Map<String, dynamic> data, })
   {
@@ -58,6 +58,11 @@ abstract class FirestoreDoc {
           throw 'Invalid document type';
       }
     //docId = data['docId'] ?? -1;
+  }
+
+  static String KEY(int fsid) {
+    String key = NumberFormat("FS00000000", "en_US").format(fsid);
+    return key;
   }
 
   String get key

@@ -20,8 +20,8 @@ import 'package:provider/provider.dart';
 class MembershipTile extends StatelessWidget {
   final Membership membership;
   MembershipTile({super.key,  required this.membership });
-  TextEditingController controller1 = TextEditingController();
-  TextEditingController controller2 = TextEditingController();
+  final TextEditingController controller1 = TextEditingController();
+  final TextEditingController controller2 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,7 @@ class MembershipTile extends StatelessWidget {
                           title: Text('Membership Status: ${membership.status}'),
                           subtitle: Text(
                               'Community: ${community?.name ?? '...'} (${membership.key})\n'
-                                  'Owner: ${communityPlayer.fName ?? '...'} ${communityPlayer.lName ?? ""}\n'
+                                  'Owner: ${communityPlayer.fName} ${communityPlayer.lName}\n'
                                   'Credits: ${member?.credits ?? -1}'
                           ),
                           trailing: SizedBox(

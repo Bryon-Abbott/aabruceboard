@@ -9,7 +9,7 @@ class Community implements FirestoreDoc {
   final String nextIdField = 'nextCid';
   @override
   final String totalField = 'noCommunities';
-  @override
+
   static final NumberFormat _keyFormat = NumberFormat("C0000", "en_US");
   // Data Class Variables
   int pid;

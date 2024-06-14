@@ -8,7 +8,7 @@ class Board implements FirestoreDoc {
   final String nextIdField = 'nextBid';
   @override
   final String totalField = 'noBoards';
-  @override
+
   final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
   String gid='none';
 

@@ -1,6 +1,6 @@
 
 import 'package:bruceboard/services/auth.dart';
-import 'package:bruceboard/shared/constants.dart';
+//import 'package:bruceboard/shared/constants.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +11,7 @@ class SignIn extends StatefulWidget {
   const SignIn({super.key,  required this.toggleView });
 
   @override
-  _SignInState createState() => _SignInState();
+  State<SignIn> createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
@@ -48,7 +48,7 @@ class _SignInState extends State<SignIn> {
               const SizedBox(height: 20.0),
               TextFormField(
 //                decoration: textInputDecoration.copyWith(hintText: 'email'),
-                decoration: InputDecoration(hintText: 'email@doman.com'),
+                decoration: const InputDecoration(hintText: 'email@doman.com'),
                 //style: Theme.of(context).textTheme.titleMedium,
                 validator: (val) => val!.isEmpty ? 'Enter an email' : null,
                 onChanged: (val) {
@@ -58,7 +58,7 @@ class _SignInState extends State<SignIn> {
               const SizedBox(height: 20.0),
               TextFormField(
                 obscureText: true,
-                decoration: InputDecoration(hintText: 'password (6+ chars)'),
+                decoration: const InputDecoration(hintText: 'password (6+ chars)'),
 //                decoration: textInputDecoration.copyWith(hintText: 'password'),
                 validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
                 onChanged: (val) {
@@ -102,6 +102,7 @@ class _SignInState extends State<SignIn> {
                           error = 'Could not sign in with those credentials';
                         });
                       } else {
+                        if (!context.mounted) return;
                         Navigator.pop(context);
                       }
 // Note: The catch code below is never executed???

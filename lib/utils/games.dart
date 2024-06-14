@@ -130,7 +130,7 @@ class GameData {
     percentSplits = List<int>.from(percentSplitDynamic);
 
     // Check if Row Scores and Col Scores are set, if so lock them.
-    if (rowScores[0] == -1 || colScores == -1) {
+    if (-1 == rowScores[0] || -1 == colScores[0]) {
       scoresLocked = false;
     } else {
       scoresLocked = true;

@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:bruceboard/models/series.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/community.dart';
@@ -15,7 +15,7 @@ class AccessTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BruceUser bruceUser = Provider.of<BruceUser>(context);
+//    BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     // Player communityPlayer = DatabaseService(FSDocType.player).fsDoc(docId: membership.pid) as Player;
     // Community community = DatabaseService(FSDocType.community, uid: communityPlayer.uid)

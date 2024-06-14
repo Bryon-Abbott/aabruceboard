@@ -158,7 +158,7 @@ class _HomeState extends State<Home> {
               child: Container(
                 height: newScreenHeight,
                 width: newScreenWidth,
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.surface,
                 child: SingleChildScrollView(
                   child: Column(children: <Widget>[
                     const SizedBox(height: 20,),
@@ -404,7 +404,7 @@ class _HomeState extends State<Home> {
                     // Spacer(),
                     const SizedBox(height: 20.0),
                     Text(
-                      "Welcome '${bruceUser == null ? "????" : bruceUser.displayName}'",
+                      "Welcome '${bruceUser.displayName}'",
                       textAlign: TextAlign.end,
                       style: Theme.of(context).textTheme.titleSmall,
                     ),

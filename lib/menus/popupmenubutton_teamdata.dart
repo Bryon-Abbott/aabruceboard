@@ -4,11 +4,11 @@ import 'package:bruceboard/utils/league_list.dart';
 
 class PopupMenuButtonTeamData extends StatelessWidget {
   final void Function(TeamData selectedValue) onSelected;
-  TeamData initialValue;
-  String? toolTip;
-  Map<String, TeamData> leagueTeamData;
+  final TeamData initialValue;
+  final String? toolTip;
+  final Map<String, TeamData> leagueTeamData;
 
-  PopupMenuButtonTeamData({super.key,
+  const PopupMenuButtonTeamData({super.key,
     required this.onSelected,
     required this.initialValue,
     required this.leagueTeamData,

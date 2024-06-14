@@ -52,7 +52,7 @@ class GameBoard extends StatefulWidget {
 class _GameBoardState extends State<GameBoard> {
   late Game game;
   late Series series;
-  late String _uid;
+//  late String _uid;
 
   late bool isGameOwner;
   late Map<String, TeamData> leagueTeamData;
@@ -114,8 +114,8 @@ class _GameBoardState extends State<GameBoard> {
   Widget build(BuildContext context) {
     game = widget.game;
 
-    BruceUser bruceUser = Provider.of<BruceUser>(context);
-    _uid = bruceUser.uid;
+//    BruceUser bruceUser = Provider.of<BruceUser>(context);
+//    _uid = bruceUser.uid;
 
     // Calculate screen size
     var padding = MediaQuery.of(context).padding;
@@ -375,7 +375,7 @@ class _GameBoardState extends State<GameBoard> {
                 Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: SizedBox(
-                    width: 35,
+                    width: 36,
                     child: Text("Qtr${index + 1}:"),
                   ),
                 ),
@@ -386,7 +386,7 @@ class _GameBoardState extends State<GameBoard> {
                     width: 30,
                     decoration: BoxDecoration(
                       border: Border.all(color: Theme.of(context).colorScheme.outline),
-                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,  // .surfaceVariant,
                     ),
                     child: Text(board.colResults[index].toString(),
                         textAlign: TextAlign.right),
@@ -399,7 +399,7 @@ class _GameBoardState extends State<GameBoard> {
                     width: 30,
                     decoration: BoxDecoration(
                       border: Border.all(color: Theme.of(context).colorScheme.outline),
-                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest,  //.surfaceVariant,
                     ),
                     child: Text(board.rowResults[index].toString(),
                         textAlign: TextAlign.right),
@@ -419,7 +419,7 @@ class _GameBoardState extends State<GameBoard> {
                     width: 150,
                     decoration: BoxDecoration(
                       border: Border.all(color: Theme.of(context).colorScheme.outline),
-                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest, // .surfaceVariant,
                     ),
                     child: (!board.scoresLocked)
                         ? const Text("Lock Score Digits")
@@ -444,7 +444,7 @@ class _GameBoardState extends State<GameBoard> {
                     width: 40,
                     decoration: BoxDecoration(
                       border: Border.all(color: Theme.of(context).colorScheme.outline),
-                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      color: Theme.of(context).colorScheme.surfaceContainerHighest, // .surfaceVariant,
                     ),
                     // child: Text('Fix Me'),
                     child: Text((board.squaresPicked*board.percentSplits[index]*game.squareValue~/100).toString(),
@@ -535,7 +535,7 @@ class _GameBoardState extends State<GameBoard> {
               comment: "Thanks for Playing.",
               description: "You Won the Q${i+1} Score and received $credits credits. Your account was updated from $prevCredits to ${member.credits}) "
                      "Community: <${community.name}>, Owner: ${activePlayer.fName} ${activePlayer.lName}",
-              data: { 'cid': community.docId, 'credits' : member.credits ?? 0 },
+              data: { 'cid': community.docId, 'credits' : member.credits },
             );
             // messageMemberAddCreditsNotification(credits: credits, fromPlayer: activePlayer, toPlayer: winnersPlayer[i],
             //   description: "You Won the Q${i+1} Score and received $credits credits. Your account was updated from $prevCredits to ${member.credits}) "
@@ -561,6 +561,7 @@ class _GameBoardState extends State<GameBoard> {
         dev.log("Got Exclude PID ($excludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
 
         Grid grid = await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
+        if (!context.mounted) return;
         dynamic result = await Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => AccessListMembers(series: series)));
         //dynamic result = await Navigator.pushNamed(context, '/player-select');
@@ -580,6 +581,7 @@ class _GameBoardState extends State<GameBoard> {
                 }
                 updated++;
               } else {
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Member has run out of credits after $updated squares."))
                 );
@@ -820,7 +822,7 @@ class _GameBoardState extends State<GameBoard> {
                             width: 40,
                             decoration: BoxDecoration(
                               border: Border.all(color: Theme.of(context).colorScheme.outline),
-                              color: Theme.of(context).colorScheme.surfaceVariant,
+                              color: Theme.of(context).colorScheme.surfaceContainerHighest,   // .surfaceVariant,
                             ),
             //                        child: Text('Fix Me'),
                             child: Text((credits[index]).toString(),

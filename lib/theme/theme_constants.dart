@@ -1,11 +1,11 @@
 //import 'package:bruceboard/theme/theme_manager.dart';
 import 'package:flutter/material.dart';
 
-const COLOR_PRIMARY = Colors.deepOrangeAccent;
-const COLOR_ACCENT = Colors.orange;
+const kColorPrimary = Colors.deepOrangeAccent;
+const kColorAccent = Colors.orange;
 //const BODY_COLOR = Colors.black;
-Color BODY_COLOR = Colors.green[900] ?? Colors.green;
-Color BODY_COLOR_DARK = Colors.green[300] ?? Colors.green;
+Color kBodyColor = Colors.green[900] ?? Colors.green;
+Color kBodyColorDark = Colors.green[300] ?? Colors.green;
 //Color BODY_COLOR = Colors.lime[900] ?? Colors.lightGreen;
 
 // ===========================================================================
@@ -24,30 +24,31 @@ ThemeData lightTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.green,
     brightness: Brightness.light,
-    background: Colors.green[100],
+    surface: Colors.green[100],
+//    background: Colors.green[100],
   ),
 
   textTheme: TextTheme(
     titleLarge: TextStyle(
       fontSize: 32,
       fontWeight: FontWeight.bold,
-      color: BODY_COLOR,
+      color: kBodyColor,
     ),
     displayLarge: TextStyle(
       fontSize: 32,
       fontWeight: FontWeight.bold,
-      color: BODY_COLOR,
+      color: kBodyColor,
     ),
     titleMedium: TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.bold,
-      color: BODY_COLOR,
+      color: kBodyColor,
     ),
     bodyMedium: TextStyle(
-      color: BODY_COLOR,
+      color: kBodyColor,
     ),
     headlineMedium: TextStyle(
-      color: BODY_COLOR,
+      color: kBodyColor,
     )
   ),
 
@@ -68,7 +69,7 @@ ThemeData lightTheme = ThemeData(
   // ),
 
   floatingActionButtonTheme:
-    const FloatingActionButtonThemeData(backgroundColor: COLOR_ACCENT),
+    const FloatingActionButtonThemeData(backgroundColor: kColorAccent),
   textButtonTheme: const TextButtonThemeData(
     style: ButtonStyle(
 
@@ -76,7 +77,7 @@ ThemeData lightTheme = ThemeData(
   ),
   elevatedButtonTheme: ElevatedButtonThemeData(
      style: ButtonStyle(
-       textStyle: MaterialStateProperty.all(
+       textStyle: WidgetStateProperty.all(
           const TextStyle(
 //              fontSize: 10,
               fontWeight: FontWeight.normal
@@ -89,9 +90,9 @@ ThemeData lightTheme = ThemeData(
       //   )
       // ),
       alignment: Alignment.center,
-      padding: MaterialStateProperty.all<EdgeInsets>(
+      padding: WidgetStateProperty.all<EdgeInsets>(
           const EdgeInsets.all(2)),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(2.0),
          // side: const BorderSide(color: Colors.lightGreenAccent),
@@ -120,30 +121,32 @@ ThemeData darkTheme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
     seedColor: Colors.brown,
     brightness: Brightness.dark,
-    background: Colors.green[900]
+    //background: Colors.green[900]
+    surface: Colors.green[900]
+
   ),
 
   textTheme: TextTheme(
     titleLarge: TextStyle(
       fontSize: 32,
       fontWeight: FontWeight.bold,
-      color: BODY_COLOR_DARK,
+      color: kBodyColorDark,
     ),
     displayLarge: TextStyle(
       fontSize: 32,
       fontWeight: FontWeight.bold,
-      color: BODY_COLOR_DARK,
+      color: kBodyColorDark,
     ),
     titleMedium: TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.bold,
-      color: BODY_COLOR_DARK,
+      color: kBodyColorDark,
     ),
     bodyMedium: TextStyle(
-      color: BODY_COLOR_DARK,
+      color: kBodyColorDark,
     ),
       headlineMedium: TextStyle(
-        color: BODY_COLOR_DARK,
+        color: kBodyColorDark,
       )
   ),
 
@@ -161,8 +164,8 @@ ThemeData darkTheme = ThemeData(
 
 
   switchTheme: SwitchThemeData(
-    trackColor: MaterialStateProperty.all<Color>(Colors.grey),
-    thumbColor: MaterialStateProperty.all<Color>(Colors.white),
+    trackColor: WidgetStateProperty.all<Color>(Colors.grey),
+    thumbColor: WidgetStateProperty.all<Color>(Colors.white),
   ),
 
   inputDecorationTheme: InputDecorationTheme(
@@ -174,16 +177,16 @@ ThemeData darkTheme = ThemeData(
 
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ButtonStyle(
-      textStyle: MaterialStateProperty.all(
+      textStyle: WidgetStateProperty.all(
         const TextStyle(
 //          fontSize: 20,
           fontWeight: FontWeight.normal
         )
       ),
       alignment: Alignment.center,
-      padding: MaterialStateProperty.all<EdgeInsets>(
+      padding: WidgetStateProperty.all<EdgeInsets>(
           const EdgeInsets.all(1)),
-      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+      shape: WidgetStateProperty.all<RoundedRectangleBorder>(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(2.0),
 //          side: const BorderSide(color: Colors.lightGreenAccent),

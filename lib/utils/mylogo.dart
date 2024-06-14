@@ -7,7 +7,7 @@ class MyLogo {
   /// This values variable can be accessed to display all logos
   /// available in the plugin package.
   static List<Widget> values = <Widget>[
-    ...MyLogo.cfl.values.map((AssetGenImage e) => e.image()).toList(),
+    ...MyLogo.cfl.values.map((AssetGenImage e) => e.image()), //.toList(),
   ];
 }
 

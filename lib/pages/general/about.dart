@@ -52,11 +52,9 @@ class _AboutState extends State<About> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 10),
-                Container(
-                  child: Text("Bruce Board is a standard Football Pool board",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.displayLarge,
-                  ),
+                Text("Bruce Board is a standard Football Pool board",
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.displayLarge,
                 ),
                 const SizedBox(height: 10),
                 Padding(

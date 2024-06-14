@@ -33,12 +33,12 @@ class CommunityMaintainState extends State<CommunityMaintain> {
     //cid = ModalRoute.of(context)!.settings.arguments as String;
     BruceUser bruceUser = Provider.of<BruceUser>(context);
     //String uid = bruceUser.uid;
-    late int cid;
+//    late int cid;
     //Community? community = widget.community;
     String currentCommunityName = "";
     String currentCommunityType = "";
-    int currentCommunityNoMembers = 0;
-    int noGames = 0;
+//    int currentCommunityNoMembers = 0;
+//    int noGames = 0;
 
     // Todo: Remove this
     if (community != null) {
@@ -50,10 +50,10 @@ class CommunityMaintainState extends State<CommunityMaintain> {
 
     if ( community != null ) {
       //uid = community!.uid;
-      cid = community!.docId;
+//      cid = community!.docId;
       currentCommunityName = community?.name ?? 'xxx';
       currentCommunityType = community?.type ?? 'xxx';
-      currentCommunityNoMembers = community?.noMembers ?? 0;
+//      currentCommunityNoMembers = community?.noMembers ?? 0;
     }
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
@@ -158,6 +158,7 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                               // Save Updates to Shared Preferences
                               log("community_maintain: Added/Updated community "
                                   "${community?.noMembers}");
+                              if (!context.mounted) return;
                               Navigator.of(context).pop(community);
                             }
                           },

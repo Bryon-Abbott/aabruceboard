@@ -42,7 +42,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
     BruceUser bruceUser = Provider.of<BruceUser>(context);
     //_uid = bruceUser.uid;
     int newCredits = 0;
-    int noMembers = 0;
+//    int noMembers = 0;
 
     if ( member != null ) {
       newCredits = member?.credits ?? 0;
@@ -139,6 +139,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                 }
                               }
                               // Save Updates to Shared Preferences
+                              if (!context.mounted) return;
                               Navigator.of(context).pop();
                             }
                           },
@@ -171,6 +172,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                 ),
                               );
                               if (results) {
+                                if (!context.mounted) return;
                                 String? comment = await openDialogMessageComment(context, defaultComment: "Thanks for playing ... ");
                                 if (comment != null) {
                                   log('Delete Member ... C:${community.key}, U:${bruceUser.uid}');
@@ -188,6 +190,7 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                       comment: comment, description: desc,
                                       data: { 'cid': community.docId, 'credits' : member?.credits ?? 0 },
                                   );
+                                  if (!context.mounted) return;
                                   Navigator.of(context).pop();
                                 }
                               } else {

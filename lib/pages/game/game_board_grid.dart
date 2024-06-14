@@ -220,10 +220,10 @@ class _GameBoardGridState extends State<GameBoardGrid> {
               dev.log("Pressed game button ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
               if (gameOwner) {
                 dev.log("Owner Assign Square ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
-                assignSquare(game, grid, squareIndex);
+                assignSquare(context, game, grid, squareIndex);
               } else {
                 dev.log("Player Request Square ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
-                requestSquare(game, grid, squareIndex);
+                requestSquare(context, game, grid, squareIndex);
               }
             }
             : null,
@@ -260,9 +260,10 @@ class _GameBoardGridState extends State<GameBoardGrid> {
     return null;
   }
 
-  void assignSquare(Game game, Grid grid, int squareIndex) async {
+  void assignSquare(BuildContext context, Game game, Grid grid, int squareIndex) async {
     dev.log("Assign Square ($squareIndex)", name: "${runtimeType.toString()}:ownerAssignSquare()");
     //dynamic playerSelected = await Navigator.pushNamed(context, '/player-select');
+    if (!context.mounted) return;
     dynamic result = await Navigator.of(context).push(
       MaterialPageRoute(builder: (context) => AccessListMembers(series: series)),
     );
@@ -271,6 +272,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       dev.log("No Player Selected", name: "${runtimeType.toString()}:GameButton");
     } else {
       // Get Comment
+      if (!context.mounted) return;
       String? comment = await openDialogMessageComment(context, defaultComment: "Good Luck with Square $squareIndex");
       if (comment != null) {
         Access selectedAccess = result[0] as Access; // Access Record used for player (contains 'cid' and 'pid'
@@ -301,7 +303,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
   }
 
   // Request Square from Series Owner.
-  void requestSquare(Game game, Grid grid, int squareIndex) async {
+  void requestSquare(BuildContext context, Game game, Grid grid, int squareIndex) async {
     dev.log("Request Square ($squareIndex) for Community ID ${currentMembership.cid}", name: "${runtimeType.toString()}:requestSquare()");
 
     // Get Active Players Member Record from Community to Check Credits.
@@ -311,6 +313,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       Member member = fsDoc as Member;
       if (member.credits >= game.squareValue) {  // Has Credits
         // Get Comment
+        if (!context.mounted) return;
         String? comment = await openDialogMessageComment(context, defaultComment: "Please assign me to Square $squareIndex");
         if (comment != null) {
           // Send message to user
@@ -324,6 +327,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
           dev.log("Request Square Cancelled for ($squareIndex)", name: "${runtimeType.toString()}:requestSquare()");
         }
       } else {
+        if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text("You do not have enough Credits in your Community Membership (${member.credits}), Square Value ${game.squareValue}"),
@@ -331,6 +335,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
         );
       }
     } else {
+      if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Cannot find Member Record, Ensure Membership request has been accepted"),

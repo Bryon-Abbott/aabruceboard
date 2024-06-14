@@ -12,7 +12,7 @@ class Message implements FirestoreDoc {
   @override
   // final String totalField = 'NO-TOTALS';
   final String totalField = 'noMessages';
-  @override
+
   final NumberFormat _keyFormat = NumberFormat("ME00000000", "en_US");
   // Document Specific Data items
   // @override

@@ -2,24 +2,24 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 // Status POPUP, Used for Games & Series Status.
 
-enum StatusValues {Prepare, Active, Complete, Archived}
+enum StatusValues {prepare, active, complete, archived}
 Map<StatusValues, String> statusValueText = {
-  StatusValues.Prepare: "Prepare",
-  StatusValues.Active: "Active",
-  StatusValues.Complete: "Complete",
-  StatusValues.Archived: "Archived",
+  StatusValues.prepare: "Prepare",
+  StatusValues.active: "Active",
+  StatusValues.complete: "Complete",
+  StatusValues.archived: "Archived",
 };
 
 class PopupMenuButtonStatus extends StatelessWidget {
   final void Function(StatusValues selectValue) onSelected;
-  StatusValues? initialValue;
-  PopupMenuButtonStatus({super.key, required this.onSelected, this.initialValue});
+  final StatusValues? initialValue;
+  const PopupMenuButtonStatus({super.key, required this.onSelected, this.initialValue});
 
 
   @override
   Widget build(BuildContext context) {
 
-    StatusValues currentStatus = initialValue ?? StatusValues.Prepare;
+    StatusValues currentStatus = initialValue ?? StatusValues.prepare;
 
     return PopupMenuButton<StatusValues>(
       tooltip: "Set Status",
@@ -30,19 +30,19 @@ class PopupMenuButtonStatus extends StatelessWidget {
       },
       itemBuilder: (BuildContext context) => <PopupMenuEntry<StatusValues>>[
         const PopupMenuItem<StatusValues>(
-          value: StatusValues.Prepare,
+          value: StatusValues.prepare,
           child: Text('Prep'),
         ),
         const PopupMenuItem<StatusValues>(
-          value: StatusValues.Active,
+          value: StatusValues.active,
           child: Text('Active'),
         ),
         const PopupMenuItem<StatusValues>(
-          value: StatusValues.Complete,
+          value: StatusValues.complete,
           child: Text('Complete'),
         ),
         const PopupMenuItem<StatusValues>(
-          value: StatusValues.Archived,
+          value: StatusValues.archived,
           child: Text('Archive'),
         ),
       ],

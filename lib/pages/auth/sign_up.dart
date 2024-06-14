@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:bruceboard/services/auth.dart';
-import 'package:bruceboard/shared/constants.dart';
+// import 'package:bruceboard/shared/constants.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +11,7 @@ class SignUp extends StatefulWidget {
   const SignUp({super.key,  required this.toggleView });
 
   @override
-  _SignUpState createState() => _SignUpState();
+  State<SignUp> createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUp> {
@@ -74,7 +74,7 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 10.0),
                   const Text("Email Address"),
                   TextFormField(
-                    decoration: InputDecoration(hintText: 'email@domain.com'),
+                    decoration: const InputDecoration(hintText: 'email@domain.com'),
 //                    decoration: textInputDecoration.copyWith(hintText: 'email'),
                     validator: (val) => val!.isEmpty ? 'Enter an email' : null,
                     onChanged: (val) {
@@ -84,7 +84,7 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 10.0),
                   const Text("Password"),
                   TextFormField(
-                    decoration: InputDecoration(hintText: 'password'),
+                    decoration: const InputDecoration(hintText: 'password'),
 //                    decoration: textInputDecoration.copyWith(hintText: 'password'),
                     obscureText: true,
                     validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
@@ -95,7 +95,7 @@ class _SignUpState extends State<SignUp> {
                   const SizedBox(height: 10.0),
                   const Text("Password Verification"),
                   TextFormField(
-                    decoration: InputDecoration(hintText: 'reenter password'),
+                    decoration: const InputDecoration(hintText: 'reenter password'),
 //                    decoration: textInputDecoration.copyWith(hintText: 'reenter password'),
                     obscureText: true,
                     validator: (val) => val! != password ? 'Passwords entered are not the same' : null,

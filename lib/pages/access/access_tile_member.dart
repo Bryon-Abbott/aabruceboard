@@ -18,14 +18,14 @@ class AccessTileMembers extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BruceUser bruceUser = Provider.of<BruceUser>(context);
+//    BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     final Player communityPlayer = Provider.of<CommunityPlayerProvider>(context).communityPlayer;
     String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
     int excludePlayerNo = int.parse(excludePlayerNoString);
     log("Got Exclude PID ($excludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
 
-    Community? community;
+//    Community? community;
 
     return FutureBuilder<FirestoreDoc?>(
       future: DatabaseService(FSDocType.community, uid: communityPlayer.uid, cidKey: Community.Key(access.cid))

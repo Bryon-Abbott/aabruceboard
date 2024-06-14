@@ -18,7 +18,7 @@ class MemberList extends StatefulWidget {
   const MemberList({super.key, required this.community});
 
   @override
-  _MemberListState createState() => _MemberListState();
+  State<MemberList> createState() => _MemberListState();
 }
 
 class _MemberListState extends State<MemberList> {
@@ -68,6 +68,7 @@ class _MemberListState extends State<MemberList> {
                     icon: const Icon(Icons.add_circle_outline),
                     onPressed: () async {
                       player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+                      if (!context.mounted) return;
                       dynamic results = await Navigator.pushNamed(
                           context, '/player-select');
                       if (results != null) {
@@ -78,6 +79,7 @@ class _MemberListState extends State<MemberList> {
                             key: Member.KEY(playerSelected!.pid));
                         if (existingMember == null ) {
                           // Add Member to Community
+                          if (!context.mounted) return;
                           String? comment = await openDialogMessageComment(context, defaultComment: "Inviting you to the Team");
                           if (comment != null) {
                             Member member = Member(data:
@@ -97,6 +99,7 @@ class _MemberListState extends State<MemberList> {
                             log("member_list: Canceld out of Comment dialog");
                           }
                         } else {
+                          if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text("Member already exist."))
                           );

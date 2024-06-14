@@ -4,7 +4,7 @@ import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/pages/message/message_list_incoming.dart';
 //import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+//import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -42,10 +42,9 @@ import 'package:bruceboard/pages/settings/settings_scoring.dart';
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final AdaptiveThemeMode savedThemeModex = await AdaptiveTheme.getThemeMode() ??
-      AdaptiveThemeMode.light;
+//  final AdaptiveThemeMode savedThemeModex = await AdaptiveTheme.getThemeMode() ??
+//      AdaptiveThemeMode.light;
 
-  await Settings.init(cacheProvider: SharePreferenceCache());
   await Preferences.init();
 
   await Firebase.initializeApp(

@@ -10,8 +10,8 @@ class MessageOwner implements FirestoreDoc {
   final String nextIdField = 'nextMoid';
   @override
   final String totalField = 'noMessagesOwners';
-  @override
-  final NumberFormat _keyFormat = NumberFormat("MO00000000", "en_US");
+
+  // final NumberFormat _keyFormat = NumberFormat("MO00000000", "en_US");
   // Document Specific Data items
   // @override
   // int docId;

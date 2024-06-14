@@ -10,7 +10,7 @@ class Series implements FirestoreDoc {
   final String nextIdField = 'nextSid';
   @override
   final String totalField = 'noSeries';
-  @override
+
   static final NumberFormat _keyFormat = NumberFormat("S0000", "en_US");
   // Data Class Variables
 

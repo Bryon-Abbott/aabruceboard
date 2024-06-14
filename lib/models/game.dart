@@ -10,7 +10,7 @@ class Game implements FirestoreDoc {
   final String nextIdField = 'nextGid';
   @override
   final String totalField = 'noGames';
-  @override
+
   static final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
   // Data Class Variables
 //  int gid; // Game ID
