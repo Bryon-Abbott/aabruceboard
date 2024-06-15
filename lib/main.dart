@@ -52,7 +52,6 @@ main() async {
   );
 
   runApp(
-    // RootApp(savedThemeMode: savedThemeModex),
     const RootApp(),
   );
 }
@@ -128,7 +127,7 @@ class LoadApp extends StatelessWidget {
                 // '/managegames': (context) => const ManageGames(),
                 // '/maintaingame': (context) => const MaintainGame(),
                 '/about': (context) => const About(),
-                '/authenticate': (contexct) => const Authenticate(),
+                '/authenticate': (context) => const Authenticate(),
                 '/player-profile': (context) => const PlayerProfile(),
                 '/player-select': (context) => const PlayerSelect(),
                 '/series-list': (context) => const SeriesList(),

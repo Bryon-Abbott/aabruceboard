@@ -37,7 +37,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_spinkit: ^5.2.0
-  # shared_preferences: is dependancy of adaptive_theme so also included there.
+  # shared_preferences: is dependency of adaptive_theme so also included there.
   shared_preferences: ^2.2.3
   package_info_plus: ^8.0.0
   settings_ui: ^2.0.2
