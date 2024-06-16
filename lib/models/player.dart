@@ -20,6 +20,14 @@ class BruceUser {
   bool get emailVerified {
     return _auth.emailVerified;
   }
+
+  void sendEmailVerification() {
+    _auth.currentUser?.sendEmailVerification();
+  }
+
+  void sendPasswordResetEmail(email){
+    _auth.sendPasswordResetEmail(email);
+  }
 }
 
 class Player implements FirestoreDoc {

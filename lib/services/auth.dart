@@ -26,10 +26,24 @@ class AuthService {
       return _auth.currentUser?.emailVerified ?? false;
   }
 
+  User? get currentUser {
+    return _auth.currentUser;
+  }
+
   Future<void> updateDisplayName(String newDisplayName) async {
     if (_auth.currentUser != null) {
-      return await _auth.currentUser?.updateDisplayName(newDisplayName);
+      return await _auth.currentUser!.updateDisplayName(newDisplayName);
     }
+  }
+
+  Future<void> sendEmailVerification() async {
+    if (_auth.currentUser != null) {
+      await _auth.currentUser!.sendEmailVerification();
+    }
+  }
+
+  Future<void> sendPasswordResetEmail(email) async {
+    await _auth.sendPasswordResetEmail(email: email);
   }
 
   // auth change user stream
@@ -68,8 +82,9 @@ class AuthService {
       {String fName='fName', String lName = 'lName', String initials='fl' }) async {
     try {
       UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      await result.user!.updateDisplayName(displayName);
       User user = result.user!;
+      await user.updateDisplayName(displayName);
+      await user.sendEmailVerification();
       // create a new document for the user with the uid
  //     Player player = Player(data: {'uid': user.uid, 'pid': -1, 'fName': 'FNAME', 'lName': 'LNAME', 'initials': 'FL'} );
         Player player = Player(data: { 'uid': user.uid, 'fName': fName, 'lName': lName, 'initials': initials  } );

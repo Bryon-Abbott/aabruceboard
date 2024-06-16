@@ -41,7 +41,10 @@ abstract class PlayerProfileCtrl extends State<PlayerProfilePage> {
     }
   }
 
-  Future<void> verifyOnPressed() async {
+  void verifyOnPressed() {
     log("Pressed verify");
+    if (bruceUser != null) {
+      bruceUser!.sendEmailVerification();
+    }
   }
 }

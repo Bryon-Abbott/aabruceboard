@@ -82,15 +82,18 @@ class _PlayerProfilePage extends PlayerProfileCtrl {
                                 // style: ButtonStyle(
                                 //   backgroundColor: MaterialStateProperty.all<Color>(Colors.pink[400]!),
                                 // ),
-                                  child: const Text('Update',),
+                                  child: const Text('Update Player',),
                                   //                        style: TextStyle(color: Colors.white),
                                   //                      ),
                                   onPressed: updateOnPressed,
                               ),
                             ),
-                            ElevatedButton(
-                                onPressed: (bruceUser?.emailVerified ?? true) ? null : verifyOnPressed,
-                                child: Text("Verify"))
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                  onPressed: (bruceUser?.emailVerified ?? true) ? null : verifyOnPressed,
+                                  child: Text("Verify Email")),
+                            ),
                           ],
                         ),
                         const Spacer(),

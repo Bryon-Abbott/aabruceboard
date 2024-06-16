@@ -66,72 +66,54 @@ class _SignInState extends State<SignIn> {
                 },
               ),
               const SizedBox(height: 20.0),
-              ElevatedButton(
-                  style: const ButtonStyle(
-//                    backgroundColor: MaterialStateProperty.all<Color>(Colors.pink[400]!),
-                  ),
-                child: const Text(
-                  'Sign In',
-//                  style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () async {
-                  if(_formKey.currentState!.validate()) {
-                    setState(() => loading = true);
-                    // try {
-                    //   User? result = await _auth.signInWithEmailAndPassword(
-                    //       email, password)
-                    //       .then((currentUser) {
-                    //     log('Signon Successful');
-                    //     Navigator.pop(context);
-                    //   })
-                    //       .catchError((error) {
-                    //     log('Signon Faild');
-                    //     setState(() {
-                    //       loading = false;
-                    //       error = error.code;
-                    //     });
-                    //   });
-                    // } catch (e) {
-                    //   log('Error caught');
-                    // }
-                      User? result = await _auth.signInWithEmailAndPassword(
-                          email, password);
-                      if ( result == null ) {
-                        setState(() {
-                          loading = false;
-                          error = 'Could not sign in with those credentials';
-                        });
-                      } else {
-                        if (!context.mounted) return;
-                        Navigator.pop(context);
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      //style: const ButtonStyle(),
+                      child: const Text('Sign In'),
+                      onPressed: () async {
+                        if(_formKey.currentState!.validate()) {
+                          setState(() => loading = true);
+                            User? result = await _auth.signInWithEmailAndPassword(
+                                email, password);
+                            if ( result == null ) {
+                              setState(() {
+                                loading = false;
+                                error = 'Could not sign in with those credentials';
+                              });
+                            } else {
+                              if (!context.mounted) return;
+                              Navigator.pop(context);
+                            }
+                        }
                       }
-// Note: The catch code below is never executed???
-//                     } on FirebaseAuthException catch (e) {
-//                       log('Signin Firebase Auth Error');
-//                         setState(() {
-//                           loading = false;
-//                           error = e.code;
-//                         });
-//                       // if (e.code == 'weak-password') {
-//                       //   print('The password provided is too weak.');
-//                       // } else if (e.code == 'email-already-in-use') {
-//                       //   print('The account already exists for that email.');
-//                       // }
-//                     } catch (e) {
-//                       log('Signin Other Error');
-//                       setState(() {
-//                           loading = false;
-//                           error = e.toString();
-//                         });
-//                     }
-                  }
-                }
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: ElevatedButton(
+                      //style: const ButtonStyle(),
+                        child: const Text('Reset Password'),
+                        onPressed: () async {
+                          if( !email.isEmpty ) {
+                            await _auth.sendPasswordResetEmail(email);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Password Reset Email sent to ${email} ... "))
+                            );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Enter Email in Email field ... "))
+                              );
+                          }
+                        }
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 12.0),
-              Text(
-                error,
-//                style: TextStyle(color: Theme.of(context).highlightColor, fontSize: Theme.of(context)...),
-              ),
+              Text(error),
             ],
           ),
         ),
