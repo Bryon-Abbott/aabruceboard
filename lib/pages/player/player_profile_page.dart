@@ -1,43 +1,34 @@
 import 'dart:developer';
-import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/services/auth.dart';
-// import 'package:bruceboard/shared/constants.dart';
 import 'package:bruceboard/shared/loading.dart';
 
-class PlayerProfile extends StatefulWidget {
-  const PlayerProfile({super.key});
+part 'player_profile_ctrl.dart';
+
+class PlayerProfilePage extends StatefulWidget {
+  const PlayerProfilePage({Key? key}) : super(key: key);
 
   @override
-  State<PlayerProfile> createState() => _PlayerProfileState();
+  createState() => _PlayerProfilePage();
 }
 
-class _PlayerProfileState extends State<PlayerProfile> {
-
-  final _formKey = GlobalKey<FormState>();
-
-  // form values
-  String? _currentFName;
-  String? _currentLName;
-  String? _currentInitials;
-  String? _currentDisplayName;
-  // Todo: reduce the number of time the database is hit.
+class _PlayerProfilePage extends PlayerProfileCtrl {
   @override
   Widget build(BuildContext context) {
-
-    BruceUser? bruceUser = Provider.of<BruceUser?>(context);
+    bruceUser = Provider.of<BruceUser?>(context);
     // log('Bruce User ID ${bruceUser.uid}');
     if (bruceUser != null) {
       return StreamBuilder<FirestoreDoc>(
-          stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocStream( key: bruceUser.uid ),
+          stream: DatabaseService(FSDocType.player, uid: bruceUser?.uid).fsDocStream(key: bruceUser?.uid),
           builder: (context, snapshot) {
             log('player_profile: ${snapshot.data}', name: "${runtimeType.toString()}:build()");
             if(snapshot.hasData) {
-              Player player = snapshot.data! as Player;
+              player = snapshot.data! as Player;
               return Scaffold(
                 appBar: AppBar(
                   title: const Text('Player Profile'),
@@ -94,27 +85,11 @@ class _PlayerProfileState extends State<PlayerProfile> {
                                   child: const Text('Update',),
                                   //                        style: TextStyle(color: Colors.white),
                                   //                      ),
-                                  onPressed: () async {
-                                    if(_formKey.currentState!.validate()) {
-                                      player.fName = _currentFName ?? player.fName;
-                                      player.lName = _currentLName ?? player.lName;
-                                      player.initials = _currentInitials ?? player.initials;
-                                      player.pid = player.pid;
-                                      // log("player_profile: Update Player ${player.fName}");
-                                      await DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocUpdate(player);
-                                      await AuthService().updateDisplayName(
-                                          _currentDisplayName ?? AuthService().displayName
-                                      );
-                                      setState(() {
-                                        Navigator.pop(context);
-                                      }
-                                      );
-                                    }
-                                  }
+                                  onPressed: updateOnPressed,
                               ),
                             ),
                             ElevatedButton(
-                                onPressed: null,
+                                onPressed: (bruceUser?.emailVerified ?? true) ? null : verifyOnPressed,
                                 child: Text("Verify"))
                           ],
                         ),

@@ -25,7 +25,8 @@ import 'package:bruceboard/pages/community/community_list.dart';
 import 'package:bruceboard/pages/community/community_maintain.dart';
 import 'package:bruceboard/pages/membership/membership_list.dart';
 import 'package:bruceboard/pages/membership/membership_maintain.dart';
-import 'package:bruceboard/pages/player/player_profile.dart';
+import 'package:bruceboard/pages/player/player_profile_page.dart';
+// import 'package:bruceboard/pages/player/player_profile.dart';
 import 'package:bruceboard/pages/community/community_select.dart';
 import 'package:bruceboard/pages/community/community_select_owner.dart';
 //import 'package:bruceboard/archive/messageowner_list.dart';
@@ -128,7 +129,8 @@ class LoadApp extends StatelessWidget {
                 // '/maintaingame': (context) => const MaintainGame(),
                 '/about': (context) => const About(),
                 '/authenticate': (context) => const Authenticate(),
-                '/player-profile': (context) => const PlayerProfile(),
+                // '/player-profile': (context) => const PlayerProfilePage(),
+                // '/player-profile': (context) => const PlayerProfile(),
                 '/player-select': (context) => const PlayerSelect(),
                 '/series-list': (context) => const SeriesList(),
             //    '/message-list': (context) => const MessageOwnerList(),

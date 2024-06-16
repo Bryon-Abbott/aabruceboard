@@ -17,6 +17,9 @@ class BruceUser {
   String get displayName {
     return _auth.displayName;
   }
+  bool get emailVerified {
+    return _auth.emailVerified;
+  }
 }
 
 class Player implements FirestoreDoc {

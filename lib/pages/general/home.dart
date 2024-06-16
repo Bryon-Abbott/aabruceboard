@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:bruceboard/pages/player/player_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -404,7 +405,7 @@ class _HomeState extends State<Home> {
                     // Spacer(),
                     const SizedBox(height: 20.0),
                     Text(
-                      "Welcome '${bruceUser.displayName}'",
+                      "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
                       textAlign: TextAlign.end,
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
@@ -433,7 +434,8 @@ class _HomeState extends State<Home> {
         break;
       case 1:
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const PlayerProfile()),
+          // MaterialPageRoute(builder: (context) => const PlayerProfile()),
+          MaterialPageRoute(builder: (context) => const PlayerProfilePage()),
         );
         break;
       case 2:

@@ -22,6 +22,10 @@ class AuthService {
     }
   }
 
+  bool get emailVerified {
+      return _auth.currentUser?.emailVerified ?? false;
+  }
+
   Future<void> updateDisplayName(String newDisplayName) async {
     if (_auth.currentUser != null) {
       return await _auth.currentUser?.updateDisplayName(newDisplayName);
