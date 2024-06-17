@@ -97,14 +97,15 @@ class _SignInState extends State<SignIn> {
                       //style: const ButtonStyle(),
                         child: const Text('Reset Password'),
                         onPressed: () async {
-                          if( !email.isEmpty ) {
+                          if( email.isNotEmpty ) {
                             await _auth.sendPasswordResetEmail(email);
+                            if (!context.mounted) return;
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Password Reset Email sent to ${email} ... "))
+                              SnackBar(content: Text("Password Reset Email sent to $email ... "))
                             );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Enter Email in Email field ... "))
+                                  const SnackBar(content: Text("Enter Email in Email field ... "))
                               );
                           }
                         }

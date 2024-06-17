@@ -11,7 +11,6 @@ import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/services/auth.dart';
-import 'package:bruceboard/pages/player/player_profile.dart';
 import 'package:bruceboard/pages/settings/settings_main.dart';
 
 // ==========

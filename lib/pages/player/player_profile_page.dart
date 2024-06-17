@@ -11,7 +11,7 @@ import 'package:bruceboard/shared/loading.dart';
 part 'player_profile_ctrl.dart';
 
 class PlayerProfilePage extends StatefulWidget {
-  const PlayerProfilePage({Key? key}) : super(key: key);
+  const PlayerProfilePage({super.key});
 
   @override
   createState() => _PlayerProfilePage();
@@ -79,20 +79,15 @@ class _PlayerProfilePage extends PlayerProfileCtrl {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: ElevatedButton(
-                                // style: ButtonStyle(
-                                //   backgroundColor: MaterialStateProperty.all<Color>(Colors.pink[400]!),
-                                // ),
-                                  child: const Text('Update Player',),
-                                  //                        style: TextStyle(color: Colors.white),
-                                  //                      ),
-                                  onPressed: updateOnPressed,
+                                onPressed: updateOnPressed,
+                                child: const Text('Update Player',),
                               ),
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: ElevatedButton(
                                   onPressed: (bruceUser?.emailVerified ?? true) ? null : verifyOnPressed,
-                                  child: Text("Verify Email")),
+                                  child: const Text("Verify Email")),
                             ),
                           ],
                         ),
