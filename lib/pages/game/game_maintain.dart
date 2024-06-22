@@ -1,10 +1,12 @@
 import 'dart:developer';
+//import 'dart:ffi';
 import 'package:bruceboard/menus/popupmenubutton_status.dart';
 import 'package:bruceboard/menus/popupmenubutton_teamdata.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_any_logo/gen/assets.gen.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/activeplayerprovider.dart';
@@ -45,6 +47,9 @@ class _GameMaintainState extends State<GameMaintain> {
   String currentGameName = "";
   String currentTeamOne = "";
   String currentTeamTwo = "";
+  // DateTime currentGameDate = DateTime.now();
+  String currentGameDate = "";
+
   int currentSquareValue = 0;
   int currentStatus = 0;
 
@@ -55,13 +60,12 @@ class _GameMaintainState extends State<GameMaintain> {
     game = widget.game;
 //    _gid = game?.docId ?? -1;
 
-//    if ( game != null ) {
-      currentGameName = game?.name ?? "";
-      currentTeamOne = game?.teamOne ?? "Select-Away-Team";
-      currentTeamTwo = game?.teamTwo ?? "Select-Home-Team";
-      currentSquareValue = game?.squareValue ?? 0;
-      currentStatus = game?.status ?? 0;
-//    }
+    currentGameName = game?.name ?? "";
+    currentTeamOne = game?.teamOne ?? "Select-Away-Team";
+    currentTeamTwo = game?.teamTwo ?? "Select-Home-Team";
+    currentGameDate = game?.gameDate ?? DateFormat('yyyy-MM-dd').format(DateTime.now());
+    currentSquareValue = game?.squareValue ?? 0;
+    currentStatus = game?.status ?? 0;
 
     // Set League Data
     if (series.type == "NFL") {
@@ -205,6 +209,33 @@ class _GameMaintainState extends State<GameMaintain> {
                           });
                         },
                       ),
+                  Text("Game Date:"),
+
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+                    child: Row(
+                      children: [
+                        Text(currentGameDate),
+                        Spacer(),
+                        IconButton(
+                          onPressed: () async {
+                            DateTime currentGameDateTime = DateTime.parse(currentGameDate);
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: currentGameDateTime, // Refer step 1
+                                firstDate: DateTime(2020),
+                                lastDate: DateTime(2030),
+                              );
+                              if (picked != null && picked != currentGameDate)
+                                setState(() {
+                                  currentGameDate = DateFormat('yyyy-MM-dd').format(picked);
+                                });
+                          },
+                          icon: Icon(Icons.calendar_month_outlined),
+                        ),
+                      ],
+                    ),
+                  ),
                   PopupMenuButtonStatus(
                     initialValue: StatusValues.values[currentStatus],
                     // initialValue: StatusValues.Prepare,
@@ -235,6 +266,7 @@ class _GameMaintainState extends State<GameMaintain> {
                                   'name': currentGameName,
                                   'teamOne': currentTeamOne,
                                   'teamTwo': currentTeamTwo,
+                                  'gameDate': currentGameDate,
                                   'squareValue': currentSquareValue,
                                   'status': currentStatus,
                                 };
@@ -263,6 +295,7 @@ class _GameMaintainState extends State<GameMaintain> {
                                   'name': currentGameName,
                                   'teamOne': currentTeamOne,
                                   'teamTwo': currentTeamTwo,
+                                  'gameDate': currentGameDate,
                                   'squareValue': currentSquareValue,
                                   'status': currentStatus,
                                 };

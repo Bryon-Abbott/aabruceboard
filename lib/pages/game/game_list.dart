@@ -52,7 +52,7 @@ class _GameListState extends State<GameList> {
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('List Games - Count: ${series.noGames}/${game.length}'),
+                title: Text('${series.type}-${series.name}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
