@@ -49,40 +49,43 @@ class _SettingsMainState extends State<SettingsMain> {
         contentPadding: const EdgeInsets.all(24),
         platform: DevicePlatform.android,
         sections: [
-          SettingsSection(title: const Text('General'), tiles: [
-            SettingsTile.switchTile(
-              enabled: true,
-              leading: const Icon(Icons.dark_mode_outlined),
-              // initialValue: false,
-              initialValue: AdaptiveTheme.of(context).mode == AdaptiveThemeMode.dark,
-              // onToggle: (enable) {},
-              onToggle: (enable) {
-                if (enable) {
-                  AdaptiveTheme.of(context).setDark();
-                } else {
-                  AdaptiveTheme.of(context).setLight();
-                }
-              },
-              title: const Text("Dark Mode"),
-            ),
-            SettingsTile(
-              enabled: true,
-              leading: const Icon(Icons.not_interested_outlined),
-              // initialValue: false,
-              title: const Text("Exclude Player"),
-              trailing: const IntegerFormField(
-                sharedPreferenceKey: Preferences.keyExcludePlayerNo,
-                initialValue: '0000',
+          SettingsSection(
+            title: const Text('General'),
+            tiles: [
+              SettingsTile.switchTile(
+                enabled: true,
+                leading: const Icon(Icons.dark_mode_outlined),
+                // initialValue: false,
+                initialValue: AdaptiveTheme.of(context).mode == AdaptiveThemeMode.dark,
+                // onToggle: (enable) {},
+                onToggle: (enable) {
+                  if (enable) {
+                    AdaptiveTheme.of(context).setDark();
+                  } else {
+                    AdaptiveTheme.of(context).setLight();
+                  }
+                },
+                title: const Text("Dark Mode"),
               ),
-            ),
-            SettingsTile.navigation(
-                title: const Text('Scoring Settings'),
-                leading: const Icon(Icons.scoreboard),
-                trailing: const Icon(Icons.navigate_next),
-                onPressed: (context) {
-                  Navigator.pushNamed(context, '/settings_scoring');
-                }),
-          ]),
+              SettingsTile(
+                enabled: true,
+                leading: const Icon(Icons.not_interested_outlined),
+                // initialValue: false,
+                title: const Text("Exclude Player"),
+                trailing: const IntegerFormField(
+                  sharedPreferenceKey: Preferences.keyExcludePlayerNo,
+                  initialValue: '00000',
+                ),
+              ),
+            //   SettingsTile.navigation(
+            //       title: const Text('Scoring Settings'),
+            //       leading: const Icon(Icons.scoreboard),
+            //       trailing: const Icon(Icons.navigate_next),
+            //       onPressed: (context) {
+            //         Navigator.pushNamed(context, '/settings_scoring');
+            //       }),
+            ]
+          ),
         ],
       ),
     ),

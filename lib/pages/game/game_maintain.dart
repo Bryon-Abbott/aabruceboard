@@ -209,14 +209,13 @@ class _GameMaintainState extends State<GameMaintain> {
                           });
                         },
                       ),
-                  Text("Game Date:"),
-
+                  const Text("Game Date:"),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
                     child: Row(
                       children: [
                         Text(currentGameDate),
-                        Spacer(),
+                        const Spacer(),
                         IconButton(
                           onPressed: () async {
                             DateTime currentGameDateTime = DateTime.parse(currentGameDate);
@@ -226,12 +225,13 @@ class _GameMaintainState extends State<GameMaintain> {
                                 firstDate: DateTime(2020),
                                 lastDate: DateTime(2030),
                               );
-                              if (picked != null && picked != currentGameDate)
+                              if (picked != null) {
                                 setState(() {
                                   currentGameDate = DateFormat('yyyy-MM-dd').format(picked);
                                 });
+                              }
                           },
-                          icon: Icon(Icons.calendar_month_outlined),
+                          icon: const Icon(Icons.calendar_month_outlined),
                         ),
                       ],
                     ),

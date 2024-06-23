@@ -67,7 +67,7 @@ class _SettingsScoringState extends State<SettingsScoring> {
                   leading: const Icon(Icons.scoreboard),
                   trailing: const IntegerFormField(
                     sharedPreferenceKey: Preferences.keyWinningScore,
-                    initialValue: '10000',
+                    initialValue: '1000',
                   ),
                 ),
                 SettingsTile(

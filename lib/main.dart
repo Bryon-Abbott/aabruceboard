@@ -1,14 +1,11 @@
-import 'dart:async';
+//import 'dart:async';
 import 'dart:developer';
 
 import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/pages/message/message_list_incoming.dart';
-//import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+//import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'firebase_options.dart';
@@ -28,18 +25,11 @@ import 'package:bruceboard/pages/community/community_list.dart';
 import 'package:bruceboard/pages/community/community_maintain.dart';
 import 'package:bruceboard/pages/membership/membership_list.dart';
 import 'package:bruceboard/pages/membership/membership_maintain.dart';
-// import 'package:bruceboard/pages/player/player_profile_page.dart';
-// import 'package:bruceboard/pages/player/player_profile.dart';
 import 'package:bruceboard/pages/community/community_select.dart';
 import 'package:bruceboard/pages/community/community_select_owner.dart';
-//import 'package:bruceboard/archive/messageowner_list.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
 import 'package:bruceboard/pages/general/home.dart';
 import 'package:bruceboard/pages/general/about.dart';
-// import 'package:bruceboard/pages/manage_players.dart';
-// import 'package:bruceboard/pages/maintain_player.dart';
-// import 'package:bruceboard/pages/manage_games.dart';
-//import 'package:bruceboard/archive/maintain_game.dart';
 import 'package:bruceboard/pages/settings/settings_main.dart';
 import 'package:bruceboard/pages/settings/settings_scoring.dart';
 
@@ -48,8 +38,8 @@ main() async {
 
 //  final AdaptiveThemeMode savedThemeModex = await AdaptiveTheme.getThemeMode() ??
 //      AdaptiveThemeMode.light;
-  WidgetsFlutterBinding.ensureInitialized();
-  unawaited(MobileAds.instance.initialize());
+//   WidgetsFlutterBinding.ensureInitialized();
+//   unawaited(MobileAds.instance.initialize());
 
   await Preferences.init();
   await Firebase.initializeApp(
