@@ -268,10 +268,9 @@ class _GameBoardState extends State<GameBoard> {
                               Padding(
                                 padding: const EdgeInsets.all(2),
                                 child: SizedBox(
-                                  height: max(
-                                      min(screenHeight - 308, gridSize - 4),
-                                      100),
                                   // not less than 100
+                                  // height: max(min(screenHeight - 308, gridSize - 4), 100),
+                                  height: max(min(screenHeight - 235, gridSize - 4), 100),
                                   width: 40,
                                   child: RotatedBox(
                                     quarterTurns: 3,
@@ -511,7 +510,7 @@ class _GameBoardState extends State<GameBoard> {
         for (int i=0; i<4; i++) {
           Player p = winnersPlayer[i];
           int c = winnersCommunity[i];
-          // Get exclude Player Number. If no perferences saved for ExcludePlayerNo, default to -1
+          // Get exclude Player Number. If no preferences saved for ExcludePlayerNo, default to -1
           String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
           int excludePlayerNo = int.parse(excludePlayerNoString);
           dev.log("Got Exclude PID ($excludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
@@ -530,7 +529,7 @@ class _GameBoardState extends State<GameBoard> {
             member.credits += credits; // Add new Credits.
             DatabaseService(FSDocType.member, cidKey: Community.Key(winnersCommunity[i])).fsDocUpdate(member);
             // Send Message to user
-            messageSend( 20002, messageType[MessageTypeOption.notification]!,
+            messageSend( 20070, messageType[MessageTypeOption.notification]!,
               playerFrom: activePlayer, playerTo: winnersPlayer[i],
               comment: "Thanks for Playing.",
               description: "You Won the Q${i+1} Score and received $credits credits. Your account was updated from $prevCredits to ${member.credits}) "

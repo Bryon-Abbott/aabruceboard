@@ -55,7 +55,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
   late Player communityPlayer;
   late Membership currentMembership;
 
-  double gridSize = 500;
+  double gridSize = gridSizeSmall;
 
   @override
   void initState() {
@@ -85,6 +85,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
     var padding = MediaQuery.of(context).padding;
     screenHeight =  MediaQuery.of(context).size.height - padding.top - padding.bottom;
     screenWidth = MediaQuery.of(context).size.width - padding.left - padding.right;
+    dev.log("Screen Size is (H/W) : $screenHeight / $screenWidth");
 
     if (screenWidth > 1000) {
       gridSize = gridSizeLarge;
@@ -105,15 +106,18 @@ class _GameBoardGridState extends State<GameBoardGrid> {
               name: "${runtimeType.toString()}:build()");
           // widget.callback(grid.getBoughtSquares());
           return SizedBox(
-            height: max(min(screenHeight - 308, gridSize - 1), 100),
+//            height: max(min(screenHeight - 308, gridSize - 1), 100),
+            height: max(min(screenHeight - 275, gridSize - 1), 100),
             width: min(screenWidth - 45, gridSize - 1),
             //width: newScreenWidth-20,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+//              physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
+//                physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 child: SizedBox(
-                  height: gridSize,
+                  height: gridSize+1,
                   // These determine the Size of the buttons (~x/11)
                   width: gridSize,
                   child: GridView.count(

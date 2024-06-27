@@ -4,6 +4,7 @@ import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/message.dart';
 import 'package:bruceboard/pages/message/message_tile_incoming.dart';
+import 'package:bruceboard/services/messageservice.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -27,6 +28,15 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
   Widget build(BuildContext context) {
 
     activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
+    if (activePlayer.autoProcessAck) {
+      autoProcess(messageTypeOption: MessageTypeOption.acknowledgment);
+    }
+    if (activePlayer.autoProcessNot) {
+      autoProcess(messageTypeOption: MessageTypeOption.notification);
+    }
+    if (activePlayer.autoProcessReq) {
+      autoProcess(messageTypeOption: MessageTypeOption.request);
+    }
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.message, )
@@ -36,7 +46,6 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
           List<Message> message = snapshots.data!.map((a) => a as Message).toList();
           return Scaffold(
             appBar: AppBar(
-      //            backgroundColor: Colors.blue[900],
                 title: Text('Show Message - Count: ${message.length}'),
                 centerTitle: true,
                 elevation: 0,
@@ -69,5 +78,12 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
         }
       }
     );
-    }
   }
+  // Auto Process Messages from Players active Queue.
+  void autoProcess({required MessageTypeOption messageTypeOption}) async {
+    // MessageTypeOption.acknowledgment
+    log("Auto Processing ... type: $messageTypeOption", name: '${runtimeType.toString()}:AutoProcess()');
+    // DatabaseService(FSDocType.message, )
+    //     .fsDocList(group: "Incoming", pidTo: activePlayer.pid);
+  }
+}

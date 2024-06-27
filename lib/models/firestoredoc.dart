@@ -24,7 +24,7 @@ enum FSDocType {
 
 abstract class FirestoreDoc {
   final String nextIdField = 'nextFsid';    // Stored in Player
-  final String totalField = 'noDocuments';  // Strored in Parent
+  final String totalField = 'noDocuments';  // Stored in Parent
   int docId = -1;
   static final NumberFormat _keyFormat = NumberFormat("FS00000000", "en_US");
 

@@ -75,7 +75,7 @@ class MembershipTile extends StatelessWidget {
                                 builder: (context) => AccessListSeries(membership: membership)),
                             );
                           },
-                          title: Text('Membership Status: ${membership.status}'),
+                          title: Text('Status: ${membership.status}'),
                           subtitle: Text(
                               'Community: ${community?.name ?? '...'} (${membership.key})\n'
                                   'Owner: ${communityPlayer.fName} ${communityPlayer.lName}\n'

@@ -47,12 +47,18 @@ class Player implements FirestoreDoc {
   String initials;
   int pid;
 
-  // Totalizers
+  // Totals
   int noMemberships = 0;
   int noCommunities = 0;
   int noCommunityMembers = 0;
   int noSeries = 0;
   int noTotalGames = 0;
+
+  // Auto Approval Settings
+  bool autoProcessReq = false;
+  bool autoProcessNot = false;
+  bool autoProcessAck = false;
+
 
   // Player({required this.uid, required this.pid,
   //   required this.fName, required this.lName, required this.initials,
@@ -64,6 +70,9 @@ class Player implements FirestoreDoc {
         fName = data['fName'] ?? 'Fname',
         lName = data['lName'] ?? 'Lname',
         initials = data['initials'] ?? 'FL',
+        autoProcessReq = data['autoProcessReq'] ?? false,
+        autoProcessNot = data['autoProcessNot'] ?? false,
+        autoProcessAck = data['autoProcessAck'] ?? false,
         noMemberships = data['noMemberships'] ?? 0,
         noCommunities = data['noCommunities'] ?? 0,
         noSeries = data['noSeries'] ?? 0
@@ -84,18 +93,35 @@ class Player implements FirestoreDoc {
 
   @override
   void update({ required Map<String, dynamic> data, }) {
-    docId = data['docId'] ?? -1;
-    uid = data['uid'] ?? 'Anonymous';
-    pid = data['pid'] ?? -1;
-    fName = data['fName'] ?? 'Fname';
-    lName = data['lName'] ?? 'Lname';
-    initials = data['initials'] ?? 'FL';
-    noMemberships = data['noMemberships'] ?? 0;
-    noCommunities = data['noCommunities'] ?? 0;
-    noSeries = data['noSeries'] ?? 0;
+    docId = data['docId'] ?? docId;
+    uid = data['uid'] ?? uid;
+    pid = data['pid'] ?? pid;
+    fName = data['fName'] ?? fName;
+    lName = data['lName'] ?? lName;
+    initials = data['initials'] ?? initials;
+    autoProcessReq = data['autoProcessReq'] ?? autoProcessReq;
+    autoProcessNot = data['autoProcessNot'] ?? autoProcessNot;
+    autoProcessAck = data['autoProcessAck'] ?? autoProcessAck;
+    noMemberships = data['noMemberships'] ?? noMemberships;
+    noCommunities = data['noCommunities'] ?? noCommunities;
+    noSeries = data['noSeries'] ?? noSeries;
   }
+  // void update({ required Map<String, dynamic> data, }) {
+  //   docId = data['docId'] ?? -1;
+  //   uid = data['uid'] ?? 'Anonymous';
+  //   pid = data['pid'] ?? -1;
+  //   fName = data['fName'] ?? 'Fname';
+  //   lName = data['lName'] ?? 'Lname';
+  //   initials = data['initials'] ?? 'FL';
+  //   autoProcessReq = data['autoProcessReq'] ?? false;
+  //   autoProcessNot = data['autoProcessNot'] ?? false;
+  //   autoProcessAck = data['autoProcessAck'] ?? false;
+  //   noMemberships = data['noMemberships'] ?? 0;
+  //   noCommunities = data['noCommunities'] ?? 0;
+  //   noSeries = data['noSeries'] ?? 0;
+  // }
 
-  // Returns a Map<String, dynamic> of all member veriables.
+  // Returns a Map<String, dynamic> of all member variables.
   @override
   Map<String, dynamic> get updateMap {
     return {
@@ -105,6 +131,9 @@ class Player implements FirestoreDoc {
       'fName': fName,
       'lName': lName,
       'initials': initials,
+      'autoProcessReq': autoProcessReq,  // Server Side - Not Required here?
+      'autoProcessNot': autoProcessNot,
+      'autoProcessAck': autoProcessAck,
     };
   }
 }

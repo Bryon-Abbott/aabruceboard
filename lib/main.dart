@@ -30,7 +30,7 @@ import 'package:bruceboard/pages/community/community_select_owner.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
 import 'package:bruceboard/pages/general/home.dart';
 import 'package:bruceboard/pages/general/about.dart';
-import 'package:bruceboard/pages/settings/settings_main.dart';
+//import 'package:bruceboard/pages/settings/settings_main.dart';
 import 'package:bruceboard/pages/settings/settings_scoring.dart';
 
 main() async {
@@ -136,7 +136,7 @@ class LoadApp extends StatelessWidget {
                 '/community-select-owner': (context) => const CommunitySelectOwner(),
                 '/membership-list': (context) => const MembershipList(),
                 '/membership-maintain': (context) => const MembershipMaintain(),
-                '/settings': (context) => const SettingsMain(),
+                // '/settings': (context) => const SettingsMain(),
                 // Not sure I need this?
                 '/settings_scoring': (context) => const SettingsScoring(),
                 // Not sure I need this?

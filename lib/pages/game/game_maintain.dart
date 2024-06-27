@@ -64,7 +64,7 @@ class _GameMaintainState extends State<GameMaintain> {
     currentTeamOne = game?.teamOne ?? "Select-Away-Team";
     currentTeamTwo = game?.teamTwo ?? "Select-Home-Team";
     currentGameDate = game?.gameDate ?? DateFormat('yyyy-MM-dd').format(DateTime.now());
-    currentSquareValue = game?.squareValue ?? 0;
+    currentSquareValue = game?.squareValue ?? 1;
     currentStatus = game?.status ?? 0;
 
     // Set League Data

@@ -663,6 +663,7 @@ class MessageTileIncoming extends StatelessWidget {
     // Acknowledgement Messages
     // ------------------------------------------------------------------------
     // *** Add Member Notification Acknowledgement
+      case 20070:
       case 30010: case 30011:
       case 30020: case 30021:
       case 30030: case 30031:

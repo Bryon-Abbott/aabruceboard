@@ -7,13 +7,13 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 // Request --> Response.Acceptance --> Acknowledgment
 // Request --> Response.Rejection --> Acknowledgment
-// Notifiaction --> Acknowledgement
+// Notification --> Acknowledgement
 //
 // Message Rules:
 // Request Requires a Response                (00000 - 09999)
 // Response is the result of a Request        (10000 - 19999)
 // Notification is a one way message          (20000 - 29999)
-// Acknowledgemnet to a Resp or Notification  (30000 - 39999)
+// Acknowledgement to a Resp or Notification  (30000 - 39999)
 // Query Requires a Query Response            (40000 - 49999)
 // Query Response is the result of a Query Response (50000 - 59999)
 
@@ -37,7 +37,7 @@ const messageDesc = {
   20010: "Add Member Notification",                 // Data: {cid: }
   20020: "Update Member Notification",
   20030: "Removed Member Notification",
-//  20040: "Remove Credit Notification",  // ?? How is this diferent from Update Member Notifiaction?
+//  20040: "Remove Credit Notification",  // ?? How is this different from Update Member Notification?
   20040: "Assigned Square Notification",
   20060: "Accepted Square Request Notification",
   20070: "Credit Distribution Notification",
@@ -50,6 +50,7 @@ const messageDesc = {
   30031: "Remove Member Reject Acknowledgement",                 // Data: {credits: }
   30040: "Assigned Square Accept Acknowledgement",
   30041: "Assigned Square Reject Acknowledgement",
+  30070: "Credit Distribution Acknowledgement",
   // 30040: "Community Add Request Accept Acknowledgement",  // Data: {cid: }
   // 30050: "Community Add Request Reject Acknowledgement",  // Data: {cid: }
   // 30060: "Credit Adjust Acknowledgement, "
@@ -118,7 +119,7 @@ Future<void> messageMemberDistributedCreditsNotification(
   await DatabaseService(FSDocType.messageowner, toUid: toPlayer.uid).fsDocAdd(msgOwner);
   // Add Message (response) to senders messages.
   Message notification = Message(data:
-  { 'messageCode' : 20007,  // 20002 Edit Member notification
+  { 'messageCode' : 20007,  // 20007 Edit Member notification
     'messageType': messageType[MessageTypeOption.notification],      // Notification ... No response expected.
     'pidFrom': fromPlayer.pid,
     'pidTo': toPlayer.pid,

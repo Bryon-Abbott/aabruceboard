@@ -29,6 +29,7 @@ class _HomeState extends State<Home> {
   //late Future<Player> _futurePlayer;
   late CommunityPlayerProvider communityPlayerProvider; // = Provider.of<CommunityPlayerProvider>(context);
   late ActivePlayerProvider activePlayerProvider; // = Provider.of<ActivePlayerProvider>(context);
+  late Player player;
 
   @override
   void dispose() {
@@ -59,7 +60,7 @@ class _HomeState extends State<Home> {
 
     communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
     activePlayerProvider = Provider.of<ActivePlayerProvider>(context);
-    late Player player;
+    // late Player player;
 
     // Calculate screen size
     double screenWidth = MediaQuery.of(context).size.width;
@@ -439,7 +440,7 @@ class _HomeState extends State<Home> {
         break;
       case 2:
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const SettingsMain()),
+          MaterialPageRoute(builder: (context) => SettingsMain(player: player)),
         );
         break;
       case 3:

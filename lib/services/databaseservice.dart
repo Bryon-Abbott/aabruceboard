@@ -176,7 +176,7 @@ class DatabaseService {
             fsDoc.docId = 9999;
           }
       );
-      // log('Message: fsDocAdd: fsDoc Typs: ${fsDoc.runtimeType} fsDocId: ${fsDoc.docId} ');
+      // log('Message: fsDocAdd: fsDoc Type: ${fsDoc.runtimeType} fsDocId: ${fsDoc.docId} ');
       // Set or Increment the next Series number
       if ( fsDoc.docId == 0 ) {
         await nextIdDocument.update( {fsDoc.nextIdField: 1}, );
@@ -198,10 +198,10 @@ class DatabaseService {
       log('Updated number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
     }
   }
-  // Update the FirestoreDoc with data in provided Series class.
+  // Update the FirestoreDoc with data in provided fsDoc class.
   Future<void> fsDocUpdate(FirestoreDoc fsDoc) async {
     log('Updating doc id ${fsDoc.docId}', name: '${runtimeType.toString()}:fsDocAdd()');
-    return await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
+    return await docCollection.doc(fsDoc.key).set(fsDoc.updateMap, SetOptions(merge: true));
   }
 
   // Update single field in an FirestoreDoc
@@ -238,7 +238,7 @@ class DatabaseService {
   List<FirestoreDoc> _fsDocListFromSnapshot(QuerySnapshot snapshot) {
     // log('Collection Size is ${snapshot.size} UID: $uid');
     return snapshot.docs.map((doc) {
-     // log("maping docs", name: '${runtimeType.toString()}:fsDocStream()');
+     // log("mapping docs", name: '${runtimeType.toString()}:fsDocStream()');
       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
       FirestoreDoc fsDoc = FirestoreDoc( fsDocType, data: data );
       return fsDoc;
@@ -248,7 +248,7 @@ class DatabaseService {
   // Get data from snapshots
   FirestoreDoc _fsDocFromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    // Comment/Uncomment to see data without trunkation.
+    // Comment/Uncomment to see data without truncation.
     // JsonEncoder encoder = new JsonEncoder.withIndent('  ');
     // String prettyprint = encoder.convert(data);
     // print(prettyprint);
@@ -374,8 +374,7 @@ class DatabaseService {
 //        .map(_fsDocListFromSnapshot);
   }
 
-  //get FirestoreDoc List stream
-
+  //get FirestoreDoc List stream given a group
   Stream<List<FirestoreDoc>> fsDocGroupListStream({ required String group, int pid=0, int cid=0, int pidTo=0} ) {
     Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
     log('Database: fsDocGroupListStream: Group: $group, pid: $pid cid: $cid pidTo: $pidTo',name: '${runtimeType.toString()}:fsDocGroupListStream()');
@@ -403,7 +402,7 @@ class DatabaseService {
     }
 
     if (streamQuerySnapshot != null) {
-      log('Returnign stream ... $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
+      log('Returning stream ... $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
       return streamQuerySnapshot.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
     } else {
       return const Stream<List<FirestoreDoc>>.empty();

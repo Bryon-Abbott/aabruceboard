@@ -24,7 +24,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #   Refactored code.
 # 14(1.1.0): Added gameDate to Data Model.
 # 14(1.1.1): Cleaned up Settings - Removed old scoring page.
-version: 1.1.1+14
+# 15(1.1.2): Fixed scrolling on iPad, Added Approval settings,
+#  update fsDoc.Update to merge to fix totalisers and next numbers getting overwritten.
+#  update Player.Update to retain existing values when updating Player
+version: 1.1.2+15
 
 environment:
   sdk: '>=3.1.2 <4.0.0'
