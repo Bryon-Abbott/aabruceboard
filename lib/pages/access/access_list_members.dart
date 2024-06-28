@@ -33,7 +33,6 @@ class _AccessListState extends State<AccessListMembers> {
   Widget build(BuildContext context) {
 
     bruceUser = Provider.of<BruceUser>(context);
-//    Player? player;
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.access, sidKey: series.key).fsDocListStream,

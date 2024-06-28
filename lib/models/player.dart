@@ -58,6 +58,7 @@ class Player implements FirestoreDoc {
   bool autoProcessReq = false;
   bool autoProcessNot = false;
   bool autoProcessAck = false;
+  bool autoProcessAcc = false;
 
 
   // Player({required this.uid, required this.pid,
@@ -73,6 +74,7 @@ class Player implements FirestoreDoc {
         autoProcessReq = data['autoProcessReq'] ?? false,
         autoProcessNot = data['autoProcessNot'] ?? false,
         autoProcessAck = data['autoProcessAck'] ?? false,
+        autoProcessAcc = data['autoProcessAcc'] ?? false,
         noMemberships = data['noMemberships'] ?? 0,
         noCommunities = data['noCommunities'] ?? 0,
         noSeries = data['noSeries'] ?? 0
@@ -102,6 +104,7 @@ class Player implements FirestoreDoc {
     autoProcessReq = data['autoProcessReq'] ?? autoProcessReq;
     autoProcessNot = data['autoProcessNot'] ?? autoProcessNot;
     autoProcessAck = data['autoProcessAck'] ?? autoProcessAck;
+    autoProcessAcc = data['autoProcessAcc'] ?? autoProcessAcc;
     noMemberships = data['noMemberships'] ?? noMemberships;
     noCommunities = data['noCommunities'] ?? noCommunities;
     noSeries = data['noSeries'] ?? noSeries;
@@ -134,6 +137,7 @@ class Player implements FirestoreDoc {
       'autoProcessReq': autoProcessReq,  // Server Side - Not Required here?
       'autoProcessNot': autoProcessNot,
       'autoProcessAck': autoProcessAck,
+      'autoProcessAcc': autoProcessAcc,
     };
   }
 }

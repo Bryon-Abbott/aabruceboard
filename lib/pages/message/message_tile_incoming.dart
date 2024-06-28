@@ -149,7 +149,14 @@ class MessageTileIncoming extends StatelessWidget {
         Member? member = await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid']))
             .fsDoc(docId: message.pidFrom) as Member;
         log('00020: member: ${member.docId}', name: '${runtimeType.toString()}:messageAccept');
-        //
+        // Check if enough credits
+        if (message.data['credits'] > member.credits ) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text("Not enough credits to return ..."),
+              )
+          );
+          return;
+        }
         if (!context.mounted) return;
         String? comment = await openDialogMessageComment(context, defaultComment: "Credits ($credits) were updated to your membership\n (New Balance: ${member.credits+credits})");
         // Add Message to Archive

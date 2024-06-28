@@ -27,9 +27,6 @@ class _SettingsMainState extends State<SettingsMain> {
 //  _SettingsMainState({required this.player})
   late Player player;
   bool settingDarkMode = false;
-  bool autoProcessNot = false,
-      autoProcessAck = false,
-      autoProcessReq = false;
 
   @override
   void initState() {
@@ -60,7 +57,7 @@ class _SettingsMainState extends State<SettingsMain> {
       ),
       body: SafeArea(
         child: SettingsList(
-          contentPadding: const EdgeInsets.all(24),
+          contentPadding: const EdgeInsets.all(20),
           platform: DevicePlatform.android,
           sections: [
             SettingsSection(
@@ -97,7 +94,7 @@ class _SettingsMainState extends State<SettingsMain> {
                 title: const Text('Auto Processing'),
                 tiles: [
                   SettingsTile.switchTile(
-                    // enabled: true,
+                    enabled: false,
                     leading: const Icon(Icons.check_circle_outline),
                     // initialValue: false,
                     initialValue: player.autoProcessNot,
@@ -130,6 +127,22 @@ class _SettingsMainState extends State<SettingsMain> {
                     enabled: true,
                     leading: const Icon(Icons.check_circle_outline),
                     // initialValue: false,
+                    initialValue: player.autoProcessAcc,
+                    // onToggle: (enable) {},
+                    onToggle: (enable) async {
+                      await DatabaseService(FSDocType.player)
+                          .fsDocUpdateField(key: player.uid, field: 'autoProcessAcc', bvalue: enable);
+                      setState(() {
+                        player.update(data: {'autoProcessAcc': enable});
+                      });
+
+                    },
+                    title: const Text("Acceptances"),
+                  ),
+                  SettingsTile.switchTile(
+                    enabled: true,
+                    leading: const Icon(Icons.check_circle_outline),
+                    // initialValue: false,
                     initialValue: player.autoProcessReq,
                     // onToggle: (enable) {},
                     onToggle: (enable) async {
@@ -140,7 +153,7 @@ class _SettingsMainState extends State<SettingsMain> {
                       });
 
                     },
-                    title: const Text("Requests"),
+                    title: const Text("Square Requests"),
                   ),
                 ]
             ),

@@ -212,7 +212,8 @@ class DatabaseService {
     int? ivalue,
     bool? bvalue,
   }) async {
-    log('Database *key*: "$key" Update *field*: "$field" *value*: ${ivalue ?? svalue} uid: $uid');
+    log('Database *key*: "$key" Update *field*: "$field" *value*: ${ivalue ?? svalue ?? bvalue} uid: $uid',
+        name: '${runtimeType.toString()}:fsDocUpdateField()');
     return await docCollection.doc(key).update({
       field: svalue ?? ivalue ?? bvalue,
     });
