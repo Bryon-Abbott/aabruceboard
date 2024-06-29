@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:bruceboard/models/activeplayerprovider.dart';
+//import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
@@ -9,17 +9,19 @@ import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/message.dart';
 import 'package:bruceboard/models/messageowner.dart';
 import 'package:bruceboard/models/series.dart';
+import 'package:bruceboard/pages/message/message_list_processed.dart';
 import 'package:bruceboard/pages/message/message_tile_incoming.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 class MessageListIncoming extends StatefulWidget {
-  const MessageListIncoming({super.key});
+  const MessageListIncoming({super.key, required this.activePlayer});
+  final Player activePlayer;
 
   @override
   State<MessageListIncoming> createState() => _MessageListIncomingState();
@@ -31,23 +33,16 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
   // late Message message;
 
   @override
+  void initState() {
+    super.initState();
+    activePlayer = widget.activePlayer;
+    autoProcessAll();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
-    activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
-    if (activePlayer.autoProcessAck) {
-      autoProcess(messageTypeOption: MessageTypeOption.acknowledgment);
-    }
-    if (activePlayer.autoProcessAcc) {
-      autoProcess(messageTypeOption: MessageTypeOption.acceptance);
-    }
-    if (activePlayer.autoProcessReq) {
-      autoProcess(messageTypeOption: MessageTypeOption.request);
-    }
-    // Need to be more specific on Notifications as some result in
-    // database updates (ie MemberAdd -> Memebership Document)
-    // if (activePlayer.autoProcessNot) {
-    //   autoProcess(messageTypeOption: MessageTypeOption.notification);
-    // }
+//    activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.message, )
@@ -70,10 +65,19 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
                 actions: [
                   IconButton(
                     onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => MessageListProcessed(activePlayer: activePlayer)));
                     },
-                    icon: const Icon(Icons.add_circle_outline),
+                    tooltip: "Archived Messages",
+                    icon: const Icon(Icons.archive_outlined),
+                  ),
+                  IconButton(
+                    onPressed: () => autoProcessAll(),
+                    tooltip: "Auto Process Messages",
+                    icon: const Icon(Icons.auto_fix_high_outlined),
                   )
-                ]),
+                ]
+            ),
             body: ListView.builder(
               itemCount: message.length,
               itemBuilder: (context, index) {
@@ -90,6 +94,23 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
       }
     );
   }
+  void autoProcessAll() {
+    if (activePlayer.autoProcessReq) {
+      autoProcess(messageTypeOption: MessageTypeOption.request);
+    }
+    if (activePlayer.autoProcessAcc) {
+      autoProcess(messageTypeOption: MessageTypeOption.acceptance);
+    }
+    if (activePlayer.autoProcessAck) {
+      autoProcess(messageTypeOption: MessageTypeOption.acknowledgment);
+    }
+    // Need to be more specific on Notifications as some result in
+    // database updates (ie MemberAdd -> Memebership Document)
+    // if (activePlayer.autoProcessNot) {
+    //   autoProcess(messageTypeOption: MessageTypeOption.notification);
+    // }
+  }
+
   // Auto Process Messages from Players active Queue.
   void autoProcess({required MessageTypeOption messageTypeOption}) async {
     int squareRequested = -1;
@@ -157,7 +178,7 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
               continue; // Go to next message.
             }
           }
-          messageArchive(message: m, playerFrom: playerFrom);
+          await messageArchive(message: m, playerFrom: playerFrom);
         }
       }
     }

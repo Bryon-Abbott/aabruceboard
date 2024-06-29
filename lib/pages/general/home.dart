@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:bruceboard/pages/player/player_profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -182,17 +183,6 @@ class _HomeState extends State<Home> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        // const Padding(
-                        //   padding: EdgeInsets.all(8.0),
-                        //   child: SizedBox(
-                        //     height: 300,
-                        //     width: 150,
-                        //     child: Image(
-                        //       image: AssetImage(
-                        //           'assets/AdobeStock_55757786-vert.jpeg'),
-                        //     ),
-                        //   ),
-                        // ),
                         SizedBox(
                           width: 260,
                           child: Column(
@@ -240,8 +230,9 @@ class _HomeState extends State<Home> {
                                           onPressed: (bruceUser.uid == 'Anonymous')
                                               ? null
                                               : () {
-                                            Navigator.pushNamed(
-                                                context, '/message-list-incoming');
+                                            Navigator.of(context).push(
+                                                MaterialPageRoute(builder: (context) => MessageListIncoming(activePlayer: player)));
+                                            //Navigator.pushNamed(context, '/message-list-incoming');
                                           },
                                           icon: Icon(
                                             Icons.message_outlined,

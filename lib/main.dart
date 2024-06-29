@@ -2,7 +2,7 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/membershipprovider.dart';
-import 'package:bruceboard/pages/message/message_list_incoming.dart';
+//import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 //import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -128,7 +128,7 @@ class LoadApp extends StatelessWidget {
                 '/player-select': (context) => const PlayerSelect(),
                 '/series-list': (context) => const SeriesList(),
             //    '/message-list': (context) => const MessageOwnerList(),
-                '/message-list-incoming': (context) => const MessageListIncoming(),
+            //    '/message-list-incoming': (context) => const MessageListIncoming(),
                 '/series-maintain': (context) => const SeriesMaintain(),
                 '/community-list': (context) => const CommunityList(),
                 '/community-maintain': (context) => const CommunityMaintain(),

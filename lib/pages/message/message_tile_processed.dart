@@ -7,19 +7,17 @@ import 'package:bruceboard/models/message.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/community.dart';
-// import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
-class MessageTileIncoming extends StatelessWidget {
+class MessageTileProcessed extends StatelessWidget {
   final Message message;
-  const MessageTileIncoming({super.key, required this.message});
+  const MessageTileProcessed({super.key, required this.message});
 
   @override
   // Todo: Change to Future builder to set Series
@@ -59,19 +57,9 @@ class MessageTileIncoming extends StatelessWidget {
                   //mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     InkWell(
-                      onTap: () => messageAccept(context),
-                      child: const Icon(Icons.check_circle_outline),
+                      onTap: () {},
+                      child: const Icon(Icons.delete_outline),
                     ),
-                    (message.messageType == messageType[MessageTypeOption.request])
-                      ? InkWell(
-                        onTap: () => messageReject(context),
-                        child: const Icon(Icons.cancel_outlined),
-                      )
-                      : InkWell(
-                      onTap: null,
-                      child: const Icon(Icons.block_outlined),
-                    )
-//                      : const SizedBox(),
                   ],
                 ),
               ),

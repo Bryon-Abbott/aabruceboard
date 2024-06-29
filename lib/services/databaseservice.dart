@@ -396,6 +396,14 @@ class DatabaseService {
       //      .where('timestamp',isGreaterThan: 0)
             .snapshots();
         break;
+      case "Processed" :
+        log("Group: $group ... pidTo: $pidTo", name: '${runtimeType.toString()}:fsDocGroupListStream()');
+        streamQuerySnapshot = db.collectionGroup("Processed")
+            .where('pidTo', isEqualTo: pidTo)
+            .orderBy('timestamp')
+        //      .where('timestamp',isGreaterThan: 0)
+            .snapshots();
+        break;
       default: {
         log('Error: Undefined group $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
       }

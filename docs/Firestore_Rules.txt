@@ -3,59 +3,84 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    // Provide read access to Access Group Index
+    match /{path=**}/Access/{accessId} {
+      allow read;
+    }
+    // Provide read access to Incoming Group Index
+    match /{path=**}/Incoming/{messageId} {
+      allow read;
+    }
+    // Provide read access to Incoming Group Index
+    match /{path=**}/Processed/{messageId} {
+      allow read;
+    }
+
+
     match /Config/{config} {
       allow read, write: if request.auth != null;
-      }
+    } // End Config
 
 		match /Player/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
       allow read: if request.auth != null;
 
-	    match /Community/{communityId} {
-  	    allow read, write: if request.auth != null && request.auth.uid == userId;
-    	  allow read: if request.auth != null;
+			match /Community/{communityId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read: if request.auth != null;
 
-        match /Member/{memberId} {
-          allow read, write: if request.auth != null && request.auth.uid == userId;
-          allow read: if request.auth != null;
-        } // End Member
+				match /Member/{memberId} {
+      	  allow read, write: if request.auth != null && request.auth.uid == userId;
+       	 	allow read: if request.auth != null;
+		  	} // End Member
 			} // End Community
 
-	    match /MessageOwner/{senderId} {
-  	    allow read, write: if request.auth != null && request.auth.uid == userId;
-  	    allow read, write: if request.auth != null && request.auth.uid == senderId;
-    	  allow read: if request.auth != null;
-					// Incoming messages for senderId are accessibole by senderId
-        	match /Incoming/{messageId} {
-         	 	allow read, write: if request.auth != null && request.auth.uid == userId;
-         	 	allow read, write: if request.auth != null && request.auth.uid == senderId;
-          	allow read: if request.auth != null;
-          } // End Incoming
-        	match /Processed/{messageId} {
-         	 	allow read, write: if request.auth != null && request.auth.uid == userId;
-          	allow read: if request.auth != null;
-        	} // End Processing
-			} // End Owner Message
+			match /Membership/{membershipId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read: if request.auth != null;
+			} // End Membership
 
-	    match /Membership/{membershipId} {
-  	    allow read, write: if request.auth != null && request.auth.uid == userId;
-    	  allow read: if request.auth != null;
-    	}
+			match /Series/{seriesId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+        allow read: if request.auth != null;
 
-      match /Series/{seriesId} {
-  	    allow read, write: if request.auth != null && request.auth.uid == userId;
-    	  allow read: if request.auth != null;
+				match /Access/{accessId} {
+      	  allow read, write: if request.auth != null && request.auth.uid == userId;
+       	 	allow read: if request.auth != null;
+        } // End Access
 
 				match /Game/{gameId} {
-          allow read, write: if request.auth != null && request.auth.uid == userId;
-          allow read: if request.auth != null;
+      	  allow read, write: if request.auth != null && request.auth.uid == userId;
+       	 	allow read: if request.auth != null;
 
-					match /Board/{gameId} {
+					match /Board/{boardId} {
             allow read, write: if request.auth != null && request.auth.uid == userId;
             allow read: if request.auth != null;
-          }
-        }
-			}
-    }
-	}
+		  		} // End Board
+					match /Grid/{gridId} {
+            allow read, write: if request.auth != null && request.auth.uid == userId;
+            allow read: if request.auth != null;
+		  		} // End Grid
+				} // End Game
+			} // End Series
+
+			match /MessageOwner/{senderId} {
+  	    allow read, write: if request.auth != null &&
+        	(request.auth.uid == senderId || request.auth.uid == userId);
+    	  allow read: if request.auth != null;
+
+		  	match /Incoming/{messageId} {
+	  	    allow read, write: if request.auth != null &&
+	        	(request.auth.uid == senderId || request.auth.uid == userId);
+	    	  allow read: if request.auth != null;
+				} // End Message Incoming
+
+		  	match /Processed/{messageId} {
+	  	    allow read, write: if request.auth != null && request.auth.uid == userId;
+	    	  allow read: if request.auth != null;
+				} // End Message Processed
+			} // End Owner Message
+
+		} // End Player
+	} // End documents
 }
