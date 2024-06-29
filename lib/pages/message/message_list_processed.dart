@@ -64,7 +64,8 @@ class _MessageListProcessedState extends State<MessageListProcessed> {
                       } else {
                         log("No filter player selected");
                       }
-                    },                    tooltip: "Filter player",
+                    },
+                    tooltip: "Filter player",
                     icon: const Icon(Icons.filter_alt_outlined),
                   )
                 ],
