@@ -376,7 +376,7 @@ class DatabaseService {
   }
 
   //get FirestoreDoc List stream given a group
-  Stream<List<FirestoreDoc>> fsDocGroupListStream({ required String group, int pid=0, int cid=0, int pidTo=0} ) {
+  Stream<List<FirestoreDoc>> fsDocGroupListStream({ required String group, int pid=0, int cid=0, int pidTo=0, int pidFrom=0} ) {
     Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
     log('Database: fsDocGroupListStream: Group: $group, pid: $pid cid: $cid pidTo: $pidTo',name: '${runtimeType.toString()}:fsDocGroupListStream()');
 
@@ -398,11 +398,21 @@ class DatabaseService {
         break;
       case "Processed" :
         log("Group: $group ... pidTo: $pidTo", name: '${runtimeType.toString()}:fsDocGroupListStream()');
-        streamQuerySnapshot = db.collectionGroup("Processed")
-            .where('pidTo', isEqualTo: pidTo)
-            .orderBy('timestamp')
-        //      .where('timestamp',isGreaterThan: 0)
-            .snapshots();
+        if (pidFrom == 0 ) {
+          streamQuerySnapshot = db.collectionGroup("Processed")
+              .where('pidTo', isEqualTo: pidTo)
+              .orderBy('timestamp', descending: true)
+          //      .where('timestamp',isGreaterThan: 0)
+              .snapshots();
+        } else {
+          streamQuerySnapshot = db.collectionGroup("Processed")
+              .where('pidTo', isEqualTo: pidTo)
+              .where('pidFrom', isEqualTo: pidFrom)
+              .orderBy('timestamp', descending: true)
+          //      .where('timestamp',isGreaterThan: 0)
+              .snapshots();
+        }
+
         break;
       default: {
         log('Error: Undefined group $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');

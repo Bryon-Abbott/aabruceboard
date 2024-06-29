@@ -67,9 +67,9 @@ class MessageTileIncoming extends StatelessWidget {
                         onTap: () => messageReject(context),
                         child: const Icon(Icons.cancel_outlined),
                       )
-                      : InkWell(
+                      : const InkWell(
                       onTap: null,
-                      child: const Icon(Icons.block_outlined),
+                      child: Icon(Icons.block_outlined),
                     )
 //                      : const SizedBox(),
                   ],

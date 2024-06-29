@@ -19,6 +19,7 @@ class MessageListProcessed extends StatefulWidget {
 class _MessageListProcessedState extends State<MessageListProcessed> {
 
   late Player activePlayer;
+  Player? filterPlayer;
   // late Message message;
 
   @override
@@ -34,7 +35,7 @@ class _MessageListProcessedState extends State<MessageListProcessed> {
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.message, )
-          .fsDocGroupListStream(group: "Processed", pidTo: activePlayer.pid),   // as Stream<List<Series>>,
+          .fsDocGroupListStream(group: "Processed", pidTo: activePlayer.pid, pidFrom: filterPlayer?.pid ?? 0),   // as Stream<List<Series>>,
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Message> message = snapshots.data!.map((a) => a as Message).toList();
@@ -51,6 +52,21 @@ class _MessageListProcessedState extends State<MessageListProcessed> {
                   },
                 ),
                 actions: [
+                  IconButton(
+                    onPressed: () async {
+                      dynamic playerSelected = await Navigator.pushNamed(
+                          context, '/player-select');
+                      if (playerSelected != null) {
+                        setState((){
+                          filterPlayer = playerSelected as Player;
+                        });
+                        log('Filter Player Selected ${filterPlayer!.fName}');
+                      } else {
+                        log("No filter player selected");
+                      }
+                    },                    tooltip: "Filter player",
+                    icon: const Icon(Icons.filter_alt_outlined),
+                  )
                 ],
             ),
             body: ListView.builder(
