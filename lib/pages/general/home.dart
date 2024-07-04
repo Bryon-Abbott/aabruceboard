@@ -311,7 +311,7 @@ class _HomeState extends State<Home> {
                                                   Colors.red,
                                             ),
                                             label: Text(
-                                              'Build Series & Manage Games',
+                                              'Create Groups & Manage Games',
                                               style:
                                               Theme.of(context).textTheme.titleMedium,
                                             ),

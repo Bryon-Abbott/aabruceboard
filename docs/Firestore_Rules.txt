@@ -11,7 +11,7 @@ service cloud.firestore {
     match /{path=**}/Incoming/{messageId} {
       allow read;
     }
-    // Provide read access to Incoming Group Index
+    // Provide read access to Processed Group Index
     match /{path=**}/Processed/{messageId} {
       allow read;
     }

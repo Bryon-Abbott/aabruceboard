@@ -180,7 +180,7 @@ class _GameBoardState extends State<GameBoard> {
                               ),
                               PopupMenuItem<int>(
                                   value: 1,
-                                  enabled: isGameOwner && board.squaresPicked<100,
+                                  enabled: isGameOwner && board.squaresPicked<100 && !board.scoresLocked,
                                   child: const Row(
                                       children: [
                                         Icon(
@@ -456,7 +456,7 @@ class _GameBoardState extends State<GameBoard> {
                     height: 25,
                     width: 45,
                     child: ElevatedButton(
-                      onPressed: isGameOwner ? () async {
+                      onPressed: isGameOwner && !board.creditsDistributed ? () async {
                         dev.log("Getting Scores ... ", name: "${runtimeType.toString()}:buildScore");
                         final List<String>? score = await openDialogScores(index, board);
                         if (score == null || score.isEmpty) {
@@ -575,6 +575,7 @@ class _GameBoardState extends State<GameBoard> {
               if ((selectedMember.credits >= game.squareValue) || (selectedPlayer.docId == excludePlayerNo)) {
                 grid.squarePlayer[i] = selectedPlayer.docId;
                 grid.squareInitials[i] = selectedPlayer.initials;
+                grid.squareCommunity[i] = selectedAccess.cid;
                 if (selectedPlayer.docId != excludePlayerNo) {
                   selectedMember.credits -= game.squareValue;
                 }
@@ -646,7 +647,7 @@ class _GameBoardState extends State<GameBoard> {
             children: [
               TextField(
                 autofocus: true,
-                decoration: InputDecoration(hintText: game.teamOne),
+                decoration: InputDecoration(hintText: game.teamOne ),
                 style: Theme.of(context).textTheme.bodyMedium,
                 controller: controller1,
                 onSubmitted: (_) => submitScores(),
@@ -808,7 +809,7 @@ class _GameBoardState extends State<GameBoard> {
               spacing: 2,
               children:
                 List.generate(5, (index) {
-                  dev.log("List.gnerage Index $index");
+                  dev.log("List.gnerage Index $index", name: "${runtimeType.toString()}:buildCredits");
                   return SizedBox(
                     width: 80,
                     child: Row(

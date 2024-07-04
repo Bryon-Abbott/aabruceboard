@@ -27,7 +27,9 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 15(1.1.2): Fixed scrolling on iPad, Added Approval settings,
 #  update fsDoc.Update to merge to fix totalisers and next numbers getting overwritten.
 #  update Player.Update to retain existing values when updating Player
-version: 1.1.2+15
+# 16(1.1.3) Locked Score once credits distributed
+# Changed "Series" to "Group" for clarity
+version: 1.1.3+16
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

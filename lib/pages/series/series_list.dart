@@ -32,7 +32,7 @@ class _SeriesListState extends State<SeriesList> {
           List<Series> series = snapshots.data!.map((s) => s as Series).toList();
           return Scaffold(
             appBar: AppBar(
-              title: Text('Manage Series - Count: ${series.length}'),
+              title: Text('Manage Groups - Count: ${series.length}'),
               centerTitle: true,
               elevation: 0,
               leading: IconButton(

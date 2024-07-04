@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/access.dart';
-import 'package:bruceboard/models/community.dart';
+//import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
@@ -45,9 +45,8 @@ class AccessTileSeries extends StatelessWidget {
                       ),
                     );
                   },
-                  title: Text('Name: ${series?.name ?? '...'}'),
-                  subtitle: Text(
-                      'Series: ${Player.Key(access.pid)}:${Community.Key(access.cid)}:${Series.Key(access.sid)} (${series?.noGames ?? '..'}) Type: ${series?.type ?? "Unknown"} Status:${series?.status ?? "??"} '),
+                  title: Text('Group: ${series?.name ?? '...'}, Type: ${series?.type ?? "Unknown"}'),
+                  subtitle: Text('Number of Games: ${series?.noGames ?? '..'}'),
                   trailing: IconButton(
                     icon: const Icon(Icons.question_mark_outlined),
                     onPressed: () {

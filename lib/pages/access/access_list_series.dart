@@ -39,7 +39,7 @@ class _AccessListSeriesState extends State<AccessListSeries> {
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Show Series Access - Count: ${access.length}'),
+                title: Text('Show Game Groups (${access.length})'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(

@@ -9,6 +9,8 @@ import 'package:bruceboard/pages/game/game_board.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:bruceboard/menus/popupmenubutton_status.dart';
+
 class GameTile extends StatelessWidget {
   final Series series;
   final Game game;
@@ -19,7 +21,7 @@ class GameTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    StatusValues status = StatusValues.values[game.status];
     Player activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
     // Exclude games for non-owners where game status is Prepare or Archived.
     if ((activePlayer.pid == game.pid) || (game.status == 1) || (game.status == 2) ){
@@ -36,7 +38,13 @@ class GameTile extends StatelessWidget {
             },
             leading: const Icon(Icons.sports_football_outlined),
             title: Text('Game: ${game.name}'),
-            subtitle: Text(' SID: ${series.key} GID: ${game.key} Status: ${game.status}'),
+            subtitle: Row(
+              children: [
+                Text(' SID: ${series.key} GID: ${game.key} '),
+                Spacer(),
+                Text('${status.name}'),
+              ],
+            ),
             trailing: IconButton(
               onPressed: (game.pid == activePlayer.pid)
                   ? () async {

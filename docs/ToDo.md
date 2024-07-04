@@ -32,6 +32,20 @@ my_flutter_project/
 |-- README.md
 |-- .gitignore
 ```
-
+## Bugs
++ Fix Game Names on Score Prompt
++ Fill remaining squares active when board is full - Fixed
++ Score active after distribution - Fixed
++ Distribution didn't send message to Owner? - Fixed (Assign Remining not filling in community)
+## General Updates 
+### 
 ## Build Host Auto Approve
-## Deploy to apple 
+## Add Limits for Free Version 
+What Limits are required?
++ Player Limit number of Active Games with Selected Squares?
++ Owner Limit number of Active Series (2) (easy)
++ Owner Limit number of Active Games in Series being Run (2) (easy)
++ Owner Limit number of Communities (1) (easy)
++ Player Limit number of Communities in - Memberships (1) (easy)
++ Player Limit number of Squares Active
++ 

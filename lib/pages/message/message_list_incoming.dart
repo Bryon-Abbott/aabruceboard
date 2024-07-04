@@ -52,7 +52,7 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
           List<Message> message = snapshots.data!.map((a) => a as Message).toList();
           return Scaffold(
             appBar: AppBar(
-                title: Text('Show Message - Count: ${message.length}'),
+                title: Text('Show Messages'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(

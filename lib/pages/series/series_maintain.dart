@@ -75,7 +75,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
       child: Scaffold(
           appBar: AppBar(
 //            backgroundColor: Colors.blue[900],
-            title: Text((series != null ) ? 'Edit Series' : 'Add Series'),
+            title: Text((series != null ) ? 'Edit Group' : 'Add Group'),
             centerTitle: true,
             elevation: 0,
             leading: IconButton(
@@ -106,7 +106,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       setState(() {
                         currentSeriesType = seriesData[item]!.seriesText;
                         currentSeriesIcon = seriesData[item]!.seriesIcon;
-                        log("Current Series Type: '$item' Text: ${seriesData[item]!.seriesText} Current: $currentSeriesType", name: '${runtimeType.toString()}:build()');
+                        log("Current Group Type: '$item' Text: ${seriesData[item]!.seriesText} Current: $currentSeriesType", name: '${runtimeType.toString()}:build()');
                       });
                       // currentSeriesType = seriesTypeText[item]!;
                       // log("Current Series Type: '$item' Text: ${seriesTypeText[item]} Current: ${currentSeriesType}", name: '${runtimeType.toString()}:build()');
@@ -127,13 +127,13 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       title: Text("Type: $currentSeriesType"),
                     ),
                   ),
-                  const Text("Series Name: "),
+                  const Text("Group Name: "),
                   TextFormField(
                     initialValue: currentSeriesName,
                     // The validator receives the text that the user has entered.
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter Series Name';
+                        return 'Please enter Group Name';
                       }
                       return null;
                     },
@@ -142,7 +142,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                       currentSeriesName = value ?? 'Series 000';
                     },
                   ),
-                  const Text("Series Status"),
+                  const Text("Group Status"),
                   PopupMenuButtonStatus(
                     initialValue: StatusValues.values[currentStatus],
                     // initialValue: StatusValues.Prepare,

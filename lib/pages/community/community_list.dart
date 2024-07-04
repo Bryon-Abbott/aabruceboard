@@ -30,7 +30,7 @@ class _CommunityListState extends State<CommunityList> {
           List<Community> community = snapshots.data!.map((s) => s as Community).toList();
           return Scaffold(
             appBar: AppBar(
-                title: Text('Manage Community - Count: ${community.length}'),
+                title: Text('Manage Communities'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(

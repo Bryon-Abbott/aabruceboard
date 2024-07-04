@@ -39,7 +39,7 @@ class _MembershipListState extends State<MembershipList> {
           List<Membership> membershipList = snapshots.data!.map((s) => s as Membership).toList();
           return Scaffold(
             appBar: AppBar(
-              title: Text('Manage Membership - Count: ${membershipList.length}'),
+              title: Text('Manage Memberships (${membershipList.length})'),
               centerTitle: true,
               elevation: 0,
               leading: IconButton(
@@ -52,7 +52,10 @@ class _MembershipListState extends State<MembershipList> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () => addOnPressed(context),
+                  onPressed: () {
+                    addOnPressed(context);
+                    setState(() {});
+                  },
                 )
               ]),
             body: ListView.builder(

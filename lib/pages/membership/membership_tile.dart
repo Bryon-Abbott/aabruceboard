@@ -29,10 +29,8 @@ class MembershipTile extends StatelessWidget {
     Player communityPlayer; // = communityPlayerProvider.communityPlayer;
     Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
-
     // Set the Membership Provider to be user later.
     MembershipProvider membershipProvider = Provider.of<MembershipProvider>(context);
-
     Member? member;
 
     // Player? player;
@@ -56,9 +54,12 @@ class MembershipTile extends StatelessWidget {
                   builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot3) {
                     if (snapshot3.hasData) {
                       member = snapshot3.data as Member;
+                      log('Member Snapshot retrieved ${membership.key}:${member?.key ?? -98} ... ', name: '${runtimeType.toString()}:build()');
                     } else {
+                      member = null;
                       log('Member Snapshot has no data ... ', name: '${runtimeType.toString()}:build()');
                     }
+                    log('Member ${membership.key}:${member?.key ?? 80} Credits ${member?.credits ?? -99} ... ', name: '${runtimeType.toString()}:build()');
                     return Padding(
                       padding: const EdgeInsets.only(top: 1.0),
                       child: Card(
@@ -75,11 +76,11 @@ class MembershipTile extends StatelessWidget {
                                 builder: (context) => AccessListSeries(membership: membership)),
                             );
                           },
-                          title: Text('Status: ${membership.status}'),
+                          title: Text('Community: ${community?.name ?? '...'}'), // (${membership.key})
                           subtitle: Text(
-                              'Community: ${community?.name ?? '...'} (${membership.key})\n'
-                                  'Owner: ${communityPlayer.fName} ${communityPlayer.lName}\n'
-                                  'Credits: ${member?.credits ?? -1}'
+                              'Owner: ${communityPlayer.fName} ${communityPlayer.lName}\n'
+                                  'Status: ${membership.status}\n'
+                                  'Your Group Credits: ${member?.credits ?? 0}'
                           ),
                           trailing: SizedBox(
                             width: 100,
