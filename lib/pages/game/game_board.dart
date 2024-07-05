@@ -270,7 +270,8 @@ class _GameBoardState extends State<GameBoard> {
                                 child: SizedBox(
                                   // not less than 100
                                   // height: max(min(screenHeight - 308, gridSize - 4), 100),
-                                  height: max(min(screenHeight - 235, gridSize - 4), 100),
+                                  // height: max(min(screenHeight - 257, gridSize - 4), 100),
+                                  height: max(min(screenHeight - 203, gridSize - 4), 100),
                                   width: 40,
                                   child: RotatedBox(
                                     quarterTurns: 3,
@@ -284,8 +285,15 @@ class _GameBoardState extends State<GameBoard> {
                                       ),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
+                                        mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Text(leagueTeamData[game.teamTwo]?.teamName ?? game.teamTwo), //Text(game.teamTwo),
+                                          Expanded(
+                                            child: SizedBox(height: 1, width: 1),
+                                          ),
+                                          Expanded(
+                                            child: Text(leagueTeamData[game.teamTwo]?.teamName ?? game.teamTwo,
+                                              overflow: TextOverflow.fade,
+                                          )),
                                           const SizedBox(width: 10),
                                           (leagueTeamData[game.teamTwo] != null)
                                               ? RotatedBox(
@@ -350,7 +358,7 @@ class _GameBoardState extends State<GameBoard> {
       alignment: Alignment.topLeft,
       child: Container(
         margin: const EdgeInsets.all(2.0),
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(4.0),
         //height: 100,
         width: min(screenWidth, gridSize+42),
         decoration: BoxDecoration(
@@ -415,13 +423,13 @@ class _GameBoardState extends State<GameBoard> {
                   padding: const EdgeInsets.all(1.0),
                   child: Container(
                     padding: const EdgeInsets.all(1.0),
-                    width: 150,
+                    width: 100,
                     decoration: BoxDecoration(
                       border: Border.all(color: Theme.of(context).colorScheme.outline),
                       color: Theme.of(context).colorScheme.surfaceContainerHighest, // .surfaceVariant,
                     ),
                     child: (!board.scoresLocked)
-                        ? const Text("Lock Score Digits")
+                        ? const Text("Lock Digits")
                         : (winners[index].pid == -1)
                           ? const Text("Enter Scores")
                           : Text("${winners[index].fName} ${winners[index].lName}"),
@@ -432,15 +440,15 @@ class _GameBoardState extends State<GameBoard> {
                 const Padding(
                   padding: EdgeInsets.all(2.0),
                   child: SizedBox(
-                    width: 35,
-                    child: Text("Pts:"),
+                    width: 37,
+                    child: Text("Crds:"),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: Container(
                     padding: const EdgeInsets.all(1.0),
-                    width: 40,
+                    width: 35,
                     decoration: BoxDecoration(
                       border: Border.all(color: Theme.of(context).colorScheme.outline),
                       color: Theme.of(context).colorScheme.surfaceContainerHighest, // .surfaceVariant,
@@ -790,7 +798,7 @@ class _GameBoardState extends State<GameBoard> {
       alignment: Alignment.topLeft,
       child: Container(
         margin: const EdgeInsets.all(2.0),
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(2.0),
         width: min(screenWidth, gridSize+42),
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).colorScheme.outline),
@@ -798,6 +806,7 @@ class _GameBoardState extends State<GameBoard> {
        //   color: Colors.amber[900],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
              const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -806,20 +815,19 @@ class _GameBoardState extends State<GameBoard> {
                 ],
               ),
             Wrap(
-              spacing: 2,
               children:
                 List.generate(5, (index) {
-                  dev.log("List.gnerage Index $index", name: "${runtimeType.toString()}:buildCredits");
+                  dev.log("List.generate Index $index", name: "${runtimeType.toString()}:buildCredits");
                   return SizedBox(
-                    width: 80,
+                    width: 75,
                     child: Row(
                       children: [
-                        Text((index < 4) ? "Qtr${index+1}:" : (index == 4) ? "Com:" : "Total"),
+                        Text((index < 4) ? "Q${index+1}:" : (index == 4) ? "Com" : "Total"),
                         Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: Container(
                             padding: const EdgeInsets.all(1.0),
-                            width: 40,
+                            width: 38,
                             decoration: BoxDecoration(
                               border: Border.all(color: Theme.of(context).colorScheme.outline),
                               color: Theme.of(context).colorScheme.surfaceContainerHighest,   // .surfaceVariant,

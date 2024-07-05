@@ -40,7 +40,7 @@ class GameTile extends StatelessWidget {
             title: Text('Game: ${game.name}'),
             subtitle: Row(
               children: [
-                Text(' SID: ${series.key} GID: ${game.key} '),
+                Text('${series.key}:${game.key}'),
                 Spacer(),
                 Text('${status.name}'),
               ],

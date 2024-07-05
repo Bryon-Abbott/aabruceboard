@@ -107,7 +107,8 @@ class _GameBoardGridState extends State<GameBoardGrid> {
           // widget.callback(grid.getBoughtSquares());
           return SizedBox(
 //            height: max(min(screenHeight - 308, gridSize - 1), 100),
-            height: max(min(screenHeight - 275, gridSize - 1), 100),
+//            height: max(min(screenHeight - 275, gridSize - 1), 100),
+            height: max(min(screenHeight - 220, gridSize - 1), 100),
             width: min(screenWidth - 45, gridSize - 1),
             //width: newScreenWidth-20,
             child: SingleChildScrollView(

@@ -51,8 +51,7 @@ class _GameListState extends State<GameList> {
           List<Game> game = snapshots.data!.map((g) => g as Game).toList();
           return Scaffold(
             appBar: AppBar(
-      //            backgroundColor: Colors.blue[900],
-                title: Text('${series.type}-${series.name}'),
+                title: Text('Group: ${series.type}-${series.name}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
