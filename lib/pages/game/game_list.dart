@@ -44,44 +44,46 @@ class _GameListState extends State<GameList> {
     Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
     log('Game Owner: ${communityPlayer.docId}:${communityPlayer.fName}', name: "${runtimeType.toString()}:build()" );
 
-    return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.game, uid: communityPlayer.uid, sidKey: series.key).fsDocListStream,
-      builder: (context, snapshots) {
-        if(snapshots.hasData) {
-          List<Game> game = snapshots.data!.map((g) => g as Game).toList();
-          return Scaffold(
-            appBar: AppBar(
-                title: Text('Group: ${series.type}-${series.name}'),
-                centerTitle: true,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  // if user presses back, cancels changes to list (order/deletes)
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.add_circle_outline),
-                    onPressed: (activePlayer.pid != communityPlayer.pid) ? null : () async {
-                      await Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => GameMaintain(series: series)));
-                      setState(() {}); // Set state to refresh series changes.
+    return SafeArea(
+      child: StreamBuilder<List<FirestoreDoc>>(
+        stream: DatabaseService(FSDocType.game, uid: communityPlayer.uid, sidKey: series.key).fsDocListStream,
+        builder: (context, snapshots) {
+          if(snapshots.hasData) {
+            List<Game> game = snapshots.data!.map((g) => g as Game).toList();
+            return Scaffold(
+              appBar: AppBar(
+                  title: Text('Manage Games: ${series.type}-${series.name}'),
+                  centerTitle: true,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    // if user presses back, cancels changes to list (order/deletes)
+                    onPressed: () {
+                      Navigator.of(context).pop();
                     },
-                  )
-                ]),
-            body: ListView.builder(
-              itemCount: game.length,
-              itemBuilder: (context, index) {
-                return GameTile(callback: callback, series: series, game: game[index]);
-              },
-            ),
-          );
-        } else {
-          return const Loading();
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.add_circle_outline),
+                      onPressed: (activePlayer.pid != communityPlayer.pid) ? null : () async {
+                        await Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => GameMaintain(series: series)));
+                        setState(() {}); // Set state to refresh series changes.
+                      },
+                    )
+                  ]),
+              body: ListView.builder(
+                itemCount: game.length,
+                itemBuilder: (context, index) {
+                  return GameTile(callback: callback, series: series, game: game[index]);
+                },
+              ),
+            );
+          } else {
+            return const Loading();
+          }
         }
-      }
+      ),
     );
     }
   }

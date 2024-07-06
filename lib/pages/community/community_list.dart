@@ -23,49 +23,51 @@ class _CommunityListState extends State<CommunityList> {
   @override
   Widget build(BuildContext context) {
 
-    return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.community).fsDocListStream,
-      builder: (context, snapshots) {
-        if(snapshots.hasData) {
-          List<Community> community = snapshots.data!.map((s) => s as Community).toList();
-          return Scaffold(
-            appBar: AppBar(
-                title: Text('Manage Communities'),
-                centerTitle: true,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  // if user presses back, cancels changes to list (order/deletes)
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.add_circle_outline),
-                    onPressed: () async {
-                      dynamic changes = await Navigator.pushNamed(
-                          context, '/community-maintain');
-                      if (changes != null) {
-                        log('community_list: Members $changes Changes Type : ${changes.runtimeType}');
-                      } else {
-                        log('community_list: **null** Changes Type : ${changes.runtimeType}');
-                      }
+    return SafeArea(
+      child: StreamBuilder<List<FirestoreDoc>>(
+        stream: DatabaseService(FSDocType.community).fsDocListStream,
+        builder: (context, snapshots) {
+          if(snapshots.hasData) {
+            List<Community> community = snapshots.data!.map((s) => s as Community).toList();
+            return Scaffold(
+              appBar: AppBar(
+                  title: Text('Manage Communities'),
+                  centerTitle: true,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    // if user presses back, cancels changes to list (order/deletes)
+                    onPressed: () {
+                      Navigator.of(context).pop();
                     },
-                  )
-                ]),
-            body: ListView.builder(
-              itemCount: community.length,
-              itemBuilder: (context, index) {
-                return CommunityTile(community: community[index]);
-              },
-            ),
-          );
-        } else {
-          log("community_list: Snapshot Error ${snapshots.error}");
-          return const Loading();
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.add_circle_outline),
+                      onPressed: () async {
+                        dynamic changes = await Navigator.pushNamed(
+                            context, '/community-maintain');
+                        if (changes != null) {
+                          log('community_list: Members $changes Changes Type : ${changes.runtimeType}');
+                        } else {
+                          log('community_list: **null** Changes Type : ${changes.runtimeType}');
+                        }
+                      },
+                    )
+                  ]),
+              body: ListView.builder(
+                itemCount: community.length,
+                itemBuilder: (context, index) {
+                  return CommunityTile(community: community[index]);
+                },
+              ),
+            );
+          } else {
+            log("community_list: Snapshot Error ${snapshots.error}");
+            return const Loading();
+          }
         }
-      }
+      ),
     );
-    }
   }
+}

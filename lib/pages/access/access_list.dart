@@ -48,7 +48,7 @@ class _AccessListState extends State<AccessList> {
           return Scaffold(
             appBar: AppBar(
       //            backgroundColor: Colors.blue[900],
-                title: Text('Manage Access - Series: ${series.name}'),
+                title: Text('Manage Access to Group: ${series.name}'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(

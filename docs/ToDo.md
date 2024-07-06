@@ -34,11 +34,17 @@ my_flutter_project/
 ```
 ## Bugs
 + Fix Game Names on Score Prompt
++ Fix Update Profile, update Home Page
++ -------
 + Fill remaining squares active when board is full - Fixed
 + Score active after distribution - Fixed
 + Distribution didn't send message to Owner? - Fixed (Assign Remining not filling in community)
 ## General Updates 
-### 
++ Create FAQ
++ Update Documentation
++ Add Documentation to AbbottAvenue
++ Update AbbottAvenue - Business site
++ 
 ## Build Host Auto Approve
 ## Add Limits for Free Version 
 What Limits are required?

@@ -32,44 +32,46 @@ class _MembershipListState extends State<MembershipList> {
     bruceUser = Provider.of<BruceUser>(context);
     activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
-    return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.membership).fsDocListStream,
-      builder: (context, snapshots) {
-        if(snapshots.hasData) {
-          List<Membership> membershipList = snapshots.data!.map((s) => s as Membership).toList();
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Manage Memberships (${membershipList.length})'),
-              centerTitle: true,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                // if user presses back, cancels changes to list (order/deletes)
-                onPressed: () {
-                  Navigator.of(context).pop();
+    return SafeArea(
+      child: StreamBuilder<List<FirestoreDoc>>(
+        stream: DatabaseService(FSDocType.membership).fsDocListStream,
+        builder: (context, snapshots) {
+          if(snapshots.hasData) {
+            List<Membership> membershipList = snapshots.data!.map((s) => s as Membership).toList();
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('Manage Memberships (${membershipList.length})'),
+                centerTitle: true,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  // if user presses back, cancels changes to list (order/deletes)
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
+                    onPressed: () {
+                      addOnPressed(context);
+                      setState(() {});
+                    },
+                  )
+                ]),
+              body: ListView.builder(
+                itemCount: membershipList.length,
+                itemBuilder: (context, index) {
+                  return MembershipTile(membership: membershipList[index]);
                 },
               ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () {
-                    addOnPressed(context);
-                    setState(() {});
-                  },
-                )
-              ]),
-            body: ListView.builder(
-              itemCount: membershipList.length,
-              itemBuilder: (context, index) {
-                return MembershipTile(membership: membershipList[index]);
-              },
-            ),
-          );
-        } else {
-          log("membership_list: Snapshot Error ${snapshots.error}", name: '${runtimeType.toString()}:...');
-          return const Loading();
+            );
+          } else {
+            log("membership_list: Snapshot Error ${snapshots.error}", name: '${runtimeType.toString()}:...');
+            return const Loading();
+          }
         }
-      }
+      ),
     );
   }
   void addOnPressed(BuildContext context) async {

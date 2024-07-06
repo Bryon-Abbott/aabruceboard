@@ -367,6 +367,7 @@ class _GameBoardState extends State<GameBoard> {
 //          color: Colors.amber[900],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children:
             List<Widget>.generate(1, (index) {
               return const Row(
@@ -378,12 +379,13 @@ class _GameBoardState extends State<GameBoard> {
               );
             }) +
             List.generate(4, (index) {
-              return Wrap(children: [
+              return Wrap(
+                children: [
                 Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: SizedBox(
-                    width: 36,
-                    child: Text("Qtr${index + 1}:"),
+                    width: 20,
+                    child: Text("Q${index + 1}"),
                   ),
                 ),
                 Padding(
@@ -415,8 +417,8 @@ class _GameBoardState extends State<GameBoard> {
                 const Padding(
                   padding: EdgeInsets.all(2.0),
                   child: SizedBox(
-                    width: 35,
-                    child: Text("Won:"),
+                    width: 30,
+                    child: Text("Won"),
                   ),
                 ),
                 Padding(
@@ -440,8 +442,8 @@ class _GameBoardState extends State<GameBoard> {
                 const Padding(
                   padding: EdgeInsets.all(2.0),
                   child: SizedBox(
-                    width: 37,
-                    child: Text("Crds:"),
+                    width: 30,
+                    child: Text("Crds"),
                   ),
                 ),
                 Padding(
@@ -819,20 +821,19 @@ class _GameBoardState extends State<GameBoard> {
                 List.generate(5, (index) {
                   dev.log("List.generate Index $index", name: "${runtimeType.toString()}:buildCredits");
                   return SizedBox(
-                    width: 75,
+                    width: 70,
                     child: Row(
                       children: [
-                        Text((index < 4) ? "Q${index+1}:" : (index == 4) ? "Com" : "Total"),
+                        Text((index < 4) ? "Q${index+1}:" : (index == 4) ? "Com:" : "?"),
                         Padding(
                           padding: const EdgeInsets.all(2.0),
                           child: Container(
                             padding: const EdgeInsets.all(1.0),
-                            width: 38,
+                            width: 30,
                             decoration: BoxDecoration(
                               border: Border.all(color: Theme.of(context).colorScheme.outline),
                               color: Theme.of(context).colorScheme.surfaceContainerHighest,   // .surfaceVariant,
                             ),
-            //                        child: Text('Fix Me'),
                             child: Text((credits[index]).toString(),
                                 textAlign: TextAlign.right),
                           ),

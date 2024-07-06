@@ -25,49 +25,51 @@ class _SeriesListState extends State<SeriesList> {
 
     bruceUser = Provider.of<BruceUser>(context);
 
-    return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.series).fsDocListStream, // as Stream<List<Series>>,
-      builder: (context, snapshots) {
-        if(snapshots.hasData) {
-          List<Series> series = snapshots.data!.map((s) => s as Series).toList();
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Manage Groups - Count: ${series.length}'),
-              centerTitle: true,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                // if user presses back, cancels changes to list (order/deletes)
-                onPressed: () {
-                  Navigator.of(context).pop();
+    return SafeArea(
+      child: StreamBuilder<List<FirestoreDoc>>(
+        stream: DatabaseService(FSDocType.series).fsDocListStream, // as Stream<List<Series>>,
+        builder: (context, snapshots) {
+          if(snapshots.hasData) {
+            List<Series> series = snapshots.data!.map((s) => s as Series).toList();
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('Manage Groups - Count: ${series.length}'),
+                centerTitle: true,
+                elevation: 0,
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  // if user presses back, cancels changes to list (order/deletes)
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.add_circle_outline),
+                    onPressed: () async {
+                      dynamic changes = await Navigator.pushNamed(context, '/series-maintain');
+                      if (changes != null) {
+                        log('Games $changes Changes Type : ${changes.runtimeType}', name: '${runtimeType.toString()}:build()');
+                      } else {
+                        log('**null** Changes Type : ${changes.runtimeType}', name: '${runtimeType.toString()}:build()');
+                      }
+                    },
+                  )
+                ]
+              ),
+              body: ListView.builder(
+                itemCount: series.length,
+                itemBuilder: (context, index) {
+                  return SeriesTile(series: series[index]);
                 },
               ),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  onPressed: () async {
-                    dynamic changes = await Navigator.pushNamed(context, '/series-maintain');
-                    if (changes != null) {
-                      log('Games $changes Changes Type : ${changes.runtimeType}', name: '${runtimeType.toString()}:build()');
-                    } else {
-                      log('**null** Changes Type : ${changes.runtimeType}', name: '${runtimeType.toString()}:build()');
-                    }
-                  },
-                )
-              ]
-            ),
-            body: ListView.builder(
-              itemCount: series.length,
-              itemBuilder: (context, index) {
-                return SeriesTile(series: series[index]);
-              },
-            ),
-          );
-        } else {
-          log("Snapshot Error ${snapshots.error} ... loading", name: '${runtimeType.toString()}:build()');
-          return const Loading();
+            );
+          } else {
+            log("Snapshot Error ${snapshots.error} ... loading", name: '${runtimeType.toString()}:build()');
+            return const Loading();
+          }
         }
-      }
+      ),
     );
   }
 }

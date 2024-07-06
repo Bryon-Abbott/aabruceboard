@@ -71,200 +71,136 @@ class _HomeState extends State<Home> {
     double newScreenWidth = screenWidth - padding.left - padding.right;
     //dev.log("Screen Dimensions are Height: $screenHeight, Width: $screenWidth : Height: $newScreenHeight, Width: $newScreenWidth", name: " ${this.runtimeType.toString()}:build");
 
-    return FutureBuilder<FirestoreDoc?>(
-      future: DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid),
-      builder: (BuildContext context, AsyncSnapshot<FirestoreDoc?> snapshot) {
-        log('Pre-Community UID: ${communityPlayerProvider.communityPlayer.uid} ${communityPlayerProvider.communityPlayer.fName}',
-            name: "${runtimeType.toString()}:build()");
-        log('Pre-Active UID: ${activePlayerProvider.activePlayer.uid} ${activePlayerProvider.activePlayer.fName}',
-            name: "${runtimeType.toString()}:build()");
-        // Default communityPlayer if not set yet
-        if (snapshot.hasData) {
-          log('Got Document with docId ${snapshot.data!.docId} and Type: ${snapshot.data.runtimeType}', name: "${runtimeType.toString()}:build()");
-          if (snapshot.data!.docId != -1) {
-            player = snapshot.data as Player;
-            log('Got Player ${player.fName}', name: "${runtimeType.toString()}:build()");
-            activePlayerProvider.activePlayer = player;
-            if (communityPlayerProvider.communityPlayer.uid == 'Anonymous') {
-              communityPlayerProvider.communityPlayer = player;
+    return SafeArea(
+      child: FutureBuilder<FirestoreDoc?>(
+        future: DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid),
+        builder: (BuildContext context, AsyncSnapshot<FirestoreDoc?> snapshot) {
+          log('Pre-Community UID: ${communityPlayerProvider.communityPlayer.uid} ${communityPlayerProvider.communityPlayer.fName}',
+              name: "${runtimeType.toString()}:build()");
+          log('Pre-Active UID: ${activePlayerProvider.activePlayer.uid} ${activePlayerProvider.activePlayer.fName}',
+              name: "${runtimeType.toString()}:build()");
+          // Default communityPlayer if not set yet
+          if (snapshot.hasData) {
+            log('Got Document with docId ${snapshot.data!.docId} and Type: ${snapshot.data.runtimeType}', name: "${runtimeType.toString()}:build()");
+            if (snapshot.data!.docId != -1) {
+              player = snapshot.data as Player;
+              log('Got Player ${player.fName}', name: "${runtimeType.toString()}:build()");
+              activePlayerProvider.activePlayer = player;
+              if (communityPlayerProvider.communityPlayer.uid == 'Anonymous') {
+                communityPlayerProvider.communityPlayer = player;
+              }
+            } else {
+              log('No Player ... set to  Providers to Anonymous.', name: "${runtimeType.toString()}:build()");
+              activePlayerProvider.activePlayer = Player(data: {});
+              communityPlayerProvider.communityPlayer = Player(data: {});
             }
-          } else {
-            log('No Player ... set to  Providers to Anonymous.', name: "${runtimeType.toString()}:build()");
-            activePlayerProvider.activePlayer = Player(data: {});
-            communityPlayerProvider.communityPlayer = Player(data: {});
           }
-        }
-        log('Post-Community Owner UID: ${communityPlayerProvider.communityPlayer.uid} ${communityPlayerProvider.communityPlayer.fName}',
-            name: "${runtimeType.toString()}:build()");
-        log('Post-Active UID: ${activePlayerProvider.activePlayer.uid} ${activePlayerProvider.activePlayer.fName}',
-            name: "${runtimeType.toString()}:build()");
-        return PopScope(
-          canPop: false,
-          child: Scaffold(
-            backgroundColor: Colors.grey,
-            appBar: AppBar(
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: Colors.white.withOpacity(0)),
-                onPressed: null,
-              ),
-              title: const Text('Home'),
-              centerTitle: true,
-              elevation: 0,
-              actions: [
-                PopupMenuButton<int>(
-                    //              color: Colors.blue,
-                    onSelected: (item) => onMenuSelected(context, item),
-                    itemBuilder: (context) => [
-                          const PopupMenuItem<int>(
-                            value: 0,
-                            child: Row(
-                              children: [
-                                Icon(Icons.logout_outlined),
-                                SizedBox(width: 8),
-                                Text("Sign Out"),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuItem<int>(
-                            value: 1,
-                            child: Row(
-                              children: [
-                                Icon(Icons.person_outline),
-                                SizedBox(width: 8),
-                                Text("Profile"),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuItem<int>(
-                            value: 2,
-                            child: Row(
-                              children: [
-                                Icon(Icons.settings_outlined),
-                                SizedBox(width: 8),
-                                Text("Settings"),
-                              ],
-                            ),
-                          ),
-                          const PopupMenuDivider(),
-                          const PopupMenuItem<int>(
-                              value: 3,
-                              child: Row(children: [
-                                Icon(Icons.logout),
-                                SizedBox(width: 8),
-                                Text("Exit"),
-                              ])),
-                        ])
-              ],
-            ),
-            body: SafeArea(
-              child: Container(
-                height: newScreenHeight,
-                width: newScreenWidth,
-                color: Theme.of(context).colorScheme.surface,
-                child: SingleChildScrollView(
-                  child: Column(children: <Widget>[
-                    const SizedBox(height: 20,),
-                    // Text(
-                    //   'Welcome',
-                    //   textAlign: TextAlign.center,
-                    //   style: Theme.of(context).textTheme.displayLarge,
-                    // ),
-                    Text(
-                      'BruceBoard Squares',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.displayLarge,
-                    ),
-                    Text(
-                      'a Football Pool App',
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 20.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          width: 260,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.green[800]!),
-                                ),
-                                //padding: const EdgeInsets.all(8.0),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                    children: [
-                                      Text("Play Games",
-                                        style: Theme.of(context).textTheme.titleMedium,),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: ElevatedButton.icon(
-                                          onPressed: (bruceUser.uid == 'Anonymous')
-                                              ? null
-                                              : () {
-                                            Navigator.pushNamed(
-                                                context, '/membership-list');
-                                          },
-                                          icon: Icon(
-                                            Icons.collections_outlined,
-                                            size: 32,
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.color ??
-                                                Colors.red,
-                                          ),
-                                          label: Text('Join Communities & Play Games',
-                                            style:
-                                            Theme.of(context).textTheme.titleMedium,
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: ElevatedButton.icon(
-                                          onPressed: (bruceUser.uid == 'Anonymous')
-                                              ? null
-                                              : () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute(builder: (context) => MessageListIncoming(activePlayer: player)));
-                                            //Navigator.pushNamed(context, '/message-list-incoming');
-                                          },
-                                          icon: Icon(
-                                            Icons.message_outlined,
-                                            size: 32,
-                                            color: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium
-                                                ?.color ??
-                                                Colors.red,
-                                          ),
-                                          label: Text('View & Respond to Messages',
-                                            style: Theme.of(context).textTheme.titleMedium,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+          log('Post-Community Owner UID: ${communityPlayerProvider.communityPlayer.uid} ${communityPlayerProvider.communityPlayer.fName}',
+              name: "${runtimeType.toString()}:build()");
+          log('Post-Active UID: ${activePlayerProvider.activePlayer.uid} ${activePlayerProvider.activePlayer.fName}',
+              name: "${runtimeType.toString()}:build()");
+          return PopScope(
+            canPop: false,
+            child: Scaffold(
+              backgroundColor: Colors.grey,
+              appBar: AppBar(
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.white.withOpacity(0)),
+                  onPressed: null,
+                ),
+                title: const Text('Home'),
+                centerTitle: true,
+                elevation: 0,
+                actions: [
+                  PopupMenuButton<int>(
+                      //              color: Colors.blue,
+                      onSelected: (item) => onMenuSelected(context, item),
+                      itemBuilder: (context) => [
+                            const PopupMenuItem<int>(
+                              value: 0,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.logout_outlined),
+                                  SizedBox(width: 8),
+                                  Text("Sign Out"),
+                                ],
                               ),
-                              const SizedBox(height: 8,),
-                              Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.green[800]!),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Column(
+                            ),
+                            const PopupMenuItem<int>(
+                              value: 1,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.person_outline),
+                                  SizedBox(width: 8),
+                                  Text("Profile"),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuItem<int>(
+                              value: 2,
+                              child: Row(
+                                children: [
+                                  Icon(Icons.settings_outlined),
+                                  SizedBox(width: 8),
+                                  Text("Settings"),
+                                ],
+                              ),
+                            ),
+                            const PopupMenuDivider(),
+                            const PopupMenuItem<int>(
+                                value: 3,
+                                child: Row(children: [
+                                  Icon(Icons.logout),
+                                  SizedBox(width: 8),
+                                  Text("Exit"),
+                                ])),
+                          ])
+                ],
+              ),
+              body: SafeArea(
+                child: Container(
+                  height: newScreenHeight,
+                  width: newScreenWidth,
+                  color: Theme.of(context).colorScheme.surface,
+                  child: SingleChildScrollView(
+                    child: Column(children: <Widget>[
+                      const SizedBox(height: 20,),
+                      // Text(
+                      //   'Welcome',
+                      //   textAlign: TextAlign.center,
+                      //   style: Theme.of(context).textTheme.displayLarge,
+                      // ),
+                      Text(
+                        'BruceBoard Squares',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.displayLarge,
+                      ),
+                      Text(
+                        'a Football Pool App',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 20.0),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 260,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.green[800]!),
+                                  ),
+                                  //padding: const EdgeInsets.all(8.0),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.stretch,
                                       children: [
-                                        Text("Run Games",
-                                          style: Theme.of(context).textTheme.titleMedium,
-                                        ),
+                                        Text("Play Games",
+                                          style: Theme.of(context).textTheme.titleMedium,),
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
                                           child: ElevatedButton.icon(
@@ -272,10 +208,10 @@ class _HomeState extends State<Home> {
                                                 ? null
                                                 : () {
                                               Navigator.pushNamed(
-                                                  context, '/community-list');
+                                                  context, '/membership-list');
                                             },
                                             icon: Icon(
-                                              Icons.person,
+                                              Icons.collections_outlined,
                                               size: 32,
                                               color: Theme.of(context)
                                                   .textTheme
@@ -283,8 +219,7 @@ class _HomeState extends State<Home> {
                                                   ?.color ??
                                                   Colors.red,
                                             ),
-                                            label: Text(
-                                              'Create & Edit Communities',
+                                            label: Text('Join Communities & Play Games',
                                               style:
                                               Theme.of(context).textTheme.titleMedium,
                                             ),
@@ -296,13 +231,12 @@ class _HomeState extends State<Home> {
                                             onPressed: (bruceUser.uid == 'Anonymous')
                                                 ? null
                                                 : () {
-                                              Navigator.pushNamed(
-                                                //  context, '/manageplayers', arguments: BruceArguments(players, games));
-                                                  context,
-                                                  '/series-list');
+                                              Navigator.of(context).push(
+                                                  MaterialPageRoute(builder: (context) => MessageListIncoming(activePlayer: player)));
+                                              //Navigator.pushNamed(context, '/message-list-incoming');
                                             },
                                             icon: Icon(
-                                              Icons.sports_football_outlined,
+                                              Icons.message_outlined,
                                               size: 32,
                                               color: Theme.of(context)
                                                   .textTheme
@@ -310,106 +244,174 @@ class _HomeState extends State<Home> {
                                                   ?.color ??
                                                   Colors.red,
                                             ),
-                                            label: Text(
-                                              'Create Groups & Manage Games',
-                                              style:
-                                              Theme.of(context).textTheme.titleMedium,
+                                            label: Text('View & Respond to Messages',
+                                              style: Theme.of(context).textTheme.titleMedium,
                                             ),
                                           ),
                                         ),
-
-                                      ]
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ElevatedButton.icon(
-                                  onPressed: (bruceUser.uid != 'Anonymous')
-                                      ? null
-                                      : () {
-                                          Navigator.pushNamed(
-                                              //  context, '/managegames', arguments: BruceArguments(players, games));
-                                              context,
-                                              '/authenticate');
-                                        },
-                                  icon: Icon(
-                                    Icons.login,
-                                    size: 32,
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.color ??
-                                        Colors.red,
+                                const SizedBox(height: 8,),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.green[800]!),
                                   ),
-                                  label: Text(
-                                    'Sign In',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Text("Run Games",
+                                            style: Theme.of(context).textTheme.titleMedium,
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ElevatedButton.icon(
+                                              onPressed: (bruceUser.uid == 'Anonymous')
+                                                  ? null
+                                                  : () {
+                                                Navigator.pushNamed(
+                                                    context, '/community-list');
+                                              },
+                                              icon: Icon(
+                                                Icons.person,
+                                                size: 32,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.color ??
+                                                    Colors.red,
+                                              ),
+                                              label: Text(
+                                                'Create & Edit Communities',
+                                                style:
+                                                Theme.of(context).textTheme.titleMedium,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ElevatedButton.icon(
+                                              onPressed: (bruceUser.uid == 'Anonymous')
+                                                  ? null
+                                                  : () {
+                                                Navigator.pushNamed(
+                                                  //  context, '/manageplayers', arguments: BruceArguments(players, games));
+                                                    context,
+                                                    '/series-list');
+                                              },
+                                              icon: Icon(
+                                                Icons.sports_football_outlined,
+                                                size: 32,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.color ??
+                                                    Colors.red,
+                                              ),
+                                              label: Text(
+                                                'Create Groups & Manage Games',
+                                                style:
+                                                Theme.of(context).textTheme.titleMedium,
+                                              ),
+                                            ),
+                                          ),
+      
+                                        ]
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-                                child: ElevatedButton.icon(
-                                  onPressed: () {
-                                    Navigator.pushNamed(context, '/about');
-                                  },
-                                  icon: Icon(
-                                    Icons.question_mark,
-                                    size: 32,
-                                    color: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.color ??
-                                        Colors.red,
-                                  ),
-                                  label: Text(
-                                    'About',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: (bruceUser.uid != 'Anonymous')
+                                        ? null
+                                        : () {
+                                            Navigator.pushNamed(
+                                                //  context, '/managegames', arguments: BruceArguments(players, games));
+                                                context,
+                                                '/authenticate');
+                                          },
+                                    icon: Icon(
+                                      Icons.login,
+                                      size: 32,
+                                      color: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.color ??
+                                          Colors.red,
+                                    ),
+                                    label: Text(
+                                      'Sign In',
+                                      style:
+                                          Theme.of(context).textTheme.titleMedium,
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 8.0),
-//                     const Padding(
-//                       padding: EdgeInsets.all(8.0),
-//                       child: SizedBox(
-//                         height: 150,
-//                         width: 300,
-//                         child: Image(
-//                           image: AssetImage(
-//                               'assets/AdobeStock_118223983.jpeg'),
-// //                              'assets/AdobeStock_55757786-horizontal-bw.jpeg'),
-//                         ),
-//                       ),
-//                     ),
-                    Text("... Enjoy ...",
-                      // data['time'],
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    // Spacer(),
-                    const SizedBox(height: 20.0),
-                    Text(
-                      "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
-                      textAlign: TextAlign.end,
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ]),
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, '/about');
+                                    },
+                                    icon: Icon(
+                                      Icons.question_mark,
+                                      size: 32,
+                                      color: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.color ??
+                                          Colors.red,
+                                    ),
+                                    label: Text(
+                                      'About',
+                                      style:
+                                          Theme.of(context).textTheme.titleMedium,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 8.0),
+      //                     const Padding(
+      //                       padding: EdgeInsets.all(8.0),
+      //                       child: SizedBox(
+      //                         height: 150,
+      //                         width: 300,
+      //                         child: Image(
+      //                           image: AssetImage(
+      //                               'assets/AdobeStock_118223983.jpeg'),
+      // //                              'assets/AdobeStock_55757786-horizontal-bw.jpeg'),
+      //                         ),
+      //                       ),
+      //                     ),
+                      Text("... Enjoy ...",
+                        // data['time'],
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      // Spacer(),
+                      const SizedBox(height: 20.0),
+                      Text(
+                        "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
+                        textAlign: TextAlign.end,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ]),
+                  ),
                 ),
               ),
             ),
-          ),
-        );
-        // } else {
-        //   return const Loading();
-        // }
-      },
+          );
+          // } else {
+          //   return const Loading();
+          // }
+        },
+      ),
     );
   }
 
