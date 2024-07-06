@@ -374,7 +374,7 @@ class _GameBoardState extends State<GameBoard> {
                 //crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Score'),
+                  Text('Score:'),
                 ],
               );
             }) +
@@ -384,7 +384,7 @@ class _GameBoardState extends State<GameBoard> {
                 Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: SizedBox(
-                    width: 20,
+                    width: 21,
                     child: Text("Q${index + 1}"),
                   ),
                 ),
@@ -417,7 +417,7 @@ class _GameBoardState extends State<GameBoard> {
                 const Padding(
                   padding: EdgeInsets.all(2.0),
                   child: SizedBox(
-                    width: 30,
+                    width: 32,
                     child: Text("Won"),
                   ),
                 ),
@@ -442,7 +442,7 @@ class _GameBoardState extends State<GameBoard> {
                 const Padding(
                   padding: EdgeInsets.all(2.0),
                   child: SizedBox(
-                    width: 30,
+                    width: 33,
                     child: Text("Crds"),
                   ),
                 ),
@@ -813,7 +813,7 @@ class _GameBoardState extends State<GameBoard> {
              const Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Credits'),
+                  Text('Credits:'),
                 ],
               ),
             Wrap(
