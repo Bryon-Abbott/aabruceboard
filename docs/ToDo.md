@@ -1,7 +1,10 @@
 
 
 
-## Change to Multi App 
+## Change to Multi App
+We need to create an "Amdin" App and potentially a "Pro" App
+
+### Look at structure 
 Sample Structure 
 ```
 my_flutter_project/
@@ -32,6 +35,8 @@ my_flutter_project/
 |-- README.md
 |-- .gitignore
 ```
+### Package
+Create Database Package
 ## Bugs
 + Fix Game Names on Score Prompt
 + Fix Update Profile, update Home Page

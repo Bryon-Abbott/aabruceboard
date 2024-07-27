@@ -1,10 +1,12 @@
 //import 'dart:async';
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:bruceboard/models/membershipprovider.dart';
 //import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 //import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
@@ -38,8 +40,7 @@ main() async {
 
 //  final AdaptiveThemeMode savedThemeModex = await AdaptiveTheme.getThemeMode() ??
 //      AdaptiveThemeMode.light;
-//   WidgetsFlutterBinding.ensureInitialized();
-//   unawaited(MobileAds.instance.initialize());
+  unawaited(MobileAds.instance.initialize());
 
   await Preferences.init();
   await Firebase.initializeApp(

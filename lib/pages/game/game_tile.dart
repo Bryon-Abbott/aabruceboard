@@ -41,8 +41,8 @@ class GameTile extends StatelessWidget {
             subtitle: Row(
               children: [
                 Text('${series.key}:${game.key}'),
-                Spacer(),
-                Text('${status.name}'),
+                const Spacer(),
+                Text(status.name),
               ],
             ),
             trailing: IconButton(

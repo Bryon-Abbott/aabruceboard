@@ -319,7 +319,9 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       if (member.credits >= game.squareValue) {  // Has Credits
         // Get Comment
         if (!context.mounted) return;
-        String? comment = await openDialogMessageComment(context, defaultComment: "Please assign me to Square $squareIndex");
+        String? comment = await openDialogMessageComment(context, defaultComment: "Please assign me to Square $squareIndex",
+          defaultTitle: "Square Request (Credits: ${member.credits})",
+        );
         if (comment != null) {
           // Send message to user
           await messageSend(00040, messageType[MessageTypeOption.request]!,

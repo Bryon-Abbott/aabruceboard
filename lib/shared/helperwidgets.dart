@@ -13,7 +13,7 @@ Widget addHorizontalSpace(double width){
 }
 // ===========================================================================
 // Dialog to get user Text for Messages.
-Future<String?> openDialogMessageComment(BuildContext context, {String? defaultComment}) {
+Future<String?> openDialogMessageComment(BuildContext context, {String? defaultComment, String? defaultTitle}) {
   TextEditingController controller1 = TextEditingController( text: defaultComment);
   return showDialog<String>(
       context: context,
@@ -24,7 +24,7 @@ Future<String?> openDialogMessageComment(BuildContext context, {String? defaultC
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(2.0)
         ),
-      title: const Text("Message Text"),
+      title: Text("${defaultTitle ?? 'Message Text'}"),
       titleTextStyle: Theme.of(context).textTheme.bodyLarge,
       contentTextStyle: Theme.of(context).textTheme.bodyLarge,
       content: Column(

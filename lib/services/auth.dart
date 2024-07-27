@@ -22,6 +22,10 @@ class AuthService {
     }
   }
 
+  String get email {
+    return _auth.currentUser?.email ?? "annonymous@test.com";
+  }
+
   bool get emailVerified {
       return _auth.currentUser?.emailVerified ?? false;
   }

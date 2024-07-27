@@ -30,8 +30,11 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 16(1.1.3) Locked Score once credits distributed
 # Changed "Series" to "Group" for clarity
 # 18(1.1.5) Added SafeAreas to missing Screens
-#
-version: 1.1.5+18
+# 19(1.1.6) Positioning/Sizes on GameBoard for Score
+#   Added variable to avoid multiple Auto Processing.
+#   Added Summary page for Games
+#   Added Remaining Credits to Message Request
+version: 1.1.6+19
 
 environment:
   sdk: '>=3.1.2 <4.0.0'
@@ -61,7 +64,7 @@ dependencies:
   provider: ^6.0.5
   flutter_any_logo: ^1.1.1
   flutter_svg: ^2.0.10+1
- # google_mobile_ads: ^5.1.0
+  google_mobile_ads: ^5.1.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.

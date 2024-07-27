@@ -9,6 +9,7 @@ import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/pages/access/access_list_members.dart';
+import 'package:bruceboard/pages/game/game_summary_page.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/utils/preferences.dart';
 import 'package:flutter/material.dart';
@@ -164,7 +165,7 @@ class _GameBoardState extends State<GameBoard> {
                       actions: [
                         PopupMenuButton<int>(
                             onSelected: (item) =>
-                                onMenuSelected(context, item, board, series, activePlayer),
+                                onMenuSelected(context, item, board, series, activePlayer, communityPlayer),
                             itemBuilder: (context) =>
                             [
                               PopupMenuItem<int>(
@@ -200,6 +201,18 @@ class _GameBoardState extends State<GameBoard> {
                                             color: Colors.white),
                                         SizedBox(width: 8),
                                         Text("Update Splits"),
+                                      ]
+                                  )
+                              ),
+                              PopupMenuItem<int>(
+                                  value: 3,
+                                  // enabled: isGameOwner,
+                                  child: const Row(
+                                      children: [
+                                        Icon(Icons.summarize_outlined,
+                                            color: Colors.white),
+                                        SizedBox(width: 8),
+                                        Text("Game Summary"),
                                       ]
                                   )
                               ),
@@ -287,7 +300,7 @@ class _GameBoardState extends State<GameBoard> {
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Expanded(
+                                          const Expanded(
                                             child: SizedBox(height: 1, width: 1),
                                           ),
                                           Expanded(
@@ -503,7 +516,7 @@ class _GameBoardState extends State<GameBoard> {
   // --------------------------------------------------------------------------
   // Helper Functions
   // --------------------------------------------------------------------------
-  void onMenuSelected(BuildContext context, int item, Board board, Series series, Player activePlayer) async {
+  void onMenuSelected(BuildContext context, int item, Board board, Series series, Player activePlayer, Player communityPlayer) async {
     switch (item) {
       case 0:
         dev.log("Menu Select 0:Distribute Credits", name: "${runtimeType.toString()}:onMenuSelected");
@@ -617,24 +630,30 @@ class _GameBoardState extends State<GameBoard> {
         if (percents == null || percents.isEmpty) {
           return;
         } else {
-          dev.log("Loading Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:buildScore");
+          dev.log("Loading Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:onMenuSelected");
           for (int i=0; i<4; i++) {
             if (percents[i].isNotEmpty) {
               board.percentSplits[i] = int.parse(percents[i]);
             }
             qtrPercents += board.percentSplits[i];
-            dev.log("Split Data ... '${percents[i]}' ", name: "${runtimeType.toString()}:buildScore");
+            dev.log("Split Data ... '${percents[i]}' ", name: "${runtimeType.toString()}:onMenuSelected");
           }
           board.percentSplits[4] = 100 - qtrPercents;
-          dev.log("Split Data ... GameNo: ${game.docId}, Qtr Splits: $qtrPercents,  Total Splits: ${board.percentSplits[4]}", name: "${runtimeType.toString()}:buildScore");
+          dev.log("Split Data ... GameNo: ${game.docId}, Qtr Splits: $qtrPercents,  Total Splits: ${board.percentSplits[4]}", name: "${runtimeType.toString()}:onMenuSelected");
 
-          dev.log("Saving Game Data ... GameNo: ${game.docId}", name: "${runtimeType.toString()}:buildScore");
+          dev.log("Saving Game Data ... GameNo: ${game.docId}", name: "${runtimeType.toString()}:onMenuSelected");
           DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
               .fsDocUpdate(board);
           setState(() {
-            dev.log("setState() ...", name: "${runtimeType.toString()}:buildScore");
+            dev.log("setState() ...", name: "${runtimeType.toString()}:onMenuSelected");
           });
         }
+        break;
+      case 3:
+        dev.log("Summary Options selected ...", name: "${runtimeType.toString()}:onMenuSelected");
+        Grid grid = await DatabaseService(FSDocType.grid, uid: communityPlayer.uid,  sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
+        dynamic result = await Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => GameSummaryPage(game: game, grid: grid)));
         break;
     }
   }

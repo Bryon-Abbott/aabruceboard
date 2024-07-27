@@ -17,6 +17,9 @@ class BruceUser {
   String get displayName {
     return _auth.displayName;
   }
+  String get email {
+    return _auth.email;
+  }
   bool get emailVerified {
     return _auth.emailVerified;
   }

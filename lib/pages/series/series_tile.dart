@@ -30,8 +30,8 @@ class SeriesTile extends StatelessWidget {
           subtitle: Row(
             children: [
               Text('Type: ${series.type} '),
-              Spacer(),
-              Text('${status.name}'),
+              const Spacer(),
+              Text(status.name),
             ],
           ),
           trailing: IconButton(

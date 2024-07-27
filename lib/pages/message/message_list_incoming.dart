@@ -30,6 +30,7 @@ class MessageListIncoming extends StatefulWidget {
 class _MessageListIncomingState extends State<MessageListIncoming> {
 
   late Player activePlayer;
+  bool autoProcessing = false;
   // late Message message;
 
   @override
@@ -52,7 +53,7 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
           List<Message> message = snapshots.data!.map((a) => a as Message).toList();
           return Scaffold(
             appBar: AppBar(
-                title: Text('Show Messages'),
+                title: const Text('Show Messages'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -72,6 +73,7 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
                     icon: const Icon(Icons.archive_outlined),
                   ),
                   IconButton(
+                    color: autoProcessing ? Colors.red : null,
                     onPressed: () => autoProcessAll(),
                     tooltip: "Auto Process Messages",
                     icon: const Icon(Icons.auto_fix_high_outlined),
@@ -95,6 +97,11 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
     );
   }
   void autoProcessAll() {
+    if (autoProcessing) {
+      log("Already Auto Processing ...)", name: '${runtimeType.toString()}:AutoProcessAll()');
+      return;
+    }
+    autoProcessing = true;
     if (activePlayer.autoProcessReq) {
       autoProcess(messageTypeOption: MessageTypeOption.request);
     }
@@ -109,6 +116,7 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
     // if (activePlayer.autoProcessNot) {
     //   autoProcess(messageTypeOption: MessageTypeOption.notification);
     // }
+    autoProcessing = false;
   }
 
   // Auto Process Messages from Players active Queue.

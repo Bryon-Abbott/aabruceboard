@@ -1,5 +1,6 @@
 # User Manual - BruceBoard
-Version: 1.1.4 (17)
+## 0.0 Introduction 
+Version: 1.1.6 (19)
 
 BruceBoard is an application used to Create, Maintain and Play standard 10x10 Sports Pools. 
 The key functionality includes the following: 
@@ -16,6 +17,8 @@ The key functionality includes the following:
 + Respond to Messages from other Players. 
 
 **Note:** A Player can be given access to their own community to enable them to play along. 
+
+
 
 ## 1.0 Data Model 
 The following are key data model elements used within the BruceBoard Application. 
