@@ -24,7 +24,7 @@ Future<String?> openDialogMessageComment(BuildContext context, {String? defaultC
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(2.0)
         ),
-      title: Text("${defaultTitle ?? 'Message Text'}"),
+      title: Text(defaultTitle ?? 'Message Text'),
       titleTextStyle: Theme.of(context).textTheme.bodyLarge,
       contentTextStyle: Theme.of(context).textTheme.bodyLarge,
       content: Column(

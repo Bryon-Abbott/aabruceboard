@@ -1,10 +1,10 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/models/member.dart';
-import 'package:bruceboard/models/community.dart';
+// import 'package:bruceboard/models/member.dart';
+// import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/pages/member/member_maintain.dart';
+// import 'package:bruceboard/pages/member/member_maintain.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class GameSummaryTile extends StatelessWidget {
               log("Player Tapped ... Free : Square ");
             },
             leading: const Icon(Icons.person_outline),
-            title: Text('Free Squares: ${count}'),
+            title: Text('Free Squares: $count'),
             //subtitle: Text('Game ... '),
           ),
         ),
@@ -47,7 +47,7 @@ class GameSummaryTile extends StatelessWidget {
                     log("Player Tapped ... ${player.fName} : ${player.lName} ");
                   },
                   leading: const Icon(Icons.person_outline),
-                  title: Text('${player.fName} ${player.lName}: ${count}'),
+                  title: Text('${player.fName} ${player.lName}: $count'),
                   //subtitle: Text('Game ... '),
                 ),
               ),

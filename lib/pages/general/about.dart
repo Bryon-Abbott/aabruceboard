@@ -1,3 +1,4 @@
+import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 // ==========
@@ -109,6 +110,7 @@ class _AboutState extends State<About> {
                       textAlign: TextAlign.start,
                     style: Theme.of(context).textTheme.titleSmall,
                   ),
+                  const AaBannerAd(),
                 ]
             ),
           )

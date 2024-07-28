@@ -204,10 +204,10 @@ class _GameBoardState extends State<GameBoard> {
                                       ]
                                   )
                               ),
-                              PopupMenuItem<int>(
+                              const PopupMenuItem<int>(
                                   value: 3,
                                   // enabled: isGameOwner,
-                                  child: const Row(
+                                  child: Row(
                                       children: [
                                         Icon(Icons.summarize_outlined,
                                             color: Colors.white),
@@ -652,7 +652,8 @@ class _GameBoardState extends State<GameBoard> {
       case 3:
         dev.log("Summary Options selected ...", name: "${runtimeType.toString()}:onMenuSelected");
         Grid grid = await DatabaseService(FSDocType.grid, uid: communityPlayer.uid,  sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
-        dynamic result = await Navigator.of(context)
+        if (!context.mounted) return;
+        await Navigator.of(context)
             .push(MaterialPageRoute(builder: (context) => GameSummaryPage(game: game, grid: grid)));
         break;
     }
