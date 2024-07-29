@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/services/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 class BruceUser {
@@ -31,6 +32,43 @@ class BruceUser {
   void sendPasswordResetEmail(email){
     _auth.sendPasswordResetEmail(email);
   }
+
+  bool deleteUserAccount()  {
+    try {
+      _auth.currentUser!.delete();
+    } on FirebaseAuthException catch (e) {
+      log("${e.code}, ${e.message}", name: '${runtimeType.toString()}:deleteUserAccount()');
+      if (e.code == "requires-recent-login") {
+        return false;
+        //        await _reauthenticateAndDelete();
+      } else {
+        // Handle other Firebase exceptions
+      }
+    } catch (e) {
+      log("${e}");
+      // Handle general exception
+    }
+    return true;
+  }
+
+  Future<void> _reauthenticateAndDelete() async {
+    log("Reauthenticating ... ", name: '${runtimeType.toString()}:_reauthenticateAndDelete()');
+    try {
+      final providerData = _auth.currentUser?.providerData.first;
+      if (AppleAuthProvider().providerId == providerData!.providerId) {
+        await _auth.currentUser!
+            .reauthenticateWithProvider(AppleAuthProvider());
+      } else if (GoogleAuthProvider().providerId == providerData.providerId) {
+        await _auth.currentUser!
+            .reauthenticateWithProvider(GoogleAuthProvider());
+      }
+
+      await _auth.currentUser?.delete();
+    } catch (e) {
+      log("Unhandled Error ... ", name: '${runtimeType.toString()}:_reauthenticateAndDelete()');
+      // Handle exceptions
+    }
+  }
 }
 
 class Player implements FirestoreDoc {
@@ -49,6 +87,7 @@ class Player implements FirestoreDoc {
   String lName;
   String initials;
   int pid;
+  int status;  // 0 = Deleted, 1 = Active,
 
   // Totals
   int noMemberships = 0;
@@ -74,6 +113,7 @@ class Player implements FirestoreDoc {
         fName = data['fName'] ?? 'Fname',
         lName = data['lName'] ?? 'Lname',
         initials = data['initials'] ?? 'FL',
+        status = data['status'] ?? 1,  // If not found, assume active?
         autoProcessReq = data['autoProcessReq'] ?? false,
         autoProcessNot = data['autoProcessNot'] ?? false,
         autoProcessAck = data['autoProcessAck'] ?? false,
@@ -104,6 +144,7 @@ class Player implements FirestoreDoc {
     fName = data['fName'] ?? fName;
     lName = data['lName'] ?? lName;
     initials = data['initials'] ?? initials;
+    status = data['status'] ?? status;
     autoProcessReq = data['autoProcessReq'] ?? autoProcessReq;
     autoProcessNot = data['autoProcessNot'] ?? autoProcessNot;
     autoProcessAck = data['autoProcessAck'] ?? autoProcessAck;
@@ -137,6 +178,7 @@ class Player implements FirestoreDoc {
       'fName': fName,
       'lName': lName,
       'initials': initials,
+      'status': status,
       'autoProcessReq': autoProcessReq,  // Server Side - Not Required here?
       'autoProcessNot': autoProcessNot,
       'autoProcessAck': autoProcessAck,

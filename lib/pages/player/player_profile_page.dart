@@ -89,6 +89,14 @@ class _PlayerProfilePage extends PlayerProfileCtrl {
                                   onPressed: (bruceUser?.emailVerified ?? true) ? null : verifyOnPressed,
                                   child: const Text("Verify Email")),
                             ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                  onPressed:() async {
+                                    await deleteOnPressed();
+                                  },
+                                  child: const Text("Delete Account")),
+                            ),
                           ],
                         ),
                         const Spacer(),
