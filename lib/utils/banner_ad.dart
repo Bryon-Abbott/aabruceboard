@@ -38,7 +38,7 @@ class _AaBannerAdState extends State<AaBannerAd> {
         child: _bannerAd == null
         // Nothing to render yet.
             ? const SizedBox(
-              child: Text("Ad Banner Loading ..."),
+//              child: Text("Ad Banner Loading ..."),
             )
         // The actual ad.
             : AdWidget(ad: _bannerAd!),

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:bruceboard/pages/player/player_profile_page.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -113,48 +114,47 @@ class _HomeState extends State<Home> {
                 elevation: 0,
                 actions: [
                   PopupMenuButton<int>(
-                      //              color: Colors.blue,
                       onSelected: (item) => onMenuSelected(context, item),
                       itemBuilder: (context) => [
-                            const PopupMenuItem<int>(
-                              value: 0,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.logout_outlined),
-                                  SizedBox(width: 8),
-                                  Text("Sign Out"),
-                                ],
-                              ),
-                            ),
-                            const PopupMenuItem<int>(
-                              value: 1,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.person_outline),
-                                  SizedBox(width: 8),
-                                  Text("Profile"),
-                                ],
-                              ),
-                            ),
-                            const PopupMenuItem<int>(
-                              value: 2,
-                              child: Row(
-                                children: [
-                                  Icon(Icons.settings_outlined),
-                                  SizedBox(width: 8),
-                                  Text("Settings"),
-                                ],
-                              ),
-                            ),
-                            const PopupMenuDivider(),
-                            const PopupMenuItem<int>(
-                                value: 3,
-                                child: Row(children: [
-                                  Icon(Icons.logout),
-                                  SizedBox(width: 8),
-                                  Text("Exit"),
-                                ])),
-                          ])
+                    const PopupMenuItem<int>(
+                      value: 0,
+                      child: Row(
+                        children: [
+                          Icon(Icons.logout_outlined),
+                          SizedBox(width: 8),
+                          Text("Sign Out"),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 1,
+                      child: Row(
+                        children: [
+                          Icon(Icons.person_outline),
+                          SizedBox(width: 8),
+                          Text("Profile"),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 2,
+                      child: Row(
+                        children: [
+                          Icon(Icons.settings_outlined),
+                          SizedBox(width: 8),
+                          Text("Settings"),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuDivider(),
+                    const PopupMenuItem<int>(
+                        value: 3,
+                        child: Row(children: [
+                          Icon(Icons.logout),
+                          SizedBox(width: 8),
+                          Text("Exit"),
+                        ])),
+                  ])
                 ],
               ),
               body: SafeArea(
@@ -163,104 +163,106 @@ class _HomeState extends State<Home> {
                   width: newScreenWidth,
                   color: Theme.of(context).colorScheme.surface,
                   child: SingleChildScrollView(
-                    child: Column(children: <Widget>[
-                      const SizedBox(height: 20,),
-                      // Text(
-                      //   'Welcome',
-                      //   textAlign: TextAlign.center,
-                      //   style: Theme.of(context).textTheme.displayLarge,
-                      // ),
-                      Text(
-                        'BruceBoard Squares',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.displayLarge,
-                      ),
-                      Text(
-                        'a Football Pool App',
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      const SizedBox(height: 20.0),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            width: 260,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.green[800]!),
-                                  ),
-                                  //padding: const EdgeInsets.all(8.0),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                                      children: [
-                                        Text("Play Games",
-                                          style: Theme.of(context).textTheme.titleMedium,),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: ElevatedButton.icon(
-                                            onPressed: (bruceUser.uid == 'Anonymous')
-                                                ? null
-                                                : () {
-                                              Navigator.pushNamed(
-                                                  context, '/membership-list');
-                                            },
-                                            icon: Icon(
-                                              Icons.collections_outlined,
-                                              size: 32,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium
-                                                  ?.color ??
-                                                  Colors.red,
-                                            ),
-                                            label: Text('Join Communities & Play Games',
-                                              style:
-                                              Theme.of(context).textTheme.titleMedium,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: ElevatedButton.icon(
-                                            onPressed: (bruceUser.uid == 'Anonymous')
-                                                ? null
-                                                : () {
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(builder: (context) => MessageListIncoming(activePlayer: player)));
-                                              //Navigator.pushNamed(context, '/message-list-incoming');
-                                            },
-                                            icon: Icon(
-                                              Icons.message_outlined,
-                                              size: 32,
-                                              color: Theme.of(context)
-                                                  .textTheme
-                                                  .titleMedium
-                                                  ?.color ??
-                                                  Colors.red,
-                                            ),
-                                            label: Text('View & Respond to Messages',
-                                              style: Theme.of(context).textTheme.titleMedium,
+                    child: Column(
+                      children: <Widget>[
+                        const SizedBox(height: 20,),
+                        // Text(
+                        //   'Welcome',
+                        //   textAlign: TextAlign.center,
+                        //   style: Theme.of(context).textTheme.displayLarge,
+                        // ),
+                        Text(
+                          'BruceBoard Squares',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                        Text(
+                          'a Football Pool App',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        const SizedBox(height: 20.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 260,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.green[800]!),
+                                    ),
+                                    //padding: const EdgeInsets.all(8.0),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                                        children: [
+                                          Text("Play Games",
+                                            style: Theme.of(context).textTheme.titleMedium,),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ElevatedButton.icon(
+                                              onPressed: (bruceUser.uid == 'Anonymous')
+                                                  ? null
+                                                  : () {
+                                                Navigator.pushNamed(
+                                                    context, '/membership-list');
+                                              },
+                                              icon: Icon(
+                                                Icons.collections_outlined,
+                                                size: 32,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.color ??
+                                                    Colors.red,
+                                              ),
+                                              label: Text('Join Communities & Play Games',
+                                                style:
+                                                Theme.of(context).textTheme.titleMedium,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: ElevatedButton.icon(
+                                              onPressed: (bruceUser.uid == 'Anonymous')
+                                                  ? null
+                                                  : () {
+                                                Navigator.of(context).push(
+                                                    MaterialPageRoute(builder: (context) => MessageListIncoming(activePlayer: player)));
+                                                //Navigator.pushNamed(context, '/message-list-incoming');
+                                              },
+                                              icon: Icon(
+                                                Icons.message_outlined,
+                                                size: 32,
+                                                color: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.color ??
+                                                    Colors.red,
+                                              ),
+                                              label: Text('View & Respond to Messages',
+                                                style: Theme.of(context).textTheme.titleMedium,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 8,),
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.green[800]!),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Column(
+                                  const SizedBox(height: 8),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.green[800]!),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.stretch,
                                         children: [
                                           Text("Run Games",
@@ -318,90 +320,91 @@ class _HomeState extends State<Home> {
                                               ),
                                             ),
                                           ),
-      
+
                                         ]
+                                      ),
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: ElevatedButton.icon(
-                                    onPressed: (bruceUser.uid != 'Anonymous')
-                                        ? null
-                                        : () {
-                                            Navigator.pushNamed(
-                                                //  context, '/managegames', arguments: BruceArguments(players, games));
-                                                context,
-                                                '/authenticate');
-                                          },
-                                    icon: Icon(
-                                      Icons.login,
-                                      size: 32,
-                                      color: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.color ??
-                                          Colors.red,
-                                    ),
-                                    label: Text(
-                                      'Sign In',
-                                      style:
-                                          Theme.of(context).textTheme.titleMedium,
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, '/about');
-                                    },
-                                    icon: Icon(
-                                      Icons.question_mark,
-                                      size: 32,
-                                      color: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.color ??
-                                          Colors.red,
-                                    ),
-                                    label: Text(
-                                      'About',
-                                      style:
-                                          Theme.of(context).textTheme.titleMedium,
+                                  Padding(
+                                    padding: const EdgeInsets.all(4.0),
+                                    child: ElevatedButton.icon(
+                                      onPressed: (bruceUser.uid != 'Anonymous')
+                                          ? null
+                                          : () {
+                                              Navigator.pushNamed(
+                                                  //  context, '/managegames', arguments: BruceArguments(players, games));
+                                                  context,
+                                                  '/authenticate');
+                                            },
+                                      icon: Icon(
+                                        Icons.login,
+                                        size: 32,
+                                        color: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.color ??
+                                            Colors.red,
+                                      ),
+                                      label: Text(
+                                        'Sign In',
+                                        style:
+                                            Theme.of(context).textTheme.titleMedium,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 8.0),
-      //                     const Padding(
-      //                       padding: EdgeInsets.all(8.0),
-      //                       child: SizedBox(
-      //                         height: 150,
-      //                         width: 300,
-      //                         child: Image(
-      //                           image: AssetImage(
-      //                               'assets/AdobeStock_118223983.jpeg'),
-      // //                              'assets/AdobeStock_55757786-horizontal-bw.jpeg'),
-      //                         ),
-      //                       ),
-      //                     ),
-                      Text("... Enjoy ...",
-                        // data['time'],
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      // Spacer(),
-                      const SizedBox(height: 20.0),
-                      Text(
-                        "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
-                        textAlign: TextAlign.end,
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ]),
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+                                    child: ElevatedButton.icon(
+                                      onPressed: () {
+                                        Navigator.pushNamed(context, '/about');
+                                      },
+                                      icon: Icon(
+                                        Icons.question_mark,
+                                        size: 32,
+                                        color: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.color ??
+                                            Colors.red,
+                                      ),
+                                      label: Text(
+                                        'About',
+                                        style:
+                                            Theme.of(context).textTheme.titleMedium,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 8.0),
+        //                     const Padding(
+        //                       padding: EdgeInsets.all(8.0),
+        //                       child: SizedBox(
+        //                         height: 150,
+        //                         width: 300,
+        //                         child: Image(
+        //                           image: AssetImage(
+        //                               'assets/AdobeStock_118223983.jpeg'),
+        // //                              'assets/AdobeStock_55757786-horizontal-bw.jpeg'),
+        //                         ),
+        //                       ),
+        //                     ),
+        //                 Text("... Enjoy ...",
+        //                   // data['time'],
+        //                   style: Theme.of(context).textTheme.titleLarge,
+        //                 ),
+                      //  const AaBannerAd(),
+                        Text(
+                          "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
+                          textAlign: TextAlign.end,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
+//                        const SizedBox(height: 20.0),
+                      ]
+                    ),
                   ),
                 ),
               ),

@@ -98,7 +98,8 @@ Future<void> messageSend(
           'comment': comment,
           'data': data,
         });
-  return await DatabaseService(FSDocType.message, toUid: playerTo.uid).fsDocAdd(notification);
+  // 2024-07-29 Removed Await here,
+  return DatabaseService(FSDocType.message, toUid: playerTo.uid).fsDocAdd(notification);
 }
 // ********** ADD REQ:00001 / RESP:10001 **********
 // ********** REMOVE REQ:00002 / RESP:10002 **********
