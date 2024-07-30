@@ -36,7 +36,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #   Added Remaining Credits to Message Request
 # 20(1.1.7) Paused adds for deploy to Apple
 #   Added Status to Account to indicated active.
-version: 1.1.7+20
+# 21(1.1.8) Restricted Player Select to active players
+version: 1.1.8+21
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

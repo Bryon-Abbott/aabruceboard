@@ -16,7 +16,7 @@ import 'package:bruceboard/shared/loading.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/auth.dart';
+import 'package:bruceboard/services/authservices.dart';
 import 'package:bruceboard/theme/theme_constants.dart';
 import 'package:bruceboard/utils/preferences.dart';
 

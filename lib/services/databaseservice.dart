@@ -1,9 +1,10 @@
 import 'dart:developer';
-
-import 'package:bruceboard/models/firestoredoc.dart';
+import 'dart:ffi';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:bruceboard/models/firestoredoc.dart';
 
 // Todo: Convert this to a Database Factory
 class DatabaseService {
@@ -340,15 +341,41 @@ class DatabaseService {
     //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
 //        .map(_fsDocListFromSnapshot);
   }
+  //  fsDocQueryListStream( {'field1': 'value1', 'field2': 'value2', 'field3': 5});
+  Stream<List<FirestoreDoc>> fsDocQueryListStream({ required Map<String, dynamic> queryValues }) {
 
+    Stream<QuerySnapshot<Object?>> s001;
+    Query<Object?>? q001;
+
+    log('fsDocListStream: ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
+
+    queryValues.forEach((key, value) {
+      if (key != '' && value != '') {
+        if (q001 == null) {
+          q001 = docCollection.where(key.toString(), isEqualTo: value);
+        } else {
+          q001 = q001!.where(key.toString(), isEqualTo: value);
+        }
+      };
+    });
+    // If no query parameters ... return full collection
+    if (q001 == null) {
+      s001 = docCollection.snapshots();
+    } else {
+      s001 = q001!.snapshots();
+    }
+    return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
+  }
   //get FirestoreDoc List stream
-  Stream<List<FirestoreDoc>> fsDocQueryListStream(
+  // This has been replaced by fsDocQueryListStream
+  Stream<List<FirestoreDoc>> fsDocQueryListStreamOld(
       { required String filterField1, required String filterValue1,
-        required String filterField2, required String filterValue2}) {
+        required String filterField2, required String filterValue2,}) {
     log('fsDocListStream: ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
     log(docCollection.path, name: '${runtimeType.toString()}:fsDocQueryListStream()');
 
     Stream<QuerySnapshot<Object?>> s001;
+
     if (filterField1.isNotEmpty && filterValue1.isNotEmpty) {
       if (filterField2.isNotEmpty && filterValue2.isNotEmpty) {
         s001 = docCollection

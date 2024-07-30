@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:bruceboard/services/auth.dart';
+import 'package:bruceboard/services/authservices.dart';
 // import 'package:bruceboard/shared/constants.dart';
 import 'package:bruceboard/shared/loading.dart';
 //import 'package:firebase_auth/firebase_auth.dart';

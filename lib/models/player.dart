@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/services/auth.dart';
+import 'package:bruceboard/services/authservices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 

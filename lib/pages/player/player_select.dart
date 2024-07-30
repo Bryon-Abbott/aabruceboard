@@ -28,9 +28,12 @@ class _PlayerSelectState extends State<PlayerSelect> {
     bruceUser = Provider.of<BruceUser>(context);
     return StreamBuilder<List<FirestoreDoc>>(
       // stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocListStream,
+      // stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocQueryListStream(
+      //   filterField1: "fName", filterValue1: filterFName,
+      //   filterField2: "lName", filterValue2: filterLName,
+      // ),
       stream: DatabaseService(FSDocType.player, uid: bruceUser.uid).fsDocQueryListStream(
-        filterField1: "fName", filterValue1: filterFName,
-        filterField2: "lName", filterValue2: filterLName,
+          queryValues: {'fName': filterFName, 'lName': filterLName, 'status': 1}
       ),
       builder: (context, snapshots) {
         if(snapshots.hasData) {

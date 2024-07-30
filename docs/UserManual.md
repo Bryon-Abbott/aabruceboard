@@ -105,6 +105,12 @@ Owners can add non-verified Players to their communities but should be aware tha
 
 If the Player's email has been verified, the [Verify Email] button will be disabled. 
 
+#### 2.2.4 Delete Account 
+
+Players can delete their account if desired. This will remove the Account from Firebase and the player will no longer have access to the Communities and/or Gamess they are running. 
+
+The Player sign back up again but a new account will be provided and the Payer will need to re-request access to any communities they wish to join.  In addition, any communities or boards that they had will no longer be accessible.  
+
 ## 3.0 Groups 
 Groups are collections of games. This can be any grouping of games the Owner wants (i.e. games for a given week, games for a given team, games for a given playoff series, etc). 
 

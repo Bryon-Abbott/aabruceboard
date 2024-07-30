@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
-import 'package:bruceboard/services/auth.dart';
+import 'package:bruceboard/services/authservices.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 part 'player_profile_ctrl.dart';
