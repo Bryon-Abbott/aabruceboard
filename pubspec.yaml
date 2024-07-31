@@ -37,6 +37,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 20(1.1.7) Paused adds for deploy to Apple
 #   Added Status to Account to indicated active.
 # 21(1.1.8) Restricted Player Select to active players
+#   Trim Name on entry and profile chnages
 version: 1.1.8+21
 
 environment:

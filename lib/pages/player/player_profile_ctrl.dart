@@ -26,11 +26,11 @@ abstract class PlayerProfileCtrl extends State<PlayerProfilePage> {
 
   Future<void> updateOnPressed() async {
     if(_formKey.currentState!.validate()) {
-      player.fName = _currentFName ?? player.fName;
-      player.lName = _currentLName ?? player.lName;
-      player.initials = _currentInitials ?? player.initials;
+      player.fName = (_currentFName != null) ? _currentFName!.trim() : player.fName;
+      player.lName = (_currentLName != null) ? _currentLName!.trim() : player.lName;
+      player.initials = (_currentInitials != null) ? _currentInitials!.trim() : player.initials;
       //player.pid = player.pid;
-      // log("player_profile: Update Player ${player.fName}");
+      log("player_profile: Update Player '${player.fName}' '${player.lName}'");
       await DatabaseService(FSDocType.player, uid: bruceUser?.uid).fsDocUpdate(player);
       await AuthService().updateDisplayName(
         _currentDisplayName ?? AuthService().displayName

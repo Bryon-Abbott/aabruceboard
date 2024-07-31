@@ -109,11 +109,11 @@ class _SignUpState extends State<SignUp> {
                   TextFormField(
                     decoration: const InputDecoration(hintText: 'Enter First Name'),
 //                    decoration: textInputDecoration.copyWith(hintText: 'First Name'),
-                    validator: (val) => val!.isEmpty ? 'Enter First Name' : null,
+                    validator: (val) => val!.trim().isEmpty ? 'Enter First Name' : null,
                     onChanged: (val) {
-                      displayNameController.text = "$val $lName";
-                      initialsController.text = "${val.isEmpty ? '.' : val.substring(0,1)}${lName.isEmpty ? '.' : lName.substring(0,1)}";
-                      setState(() => fName = val);
+                      displayNameController.text = "${val.trim()} $lName";
+                      initialsController.text = "${val.trim().isEmpty ? '.' : val.trim().substring(0,1)}${lName.isEmpty ? '.' : lName.substring(0,1)}";
+                      setState(() => fName = val.trim());
                     },
                   ),
                   const SizedBox(height: 10.0),
@@ -121,11 +121,11 @@ class _SignUpState extends State<SignUp> {
                   TextFormField(
                     decoration: const InputDecoration(hintText: 'Enter Last Name'),
 //                    decoration: textInputDecoration.copyWith(hintText: 'Last Name'),
-                    validator: (val) => val!.isEmpty ? 'Enter Last Name' : null,
+                    validator: (val) => val!.trim().isEmpty ? 'Enter Last Name' : null,
                     onChanged: (val) {
-                      displayNameController.text = "$fName $val";
-                      initialsController.text = "${fName.isEmpty ? '.' : fName.substring(0,1)}${val.isEmpty ? '.' : val.substring(0,1)}";
-                      setState(() => lName = val);
+                      displayNameController.text = "$fName ${val.trim()}";
+                      initialsController.text = "${fName.trim().isEmpty ? '.' : fName.substring(0,1)}${val.isEmpty ? '.' : val.trim().substring(0,1)}";
+                      setState(() => lName = val.trim());
                     },
                   ),
                   const SizedBox(height: 10.0),
@@ -134,9 +134,9 @@ class _SignUpState extends State<SignUp> {
                     controller: initialsController,
                     decoration: const InputDecoration(hintText: 'Initials'),
 //                    decoration: textInputDecoration.copyWith(hintText: 'Initials'),
-                    validator: (val) => val!.isEmpty ? 'Must enter initials ...' : null,
+                    validator: (val) => val!.trim().isEmpty ? 'Must enter initials ...' : null,
                     onChanged: (val) {
-                      setState(() => initials = val);
+                      setState(() => initials = val.trim());
                     },
                   ),
                   const SizedBox(height: 10.0),

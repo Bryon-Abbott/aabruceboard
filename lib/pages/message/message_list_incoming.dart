@@ -35,15 +35,13 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
 
   @override
   void initState() {
-    super.initState();
     activePlayer = widget.activePlayer;
-    autoProcessAll();
+    super.initState();
+    // autoProcessAll();
   }
 
   @override
   Widget build(BuildContext context) {
-
-//    activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.message, )
@@ -73,8 +71,8 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
                     icon: const Icon(Icons.archive_outlined),
                   ),
                   IconButton(
-                    color: autoProcessing ? Colors.red : null,
-                    onPressed: () => autoProcessAll(),
+                    // color: autoProcessing ? Colors.red : Colors.amber,
+                    onPressed: autoProcessAll,
                     tooltip: "Auto Process Messages",
                     icon: const Icon(Icons.auto_fix_high_outlined),
                   )
