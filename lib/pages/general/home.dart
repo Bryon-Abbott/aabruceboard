@@ -396,13 +396,13 @@ class _HomeState extends State<Home> {
         //                   // data['time'],
         //                   style: Theme.of(context).textTheme.titleLarge,
         //                 ),
-                      //  const AaBannerAd(),
                         Text(
                           "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
                           textAlign: TextAlign.end,
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
-//                        const SizedBox(height: 20.0),
+                        const SizedBox(height: 8.0),
+                        const AaBannerAd(),
                       ]
                     ),
                   ),

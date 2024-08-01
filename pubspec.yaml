@@ -38,7 +38,8 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #   Added Status to Account to indicated active.
 # 21(1.1.8) Restricted Player Select to active players
 #   Trim Name on entry and profile chnages
-version: 1.1.8+21
+# 22(1.1.9) Added IOS Ads number and adds to About and Home
+version: 1.1.9+22
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

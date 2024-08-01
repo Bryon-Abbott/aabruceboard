@@ -79,67 +79,70 @@ class _AboutState extends State<About> {
         ),
         body: SafeArea(
           child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const SizedBox(height: 10),
-                Text("Bruce Board is a standard Football Pool board",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.displayLarge,
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text.rich(
-                      const TextSpan(
-                        children: <TextSpan>[
-                          TextSpan(text: 'This is a game application to allow friends to '),
-                          TextSpan(text: 'manage a Football pool, collecting points, '),
-                          TextSpan(text: 'entering scores and displaying point results.'),
-                        ],
-                      ),
-                      style: Theme.of(context).textTheme.headlineSmall,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 10),
+              Text("Bruce Board is a standard Football Pool board",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.displayLarge,
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text.rich(
+                  const TextSpan(
+                    children: <TextSpan>[
+                      TextSpan(text: 'This is a game application to allow friends to '),
+                      TextSpan(text: 'manage a Football pool, collecting points, '),
+                      TextSpan(text: 'entering scores and displaying point results.'),
+                    ],
                   ),
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text.rich(
-                    const TextSpan(
-                        text: "Key Features include: ",
-                        children: <TextSpan> [
-                          TextSpan(text: "Add Players, Add Games, Assign Players to Squares "),
-                          TextSpan(text: "Enter quarterly scores and display player points "),
-                        ]
-                    ),
-                    style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text.rich(
+                  const TextSpan(
+                    text: "Key Features include: ",
+                    children: <TextSpan> [
+                      TextSpan(text: "Add Players, Add Games, Assign Players to Squares "),
+                      TextSpan(text: "Enter quarterly scores and display player points "),
+                    ]
                   ),
+                  style: Theme.of(context).textTheme.headlineSmall,
                 ),
-                const SizedBox(height: 40),
-                Text("Product Manager: Meagan Sheehan",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Text("For technical items contact Bryon.Abbott@abbottavenue.com",
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const Spacer(),
+              ),
+              const SizedBox(height: 40),
+              Text("Product Manager: Meagan Sheehan",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text("Technical Manager: Bryon Abbott, Bryon.Abbott@abbottavenue.com",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              const SizedBox(height: 8.0,),
+//              const Spacer(),
 //                // Text("User Manual: https://www.abbottavenue.com/bruceboard/docs/index.html",
-                //   textAlign: TextAlign.start,
-                //   style: Theme.of(context).textTheme.titleSmall,                ),
-                // Text("App Name: ${_packageInfo.appName}",
-                //     textAlign: TextAlign.start,
-                //   style: Theme.of(context).textTheme.titleSmall,
-                // ),
-                Text("Version: ${_packageInfo.version} (${_packageInfo.buildNumber})",
-                    textAlign: TextAlign.start,
-                  style: Theme.of(context).textTheme.titleSmall,
-                ),
-                // Text("Release: ${_packageInfo.buildNumber}",
-                //     textAlign: TextAlign.start,
-                //   style: Theme.of(context).textTheme.titleSmall,
-                // ),
-              ]
+              //   textAlign: TextAlign.start,
+              //   style: Theme.of(context).textTheme.titleSmall,                ),
+              // Text("App Name: ${_packageInfo.appName}",
+              //     textAlign: TextAlign.start,
+              //   style: Theme.of(context).textTheme.titleSmall,
+              // ),
+              Text("Version: ${_packageInfo.version} (${_packageInfo.buildNumber})",
+                  textAlign: TextAlign.start,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              const SizedBox(height: 8.0,),
+              const AaBannerAd(),
+              // Text("Release: ${_packageInfo.buildNumber}",
+              //     textAlign: TextAlign.start,
+              //   style: Theme.of(context).textTheme.titleSmall,
+              // ),
+            ]
           ),
         )
       ),
