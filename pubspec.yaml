@@ -39,7 +39,9 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 21(1.1.8) Restricted Player Select to active players
 #   Trim Name on entry and profile chnages
 # 22(1.1.9) Added IOS Ads number and adds to About and Home
-version: 1.1.9+22
+# 32(1.2.0) Added SquareStatus to Grid (Free,Requested,Taken) for Cloud Functions
+#   Excluded ads on Web deploys
+version: 1.2.0+23
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

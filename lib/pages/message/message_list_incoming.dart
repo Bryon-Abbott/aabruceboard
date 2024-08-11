@@ -155,12 +155,13 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
               log('00040: Credits: ${member.credits}', name: '${runtimeType.toString()}:AutoProcess()');
               squareRequested = m.data['squareRequested'] ?? -1;
               if (member.credits >= game.squareValue) {
-                if (grid.squarePlayer[squareRequested] == -1) {
+                if (grid.squareStatus[squareRequested] == SquareStatus.free.index) {
                   log('Accepting Request and Replying ... ', name: '${runtimeType.toString()}:AutoProcess()');
                   member.credits -= game.squareValue;
                   grid.squarePlayer[squareRequested] = playerFrom.docId;
                   grid.squareInitials[squareRequested] = playerFrom.initials;
                   grid.squareCommunity[squareRequested] = m.data['cid'];
+                  grid.squareStatus[squareRequested] = SquareStatus.taken.index;
                   // Todo: Look at the need for awaits here
                   await DatabaseService(FSDocType.member, cidKey: Community.Key(m.data['cid'])).fsDocUpdate(member);
                   await DatabaseService(FSDocType.grid, sidKey: Series.Key(m.data['sid']), gidKey: game.key).fsDocUpdate(grid);

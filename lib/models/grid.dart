@@ -4,6 +4,8 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/utils/preferences.dart';
 import 'package:intl/intl.dart';
 
+enum SquareStatus {free, requested, taken}
+
 class Grid implements FirestoreDoc {
   @override
   int docId = -1;
@@ -19,16 +21,17 @@ class Grid implements FirestoreDoc {
 //  String uid = 'error' ;
   List<int> squarePlayer;     // Player PID
   List<int> squareCommunity;  // Community where Player Member record resides
+  List<int> squareStatus;     // Free,Requested,Taken
   List<String> squareInitials;// Player Initials
   List<int> rowScores;
   List<int> colScores;
 //  bool scoresLocked = false;
-
 //  Board({ required this.gid, }) :
   Grid({ required Map<String, dynamic> data, }) :
     docId = data['docId']                                   ?? -1,
     squarePlayer = data['squarePlayer']?.cast<int>()        ?? List<int>.filled(100, -1),       // 100
     squareCommunity = data['squareCommunity']?.cast<int>()  ?? List<int>.filled(100, -1),  // 100
+    squareStatus = data['squareStatus']?.cast<int>()        ?? List<int>.filled(100, SquareStatus.free.index),
     squareInitials = data['squareInitials']?.cast<String>() ?? List<String>.filled(100, 'FS'),  // 100
     rowScores = data['rowScores']?.cast<int>()              ?? List<int>.filled(10, -1),        // 10
     colScores = data['colScores']?.cast<int>()              ?? List<int>.filled(10, -1)        // 10
@@ -93,6 +96,7 @@ class Grid implements FirestoreDoc {
     squarePlayer = data['squarePlayer'];      // 100
     squareCommunity = data['squareCommunity'];      // 100
     squareInitials = data['squareInitials'];  // 100
+    squareStatus = data['squareStatus'];
     rowScores = data['rowScores'];            // 10
     colScores = data['colScores'];            // 10
 //    scoresLocked = data['scoresLocked'];
@@ -107,6 +111,7 @@ class Grid implements FirestoreDoc {
       'squarePlayer' : squarePlayer,
       'squareCommunity' : squareCommunity,
       'squareInitials' : squareInitials,
+      'squareStatus' : squareStatus,
       'scoresLocked' : scoresLocked,
       'rowScores' : rowScores,
       'colScores' : colScores,

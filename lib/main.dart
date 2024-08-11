@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bruceboard/models/membershipprovider.dart';
+import 'package:flutter/foundation.dart';
 //import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -40,7 +41,9 @@ main() async {
 
 //  final AdaptiveThemeMode savedThemeModex = await AdaptiveTheme.getThemeMode() ??
 //      AdaptiveThemeMode.light;
-  unawaited(MobileAds.instance.initialize());
+  if (!kIsWeb) {
+    unawaited(MobileAds.instance.initialize());
+  }
 
   await Preferences.init();
   await Firebase.initializeApp(

@@ -235,7 +235,7 @@ class MessageTileProcessed extends StatelessWidget {
         log('00040: Credits: ${member.credits}', name: '${runtimeType.toString()}:messageAccept');
 
         if (member.credits >= game.squareValue) {  // Member has enough
-          if (grid.squarePlayer[squareRequested] == -1) {  // Square is open
+          if (grid.squareStatus[squareRequested] == SquareStatus.free.index) {  // Square is open
             if (!context.mounted) return;
             comment = await openDialogMessageComment(context, defaultComment: comment);
             if ( comment != null ) {
@@ -243,6 +243,7 @@ class MessageTileProcessed extends StatelessWidget {
               grid.squarePlayer[squareRequested] = playerFrom.docId;
               grid.squareInitials[squareRequested] = playerFrom.initials;
               grid.squareCommunity[squareRequested] = message.data['cid'];
+              grid.squareStatus[squareRequested] = SquareStatus.taken.index;
               // Todo: Look at the need for awaits here
               await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocUpdate(member);
               await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key).fsDocUpdate(grid);

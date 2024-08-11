@@ -49,7 +49,9 @@ class _AaBannerAdState extends State<AaBannerAd> {
   @override
   void initState() {
     super.initState();
-    _loadAd();
+    if (AdHelper.bannerAdUnitId != 'undefined') {
+      _loadAd();
+    }
   }
 
   @override

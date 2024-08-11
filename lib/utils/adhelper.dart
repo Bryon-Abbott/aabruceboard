@@ -7,7 +7,8 @@ class AdHelper {
     } else if (Platform.isIOS) {
       return 'ca-app-pub-1626767512554657/7647529181';
     } else {
-      throw UnsupportedError('Unsupported platform');
+      return 'undefined';
+      //throw UnsupportedError('Unsupported platform');
     }
   }
 }

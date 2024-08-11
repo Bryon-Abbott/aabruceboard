@@ -599,6 +599,7 @@ class _GameBoardState extends State<GameBoard> {
                 grid.squarePlayer[i] = selectedPlayer.docId;
                 grid.squareInitials[i] = selectedPlayer.initials;
                 grid.squareCommunity[i] = selectedAccess.cid;
+                grid.squareStatus[i] = SquareStatus.taken.index; 
                 if (selectedPlayer.docId != excludePlayerNo) {
                   selectedMember.credits -= game.squareValue;
                 }

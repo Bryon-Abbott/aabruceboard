@@ -220,7 +220,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
           textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           disabledBackgroundColor: getSquareColor(grid, squareIndex),
         ),
-        onPressed: (grid.squarePlayer[squareIndex] == -1)
+        onPressed: (grid.squareStatus[squareIndex] == SquareStatus.free.index)
             ? () {
               dev.log("Pressed game button ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
               if (gameOwner) {
@@ -240,29 +240,31 @@ class _GameBoardGridState extends State<GameBoardGrid> {
   Color? getSquareColor(Grid grid, int index) {
     int lastDigitOne = -1; // Column Number = Team one
     int lastDigitTwo = -1; // Row Number = Team two
-
+    Color? squareColor;
     int row = index ~/ 10;
     int col = index % 10;
-
-    //int i=0;
-    // Scores not set
+    // Scores not set ... only color Requested
     if (grid.rowScores[row] == -1 || grid.colScores[col] == -1) {
-      return null;
-    }
-
-    for (int i = 3; i >= 0; i--) {
-      if (board.rowResults[i] == -1 ||
-          board.colResults[i] == -1) continue;
-      // Get last digit of each score
-      lastDigitOne = board.colResults[i] % 10; // Column Number = Team one
-      lastDigitTwo = board.rowResults[i] % 10; // Row Number = Team two
-      // Check if both are equal
-      if ((grid.colScores[col] == lastDigitOne) &&
-           grid.rowScores[row] == lastDigitTwo) {
-        return Colors.red[(i + 2) * 100];
+      //dev.log("Square ($index) is ${SquareStatus.values[grid.squareStatus[index]].toString()}", name: "${runtimeType.toString()}:getSquareColor");
+      if (grid.squareStatus[index] == SquareStatus.requested.index) {
+        dev.log("++Square ($index) is ${SquareStatus.values[grid.squareStatus[index]].toString()}", name: "${runtimeType.toString()}:getSquareColor");
+        squareColor = Colors.amber[200];
+      }
+    } else {  // Scores are set ... see if we have any winners.
+      for (int i = 3; i >= 0; i--) {
+        if (board.rowResults[i] == -1 ||
+            board.colResults[i] == -1) continue;
+        // Get last digit of each score
+        lastDigitOne = board.colResults[i] % 10; // Column Number = Team one
+        lastDigitTwo = board.rowResults[i] % 10; // Row Number = Team two
+        // Check if both are equal
+        if ((grid.colScores[col] == lastDigitOne) &&
+            grid.rowScores[row] == lastDigitTwo) {
+          squareColor = Colors.red[(i + 2) * 100];
+        }
       }
     }
-    return null;
+    return squareColor;
   }
 
   void assignSquare(BuildContext context, Game game, Grid grid, int squareIndex) async {
@@ -286,6 +288,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
         grid.squarePlayer[squareIndex] = selectedPlayer.docId;
         grid.squareCommunity[squareIndex] = selectedAccess.cid;
         grid.squareInitials[squareIndex] = selectedPlayer.initials;
+        grid.squareStatus[squareIndex] = SquareStatus.taken.index;
         // Get the member record for the player.
         Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDoc(docId: selectedPlayer.pid ) as Member;
         member.credits -= game.squareValue;

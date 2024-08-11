@@ -3,6 +3,7 @@ import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:bruceboard/pages/player/player_profile_page.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -402,7 +403,7 @@ class _HomeState extends State<Home> {
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 8.0),
-                        const AaBannerAd(),
+                        kIsWeb ? const SizedBox() : const AaBannerAd(),
                       ]
                     ),
                   ),
