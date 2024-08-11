@@ -136,6 +136,15 @@ Once added and sent for review, this can take a day or so to get moved to produc
 
 <img src="images/TT0001-ClosedTesting.png" alt="TT0001-ClosedTesting" width="400"/>
 
+### iOS 
+Reset the pod install (do for ios & macos)
+gem install cocoapods-deintegrate
+gem install cocoapods-clean
+Go to the project directory and run pod deintegrate
+Again run pod clean
+Run pod install
+
+
 ## Logos
 ### CFL 
 The CFL Logos were obtained from sportslogo.net (https://www.sportslogos.net/teams/list_by_league/8/canadian_football_league/cfl/logos/)
