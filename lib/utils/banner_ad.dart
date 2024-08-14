@@ -1,6 +1,7 @@
 // import 'dart:io';
 
 import 'package:bruceboard/utils/adhelper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -49,7 +50,7 @@ class _AaBannerAdState extends State<AaBannerAd> {
   @override
   void initState() {
     super.initState();
-    if (AdHelper.bannerAdUnitId != 'undefined') {
+    if (!kIsWeb) {
       _loadAd();
     }
   }

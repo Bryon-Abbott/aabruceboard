@@ -247,7 +247,7 @@ class MessageTileIncoming extends StatelessWidget {
         log('00040: Credits: ${member.credits}', name: '${runtimeType.toString()}:messageAccept');
 
         if (member.credits >= game.squareValue) {  // Member has enough
-          if (grid.squareStatus[squareRequested] == SquareStatus.free.index) {  // Square is open
+          if (grid.squareStatus[squareRequested] != SquareStatus.taken.index) {  // Square is open
             if (!context.mounted) return;
             comment = await openDialogMessageComment(context, defaultComment: comment);
             if ( comment != null ) {
@@ -768,9 +768,21 @@ class MessageTileIncoming extends StatelessWidget {
         Game? game = await DatabaseService(FSDocType.game, sidKey: Series.Key(message.data['sid']))
             .fsDoc(docId: message.data['gid']) as Game;
         log('000040: square value: ${game.squareValue}', name: '${runtimeType.toString()}:messageReject()');
+
+        Grid? grid = await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key)
+            .fsDoc(docId: message.data['gid']) as Grid;
+        log("00040: grid player: ${grid.squarePlayer}, '${grid.squareInitials}' ", name: '${runtimeType.toString()}:messageAccept');
+
         if (!context.mounted) return;
         String? comment = await openDialogMessageComment(context, defaultComment: "Sorry, rejected ${playerFrom.fName}");
         if ( comment != null ) {
+          // Reset Sauare
+          grid.squareCommunity[squareRequested] = -1;
+          grid.squareInitials[squareRequested] = "FS";
+          grid.squarePlayer[squareRequested] = -1;
+          grid.squareStatus[squareRequested] = SquareStatus.free.index;
+          await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key).fsDocUpdate(grid);
+
           messageSend(10041, messageType[MessageTypeOption.rejection]!,
             playerFrom: playerTo,
             playerTo: playerFrom,

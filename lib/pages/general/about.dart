@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:bruceboard/utils/adhelper.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -138,7 +139,9 @@ class _AboutState extends State<About> {
                 style: Theme.of(context).textTheme.titleSmall,
               ),
               const SizedBox(height: 8.0,),
-              kIsWeb ? const SizedBox() : const AaBannerAd(),
+              (!kIsWeb)
+                  ? const SizedBox()
+                  : const AaBannerAd(),
               // Text("Release: ${_packageInfo.buildNumber}",
               //     textAlign: TextAlign.start,
               //   style: Theme.of(context).textTheme.titleSmall,

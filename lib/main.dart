@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bruceboard/models/membershipprovider.dart';
+import 'package:bruceboard/utils/adhelper.dart';
 import 'package:flutter/foundation.dart';
 //import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +42,9 @@ main() async {
 
 //  final AdaptiveThemeMode savedThemeModex = await AdaptiveTheme.getThemeMode() ??
 //      AdaptiveThemeMode.light;
+
   if (!kIsWeb) {
+    log('Setting up MobileAds ${kIsWeb}', name: 'main()');
     unawaited(MobileAds.instance.initialize());
   }
 
