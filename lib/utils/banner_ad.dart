@@ -16,6 +16,7 @@ class AaBannerAd extends StatefulWidget {
   // // Use this ad unit on Android...
   //     ? 'ca-app-pub-3940256099942544/6300978111'
   // // ... or this one on iOS.
+  //
   //     : 'ca-app-pub-3940256099942544/2934735716';
   //final String adUnitId = adHelper.bannerAdUnitId;
   // final String adUnitId;

@@ -609,11 +609,12 @@ class _GameBoardState extends State<GameBoard> {
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Member has run out of credits after $updated squares."))
                 );
-                DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(selectedMember);
-                break; // Exit the loop.
+                break; // Ran out of Credits ... Exit the loop.
               }
             }
           }
+          // Update Member Record to reflect credits used.
+          DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(selectedMember);
           dev.log("Saving Game Data ... Game Board ${game.docId}, Squares $updated", name: "${runtimeType.toString()}:onMenuSelected");
           await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
           // setState(() { });
@@ -808,13 +809,16 @@ class _GameBoardState extends State<GameBoard> {
   Widget buildCredits(Board board) {
     List<int> credits = [0,0,0,0,0,0];
     int totalCredits = 0;
+    int squaresPicked = 0;
 
     for (int i = 0; i<4; i++) {
-     credits[i] = board.squaresPicked*board.percentSplits[i]*game.squareValue~/100;
+//     credits[i] = board.squaresPicked*board.percentSplits[i]*game.squareValue~/100;
+     credits[i] = squaresPicked*board.percentSplits[i]*game.squareValue~/100;
      totalCredits += credits[i];
     }
 
-    credits[5] = board.squaresPicked * game.squareValue;  // Total Credits collected
+//    credits[5] = board.squaresPicked * game.squareValue;  // Total Credits collected
+    credits[5] = squaresPicked * game.squareValue;  // Total Credits collected
     credits[4] = credits[5] - totalCredits;               // calculate the remainder and assign to the community
 
     return Align(

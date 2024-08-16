@@ -771,17 +771,23 @@ class MessageTileIncoming extends StatelessWidget {
 
         Grid? grid = await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key)
             .fsDoc(docId: message.data['gid']) as Grid;
-        log("00040: grid player: ${grid.squarePlayer}, '${grid.squareInitials}' ", name: '${runtimeType.toString()}:messageAccept');
+        log("00040: grid player: ${grid.squarePlayer[squareRequested]}, '${grid.squareInitials[squareRequested]}' ",
+            name: '${runtimeType.toString()}:messageAccept');
 
         if (!context.mounted) return;
         String? comment = await openDialogMessageComment(context, defaultComment: "Sorry, rejected ${playerFrom.fName}");
         if ( comment != null ) {
-          // Reset Sauare
-          grid.squareCommunity[squareRequested] = -1;
-          grid.squareInitials[squareRequested] = "FS";
-          grid.squarePlayer[squareRequested] = -1;
-          grid.squareStatus[squareRequested] = SquareStatus.free.index;
-          await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key).fsDocUpdate(grid);
+          // If the square was request (not taken) by me, reset to free.
+          if ((grid.squareStatus[squareRequested] == SquareStatus.requested.index)
+              && (grid.squarePlayer[squareRequested] == playerFrom.pid )) {
+            // Reset Sauare
+            grid.squareCommunity[squareRequested] = -1;
+            grid.squareInitials[squareRequested] = "FS";
+            grid.squarePlayer[squareRequested] = -1;
+            grid.squareStatus[squareRequested] = SquareStatus.free.index;
+            await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key)
+                .fsDocUpdate(grid);
+          }
 
           messageSend(10041, messageType[MessageTypeOption.rejection]!,
             playerFrom: playerTo,
