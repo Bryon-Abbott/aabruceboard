@@ -404,7 +404,7 @@ class _HomeState extends State<Home> {
                           style: Theme.of(context).textTheme.titleSmall,
                         ),
                         const SizedBox(height: 8.0),
-                        (!kIsWeb)
+                        (kIsWeb)
                             ? const SizedBox()
                             : const AaBannerAd(),
                       ]

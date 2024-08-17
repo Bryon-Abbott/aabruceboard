@@ -1,5 +1,7 @@
 // import 'dart:io';
 
+import 'dart:developer';
+
 import 'package:bruceboard/utils/adhelper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -76,6 +78,7 @@ class _AaBannerAdState extends State<AaBannerAd> {
             return;
           }
           setState(() {
+            log("Loading Banner Ad", name: '${runtimeType.toString()}:_loadAd():onAdLoaded()');
             _bannerAd = ad as BannerAd;
           });
         },
