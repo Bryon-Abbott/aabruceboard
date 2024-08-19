@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:bruceboard/utils/adhelper.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

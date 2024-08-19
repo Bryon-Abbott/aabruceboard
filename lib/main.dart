@@ -3,13 +3,10 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bruceboard/models/membershipprovider.dart';
-import 'package:bruceboard/utils/adhelper.dart';
 import 'package:flutter/foundation.dart';
-//import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-//import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'firebase_options.dart';
@@ -44,7 +41,7 @@ main() async {
 //      AdaptiveThemeMode.light;
 
   if (!kIsWeb) {
-    log('Setting up MobileAds ${kIsWeb}', name: 'main()');
+    log('Setting up MobileAds $kIsWeb', name: 'main()');
     unawaited(MobileAds.instance.initialize());
   }
 

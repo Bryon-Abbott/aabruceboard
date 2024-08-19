@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:bruceboard/pages/player/player_profile_page.dart';
-import 'package:bruceboard/utils/adhelper.dart';
+//import 'package:bruceboard/utils/adhelper.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +60,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final BruceUser bruceUser = Provider.of<BruceUser?>(context) ?? BruceUser();
-    log('Start of Build: ${bruceUser.uid} ${bruceUser.displayName} Is Web: ${kIsWeb}', name: "${runtimeType.toString()}:build()");
+    log('Start of Build: ${bruceUser.uid} ${bruceUser.displayName} Is Web: $kIsWeb', name: "${runtimeType.toString()}:build()");
 
     communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
     activePlayerProvider = Provider.of<ActivePlayerProvider>(context);

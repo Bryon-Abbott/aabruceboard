@@ -45,7 +45,7 @@ class BruceUser {
         // Handle other Firebase exceptions
       }
     } catch (e) {
-      log("${e}");
+      log("$e");
       // Handle general exception
     }
     return true;

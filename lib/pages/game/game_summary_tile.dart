@@ -47,7 +47,9 @@ class GameSummaryTile extends StatelessWidget {
                     log("Player Tapped ... ${player.fName} : ${player.lName} ");
                   },
                   leading: const Icon(Icons.person_outline),
-                  title: Text('${player.fName} ${player.lName}: $count'),
+                  title: Text('${player.fName} ${player.lName}: $count',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                   //subtitle: Text('Game ... '),
                 ),
               ),

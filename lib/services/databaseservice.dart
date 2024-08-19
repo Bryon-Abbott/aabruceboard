@@ -355,6 +355,7 @@ class DatabaseService {
         } else {
           q001 = q001!.where(key.toString(), isEqualTo: value);
         }
+      // ignore: empty_statements
       };
     });
     // If no query parameters ... return full collection
