@@ -44,7 +44,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 1.2.1(24) Bug Fixes
 #   Fixed Credit error when filling squares and dont run out of credits.
 #   Fixed reset square on double request.
-version: 1.2.1+24
+version: 1.2.2+25
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

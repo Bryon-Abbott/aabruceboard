@@ -1,6 +1,7 @@
 import 'dart:developer';
 //import 'dart:ffi';
 import 'package:bruceboard/menus/popupmenubutton_status.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:bruceboard/utils/league_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -85,198 +86,205 @@ class SeriesMaintainState extends State<SeriesMaintain> {
               },
             ),
           ),
-          body: SingleChildScrollView(
-            child: Form(
-              //autovalidateMode: AutovalidateMode.always,
-              onChanged: () {
-                //debugPrint("Something Changed ... Game '$game' Email '$email' ");
-                Form.of(primaryFocus!.context!).save();
-              },
-              key: _formSeriesKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("Type: "),
-                  PopupMenuButton<SeriesType>(
-                    tooltip: "Select League",
-                    initialValue: seriesData.keys.firstWhere((k) => seriesData[k]?.seriesText == currentSeriesType,
-                                                      orElse: () =>  SeriesType.itemOther),  //currentSeriesType,
-                    // Callback that sets the selected popup menu item.
-                    onSelected: (SeriesType item) {
-                      setState(() {
-                        currentSeriesType = seriesData[item]!.seriesText;
-                        currentSeriesIcon = seriesData[item]!.seriesIcon;
-                        log("Current Group Type: '$item' Text: ${seriesData[item]!.seriesText} Current: $currentSeriesType", name: '${runtimeType.toString()}:build()');
-                      });
-                      // currentSeriesType = seriesTypeText[item]!;
-                      // log("Current Series Type: '$item' Text: ${seriesTypeText[item]} Current: ${currentSeriesType}", name: '${runtimeType.toString()}:build()');
+          body: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Form(
+                    //autovalidateMode: AutovalidateMode.always,
+                    onChanged: () {
+                      //debugPrint("Something Changed ... Game '$game' Email '$email' ");
+                      Form.of(primaryFocus!.context!).save();
                     },
-                    itemBuilder: (BuildContext context) {
-                      List<PopupMenuEntry<SeriesType>> menuItems = <PopupMenuEntry<SeriesType>>[];
+                    key: _formSeriesKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("Type: "),
+                        PopupMenuButton<SeriesType>(
+                          tooltip: "Select League",
+                          initialValue: seriesData.keys.firstWhere((k) => seriesData[k]?.seriesText == currentSeriesType,
+                                                            orElse: () =>  SeriesType.itemOther),  //currentSeriesType,
+                          // Callback that sets the selected popup menu item.
+                          onSelected: (SeriesType item) {
+                            setState(() {
+                              currentSeriesType = seriesData[item]!.seriesText;
+                              currentSeriesIcon = seriesData[item]!.seriesIcon;
+                              log("Current Group Type: '$item' Text: ${seriesData[item]!.seriesText} Current: $currentSeriesType", name: '${runtimeType.toString()}:build()');
+                            });
+                            // currentSeriesType = seriesTypeText[item]!;
+                            // log("Current Series Type: '$item' Text: ${seriesTypeText[item]} Current: ${currentSeriesType}", name: '${runtimeType.toString()}:build()');
+                          },
+                          itemBuilder: (BuildContext context) {
+                            List<PopupMenuEntry<SeriesType>> menuItems = <PopupMenuEntry<SeriesType>>[];
 
-                      for (SeriesType e in SeriesType.values ) {
-                        menuItems.add(PopupMenuItem<SeriesType>(
-                            value: e,
-                            child: Text(seriesData[e]!.seriesText)));
-                      }
-                      return menuItems;
-                    } ,
-                    child: ListTile(
-                      leading: currentSeriesIcon,
-                      trailing: const Icon(Icons.menu),
-                      title: Text("Type: $currentSeriesType"),
-                    ),
-                  ),
-                  const Text("Group Name: "),
-                  TextFormField(
-                    initialValue: currentSeriesName,
-                    // The validator receives the text that the user has entered.
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter Group Name';
-                      }
-                      return null;
-                    },
-                    onSaved: (String? value) {
-                      //debugPrint('Game name is: $value');
-                      currentSeriesName = value ?? 'Series 000';
-                    },
-                  ),
-                  const Text("Group Status"),
-                  PopupMenuButtonStatus(
-                    initialValue: StatusValues.values[currentStatus],
-                    // initialValue: StatusValues.Prepare,
-                    onSelected: (StatusValues selectValue) {
-                      log("Got Selected Value ${selectValue.index} ${selectValue.name}",name: '${runtimeType.toString()}:build()' );
-                      setState(() {
-                        currentStatus = selectValue.index;
-                      });
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text("Number of Games: ${series?.noGames ?? 'N/A'}, Number of Community Accesses ${series?.noAccesses ?? 0}"),
-                  ),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          child: const Text('Save'),
-                          onPressed: () async {
-                            // Validate returns true if the form is valid, or false otherwise.
-                            if (player == null) {
-                              log('Getting Player ... ', name: '${runtimeType.toString()}:build()');
-                              FirestoreDoc? fsDoc = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid);
-                              if (fsDoc != null) {
-                                player = fsDoc as Player;
-                              } else {
-                                log('Waiting for Player', name: '${runtimeType.toString()}:build()');
-                              }
+                            for (SeriesType e in SeriesType.values ) {
+                              menuItems.add(PopupMenuItem<SeriesType>(
+                                  value: e,
+                                  child: Text(seriesData[e]!.seriesText)));
                             }
-                            log('Player is ... ${player!.fName}', name: '${runtimeType.toString()}:build()');
-                            if (_formSeriesKey.currentState!.validate()) {
-                              // If the form is valid, display a snackbar. In the real world,
-                              // you'd often call a server or save the information in a database.
-                              if ( series == null ) {
-                                // Create new Series and store to Firebase
-                                Map<String, dynamic> data =
-                                { 'pid': player!.pid,
-                                  'name': currentSeriesName,
-                                  'type': currentSeriesType,
-                                  'status': currentStatus,
-                                  'noGames': currentSeriesNoGames,
-                                };
-                                series = Series( data: data );
-                                await DatabaseService(FSDocType.series, uid: uid).fsDocAdd(series!);
-                                // series!.sid = series!.docId; // Set SID to docID
-                                // await DatabaseService(FSDocType.series, uid: uid).fsDocUpdate(series!);
-                                //series?.noGames++;
-                              } else {
-                                // Update existing Series and store to Firebase
-                                Map<String, dynamic> data =
-                                { 'name': currentSeriesName,
-                                  'type': currentSeriesType,
-                                  'status': currentStatus,
-                                  'noGames': currentSeriesNoGames,  // Todo: Delete this and let default? Add noAccesses?
-                                };
-                                series!.update(data: data);
-                                // series!.name = currentSeriesName;
-                                // series!.type = currentSeriesType;
-                                // series!.noGames = currentSeriesNoGames;
-                                await DatabaseService(FSDocType.series, uid: uid).fsDocUpdate(series!);
-                              }
-                              // Save Updates to Shared Preferences
-                              log("Added/Updated series ${series?.noGames}", name: '${runtimeType.toString()}:build()');
-                              if (!context.mounted) return;
-                              Navigator.of(context).pop(series);
+                            return menuItems;
+                          } ,
+                          child: ListTile(
+                            leading: currentSeriesIcon,
+                            trailing: const Icon(Icons.menu),
+                            title: Text("Type: $currentSeriesType"),
+                          ),
+                        ),
+                        const Text("Group Name: "),
+                        TextFormField(
+                          initialValue: currentSeriesName,
+                          // The validator receives the text that the user has entered.
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter Group Name';
                             }
+                            return null;
+                          },
+                          onSaved: (String? value) {
+                            //debugPrint('Game name is: $value');
+                            currentSeriesName = value ?? 'Series 000';
                           },
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (series==null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Series not saved ..."),
-                                )
-                              );
-                            } else if (series!.noGames > 0) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Must delete ALL games in series ..."),
-                                )
-                              );
-                            } else if (series!.noAccesses > 0) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Must delete ALL access in series ..."),
-                                  )
-                              );
-                            } else {
-                              // log('Delete Series ... ${_sid}');
-                              log('Delete Series ... ${series!.key}', name: '${runtimeType.toString()}:build()');
-                              DatabaseService(FSDocType.series, uid: uid).fsDocDelete(series!);
-                              Navigator.of(context).pop();
-
-                            }
+                        const Text("Group Status"),
+                        PopupMenuButtonStatus(
+                          initialValue: StatusValues.values[currentStatus],
+                          // initialValue: StatusValues.Prepare,
+                          onSelected: (StatusValues selectValue) {
+                            log("Got Selected Value ${selectValue.index} ${selectValue.name}",name: '${runtimeType.toString()}:build()' );
+                            setState(() {
+                              currentStatus = selectValue.index;
+                            });
                           },
-                            child: const Text("Delete")),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                            onPressed: (series==null) ? null : () async {
-                              await Navigator.of(context).push(
-                                MaterialPageRoute(builder: (context) => AccessList(series: series!)),
-                              );
-                              series = await DatabaseService(FSDocType.series).fsDoc(key: series!.key) as Series;
-                              setState(() {
-                                log('setting State: ${series!.noAccesses}', name: '${runtimeType.toString()}:build()');
-                              });
-                            log('Back from AccessList, No Access ${series!.noAccesses}', name: '${runtimeType.toString()}:build()');
-                            },
-                            child: const Text("Access")),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ElevatedButton(
-                            onPressed: () {
-                              if (kDebugMode) {
-                                print("Return without adding series");
-                              }
-                              Navigator.pop(context);
-                            },
-                            child: const Text("Cancel")),
-                      ),
-                    ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text("Number of Games: ${series?.noGames ?? 'N/A'}, Number of Community Accesses ${series?.noAccesses ?? 0}"),
+                        ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                child: const Text('Save'),
+                                onPressed: () async {
+                                  // Validate returns true if the form is valid, or false otherwise.
+                                  if (player == null) {
+                                    log('Getting Player ... ', name: '${runtimeType.toString()}:build()');
+                                    FirestoreDoc? fsDoc = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid);
+                                    if (fsDoc != null) {
+                                      player = fsDoc as Player;
+                                    } else {
+                                      log('Waiting for Player', name: '${runtimeType.toString()}:build()');
+                                    }
+                                  }
+                                  log('Player is ... ${player!.fName}', name: '${runtimeType.toString()}:build()');
+                                  if (_formSeriesKey.currentState!.validate()) {
+                                    // If the form is valid, display a snackbar. In the real world,
+                                    // you'd often call a server or save the information in a database.
+                                    if ( series == null ) {
+                                      // Create new Series and store to Firebase
+                                      Map<String, dynamic> data =
+                                      { 'pid': player!.pid,
+                                        'name': currentSeriesName,
+                                        'type': currentSeriesType,
+                                        'status': currentStatus,
+                                        'noGames': currentSeriesNoGames,
+                                      };
+                                      series = Series( data: data );
+                                      await DatabaseService(FSDocType.series, uid: uid).fsDocAdd(series!);
+                                      // series!.sid = series!.docId; // Set SID to docID
+                                      // await DatabaseService(FSDocType.series, uid: uid).fsDocUpdate(series!);
+                                      //series?.noGames++;
+                                    } else {
+                                      // Update existing Series and store to Firebase
+                                      Map<String, dynamic> data =
+                                      { 'name': currentSeriesName,
+                                        'type': currentSeriesType,
+                                        'status': currentStatus,
+                                        'noGames': currentSeriesNoGames,  // Todo: Delete this and let default? Add noAccesses?
+                                      };
+                                      series!.update(data: data);
+                                      // series!.name = currentSeriesName;
+                                      // series!.type = currentSeriesType;
+                                      // series!.noGames = currentSeriesNoGames;
+                                      await DatabaseService(FSDocType.series, uid: uid).fsDocUpdate(series!);
+                                    }
+                                    // Save Updates to Shared Preferences
+                                    log("Added/Updated series ${series?.noGames}", name: '${runtimeType.toString()}:build()');
+                                    if (!context.mounted) return;
+                                    Navigator.of(context).pop(series);
+                                  }
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  if (series==null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Series not saved ..."),
+                                      )
+                                    );
+                                  } else if (series!.noGames > 0) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Must delete ALL games in series ..."),
+                                      )
+                                    );
+                                  } else if (series!.noAccesses > 0) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Must delete ALL access in series ..."),
+                                        )
+                                    );
+                                  } else {
+                                    // log('Delete Series ... ${_sid}');
+                                    log('Delete Series ... ${series!.key}', name: '${runtimeType.toString()}:build()');
+                                    DatabaseService(FSDocType.series, uid: uid).fsDocDelete(series!);
+                                    Navigator.of(context).pop();
+
+                                  }
+                                },
+                                  child: const Text("Delete")),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                  onPressed: (series==null) ? null : () async {
+                                    await Navigator.of(context).push(
+                                      MaterialPageRoute(builder: (context) => AccessList(series: series!)),
+                                    );
+                                    series = await DatabaseService(FSDocType.series).fsDoc(key: series!.key) as Series;
+                                    setState(() {
+                                      log('setting State: ${series!.noAccesses}', name: '${runtimeType.toString()}:build()');
+                                    });
+                                  log('Back from AccessList, No Access ${series!.noAccesses}', name: '${runtimeType.toString()}:build()');
+                                  },
+                                  child: const Text("Access")),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ElevatedButton(
+                                  onPressed: () {
+                                    if (kDebugMode) {
+                                      print("Return without adding series");
+                                    }
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text("Cancel")),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ],
+                ),
               ),
-            ),
+              (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+            ],
           )
       ),
     );

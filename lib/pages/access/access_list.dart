@@ -1,6 +1,8 @@
 import 'dart:developer';
 // import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -45,67 +47,76 @@ class _AccessListState extends State<AccessList> {
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Access> accessList = snapshots.data!.map((s) => s as Access).toList();
-          return Scaffold(
-            appBar: AppBar(
-      //            backgroundColor: Colors.blue[900],
-                title: Text('Manage Access to Group: ${series.name}'),
-                centerTitle: true,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  // if user presses back, cancels changes to list (order/deletes)
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                actions: [
-                  IconButton(
-                    onPressed: () async {
-                      Community? community;
-                      //Player? communityPlayer;
-                      dynamic results = await Navigator.pushNamed(context, '/community-select');
-                      if (results != null) {
-                        //communityPlayer = results[0] as Player;
-                        community = results as Community;
-                        // log('membership_list: Check if selected community already exists ... P:U:${communityPlayer.docId}:${community.docId} ');
-                        dynamic existingAccess = await DatabaseService(FSDocType.access, sidKey: series.key).fsDoc(
-                            key: Access.KEY(communityPlayer.docId, community.docId));
-                        if (existingAccess == null ) { // If not found, request membership from community owner.
-                          //Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
-                          // Verify Request with Player.
-                            Access access = Access( data: {
-                                'cid': community.docId, // Community Owner CID
-                                'pid': communityPlayer.docId,  // Community Onwer PID
-                                'sid': series.docId,
-                                'type': 'Active',
-                              });
-                            // Note ... the database section is the current user but the Membership PID
-                            // is the PID of the owner of the community.
-                            await DatabaseService(FSDocType.access, sidKey: series.key).fsDocAdd(access);
-                            series.noAccesses++;
-                            log("access_list: Updating AID: ${access.docId}", name: "${runtimeType.toString()}:build()");
-                            // Add MemberOwner to Community Player for current Player
-                            // Process Messages
-                            // await messageMembershipAddRequest(membership: membership, player: player, communityPlayer: communityPlayer,
-                            //     description: '${player.fName} ${player.lName} requested to be added to your <${community.name}> community',
-                            //     comment: comment);
-                        } else {
-                          // Error: Membership request already exists ... display message
-                          if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Access already exist ... "))
-                          );
-                        }
-                      }
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                  //            backgroundColor: Colors.blue[900],
+                  title: Text('Manage Access to Group: ${series.name}'),
+                  centerTitle: true,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    // if user presses back, cancels changes to list (order/deletes)
+                    onPressed: () {
+                      Navigator.of(context).pop();
                     },
-                    icon: const Icon(Icons.add_circle_outline),
-                  )
-                ]),
-            body: ListView.builder(
-              itemCount: accessList.length,
-              itemBuilder: (context, index) {
-                return AccessTile(access: accessList[index]);
-              },
+                  ),
+                  actions: [
+                    IconButton(
+                      onPressed: () async {
+                        Community? community;
+                        //Player? communityPlayer;
+                        dynamic results = await Navigator.pushNamed(context, '/community-select');
+                        if (results != null) {
+                          //communityPlayer = results[0] as Player;
+                          community = results as Community;
+                          // log('membership_list: Check if selected community already exists ... P:U:${communityPlayer.docId}:${community.docId} ');
+                          dynamic existingAccess = await DatabaseService(FSDocType.access, sidKey: series.key).fsDoc(
+                              key: Access.KEY(communityPlayer.docId, community.docId));
+                          if (existingAccess == null ) { // If not found, request membership from community owner.
+                            //Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+                            // Verify Request with Player.
+                              Access access = Access( data: {
+                                  'cid': community.docId, // Community Owner CID
+                                  'pid': communityPlayer.docId,  // Community Onwer PID
+                                  'sid': series.docId,
+                                  'type': 'Active',
+                                });
+                              // Note ... the database section is the current user but the Membership PID
+                              // is the PID of the owner of the community.
+                              await DatabaseService(FSDocType.access, sidKey: series.key).fsDocAdd(access);
+                              series.noAccesses++;
+                              log("access_list: Updating AID: ${access.docId}", name: "${runtimeType.toString()}:build()");
+                              // Add MemberOwner to Community Player for current Player
+                              // Process Messages
+                              // await messageMembershipAddRequest(membership: membership, player: player, communityPlayer: communityPlayer,
+                              //     description: '${player.fName} ${player.lName} requested to be added to your <${community.name}> community',
+                              //     comment: comment);
+                          } else {
+                            // Error: Membership request already exists ... display message
+                            if (!context.mounted) return;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Access already exist ... "))
+                            );
+                          }
+                        }
+                      },
+                      icon: const Icon(Icons.add_circle_outline),
+                    )
+                  ]),
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: accessList.length,
+                      itemBuilder: (context, index) {
+                        return AccessTile(access: accessList[index]);
+                      },
+                    ),
+                  ),
+                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                ],
+              ),
             ),
           );
         } else {

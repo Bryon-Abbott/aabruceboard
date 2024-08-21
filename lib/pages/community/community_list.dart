@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/pages/community/community_tile.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bruceboard/models/player.dart';
@@ -55,11 +57,18 @@ class _CommunityListState extends State<CommunityList> {
                       },
                     )
                   ]),
-              body: ListView.builder(
-                itemCount: community.length,
-                itemBuilder: (context, index) {
-                  return CommunityTile(community: community[index]);
-                },
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: community.length,
+                      itemBuilder: (context, index) {
+                        return CommunityTile(community: community[index]);
+                      },
+                    ),
+                  ),
+                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                ],
               ),
             );
           } else {

@@ -87,8 +87,7 @@ class AccessMaintainState extends State<AccessMaintain> {
                     padding: EdgeInsets.all(8.0),
                     child: Text("Number of Members: ???"),
                   ),
-                  Row(
-                    children: [
+                  Row(children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ElevatedButton(

@@ -7,6 +7,8 @@ import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_tile.dart';
 import 'package:bruceboard/pages/game/game_maintain.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -72,11 +74,19 @@ class _GameListState extends State<GameList> {
                       },
                     )
                   ]),
-              body: ListView.builder(
-                itemCount: game.length,
-                itemBuilder: (context, index) {
-                  return GameTile(callback: callback, series: series, game: game[index]);
-                },
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: game.length,
+                      itemBuilder: (context, index) {
+                        return GameTile(callback: callback, series: series, game: game[index]);
+                      },
+                    ),
+                  ),
+//                  const SizedBox(height: 8.0),
+                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                ],
               ),
             );
           } else {

@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -57,11 +59,18 @@ class _SeriesListState extends State<SeriesList> {
                   )
                 ]
               ),
-              body: ListView.builder(
-                itemCount: series.length,
-                itemBuilder: (context, index) {
-                  return SeriesTile(series: series[index]);
-                },
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: series.length,
+                      itemBuilder: (context, index) {
+                        return SeriesTile(series: series[index]);
+                      },
+                    ),
+                  ),
+                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                ],
               ),
             );
           } else {

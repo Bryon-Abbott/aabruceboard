@@ -12,6 +12,8 @@ import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/message/message_list_processed.dart';
 import 'package:bruceboard/pages/message/message_tile_incoming.dart';
 import 'package:bruceboard/services/messageservice.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 //import 'package:provider/provider.dart';
 
@@ -49,40 +51,49 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Message> message = snapshots.data!.map((a) => a as Message).toList();
-          return Scaffold(
-            appBar: AppBar(
-                title: const Text('Show Messages'),
-                centerTitle: true,
-                elevation: 0,
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  // if user presses back, cancels changes to list (order/deletes)
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                actions: [
-                  IconButton(
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                  title: const Text('Show Messages'),
+                  centerTitle: true,
+                  elevation: 0,
+                  leading: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    // if user presses back, cancels changes to list (order/deletes)
                     onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => MessageListProcessed(activePlayer: activePlayer)));
+                      Navigator.of(context).pop();
                     },
-                    tooltip: "Archived Messages",
-                    icon: const Icon(Icons.archive_outlined),
                   ),
-                  IconButton(
-                    // color: autoProcessing ? Colors.red : Colors.amber,
-                    onPressed: autoProcessAll,
-                    tooltip: "Auto Process Messages",
-                    icon: const Icon(Icons.auto_fix_high_outlined),
-                  )
-                ]
-            ),
-            body: ListView.builder(
-              itemCount: message.length,
-              itemBuilder: (context, index) {
-                return MessageTileIncoming(message: message[index]);
-              },
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => MessageListProcessed(activePlayer: activePlayer)));
+                      },
+                      tooltip: "Archived Messages",
+                      icon: const Icon(Icons.archive_outlined),
+                    ),
+                    IconButton(
+                      // color: autoProcessing ? Colors.red : Colors.amber,
+                      onPressed: autoProcessAll,
+                      tooltip: "Auto Process Messages",
+                      icon: const Icon(Icons.auto_fix_high_outlined),
+                    )
+                  ]
+              ),
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: message.length,
+                      itemBuilder: (context, index) {
+                        return MessageTileIncoming(message: message[index]);
+                      },
+                    ),
+                  ),
+                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                ],
+              ),
             ),
           );
         } else {

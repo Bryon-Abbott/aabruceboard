@@ -10,7 +10,9 @@ import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:bruceboard/pages/game/game_summary_page.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:bruceboard/utils/preferences.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -196,131 +198,139 @@ class _GameBoardState extends State<GameBoard> {
                   centerTitle: true,
                   elevation: 0,
                 ),
-                body: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    //crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Row(
-                        //mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: SizedBox(
-                              height: 40,
-                              width: 40,
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                child: const Icon(
-                                  Icons.sports_football_outlined,
-                                  // color: Colors.yellow,
-                                  size: 24,
-                                ),
-                              ),
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: SizedBox(
-                              height: 40,
-                              width: min(screenWidth - 48, gridSize - 4),
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  textStyle: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold
-                                  ),
-                                ),
-                                  child: Row(
-                                      children: [
-                                        const SizedBox(width: 10),
-                                        (leagueTeamData[game.teamOne] != null)
-                                            ? Image(image: AssetImage(leagueTeamData[game.teamOne]!.teamLogo.path))
-                                            : const Image(image: AssetImage('assets/ball.png'), width: 30,),
-                                        const SizedBox(width: 10),
-                                        Text(leagueTeamData[game.teamOne]?.teamName ?? game.teamOne), //Text(game.teamTwo),
-                                      ]
-                                  )
-                                // child: Text(leagueTeamData[game.teamOne]?.teamName ?? game.teamOne),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: SizedBox(
-                              // not less than 100
-                              // height: max(min(screenHeight - 308, gridSize - 4), 100),
-                              // height: max(min(screenHeight - 257, gridSize - 4), 100),
-                              height: max(min(screenHeight - 203, gridSize - 4), 100),
-                              width: 40,
-                              child: RotatedBox(
-                                quarterTurns: 3,
-                                child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    textStyle: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold
+                body: Column(
+                  children: [
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          //crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              //mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: SizedBox(
+                                    height: 40,
+                                    width: 40,
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      child: const Icon(
+                                        Icons.sports_football_outlined,
+                                        // color: Colors.yellow,
+                                        size: 24,
+                                      ),
                                     ),
                                   ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Expanded(
-                                        child: SizedBox(height: 1, width: 1),
-                                      ),
-                                      Expanded(
-                                        child: Text(leagueTeamData[game.teamTwo]?.teamName ?? game.teamTwo,
-                                          overflow: TextOverflow.fade,
-                                      )),
-                                      const SizedBox(width: 10),
-                                      (leagueTeamData[game.teamTwo] != null)
-                                          ? RotatedBox(
-                                              quarterTurns: 1,
-                                              child: Image(image: AssetImage(leagueTeamData[game.teamTwo]!.teamLogo.path)))
-                                          : const Image(image: AssetImage('assets/ball.png'), width: 30,),
-                                      const SizedBox(width: 10),
-                                    ]
-                                  )
                                 ),
-                              ),
+                                Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: SizedBox(
+                                    height: 40,
+                                    width: min(screenWidth - 48, gridSize - 4),
+                                    child: ElevatedButton(
+                                      onPressed: () {},
+                                      style: ElevatedButton.styleFrom(
+                                        textStyle: const TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                        child: Row(
+                                            children: [
+                                              const SizedBox(width: 10),
+                                              (leagueTeamData[game.teamOne] != null)
+                                                  ? Image(image: AssetImage(leagueTeamData[game.teamOne]!.teamLogo.path))
+                                                  : const Image(image: AssetImage('assets/ball.png'), width: 30,),
+                                              const SizedBox(width: 10),
+                                              Text(leagueTeamData[game.teamOne]?.teamName ?? game.teamOne), //Text(game.teamTwo),
+                                            ]
+                                        )
+                                      // child: Text(leagueTeamData[game.teamOne]?.teamName ?? game.teamOne),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          ScrollConfiguration(
-                            behavior: ScrollConfiguration.of(context)
-                                .copyWith(
-                                dragDevices: {
-                                  PointerDeviceKind.touch,
-                                  PointerDeviceKind.mouse,
-                                }),
-                            child: Center(
-                              // child: BoardGrid(args: BruceArguments(players, games))
-                                child: GameBoardGrid(game: game,
-                                    board: board,
-                                    series: series,
-                                    callback: callback)
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: SizedBox(
+                                    // not less than 100
+                                    // height: max(min(screenHeight - 308, gridSize - 4), 100),
+                                    // height: max(min(screenHeight - 257, gridSize - 4), 100),
+                                    height: max(min(screenHeight - 203, gridSize - 4), 100),
+                                    width: 40,
+                                    child: RotatedBox(
+                                      quarterTurns: 3,
+                                      child: ElevatedButton(
+                                        onPressed: () {},
+                                        style: ElevatedButton.styleFrom(
+                                          textStyle: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Expanded(
+                                              child: SizedBox(height: 1, width: 1),
+                                            ),
+                                            Expanded(
+                                              child: Text(leagueTeamData[game.teamTwo]?.teamName ?? game.teamTwo,
+                                                overflow: TextOverflow.fade,
+                                            )),
+                                            const SizedBox(width: 10),
+                                            (leagueTeamData[game.teamTwo] != null)
+                                                ? RotatedBox(
+                                                    quarterTurns: 1,
+                                                    child: Image(image: AssetImage(leagueTeamData[game.teamTwo]!.teamLogo.path)))
+                                                : const Image(image: AssetImage('assets/ball.png'), width: 30,),
+                                            const SizedBox(width: 10),
+                                          ]
+                                        )
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                ScrollConfiguration(
+                                  behavior: ScrollConfiguration.of(context)
+                                      .copyWith(
+                                      dragDevices: {
+                                        PointerDeviceKind.touch,
+                                        PointerDeviceKind.mouse,
+                                      }),
+                                  child: Center(
+                                    // child: BoardGrid(args: BruceArguments(players, games))
+                                      child: GameBoardGrid(game: game,
+                                          board: board,
+                                          series: series,
+                                          callback: callback)
+                                  ),
+                                )
+                              ],
                             ),
-                          )
-                        ],
+//                            const SizedBox(height: 20.0),
+                            // buildCredits(board),
+                            // buildScore(board, winnersPlayer),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.start,
+                            //   children: [
+                            //     Text('Owner:${Player.Key(game.pid)} Series:${Series.Key(series.docId)} Game: ${Game.Key(game.docId)}'),
+                            //   ],
+                            // ),
+                          ],
+                        ),
                       ),
-                      // buildCredits(board),
-                      // buildScore(board, winnersPlayer),
-                      // Row(
-                      //   mainAxisAlignment: MainAxisAlignment.start,
-                      //   children: [
-                      //     Text('Owner:${Player.Key(game.pid)} Series:${Series.Key(series.docId)} Game: ${Game.Key(game.docId)}'),
-                      //   ],
-                      // ),
-                    ],
-                  ),
+                    ),
+                    (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                  ],
                 ),
               ),
             );

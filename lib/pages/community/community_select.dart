@@ -4,6 +4,8 @@ import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CommunitySelect extends StatefulWidget {
@@ -36,22 +38,29 @@ class _CommunitySelectState extends State<CommunitySelect> {
                   },
                 ),
               ),
-              body: ListView.builder(
-                itemCount: community.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: const Icon(Icons.person_outline),
-                    title: Text(community[index].name),
-                    subtitle: Text("Community: ${community[index].key}"),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.check_circle_outline),
-                      onPressed: () {
-                        log('Icon Pressed', name: '${runtimeType.toString()}:ListTile:onPressed()');
-                        Navigator.of(context).pop(community[index]);
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: community.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: const Icon(Icons.person_outline),
+                          title: Text(community[index].name),
+                          subtitle: Text("Community: ${community[index].key}"),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.check_circle_outline),
+                            onPressed: () {
+                              log('Icon Pressed', name: '${runtimeType.toString()}:ListTile:onPressed()');
+                              Navigator.of(context).pop(community[index]);
+                            },
+                          ),
+                        );
                       },
                     ),
-                  );
-                },
+                  ),
+                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                ],
               ),
             );
           } else {

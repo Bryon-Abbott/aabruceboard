@@ -217,7 +217,8 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       padding: const EdgeInsets.all(1),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+//          textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          textStyle: Theme.of(context).textTheme.bodyMedium,
           disabledBackgroundColor: getSquareColor(grid, squareIndex),
         ),
         onPressed: (grid.squareStatus[squareIndex] == SquareStatus.free.index)

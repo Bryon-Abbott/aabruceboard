@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -59,11 +61,18 @@ class _MembershipListState extends State<MembershipList> {
                     },
                   )
                 ]),
-              body: ListView.builder(
-                itemCount: membershipList.length,
-                itemBuilder: (context, index) {
-                  return MembershipTile(membership: membershipList[index]);
-                },
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: membershipList.length,
+                      itemBuilder: (context, index) {
+                        return MembershipTile(membership: membershipList[index]);
+                      },
+                    ),
+                  ),
+                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                ],
               ),
             );
           } else {

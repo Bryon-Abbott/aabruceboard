@@ -1,5 +1,7 @@
 import 'dart:developer';
 import 'package:bruceboard/services/messageservice.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
@@ -166,7 +168,10 @@ class _GameSummaryPage extends GameSummaryCtlr {
                                         ? const Text("Lock Digits")
                                         : (winnersPlayer[index].pid == -1)
                                             ? const Text("Enter Scores")
-                                            : Text("${winnersPlayer[index].fName} ${winnersPlayer[index].lName}"),
+                                            : Text("${winnersPlayer[index].fName} ${winnersPlayer[index].lName}",
+                                              overflow: TextOverflow.fade,
+                                              softWrap: false,
+                                          ),
                                     // child: Text(getWinners(board.rowResults[index], board.colResults[index], board)
                                     //       .then((value) { return value; } )),
                                   ),
@@ -311,6 +316,7 @@ class _GameSummaryPage extends GameSummaryCtlr {
                       ),
                     ),
                   ),
+                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
                 ],
               ),
             ),

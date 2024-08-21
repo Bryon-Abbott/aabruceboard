@@ -4,6 +4,8 @@ import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/pages/access/access_tile_series.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -59,11 +61,18 @@ class _AccessListSeriesState extends State<AccessListSeries> {
                       icon: Icon(Icons.add_circle_outline),
                     )
                   ]),
-              body: ListView.builder(
-                itemCount: access.length,
-                itemBuilder: (context, index) {
-                  return AccessTileSeries(access: access[index]);
-                },
+              body: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: access.length,
+                      itemBuilder: (context, index) {
+                        return AccessTileSeries(access: access[index]);
+                      },
+                    ),
+                  ),
+                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                ],
               ),
             );
           } else {
