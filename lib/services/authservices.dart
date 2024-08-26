@@ -42,6 +42,7 @@ class AuthService {
 
   Future<void> sendEmailVerification() async {
     if (_auth.currentUser != null) {
+      log("Auth Services sending Email Verification");
       await _auth.currentUser!.sendEmailVerification();
     }
   }

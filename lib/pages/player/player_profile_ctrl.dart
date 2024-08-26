@@ -42,8 +42,9 @@ abstract class PlayerProfileCtrl extends State<PlayerProfilePage> {
   }
 
   void verifyOnPressed() {
-    log("Pressed verify");
+    log("Pressed verify", name: "${runtimeType.toString()}:verifyOnPressed()");
     if (bruceUser != null) {
+      log("Sending Email", name: "${runtimeType.toString()}:verifyOnPressed()");
       bruceUser!.sendEmailVerification();
     }
   }

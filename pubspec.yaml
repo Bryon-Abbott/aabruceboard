@@ -44,7 +44,12 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # 1.2.1(24) Bug Fixes
 #   Fixed Credit error when filling squares and dont run out of credits.
 #   Fixed reset square on double request.
-version: 1.2.2+25
+# 1.2.2(25) Bug Fixes
+#   Added Ads, Cleaned up Game Page & Game Summary Page
+# 1.2.3(26) Bug Fixes
+#  Fixed "Doman" on signin.
+#  Added Verify Prompt to SignUp
+version: 1.2.3+26
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

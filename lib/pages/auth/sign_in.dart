@@ -53,7 +53,7 @@ class _SignInState extends State<SignIn> {
                     const SizedBox(height: 20.0),
                     TextFormField(
               //                decoration: textInputDecoration.copyWith(hintText: 'email'),
-                      decoration: const InputDecoration(hintText: 'email@doman.com'),
+                      decoration: const InputDecoration(hintText: 'email@domain.com'),
                       //style: Theme.of(context).textTheme.titleMedium,
                       validator: (val) => val!.isEmpty ? 'Enter an email' : null,
                       onChanged: (val) {
