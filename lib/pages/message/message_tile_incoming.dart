@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:bruceboard/models/audit.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/member.dart';
@@ -149,13 +150,19 @@ class MessageTileIncoming extends StatelessWidget {
         String? comment = await openDialogMessageComment(context, defaultComment: "Credits ($credits) were updated to your membership\n (New Balance: ${member.credits+credits})");
         // Add Message to Archive
         if (comment != null) {
+          int debit=0, credit=0;
           // Update Credits and save to database.
           if (message.data['creditDebit'] == 'credit') {
             member.credits += message.data['credits'] as int;
+            credit = message.data['credits'] as int;
           } else {
             member.credits -= message.data['credits'] as int;
+            debit = message.data['credits'] as int;
           }
           await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocUpdate(member);
+          Audit audit = Audit(data: {'code': AuditCode.memberCreditsRequested.code, 'ownerPid': playerTo.pid, 'playerPid': playerFrom.pid, 'cid': message.data['cid'], 'debit': debit, 'credit': credit});
+          await DatabaseService(FSDocType.audit).fsDocAdd(audit);
+
           // Send Message back to Requester
           Community? community = await DatabaseService(FSDocType.community).fsDoc(docId: message.data['cid']) as Community;
 //          String desc = '${playerTo.fName} ${playerTo.lName} accepted your request to add/refund credits '
@@ -261,6 +268,10 @@ class MessageTileIncoming extends StatelessWidget {
               await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key).fsDocUpdate(grid);
               await DatabaseService(FSDocType.board, sidKey: Series.Key(message.data['sid']), gidKey: game.key)
                   .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
+
+              Audit audit = Audit(data: {'code': AuditCode.squareRequested.code, 'ownerPid': playerTo.pid, 'playerPid': playerFrom.pid, 'cid': message.data['cid'], 'debit': game.squareValue, 'credit': 0});
+              await DatabaseService(FSDocType.audit).fsDocAdd(audit);
+
               messageSend(10040, messageType[MessageTypeOption.acceptance]!,
                 playerFrom: playerTo,
                 playerTo: playerFrom,

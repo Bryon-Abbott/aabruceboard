@@ -1,5 +1,6 @@
 import 'dart:developer' as dev;
 import 'dart:math';
+import 'package:bruceboard/models/audit.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -298,6 +299,12 @@ class _GameBoardGridState extends State<GameBoardGrid> {
         DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(member);
         DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
             .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
+
+        Audit audit = Audit(data: {'code': AuditCode.squareAssigned.code, 'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
+          'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
+          'debit':  game.squareValue, 'credit': 0});
+        await DatabaseService(FSDocType.audit).fsDocAdd(audit);
+
         dev.log("saving Data ... gameNo: ${game.docId} ", name: "${runtimeType.toString()}:GameButton");
         // Send message to user
         await messageSend(20040, messageType[MessageTypeOption.notification]!,

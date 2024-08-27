@@ -33,6 +33,10 @@ class BruceUser {
     _auth.sendPasswordResetEmail(email);
   }
 
+  void signOut() {
+    _auth.signOut();
+  }
+
   bool deleteUserAccount()  {
     try {
       _auth.currentUser!.delete();

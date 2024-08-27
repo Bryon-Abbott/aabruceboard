@@ -228,6 +228,7 @@ class _SignUpState extends State<SignUp> {
       log("Adding User: '$fName' '$lName' '$initials' '$displayName'", name: "${runtimeType.toString()}:registerUser()");
       log("Resulting UID: ${registerResults.uid}");
       await openDialogNotification(email);
+      _auth.signOut();
       returnString = "Success";
       // var rc = await registerResults.sendEmailVerification();
       // if (rc != null) {
@@ -245,15 +246,13 @@ class _SignUpState extends State<SignUp> {
   Future<String?> openDialogNotification(String email) => showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
-          titlePadding: const EdgeInsets.fromLTRB(6, 2, 2, 2),
-          actionsPadding: const EdgeInsets.all(2),
-          contentPadding: const EdgeInsets.fromLTRB(6, 2, 6, 2),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.0)),
           title: const Text("Email Verification sent ... "),
-          titleTextStyle: Theme.of(context).textTheme.bodyLarge,
-          contentTextStyle: Theme.of(context).textTheme.bodyLarge,
-          content: Text("An email has been set to to the email address '$email'. \n" +
-              "  Please sign onto your email and verify your account"),
+          // titleTextStyle: Theme.of(context).textTheme.bodyLarge,
+          // contentTextStyle: Theme.of(context).textTheme.bodyLarge,
+          content: Text("An email has been set to to your email address '$email'. \n" +
+              "Please sign onto your email, verify your account " +
+              "then resign into your BruceBoard account"
+          ),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context, 'Ok'),

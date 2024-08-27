@@ -1,18 +1,18 @@
 import 'dart:developer';
-
-import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/services/messageservice.dart';
-import 'package:bruceboard/shared/helperwidgets.dart';
-import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:bruceboard/models/audit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'package:provider/provider.dart';
+
+import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/player.dart';
+import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/services/databaseservice.dart';
+import 'package:bruceboard/shared/helperwidgets.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
 
 // Todo: Look at provider for Series ID (sid) vs passing as parameter.
 // Create a Form widget.
@@ -125,15 +125,23 @@ class _MemberMaintainState extends State<MemberMaintain> {
                                       String? comment = await openDialogMessageComment(context, defaultComment: "Topped up Credits to $newCredits credits");
                                       log('member_maintain: Comment is $comment');
                                       if (comment != null ) {
+                                        Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
+                                        Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
+
                                         int prevCredits = member!.credits;
+                                        int delta = newCredits - prevCredits;
+                                        int credit = (delta>0) ? delta : 0;
+                                        int debit = (delta<0) ? -delta : 0;
                                         Map<String, dynamic> data = {
                                           'credits' : newCredits,
                                         };
                                         member!.update(data: data);
                                         await DatabaseService(FSDocType.member, uid: bruceUser.uid, cidKey: community.key).fsDocUpdate(member!);
+                                        log("Writing Audit Log", name: '${runtimeType.toString()}:build()');
+                                        Audit audit = Audit(data: {'code': AuditCode.memberCreditsUpdated.code, 'ownerPid': player.pid, 'playerPid': memberPlayer.pid, 'cid': community.docId, 'debit': debit, 'credit': credit});
+                                        await DatabaseService(FSDocType.audit, uid: bruceUser.uid).fsDocAdd(audit);
+
                                         // Send Message to user
-                                        Player? player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
-                                        Player? memberPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: member!.docId) as Player;
                                         messageSend( 20020, messageType[MessageTypeOption.notification]!,
                                           playerFrom: player, playerTo: memberPlayer,
                                           comment: comment,

@@ -1,8 +1,6 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:bruceboard/models/firestoredoc.dart';
 
 // Todo: Convert this to a Database Factory
@@ -19,7 +17,7 @@ class DatabaseService {
   String messageLocation; // Where to write / read messages (default to
   FSDocType fsDocType;
 
-  FirebaseFirestore db = FirebaseFirestore.instance;
+  static FirebaseFirestore db = FirebaseFirestore.instance;
   final CollectionReference configCollection = FirebaseFirestore.instance
       .collection('Config');
 
@@ -29,6 +27,10 @@ class DatabaseService {
   late CollectionReference docCollection;
   late DocumentReference statsDocument;
   late DocumentReference nextIdDocument;
+
+  FirebaseFirestore get dbInst {
+    return db;
+  }
 
   DatabaseService(this.fsDocType,
       { this.toUid, this.fromUid, this.uid,
@@ -64,6 +66,15 @@ class DatabaseService {
         docCollection = playerCollection.doc(toUid).collection('MessageOwner');
         //.doc(uid).collection('Incoming');
         log('Found "MessageOwner" class', name: '${runtimeType.toString()}:Database()');
+        log(docCollection.path, name: '${runtimeType.toString()}:Database()');
+      }
+      break;
+      case FSDocType.audit: {
+        nextIdDocument = playerCollection.doc(uid);
+        statsDocument = playerCollection.doc(uid);  // Write stats to sending player?
+        docCollection = playerCollection.doc(toUid).collection('Audit');
+        //.doc(uid).collection('Incoming');
+        log('Found "Audit" class', name: '${runtimeType.toString()}:Database()');
         log(docCollection.path, name: '${runtimeType.toString()}:Database()');
       }
       break;

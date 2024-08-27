@@ -3,6 +3,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:bruceboard/models/audit.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/grid.dart';
@@ -577,6 +578,7 @@ class _GameBoardState extends State<GameBoard> {
           Member selectedMember = await DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDoc(docId: selectedPlayer.docId ) as Member;
           dev.log("Load Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:onMenuSelected");
           int updated = 0;
+          int creditsSpent = 0;
           for (int i = 0; i < 100; i++) {
             if (grid.squarePlayer[i] == -1) {
               if ((selectedMember.credits >= game.squareValue) || (selectedPlayer.docId == excludePlayerNo)) {
@@ -586,6 +588,7 @@ class _GameBoardState extends State<GameBoard> {
                 grid.squareStatus[i] = SquareStatus.taken.index; 
                 if (selectedPlayer.docId != excludePlayerNo) {
                   selectedMember.credits -= game.squareValue;
+                  creditsSpent += game.squareValue;
                 }
                 updated++;
               } else {
@@ -599,6 +602,12 @@ class _GameBoardState extends State<GameBoard> {
           }
           // Update Member Record to reflect credits used.
           DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(selectedMember);
+
+          Audit audit = Audit(data: {'code': AuditCode.squareFilled.code, 'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
+            'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
+            'debit': creditsSpent, 'credit': 0});
+          await DatabaseService(FSDocType.audit).fsDocAdd(audit);
+
           dev.log("Saving Game Data ... Game Board ${game.docId}, Squares $updated", name: "${runtimeType.toString()}:onMenuSelected");
           await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
           // setState(() { });

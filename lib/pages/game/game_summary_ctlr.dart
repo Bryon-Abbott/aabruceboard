@@ -236,6 +236,12 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
             int prevCredits = member.credits;
             member.credits += credits; // Add new Credits.
             DatabaseService(FSDocType.member, cidKey: Community.Key(winnersCommunity[i])).fsDocUpdate(member);
+
+            Audit audit = Audit(data: {'code': AuditCode.memberCreditsDisttributed.code, 'ownerPid': activePlayer.pid, 'playerPid': winnersPlayer[i].pid,
+              'cid': community.docId, 'sid': series.docId, 'gid': game.docId,
+              'debit': 0, 'credit': credits});
+            await DatabaseService(FSDocType.audit).fsDocAdd(audit);
+
             // Send Message to user
             messageSend( 20070, messageType[MessageTypeOption.notification]!,
               playerFrom: activePlayer, playerTo: winnersPlayer[i],

@@ -1,6 +1,7 @@
 // Firestore Document - BaseClass
 import 'dart:developer';
 import 'package:bruceboard/models/access.dart';
+import 'package:bruceboard/models/audit.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:intl/intl.dart';
 
@@ -20,7 +21,7 @@ enum FSDocType {
     series, access, game, board, grid,
     community, member,
     membership,
-    messageowner, message }
+    messageowner, message, audit }
 
 abstract class FirestoreDoc {
   final String nextIdField = 'nextFsid';    // Stored in Player
@@ -33,6 +34,8 @@ abstract class FirestoreDoc {
       switch (fsDocType) {
         case FSDocType.player:
           return Player(data: data);
+        case FSDocType.audit:
+          return Audit(data: data);
         case FSDocType.series:
           return Series(data: data);
         case FSDocType.access:
