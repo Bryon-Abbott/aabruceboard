@@ -49,9 +49,10 @@ abstract class PlayerProfileCtrl extends State<PlayerProfilePage> {
         builder: (BuildContext context) =>
           AlertDialog(
             title: const Text('Email Verification sent ... '),
-            content: Text("An email has been set to to your email address '${bruceUser!.email}'. \n" +
-              "Please sign onto your email, verify your account " +
-              "then resign into your BruceBoard account"),
+            content: Text(
+                '''An email has been set to to your email address '${bruceUser!.email}'. 
+                   Please sign onto your email, verify your account 
+                   then resign into your BruceBoard account'''),
             actions: [
               ElevatedButton(
                 child: const Text('Ok'),

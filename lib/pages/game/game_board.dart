@@ -182,17 +182,17 @@ class _GameBoardState extends State<GameBoard> {
                             ]
                           )
                         ),
-                        const PopupMenuItem<int>(
-                          value: 3,
-                          // enabled: isGameOwner,
-                          child: Row(
-                            children: [
-                              Icon(Icons.summarize_outlined, color: Colors.white),
-                              SizedBox(width: 8),
-                              Text("Game Summary"),
-                            ]
-                          )
-                        ),
+                        // const PopupMenuItem<int>(
+                        //   value: 3,
+                        //   // enabled: isGameOwner,
+                        //   child: Row(
+                        //     children: [
+                        //       Icon(Icons.summarize_outlined, color: Colors.white),
+                        //       SizedBox(width: 8),
+                        //       Text("Game Summary"),
+                        //     ]
+                        //   )
+                        // ),
                       ]
                     )
                   ],
@@ -317,7 +317,19 @@ class _GameBoardState extends State<GameBoard> {
                                 )
                               ],
                             ),
-//                            const SizedBox(height: 20.0),
+                            const SizedBox(height: 20.0),
+                            ElevatedButton(
+                                onPressed: () async {
+                                  dev.log("Summary Button Pushed ...", name: "${runtimeType.toString()}:build()");
+                                  Grid grid = await DatabaseService(FSDocType.grid, uid: communityPlayer.uid,  sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
+                                  if (!context.mounted) return;
+                                  await Navigator.of(context)
+                                      .push(MaterialPageRoute(builder: (context) => GameSummaryPage(series: series, game: game, grid: grid, board: board)));
+                                },
+                                child: const Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: Text("Game Summary"),
+                                ))
                             // buildCredits(board),
                             // buildScore(board, winnersPlayer),
                             // Row(
@@ -644,13 +656,13 @@ class _GameBoardState extends State<GameBoard> {
       //     });
       //   }
       //   break;
-      case 3:
-        dev.log("Summary Options selected ...", name: "${runtimeType.toString()}:onMenuSelected");
-        Grid grid = await DatabaseService(FSDocType.grid, uid: communityPlayer.uid,  sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
-        if (!context.mounted) return;
-        await Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => GameSummaryPage(series: series, game: game, grid: grid, board: board)));
-        break;
+      // case 3:
+      //   dev.log("Summary Options selected ...", name: "${runtimeType.toString()}:onMenuSelected");
+      //   Grid grid = await DatabaseService(FSDocType.grid, uid: communityPlayer.uid,  sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
+      //   if (!context.mounted) return;
+      //   await Navigator.of(context)
+      //       .push(MaterialPageRoute(builder: (context) => GameSummaryPage(series: series, game: game, grid: grid, board: board)));
+      //   break;
     }
   }
 

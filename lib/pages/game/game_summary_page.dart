@@ -225,8 +225,11 @@ class _GameSummaryPage extends GameSummaryCtlr {
 
                                               log("Saving Game Data ... GameNo: ${game.docId} ",
                                                   name: "${runtimeType.toString()}:buildScore()");
-                                              DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
+                                              await DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
                                                   .fsDocUpdate(board);
+                                              setState(() {
+                                                // reset state to reload players?
+                                              });
                                             }
                                           }
                                         : null,
@@ -236,7 +239,45 @@ class _GameSummaryPage extends GameSummaryCtlr {
                                 ),
                               ]
                             );
-                          }),
+                          })+
+                          List<Widget>.generate(1, (index) {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const SizedBox(
+                                  width: 231,
+                                  child: Text('Community:')
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.all(2.0),
+                                  child: SizedBox(
+                                    width: 33,
+                                    child: Text("Crds"),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Container(
+                                    padding: const EdgeInsets.all(1.0),
+                                    width: 35,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Theme.of(context).colorScheme.outline),
+                                      color: Theme.of(context).colorScheme.surfaceContainerHighest, // .surfaceVariant,
+                                    ),
+                                    // Todo: Look at improving this.
+                                    child: Text(
+                                        ((board.squaresPicked * game.squareValue)-
+                                        (board.squaresPicked * board.percentSplits[index] * game.squareValue ~/ 100)-
+                                        (board.squaresPicked * board.percentSplits[index] * game.squareValue ~/ 100)-
+                                        (board.squaresPicked * board.percentSplits[index] * game.squareValue ~/ 100)-
+                                        (board.squaresPicked * board.percentSplits[index] * game.squareValue ~/ 100))
+                                            .toString(),
+                                        textAlign: TextAlign.right),
+                                  ),
+                                ),
+                              ],
+                            );
+                          })                        ,
                       ),
                     ),
                   ),
@@ -250,15 +291,15 @@ class _GameSummaryPage extends GameSummaryCtlr {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text("Splits: "),
+                        const Text("Splits: "),
                         Row(
                           children:
                             [ const Padding(
-                                padding: const EdgeInsets.all(2.0),
+                                padding: EdgeInsets.all(2.0),
                                 child: Text("Quarters"),
                               )
                             ] +
-                            List.generate(4, (int) {
+                            List.generate(4, (i) {
                               // return Text("$int");
                               return Padding(
                                 padding: const EdgeInsets.all(2.0),
@@ -269,12 +310,12 @@ class _GameSummaryPage extends GameSummaryCtlr {
                                     border: Border.all(color: Theme.of(context).colorScheme.outline),
                                     color: Theme.of(context).colorScheme.surfaceContainerHighest, // .surfaceVariant,
                                   ),
-                                  child: Text(board.percentSplits[int].toString(), textAlign: TextAlign.right),
+                                  child: Text(board.percentSplits[i].toString(), textAlign: TextAlign.right),
                                 ),
                               );
                             }) +
                             [ const Padding(
-                                padding: const EdgeInsets.all(2.0),
+                                padding: EdgeInsets.all(2.0),
                                 child: Text("Community"),
                               ),
                               Padding(

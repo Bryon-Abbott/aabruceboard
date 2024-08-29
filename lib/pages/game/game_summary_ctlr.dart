@@ -46,37 +46,68 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
           name: "${runtimeType.toString()}:getNames");
     }
     return players;
-  } // End _GameBoard:getWinners
+  } // End _GameBoard:getPlayers
 
   // ==========================================================================
-  Future<List<String>?> openDialogScores(int qtr, Board board) =>
-      showDialog<List<String>>(
+  Future<List<String>?> openDialogScores(int qtr, Board board) {
+      //controller1.text(board.rowResults[qtr]);
+      //controller2.text(board.rowResults[qtr]);
+      return showDialog<List<String>>(
         context: context,
         builder: (context) => AlertDialog(
           titlePadding: const EdgeInsets.fromLTRB(6, 2, 2, 2),
           actionsPadding: const EdgeInsets.all(2),
           contentPadding: const EdgeInsets.fromLTRB(6, 2, 6, 2),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.0)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(2.0)),
           title: Text("Quarter ${qtr + 1} Score"),
           titleTextStyle: Theme.of(context).textTheme.bodyLarge,
           contentTextStyle: Theme.of(context).textTheme.bodyLarge,
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                autofocus: true,
-                decoration: InputDecoration(hintText: game.teamOne),
-                style: Theme.of(context).textTheme.bodyMedium,
-                controller: controller1,
-                onSubmitted: (_) => submitScores(),
+              Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 100,
+                       height: 30,
+                      child: TextField(
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          icon: ImageIcon(AssetImage(game.teamOne)),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                          border: const OutlineInputBorder(),
+                        ),
+                        style: Theme.of(context).textTheme.bodySmall,
+                        controller: controller1..text = board.colResults[qtr].toString(),
+                        onSubmitted: (_) => submitScores(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              TextField(
-                autofocus: true,
-                decoration: InputDecoration(hintText: game.teamTwo),
-                style: Theme.of(context).textTheme.bodyMedium,
-                controller: controller2,
-                onSubmitted: (_) => submitScores(),
+              Padding(
+                padding: const EdgeInsets.all(2.0),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 100,
+                      height: 30,
+                      child: TextField(
+                        autofocus: true,
+                        decoration: InputDecoration(
+                          icon: ImageIcon(AssetImage(game.teamTwo)),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                          border: const OutlineInputBorder(),
+                        ),
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        controller: controller2..text = board.rowResults[qtr].toString(),
+                        onSubmitted: (_) => submitScores(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -88,6 +119,7 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
           ],
         ),
       ); // end _GameBoard:showDialog()
+  }
 
   void submitScores() {
     Navigator.of(context).pop([controller1.text, controller2.text]);
@@ -204,6 +236,7 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
   void onMenuSelected(BuildContext context, int item, Board board, Series series, Player activePlayer, Player communityPlayer) async {
     switch (item) {
       case 0:
+        int remainingCredits = game.squareValue*board.squaresPicked;
         log("Menu Select 0:Distribute Credits", name: "${runtimeType.toString()}:onMenuSelected");
         // Verify all winners are set.
         for (Player p in winnersPlayer) {
@@ -214,7 +247,7 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
             return;
           }
         }
-        // Update Credits and Send messages.
+        // Update Credits and Send messages for 4 quarters
         for (int i=0; i<4; i++) {
           Player p = winnersPlayer[i];
           int c = winnersCommunity[i];
@@ -222,27 +255,28 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
           String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
           int excludePlayerNo = int.parse(excludePlayerNoString);
           log("Got Exclude PID ($excludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
+          // Get Member record, Calculate Credits won and update member credits.
+          // Todo: Improve by just updating MemberCredits in 1 step vs get/update
+          log("Start Distribution (${board.docId} Player (${p.docId}) Community ($c)", name: "${runtimeType.toString()}:onMenuSelected");
+          Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(c))
+              .fsDoc(docId: p.pid) as Member;
+          log("Got Member (${member.docId})", name: "${runtimeType.toString()}:onMenuSelected");
+          Community community = await DatabaseService(FSDocType.community, cidKey: Community.Key(c))
+              .fsDoc(docId:winnersCommunity[i]) as Community;
+          log("Got Community (${community.docId})", name: "${runtimeType.toString()}:onMenuSelected");
+          int credits = board.squaresPicked*board.percentSplits[i]*game.squareValue~/100;
+          remainingCredits -= credits;
+          int prevCredits = member.credits;
+          member.credits += credits; // Add new Credits.
+          DatabaseService(FSDocType.member, cidKey: Community.Key(winnersCommunity[i])).fsDocUpdate(member);
+          // Write Audit Record
+          Audit audit = Audit(data: {'code': AuditCode.memberCreditsDisttributed.code, 'ownerPid': activePlayer.pid, 'playerPid': winnersPlayer[i].pid,
+            'cid': community.docId, 'sid': series.docId, 'gid': game.docId,
+            'debit': 0, 'credit': credits});
+          await DatabaseService(FSDocType.audit).fsDocAdd(audit);
 
-          // If Winner is a Player, transfer credits and send message.
+          // If Winner is a Player ... send a message
           if (p.docId != excludePlayerNo)  {
-            log("Start Board (${board.docId} Player (${p.docId}) Community ($c)", name: "${runtimeType.toString()}:onMenuSelected");
-            Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(c))
-                .fsDoc(docId: p.pid) as Member;
-            log("Got Member (${member.docId})", name: "${runtimeType.toString()}:onMenuSelected");
-            Community community = await DatabaseService(FSDocType.community, cidKey: Community.Key(c))
-                .fsDoc(docId:winnersCommunity[i]) as Community;
-            log("Got Community (${community.docId})", name: "${runtimeType.toString()}:onMenuSelected");
-            int credits = board.squaresPicked*board.percentSplits[i]*game.squareValue~/100;
-            int prevCredits = member.credits;
-            member.credits += credits; // Add new Credits.
-            DatabaseService(FSDocType.member, cidKey: Community.Key(winnersCommunity[i])).fsDocUpdate(member);
-
-            Audit audit = Audit(data: {'code': AuditCode.memberCreditsDisttributed.code, 'ownerPid': activePlayer.pid, 'playerPid': winnersPlayer[i].pid,
-              'cid': community.docId, 'sid': series.docId, 'gid': game.docId,
-              'debit': 0, 'credit': credits});
-            await DatabaseService(FSDocType.audit).fsDocAdd(audit);
-
-            // Send Message to user
             messageSend( 20070, messageType[MessageTypeOption.notification]!,
               playerFrom: activePlayer, playerTo: winnersPlayer[i],
               comment: "Thanks for Playing.",
@@ -251,14 +285,41 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
               data: { 'cid': community.docId, 'credits' : member.credits },
             );
           } else {
-            log("Square one by 'No Player' ... ignore", name: "${runtimeType.toString()}:onMenuSelected");
+            log("Square one by 'No Player' ... Don't send message", name: "${runtimeType.toString()}:onMenuSelected");
           }
+        } // End for 4 Winners
+        // If there are credits remaining, send them to the owner in the default community and send message to owner
+        if ( remainingCredits > 0 ) {
+          Community community = await DatabaseService(FSDocType.community)
+            .fsDoc(key: Community.Key(series.defaultCid) ) as Community;
+          Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(series.defaultCid))
+            .fsDoc(docId: activePlayer.pid) as Member;
+          int prevCredits = member.credits;
+          member.credits += remainingCredits; // Add new Credits.
+          DatabaseService(FSDocType.member, cidKey: Community.Key(series.defaultCid)).fsDocUpdate(member);
+
+          Audit audit = Audit(data: {'code': AuditCode.communityCreditsDisttributed.code, 'ownerPid': activePlayer.pid, 'playerPid': activePlayer.pid,
+            'cid': series.defaultCid, 'sid': series.docId, 'gid': game.docId,
+            'debit': 0, 'credit': remainingCredits});
+          await DatabaseService(FSDocType.audit).fsDocAdd(audit);
+
+          messageSend( 20070, messageType[MessageTypeOption.notification]!,
+            playerFrom: activePlayer, playerTo: activePlayer,
+            comment: "Community Credits Distribution.",
+            description: "The Community received $remainingCredits credits. Your account was updated from $prevCredits to ${member.credits}) "
+            "Community: <${community.name}>, Owner: ${activePlayer.fName} ${activePlayer.lName}",
+            data: { 'cid': community.docId, 'credits' : member.credits },
+          );
         }
+
+        // Update board to indicated credits distributed.
         DatabaseService(FSDocType.board, sidKey:series.key, gidKey:Game.Key(board.docId))
             .fsDocUpdateField(key:Game.Key(board.docId), field: 'creditsDistributed', bvalue: true );
+        // Pop out of Summary Page back to Game Page.
+        if (!context.mounted) return;
+        Navigator.pop(context);
 
         log("Winners ${winnersPlayer[0].pid},${winnersPlayer[1].pid},${winnersPlayer[2].pid},${winnersPlayer[3].pid}");
-
         break;
       case 1:
         int qtrPercents = 0;
@@ -286,7 +347,6 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
           });
         }
         break;
-
     }
   }
 

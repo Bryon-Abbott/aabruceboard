@@ -18,6 +18,7 @@ class Series implements FirestoreDoc {
   String name;
   String type;
   int status; // Prep=0, Active=1; Complete=2; Archive=3;
+  int defaultCid; // Default Series Community, must be under owner, where community credits go.
   int noGames;
   int noAccesses;
 
@@ -26,6 +27,7 @@ class Series implements FirestoreDoc {
     name = data['name'] ?? 'NAME',
     type = data['type'] ?? 'TYPE',
     status = data['status'] ?? 0,
+    defaultCid = data['defaultCid'] ?? -1,
     noGames = data['noGames'] ?? 0,
     noAccesses = data['noAccesses'] ?? 0;
 
@@ -35,6 +37,7 @@ class Series implements FirestoreDoc {
     name = data['name'] ?? name;
     type = data['type'] ?? type;
     status = data['status'] ?? 0;
+    defaultCid = data['defaultCid'] ?? -1;
     noGames = data['noGames'] ?? noGames;
     noAccesses = data['noAccesses'] ?? noAccesses;
   }
@@ -60,6 +63,7 @@ class Series implements FirestoreDoc {
       'name': name,
       'type': type,
       'status': status,
+      'defaultCid': defaultCid,
       'noGames': noGames,
       'noAccesses': noAccesses,
     };

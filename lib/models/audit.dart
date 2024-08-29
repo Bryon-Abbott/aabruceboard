@@ -13,7 +13,9 @@ enum AuditCode implements Comparable<AuditCode> {
   squareCloudAssigned(code:60, desc: "Square Assigned by Cloud"),
   memberCreditsUpdated(code:70, desc: "Member Credits Update by Owner"),
   memberCreditsRequested(code: 80, desc: "Member Credits update by Player request"),
-  memberCreditsDisttributed(code: 90, desc: "Member Credits updated by Distribution");
+  memberCreditsDisttributed(code: 90, desc: "Member Credits updated by Distribution"),
+  communityCreditsDisttributed(code: 100, desc: "Community Credits updated by Distribution")
+  ;
 
   const AuditCode({required this.code, required this.desc});
   final int code;

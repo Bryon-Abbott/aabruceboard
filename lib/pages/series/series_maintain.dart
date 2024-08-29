@@ -1,6 +1,7 @@
 import 'dart:developer';
 //import 'dart:ffi';
 import 'package:bruceboard/menus/popupmenubutton_status.dart';
+import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:bruceboard/utils/league_list.dart';
 import 'package:flutter/foundation.dart';
@@ -36,6 +37,8 @@ class SeriesMaintainState extends State<SeriesMaintain> {
   Icon currentSeriesIcon = const Icon(Icons.cabin_outlined);
   String currentSeriesName = "";
   int currentSeriesNoGames = 0;
+  int currentDefaultCid = -1;
+  late TextEditingController controllerCid;
 
   @override
   void initState() {
@@ -46,11 +49,19 @@ class SeriesMaintainState extends State<SeriesMaintain> {
       currentSeriesType = series?.type ?? 'xxx';
       currentSeriesNoGames = series?.noGames ?? 0;
       currentStatus = series?.status ?? 0;
+      currentDefaultCid = series?.defaultCid ?? -1;
       SeriesType sti = seriesData.keys.firstWhere((k) => seriesData[k]?.seriesText == currentSeriesType,
           orElse: () =>  SeriesType.itemOther);
      // currentSeriesPng = seriesTypeData[sti]![1];
+      controllerCid = TextEditingController(text: Community.Key(series?.defaultCid ?? -1));
       currentSeriesIcon = seriesData[sti]!.seriesIcon;
     }    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controllerCid.dispose(); // Dispose of TextEditingController
+    super.dispose();
   }
 
   @override
@@ -146,6 +157,43 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                             currentSeriesName = value ?? 'Series 000';
                           },
                         ),
+                        const Text("Default Community"),
+                        Row(
+                          children: [
+                            Expanded(
+                            //  width: 100,
+                              child: TextFormField(
+                                controller: controllerCid,
+                                readOnly: true,
+                                // initialValue: Community.Key(currentDefaultCid),
+                                validator: (value) {
+                                  if (value == null || value.isEmpty || value == '-C0001') {
+                                    return 'Please select a default community';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (String? value) {
+                                  currentDefaultCid =  (value != null) ? int.parse(value) : -1;
+                                },
+                              ),
+                            ),
+                            // Spacer(),
+                            ElevatedButton(
+                                onPressed: () async {
+                                  Community? community;
+                                  dynamic results = await Navigator.pushNamed(context, '/community-select-owner');
+                                  if (results != null) {
+                                    community = results[1] as Community;
+                                    controllerCid.text = Community.Key(community.docId);
+                                    currentDefaultCid = community.docId;
+                                    log("Got Community Value ${community.docId}",name: '${runtimeType.toString()}:build()' );
+                                    setState(() {  });
+                                    }
+                                  },
+                                child: const Text("Pick")),
+                          ]
+                        ),
+
                         const Text("Group Status"),
                         PopupMenuButtonStatus(
                           initialValue: StatusValues.values[currentStatus],
@@ -189,6 +237,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                         'name': currentSeriesName,
                                         'type': currentSeriesType,
                                         'status': currentStatus,
+                                        'defaultCid': currentDefaultCid,
                                         'noGames': currentSeriesNoGames,
                                       };
                                       series = Series( data: data );
@@ -202,6 +251,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                       { 'name': currentSeriesName,
                                         'type': currentSeriesType,
                                         'status': currentStatus,
+                                        'defaultCid': currentDefaultCid,
                                         'noGames': currentSeriesNoGames,  // Todo: Delete this and let default? Add noAccesses?
                                       };
                                       series!.update(data: data);

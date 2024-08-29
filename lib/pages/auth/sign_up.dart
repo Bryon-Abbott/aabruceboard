@@ -249,9 +249,10 @@ class _SignUpState extends State<SignUp> {
           title: const Text("Email Verification sent ... "),
           // titleTextStyle: Theme.of(context).textTheme.bodyLarge,
           // contentTextStyle: Theme.of(context).textTheme.bodyLarge,
-          content: Text("An email has been set to to your email address '$email'. \n" +
-              "Please sign onto your email, verify your account " +
-              "then resign into your BruceBoard account"
+          content: Text(
+              '''An email has been set to to your email address '$email'.
+                 Please sign onto your email, verify your account 
+                 then resign into your BruceBoard account'''
           ),
           actions: [
             ElevatedButton(
@@ -273,7 +274,8 @@ class _SignUpState extends State<SignUp> {
           titleTextStyle: Theme.of(context).textTheme.bodyLarge,
           contentTextStyle: Theme.of(context).textTheme.bodyLarge,
           content: Text(
-              "Something went wrong with the registration for '$email'. \n" + "  Please try again with correct email."),
+              '''Something went wrong with the registration for '$email'. 
+                 Please try again with correct email.'''),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context, 'Ok'),
@@ -293,8 +295,9 @@ class _SignUpState extends State<SignUp> {
           title: const Text("Email Verification Failure ... "),
           titleTextStyle: Theme.of(context).textTheme.bodyLarge,
           contentTextStyle: Theme.of(context).textTheme.bodyLarge,
-          content: Text("Something went wrong with the verification for '$email'. \n" +
-              "Please try verifying again thru the Profile Page."),
+          content: Text(
+              '''Something went wrong with the verification for '$email'.
+                 Please try verifying again thru the Profile Page.''' ),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.pop(context, 'Ok'),

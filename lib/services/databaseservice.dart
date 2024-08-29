@@ -187,6 +187,12 @@ class DatabaseService {
             fsDoc.docId = 9999;
           }
       );
+      // *********
+      // Note: The Get Next Number and Increment should be wrapped in a transaction to
+      // avoid the number being "GOT" by user and cloud simultaneously.
+      // If this occurs, the result would be a overwritten record.  This would be most likely
+      // for Audit records as these are Created by Cloud Functions as well as the client app.
+      // Todo: Wrap get nextNumber & update in a Transaction
       // log('Message: fsDocAdd: fsDoc Type: ${fsDoc.runtimeType} fsDocId: ${fsDoc.docId} ');
       // Set or Increment the next Series number
       if ( fsDoc.docId == 0 ) {
