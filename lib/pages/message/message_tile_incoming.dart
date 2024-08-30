@@ -147,7 +147,8 @@ class MessageTileIncoming extends StatelessWidget {
           return;
         }
         if (!context.mounted) return;
-        String? comment = await openDialogMessageComment(context, defaultComment: "Credits ($credits) were updated to your membership\n (New Balance: ${member.credits+credits})");
+        String? comment = await openDialogMessageComment(context,
+            defaultComment: "Credits ($credits) were updated to your membership\n (New Balance: ${member.credits+credits})");
         // Add Message to Archive
         if (comment != null) {
           int debit=0, credit=0;
@@ -160,7 +161,9 @@ class MessageTileIncoming extends StatelessWidget {
             debit = message.data['credits'] as int;
           }
           await DatabaseService(FSDocType.member, cidKey: Community.Key(message.data['cid'])).fsDocUpdate(member);
-          Audit audit = Audit(data: {'code': AuditCode.memberCreditsRequested.code, 'ownerPid': playerTo.pid, 'playerPid': playerFrom.pid, 'cid': message.data['cid'], 'debit': debit, 'credit': credit});
+          Audit audit = Audit(data: {'code': AuditCode.memberCreditsRequested.code, 'ownerPid': playerTo.pid,
+            'playerPid': playerFrom.pid, 'cid': message.data['cid'],
+            'debit': debit, 'credit': credit});
           await DatabaseService(FSDocType.audit).fsDocAdd(audit);
 
           // Send Message back to Requester
@@ -269,7 +272,9 @@ class MessageTileIncoming extends StatelessWidget {
               await DatabaseService(FSDocType.board, sidKey: Series.Key(message.data['sid']), gidKey: game.key)
                   .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
 
-              Audit audit = Audit(data: {'code': AuditCode.squareRequested.code, 'ownerPid': playerTo.pid, 'playerPid': playerFrom.pid, 'cid': message.data['cid'], 'debit': game.squareValue, 'credit': 0});
+              Audit audit = Audit(data: {'code': AuditCode.squareRequested.code,
+                'ownerPid': playerTo.pid, 'playerPid': playerFrom.pid, 'cid': message.data['cid'],
+                'square': squareRequested, 'debit': game.squareValue, 'credit': 0});
               await DatabaseService(FSDocType.audit).fsDocAdd(audit);
 
               messageSend(10040, messageType[MessageTypeOption.acceptance]!,

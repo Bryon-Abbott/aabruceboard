@@ -51,7 +51,13 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #  Fixed "Doman" on signin.
 #  Added Verify Prompt to SignUp
 #  Added Default Cid for Series to pick where Community Credits go.
-version: 1.2.3+26
+# 1.2.4(27)
+#  Added Show/No Show to passwords
+#  Hardcoded Excluded Player to 1000
+#  Added Square to Audit
+#  Removed Splits menu option from Game Board
+#  Stopped Debiting from exclude player
+version: 1.2.4+27
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

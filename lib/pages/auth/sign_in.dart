@@ -22,10 +22,17 @@ class _SignInState extends State<SignIn> {
   final _formKey = GlobalKey<FormState>();
   String error = '';
   bool loading = false;
+  bool _isHidden = true;
 
   // text field state
   String email = '';
   String password = '';
+
+  void _togglePasswordView() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,8 +69,21 @@ class _SignInState extends State<SignIn> {
                     ),
                     const SizedBox(height: 20.0),
                     TextFormField(
-                      obscureText: true,
-                      decoration: const InputDecoration(hintText: 'password (6+ chars)'),
+                      obscureText: _isHidden,
+                      decoration: InputDecoration(
+                        hintText: 'Password (6+ chars)',
+                        suffix: InkWell(
+                          onTap: _togglePasswordView,
+                          child: Icon(
+                              _isHidden
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined
+                          ),
+                        ),
+//                      ),
+                    ),
+                      // obscureText: true,
+                      //decoration: const InputDecoration(hintText: 'password (6+ chars)'),
               //                decoration: textInputDecoration.copyWith(hintText: 'password'),
                       validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
                       onChanged: (val) {

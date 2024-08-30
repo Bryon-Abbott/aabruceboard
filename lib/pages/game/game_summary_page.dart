@@ -51,13 +51,15 @@ class _GameSummaryPage extends GameSummaryCtlr {
         future: getWinners(board, communityPlayer),
         // initialData: List<List<dynamic>>.filled(2, [Player(data: {}), -1]),
         initialData: [
-          [Player(data: {}), Player(data: {}), Player(data: {}), Player(data: {})],
-          const [-1, -1, -1, -1]
+          [Player(data: {}), Player(data: {}), Player(data: {}), Player(data: {})], // Winner
+          const [-1, -1, -1, -1],                                                   // Community
+          const [-1, -1, -1, -1]                                                    // Square
         ],
         builder: (BuildContext context, AsyncSnapshot<List<List<dynamic>>> snapshot) {
           if (snapshot.hasData) {
             winnersPlayer = snapshot.data![0].cast<Player>(); // as List<Player>;
             winnersCommunity = snapshot.data![1].cast<int>(); // as List<int>;
+            winnerSquare = snapshot.data![2].cast<int>(); // as List<int>;
           }
           return SafeArea(
             child: Scaffold(

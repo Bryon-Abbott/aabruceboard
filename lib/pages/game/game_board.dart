@@ -171,17 +171,17 @@ class _GameBoardState extends State<GameBoard> {
                             ]
                           )
                         ),
-                        PopupMenuItem<int>(
-                          value: 2,
-                          enabled: isGameOwner && !board.scoresLocked,
-                          child: const Row(
-                            children: [
-                              Icon(Icons.percent_outlined,  color: Colors.white),
-                              SizedBox(width: 8),
-                              Text("Update Splits"),
-                            ]
-                          )
-                        ),
+                        // PopupMenuItem<int>(
+                        //   value: 2,
+                        //   enabled: isGameOwner && !board.scoresLocked,
+                        //   child: const Row(
+                        //     children: [
+                        //       Icon(Icons.percent_outlined,  color: Colors.white),
+                        //       SizedBox(width: 8),
+                        //       Text("Update Splits"),
+                        //     ]
+                        //   )
+                        // ),
                         // const PopupMenuItem<int>(
                         //   value: 3,
                         //   // enabled: isGameOwner,
@@ -575,9 +575,9 @@ class _GameBoardState extends State<GameBoard> {
       case 1:
         dev.log("Menu Select 1:Fill in remainder", name: "${runtimeType.toString()}:onMenuSelected");
         dev.log("Filling scores-Before", name: "${runtimeType.toString()}:onMenuSelected");
-        String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
-        int excludePlayerNo = int.parse(excludePlayerNoString);
-        dev.log("Got Exclude PID ($excludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
+        // String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
+        // int excludePlayerNo = int.parse(excludePlayerNoString);
+        dev.log("Got Exclude PID ($kExcludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
 
         Grid grid = await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
         if (!context.mounted) return;
@@ -593,14 +593,25 @@ class _GameBoardState extends State<GameBoard> {
           int creditsSpent = 0;
           for (int i = 0; i < 100; i++) {
             if (grid.squarePlayer[i] == -1) {
-              if ((selectedMember.credits >= game.squareValue) || (selectedPlayer.docId == excludePlayerNo)) {
+              if ((selectedMember.credits >= game.squareValue) || (selectedPlayer.docId == kExcludePlayerNo)) {
                 grid.squarePlayer[i] = selectedPlayer.docId;
                 grid.squareInitials[i] = selectedPlayer.initials;
                 grid.squareCommunity[i] = selectedAccess.cid;
                 grid.squareStatus[i] = SquareStatus.taken.index; 
-                if (selectedPlayer.docId != excludePlayerNo) {
+                if (selectedPlayer.docId != kExcludePlayerNo) {
                   selectedMember.credits -= game.squareValue;
                   creditsSpent += game.squareValue;
+                  Audit audit = Audit(data: {'code': AuditCode.squareFilledExclude.code,
+                    'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
+                    'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
+                    'square': i, 'debit': game.squareValue, 'credit': 0});
+                  await DatabaseService(FSDocType.audit).fsDocAdd(audit);
+                } else {
+                  Audit audit = Audit(data: {'code': AuditCode.squareFilledPlayer.code,
+                    'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
+                    'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
+                    'square': i, 'debit': 0, 'credit': 0});
+                  await DatabaseService(FSDocType.audit).fsDocAdd(audit);
                 }
                 updated++;
               } else {
@@ -612,14 +623,11 @@ class _GameBoardState extends State<GameBoard> {
               }
             }
           }
-          // Update Member Record to reflect credits used.
-          DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(selectedMember);
-
-          Audit audit = Audit(data: {'code': AuditCode.squareFilled.code, 'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
-            'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
-            'debit': creditsSpent, 'credit': 0});
-          await DatabaseService(FSDocType.audit).fsDocAdd(audit);
-
+          // Update Member Record to reflect credits used if not excluded player
+          if (selectedPlayer.pid != kExcludePlayerNo) {
+            DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(selectedMember);
+            // Todo: Send Message to udpated user!
+          }
           dev.log("Saving Game Data ... Game Board ${game.docId}, Squares $updated", name: "${runtimeType.toString()}:onMenuSelected");
           await DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
           // setState(() { });

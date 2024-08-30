@@ -280,40 +280,52 @@ class _GameBoardGridState extends State<GameBoardGrid> {
     if (result == null) {
       dev.log("No Player Selected", name: "${runtimeType.toString()}:GameButton");
     } else {
+      String? comment;
+      Access selectedAccess = result[0] as Access; // Access Record used for player (contains 'cid' and 'pid'
+      Player selectedPlayer = result[1] as Player; // Player player
       // Get Comment
-      if (!context.mounted) return;
-      String? comment = await openDialogMessageComment(context, defaultComment: "Good Luck with Square $squareIndex");
-      if (comment != null) {
-        Access selectedAccess = result[0] as Access; // Access Record used for player (contains 'cid' and 'pid'
-        Player selectedPlayer = result[1] as Player; // Player player
+      if (selectedPlayer.pid != kExcludePlayerNo) {
+        if (!context.mounted) return;
+        comment = await openDialogMessageComment(context,
+            defaultComment: "Good Luck with Square $squareIndex");
+      }
+      if ((comment != null) || (selectedPlayer.pid == kExcludePlayerNo)) {
         dev.log("Player Selected (${selectedPlayer.initials}) as Player)", name: "${runtimeType.toString()}:GameButton");
         grid.squarePlayer[squareIndex] = selectedPlayer.docId;
         grid.squareCommunity[squareIndex] = selectedAccess.cid;
         grid.squareInitials[squareIndex] = selectedPlayer.initials;
         grid.squareStatus[squareIndex] = SquareStatus.taken.index;
         // Get the member record for the player.
-        Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDoc(docId: selectedPlayer.pid ) as Member;
-        member.credits -= game.squareValue;
+        if (selectedPlayer.pid != kExcludePlayerNo) {
+          // Todo: Update field directly via FieldValue
+          Member member = await DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDoc(docId: selectedPlayer.pid ) as Member;
+          member.credits -= game.squareValue;
+          DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(member);
+
+          Audit audit = Audit(data: {'code': AuditCode.squareAssignedPlayer.code, 'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
+            'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
+            'square': squareIndex, 'debit':  game.squareValue, 'credit': 0});
+          await DatabaseService(FSDocType.audit).fsDocAdd(audit);
+
+          await messageSend(20040, messageType[MessageTypeOption.notification]!,
+            playerFrom: activePlayer, playerTo: selectedPlayer,
+            comment: comment ?? "No Comment",
+            description: "Square $squareIndex for Game <${game.name}> in Series <${series.name}> has been assigned to you for ${game.squareValue} credit(s)."
+                " Your Remaining credits in community <${selectedAccess.key}> are ${member.credits}.",
+            data: { 'cid': selectedAccess.docId, 'sid': game.sid, 'gid': game.docId, 'squareRequested': squareIndex },
+          );
+        } else {  // Just write the audit record.
+          Audit audit = Audit(data: {'code': AuditCode.squareAssignedExclude.code, 'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
+            'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
+            'square': squareIndex, 'debit':  0, 'credit': 0});
+          await DatabaseService(FSDocType.audit).fsDocAdd(audit);
+
+        }
         // No need to await here as updates will come via Firestore Streams.
         DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
-        DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDocUpdate(member);
         DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
             .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
 
-        Audit audit = Audit(data: {'code': AuditCode.squareAssigned.code, 'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
-          'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
-          'debit':  game.squareValue, 'credit': 0});
-        await DatabaseService(FSDocType.audit).fsDocAdd(audit);
-
-        dev.log("saving Data ... gameNo: ${game.docId} ", name: "${runtimeType.toString()}:GameButton");
-        // Send message to user
-        await messageSend(20040, messageType[MessageTypeOption.notification]!,
-          playerFrom: activePlayer, playerTo: selectedPlayer,
-          comment: comment,
-          description: "Square $squareIndex for Game <${game.name}> in Series <${series.name}> has been assigned to you for ${game.squareValue} credit(s)."
-            " Your Remaining credits in community <${selectedAccess.key}> are ${member.credits}.",
-          data: { 'cid': selectedAccess.docId, 'sid': game.sid, 'gid': game.docId, 'squareRequested': squareIndex },
-        );
       }
     }
   }

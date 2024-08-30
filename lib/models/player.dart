@@ -5,6 +5,8 @@ import 'package:bruceboard/services/authservices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
+const int kExcludePlayerNo = 1000;
+
 class BruceUser {
 
   final AuthService _auth = AuthService();

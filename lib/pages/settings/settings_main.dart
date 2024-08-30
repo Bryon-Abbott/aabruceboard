@@ -1,13 +1,10 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
-//import 'package:bruceboard/models/activeplayerprovider.dart';
+import 'package:flutter/material.dart';
+import 'package:settings_ui/settings_ui.dart';
+
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
-import 'package:flutter/material.dart';
-//import 'package:provider/provider.dart';
-import 'package:settings_ui/settings_ui.dart';
-
-import 'package:bruceboard/utils/icon_widget.dart';
 import 'package:bruceboard/utils/preferences.dart';
 
 // ==========
@@ -78,16 +75,16 @@ class _SettingsMainState extends State<SettingsMain> {
                     },
                     title: const Text("Dark Mode"),
                   ),
-                  SettingsTile(
-                    enabled: true,
-                    leading: const Icon(Icons.not_interested_outlined),
-                    // initialValue: false,
-                    title: const Text("Exclude Player"),
-                    trailing: const IntegerFormField(
-                      sharedPreferenceKey: Preferences.keyExcludePlayerNo,
-                      initialValue: '00000',
-                    ),
-                  ),
+                  // SettingsTile(
+                  //   enabled: true,
+                  //   leading: const Icon(Icons.not_interested_outlined),
+                  //   // initialValue: false,
+                  //   title: const Text("Exclude Player"),
+                  //   trailing: const IntegerFormField(
+                  //     sharedPreferenceKey: Preferences.keyExcludePlayerNo,
+                  //     initialValue: '00000',
+                  //   ),
+                  // ),
                 ]
             ),
             SettingsSection(

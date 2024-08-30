@@ -5,16 +5,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 enum AuditCode implements Comparable<AuditCode> {
-  memberAdded(code:10, desc: "Member added to Community"),
-  memberRemoved(code:20, desc: "Member removed from Community"),
-  squareRequested(code: 30, desc: "Square Requested by Player"),
-  squareAssigned(code: 40, desc: "Square Assigned by Owner"),
-  squareFilled(code:50, desc: "Square Filled by Owner"),
-  squareCloudAssigned(code:60, desc: "Square Assigned by Cloud"),
-  memberCreditsUpdated(code:70, desc: "Member Credits Update by Owner"),
-  memberCreditsRequested(code: 80, desc: "Member Credits update by Player request"),
-  memberCreditsDisttributed(code: 90, desc: "Member Credits updated by Distribution"),
-  communityCreditsDisttributed(code: 100, desc: "Community Credits updated by Distribution")
+  memberAdded(code: 100, desc: "Member added to Community"),
+  memberRemoved(code: 101 , desc: "Member removed from Community"),
+  squareRequested(code: 200, desc: "Square Requested by Player"),
+  squareAssignedPlayer(code: 201, desc: "Square Assigned by Owner"),
+  squareAssignedExclude(code: 202, desc: "Square Excluded by Owner"),
+  squareAssignedCloud(code: 203, desc: "Square Assigned by Cloud"),
+  squareFilledPlayer(code: 204, desc: "Square Player Filled by Owner"),
+  squareFilledExclude(code: 205, desc: "Square Exclude Filled by Owner"),
+  memberCreditsUpdated(code: 300, desc: "Member Credits Update by Owner"),
+  memberCreditsRequested(code: 301, desc: "Member Credits update by Player request"),
+  memberCreditsDistributed(code: 302, desc: "Member Credits updated by Distribution"),
+  communityCreditsDistributed(code: 303, desc: "Community Credits updated by Distribution"),
   ;
 
   const AuditCode({required this.code, required this.desc});
@@ -41,6 +43,7 @@ class Audit implements FirestoreDoc {
   int cid;        // Community ID (Assums
   int sid;        // Series to which access is given.
   int gid;        // Game ID
+  int square;
   int debit;
   int credit;
 
@@ -55,6 +58,7 @@ class Audit implements FirestoreDoc {
     sid = data['sid'] ?? -1,
     cid = data['cid'] ?? -1,
     gid = data['gid'] ?? -1,
+    square = data['square'] ?? -1,
     debit = data['debit'] ?? 0,
     credit = data['credit'] ?? 0
   ;
@@ -87,6 +91,7 @@ class Audit implements FirestoreDoc {
     sid = data['sid'] ?? sid;
     cid = data['cid'] ?? cid;
     gid = data['gi'] ?? gid;
+    square = data['square'] ?? square;
     debit = data['debit'] ?? debit;
     credit = data['credit'] ?? credit;
   }
@@ -103,6 +108,7 @@ class Audit implements FirestoreDoc {
       'sid': sid,
       'cid': cid,
       'gid': gid,
+      'square': square, 
       'debit': debit,
       'credit': credit,
     };

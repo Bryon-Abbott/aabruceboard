@@ -21,9 +21,9 @@ class AccessTileMembers extends StatelessWidget {
 //    BruceUser bruceUser = Provider.of<BruceUser>(context);
 
     final Player communityPlayer = Provider.of<CommunityPlayerProvider>(context).communityPlayer;
-    String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
-    int excludePlayerNo = int.parse(excludePlayerNoString);
-    log("Got Exclude PID ($excludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
+    // String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
+    // int excludePlayerNo = int.parse(excludePlayerNoString);
+    log("Got Exclude PID ($kExcludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
 
 //    Community? community;
 
@@ -66,7 +66,7 @@ class AccessTileMembers extends StatelessWidget {
                                     Text("  Member: ${memberList[index].docId} ${player?.fName ?? '...'} ${player?.lName ?? ''} Credits: ${memberList[index].credits} "),
                                     IconButton(
                                       icon: const Icon(Icons.check_circle_outline),
-                                      onPressed: ((memberList[index].credits > 0) || (memberList[index].docId == excludePlayerNo)) ?  () {
+                                      onPressed: ((memberList[index].credits > 0) || (memberList[index].docId == kExcludePlayerNo)) ?  () {
                                         log('Pressed. ${player?.docId ?? 0}', name: '${runtimeType.toString()}:build()');
                                         Navigator.of(context).pop([access, player]);  // Return with Access & Player
                                         } : null,

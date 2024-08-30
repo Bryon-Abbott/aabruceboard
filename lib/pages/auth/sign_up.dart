@@ -20,6 +20,13 @@ class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
   String error = '';
   bool loading = false;
+  bool _isHidden = true;
+
+  void _togglePasswordView() {
+    setState(() {
+      _isHidden = !_isHidden;
+    });
+  }
 
   // text field state
   String email = '';
@@ -86,9 +93,20 @@ class _SignUpState extends State<SignUp> {
                           const SizedBox(height: 10.0),
                           const Text("Password"),
                           TextFormField(
-                            decoration: const InputDecoration(hintText: 'password'),
-                            obscureText: true,
-                            validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
+                            obscureText: _isHidden,
+                            decoration: InputDecoration(
+                              hintText: 'Password (6+ chars)',
+                              suffix: InkWell(
+                                onTap: _togglePasswordView,
+                                child: Icon(
+                                    _isHidden
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined
+                                ),
+                              ),
+//                      ),
+                            ),
+                           validator: (val) => val!.length < 6 ? 'Enter a password 6+ chars long' : null,
                             onChanged: (val) {
                               setState(() => password = val);
                             },
@@ -96,8 +114,19 @@ class _SignUpState extends State<SignUp> {
                           const SizedBox(height: 10.0),
                           const Text("Password Verification"),
                           TextFormField(
-                            decoration: const InputDecoration(hintText: 'reenter password'),
-                            obscureText: true,
+                            obscureText: _isHidden,
+                            decoration: InputDecoration(
+                              hintText: 'Password (6+ chars)',
+                              suffix: InkWell(
+                                onTap: _togglePasswordView,
+                                child: Icon(
+                                    _isHidden
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined
+                                ),
+                              ),
+//                      ),
+                            ),
                             validator: (val) => val! != password ? 'Passwords entered are not the same' : null,
                             onChanged: (val) {
                               setState(() => passwordVerification = val);

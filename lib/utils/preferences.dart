@@ -12,8 +12,8 @@ class Preferences {
   static const keyGameAxisScore = 'key-gameaxisscore';  // Not used game key is a function of gameNo.
   static const keyGameBoardData = 'key-gameboarddata';  // Not used game key is a function of gameNo.
   static const keyPlayerNextNo = 'key-playernextno';
-  static const keyExcludePlayerNo = 'key-excludeplayerno';
-  static const keyGameNextNo = 'key-gamenextno';
+//  static const keyExcludePlayerNo = 'key-excludeplayerno';
+  static const keyGameNextNo = 'key-gamenextno'; // Hard coded this to 1000 in application.
 
   // Todo: remove these when Settings is cleaned up.
   static const keyWinningScore = 'key-winningscore';

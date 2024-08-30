@@ -1,7 +1,8 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/utils/preferences.dart';
+import 'package:bruceboard/models/player.dart';
+//import 'package:bruceboard/utils/preferences.dart';
 import 'package:intl/intl.dart';
 
 enum SquareStatus {free, requested, taken}
@@ -54,11 +55,11 @@ class Grid implements FirestoreDoc {
 
   // Return the number of squares PICKED (EXcluding excluded squares)
   int getPickedSquares() {
-    String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ??
-        "-1";  // If no perferences saved for ExcludePlayerNo, default to -1
-    int excludePlayerNo = int.parse(excludePlayerNoString);
+    // String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ??
+    //     "-1";  // If no perferences saved for ExcludePlayerNo, default to -1
+    // int excludePlayerNo = int.parse(excludePlayerNoString);
 
-    int picked = squarePlayer.where((e) => (e != -1) && (e != excludePlayerNo)).length;
+    int picked = squarePlayer.where((e) => (e != -1) && (e != kExcludePlayerNo)).length;
     //dev.log("Number of bought squares is $picked", name: "${runtimeType.toString()}:getBoughtSquares");
     return picked;
   }

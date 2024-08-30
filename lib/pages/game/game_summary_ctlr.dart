@@ -10,6 +10,7 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
   List<TextEditingController> controllers = [];
   List<Player> winnersPlayer = List<Player>.filled(4, Player(data: {}));
   List<int> winnersCommunity = List<int>.filled(4, -1);
+  List<int> winnerSquare = List<int>.filled(4, -1);
 
   @override
   void initState() {
@@ -133,6 +134,7 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
     Grid? grid;
     List<Player> winners = List<Player>.filled(4, Player(data: {}));
     List<int> community = List<int>.filled(4, -1);
+    List<int> square = List<int>.filled(4, -1);
     // If score is not set yet return TBD
     //dev.log("Score One : $scoreOne Score two: $scoreTwo", name: "${this.runtimeType.toString()}:getWinner");
     for (int qtr = 0; qtr <= 3; qtr++) {
@@ -163,12 +165,14 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
           log("$qtr:Row : $row Col: $col",
               name: "${runtimeType.toString()}:getWinner");
           // Find the player number on the board
-          int playerNo = grid.squarePlayer[row * 10 + col];
-          int playerCommunity = grid.squareCommunity[row * 10 + col];
+          int squareIndex = row * 10 + col;
+          int playerNo = grid.squarePlayer[squareIndex];
+          int playerCommunity = grid.squareCommunity[squareIndex];
           Player player = await DatabaseService(FSDocType.player)
               .fsDoc(docId: playerNo) as Player;
           winners[qtr] = player;
           community[qtr] = playerCommunity;
+          square[qtr] = squareIndex;
 
           log("$qtr:Player: ${player.docId}:${player.fName} ${player.lName}, Community: $playerCommunity",
               name: "${runtimeType.toString()}:getWinner");
@@ -177,7 +181,7 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
       log('$qtr:Winner: ${winners[qtr]}',
           name: "${runtimeType.toString()}:getWinner");
     }
-    return [winners, community];
+    return [winners, community, square];
   } // End _GameBoard:getWinners
 
   Future<List<String>?> openDialogSplits(Board board) => showDialog<List<String>>(
@@ -251,10 +255,11 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
         for (int i=0; i<4; i++) {
           Player p = winnersPlayer[i];
           int c = winnersCommunity[i];
+
           // Get exclude Player Number. If no preferences saved for ExcludePlayerNo, default to -1
-          String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
-          int excludePlayerNo = int.parse(excludePlayerNoString);
-          log("Got Exclude PID ($excludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
+          // String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ?? "-1";
+          // int excludePlayerNo = int.parse(excludePlayerNoString);
+          log("Got Exclude PID ($kExcludePlayerNo)", name: "${runtimeType.toString()}:onMenuSelected");
           // Get Member record, Calculate Credits won and update member credits.
           // Todo: Improve by just updating MemberCredits in 1 step vs get/update
           log("Start Distribution (${board.docId} Player (${p.docId}) Community ($c)", name: "${runtimeType.toString()}:onMenuSelected");
@@ -270,13 +275,13 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
           member.credits += credits; // Add new Credits.
           DatabaseService(FSDocType.member, cidKey: Community.Key(winnersCommunity[i])).fsDocUpdate(member);
           // Write Audit Record
-          Audit audit = Audit(data: {'code': AuditCode.memberCreditsDisttributed.code, 'ownerPid': activePlayer.pid, 'playerPid': winnersPlayer[i].pid,
+          Audit audit = Audit(data: {'code': AuditCode.memberCreditsDistributed.code, 'ownerPid': activePlayer.pid, 'playerPid': winnersPlayer[i].pid,
             'cid': community.docId, 'sid': series.docId, 'gid': game.docId,
-            'debit': 0, 'credit': credits});
+            'square': winnerSquare[i], 'debit': 0, 'credit': credits});
           await DatabaseService(FSDocType.audit).fsDocAdd(audit);
 
           // If Winner is a Player ... send a message
-          if (p.docId != excludePlayerNo)  {
+          if (p.docId != kExcludePlayerNo)  {
             messageSend( 20070, messageType[MessageTypeOption.notification]!,
               playerFrom: activePlayer, playerTo: winnersPlayer[i],
               comment: "Thanks for Playing.",
@@ -298,7 +303,7 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
           member.credits += remainingCredits; // Add new Credits.
           DatabaseService(FSDocType.member, cidKey: Community.Key(series.defaultCid)).fsDocUpdate(member);
 
-          Audit audit = Audit(data: {'code': AuditCode.communityCreditsDisttributed.code, 'ownerPid': activePlayer.pid, 'playerPid': activePlayer.pid,
+          Audit audit = Audit(data: {'code': AuditCode.communityCreditsDistributed.code, 'ownerPid': activePlayer.pid, 'playerPid': activePlayer.pid,
             'cid': series.defaultCid, 'sid': series.docId, 'gid': game.docId,
             'debit': 0, 'credit': remainingCredits});
           await DatabaseService(FSDocType.audit).fsDocAdd(audit);
