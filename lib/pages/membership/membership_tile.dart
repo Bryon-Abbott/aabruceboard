@@ -48,10 +48,14 @@ class MembershipTile extends StatelessWidget {
             builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot2) {
               if (snapshot2.hasData) {
                 community = snapshot2.data as Community;
-                return FutureBuilder<FirestoreDoc?>(
-                  future: DatabaseService(FSDocType.member, uid: communityPlayer.uid, cidKey: Community.Key(membership.cid))
-                      .fsDoc(docId: membership.pid),
-                  builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot3) {
+                // return FutureBuilder<FirestoreDoc?>(
+                return StreamBuilder<FirestoreDoc?>(
+                  // future: DatabaseService(FSDocType.member, uid: communityPlayer.uid, cidKey: Community.Key(membership.cid))
+                  //     .fsDoc(docId: membership.pid),
+                  stream: DatabaseService(FSDocType.member, uid: communityPlayer.uid, cidKey: Community.Key(membership.cid))
+                      .fsDocStream(docId: membership.pid),
+                  // builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot3) {
+                  builder: (context, snapshot3) {
                     if (snapshot3.hasData) {
                       member = snapshot3.data as Member;
                       log('Member Snapshot retrieved ${membership.key}:${member?.key ?? -98} ... ', name: '${runtimeType.toString()}:build()');

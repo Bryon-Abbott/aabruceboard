@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   version="1.1"
+   width="712"
+   height="760.60938"
+   id="svg2"><metadata
+   id="metadata100">
+  <rdf:RDF>
+    <cc:Work
+       rdf:about="">
+      <dc:format>image/svg+xml</dc:format>
+      <dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      <dc:title></dc:title>
+    </cc:Work>
+  </rdf:RDF>
+</metadata>
+<defs
+   id="defs98" />
+<text
+   x="231"
+   y="34.609375"
+   id="text4"
+   style="font-size:40px;fill:#000000;font-family:Verdana">HARVEY BALLS</text>
+
+
+ ##################ROW 1 ##################
+<circle
+   cx="100"
+   cy="100"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle6"
+   style="fill:#ffffff;stroke:#198255;stroke-width:4" />
+<circle
+   cx="250"
+   cy="100"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle8"
+   style="fill:#ffffff;stroke:#198255;stroke-width:4" />
+<path
+   d="M 206,104.60938 V 54.609378 a 50,50 0 0 1 50,50.000002 z"
+   id="path10"
+   style="fill:#198255" />
+<circle
+   cx="400"
+   cy="100"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle12"
+   style="fill:#198255;stroke:#198255;stroke-width:4" />
+<path
+   d="M 356,104.60938 H 306 A 50,50 0 0 1 356,54.609378 z"
+   id="path14"
+   style="fill:#d44420" />
+<path
+   d="m 356,104.60938 h -50 a 50,50 0 0 0 50,50 z"
+   id="path16"
+   style="fill:#2020d4" />
+<circle
+   cx="550"
+   cy="100"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle18"
+   style="fill:#198255;stroke:#198255;stroke-width:4" />
+<path
+   d="M 506,104.60938 H 456 A 50,50 0 0 1 506,54.609378 z"
+   id="path20"
+   style="fill:#ffffff" />
+<path
+   d="m 456,104.60938 a 50,50 0 0 0 100,0 z"
+   id="path22"
+   style="fill:#198255" />
+<circle
+   cx="700"
+   cy="100"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle24"
+   style="fill:#000000;stroke:#000000;stroke-width:2" />
+
+
+
+ ################## ROW 2 ##################
+<circle
+   cx="100"
+   cy="250"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle26"
+   style="fill:#000000;stroke:#000000;stroke-width:2" />
+<circle
+   cx="250"
+   cy="250"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle28"
+   style="fill:#000000;stroke:#000000;stroke-width:2" />
+<path
+   d="m 206,254.60937 v -50 a 50,50 0 0 1 50,50 z"
+   id="path30"
+   style="fill:#ffffff" />
+<circle
+   cx="400"
+   cy="250"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle32"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+<path
+   d="m 356,254.60937 h -50 a 50,50 0 0 1 50,-50 z"
+   id="path34"
+   style="fill:#000000" />
+<path
+   d="m 356,254.60937 h -50 a 50,50 0 0 0 50,50.00001 z"
+   id="path36"
+   style="fill:#000000" />
+<circle
+   cx="550"
+   cy="250"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle38"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+<path
+   d="m 506,254.60937 h -50 a 50,50 0 0 1 50,-50 z"
+   id="path40"
+   style="fill:#000000" />
+<circle
+   cx="700"
+   cy="250"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle42"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+
+
+
+ ################## ROW 3 ##################
+<circle
+   cx="100"
+   cy="400"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle44"
+   style="fill:#000000;stroke:#000000;stroke-width:2" />
+<circle
+   cx="250"
+   cy="400"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle46"
+   style="fill:#000000;stroke:#000000;stroke-width:2" />
+<path
+   d="m 206,404.60938 h -50 a 50,50 0 0 1 50,-50 z"
+   id="path48"
+   style="fill:#ffffff" />
+<circle
+   cx="400"
+   cy="400"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle50"
+   style="fill:#000000;stroke:#000000;stroke-width:2" />
+<path
+   d="m 356,404.60938 h -50 a 50,50 0 0 1 50,-50 z"
+   id="path52"
+   style="fill:#ffffff" />
+<path
+   d="m 356,404.60938 h -50 a 50,50 0 0 0 50,50 z"
+   id="path54"
+   style="fill:#ffffff" />
+<circle
+   cx="550"
+   cy="400"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle56"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+<path
+   d="m 506,404.60938 v -50 a 50,50 0 0 1 50,50 z"
+   id="path58"
+   style="fill:#000000" />
+<circle
+   cx="700"
+   cy="400"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle60"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+
+
+  
+ ################## ROW 4 ##################
+<circle
+   cx="100"
+   cy="550"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle62"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+<circle
+   cx="250"
+   cy="550"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle64"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+<path
+   d="m 206,554.60938 h -50 a 50,50 0 0 1 50,-50 z"
+   id="path66"
+   style="fill:#000000" />
+<circle
+   cx="400"
+   cy="550"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle68"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+<path
+   d="m 356,554.60938 h -50 a 50,50 0 0 1 50,-50 z"
+   id="path70"
+   style="fill:#000000" />
+<path
+   d="m 356,554.60938 h -50 a 50,50 0 0 0 50,50 z"
+   id="path72"
+   style="fill:#000000" />
+<circle
+   cx="550"
+   cy="550"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle74"
+   style="fill:#000000;stroke:#000000;stroke-width:2" />
+<path
+   d="m 506,554.60938 v -50 a 50,50 0 0 1 50,50 z"
+   id="path76"
+   style="fill:#ffffff" />
+<circle
+   cx="700"
+   cy="550"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle78"
+   style="fill:#000000;stroke:#000000;stroke-width:2" />
+
+
+  
+ ################## ROW 5 ##################
+  <circle
+   cx="100"
+   cy="700"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle80"
+   style="fill:#ff0000;stroke:#ff0000;stroke-width:2" />
+<circle
+   cx="100"
+   cy="700"
+   r="10"
+   transform="translate(-44,4.6093776)"
+   id="circle82"
+   style="fill:#ffffff;stroke:#ff0000;stroke-width:2" />
+<circle
+   cx="250"
+   cy="700"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle84"
+   style="fill:#ff0000;stroke:#ff0000;stroke-width:2" />
+<path
+   d="m 156,704.60938 a 50,50 0 0 0 100,0 z"
+   id="path86"
+   style="fill:#ffffff" />
+<circle
+   cx="400"
+   cy="700"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle88"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+<circle
+   cx="550"
+   cy="700"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle90"
+   style="fill:#ffffff;stroke:#000000;stroke-width:2" />
+<path
+   d="m 456,704.60938 a 50,50 0 0 0 100,0 z"
+   id="path92"
+   style="fill:#000000" />
+<circle
+   cx="700"
+   cy="700"
+   r="50"
+   transform="translate(-44,4.6093776)"
+   id="circle94"
+   style="fill:#000000;stroke:#000000;stroke-width:2" />
+</svg>

@@ -150,7 +150,18 @@ Run pod install
 The CFL Logos were obtained from sportslogo.net (https://www.sportslogos.net/teams/list_by_league/8/canadian_football_league/cfl/logos/)
 Need to link back to this site for references.
 
+## Public Games
+### Option 1: Indicate at the Game Level
+Pros: Can display games that are Public
+Cons: Need to request access to a community to join game
+Process: 
+Display Public Games list
+    Order by Proximity? Date? 
+Button to request Access to Group(Series)
 
+### Option 2: Indicate at the Community Level
+Pros: Easy to Implement
+Cons: Need to give Global Access to all Games in Group(Series)
 
 # Release Log
 

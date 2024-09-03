@@ -102,7 +102,7 @@ class _SignInState extends State<SignIn> {
                               if(_formKey.currentState!.validate()) {
                                 setState(() => loading = true);
                                   User? result = await _auth.signInWithEmailAndPassword(
-                                      email, password);
+                                      email.trim(), password);
                                   if ( result == null ) {
                                     setState(() {
                                       loading = false;

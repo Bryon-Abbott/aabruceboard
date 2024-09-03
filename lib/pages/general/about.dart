@@ -87,7 +87,11 @@ class _AboutState extends State<About> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: 10),
-                    Text("BruceBoard is a standard Sports Pool board",
+                    Text("BruceBoard",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displayLarge,
+                    ),
+                    Text("A Sports Pool App",
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.displayLarge,
                     ),
@@ -95,11 +99,19 @@ class _AboutState extends State<About> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text.rich(
-                        const TextSpan(
+                        TextSpan(
+                          text: "General Description: ",
+                          style: Theme.of(context).textTheme.titleMedium,
                           children: <TextSpan>[
-                            TextSpan(text: 'This is a game application to allow friends to '),
-                            TextSpan(text: 'manage a Football pool, collecting points, '),
-                            TextSpan(text: 'entering scores and displaying point results.'),
+                            TextSpan(text: 'This is an application to allow Friends and Organizations to ',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            TextSpan(text: 'manage standard 10x10 Sports pools, managing credits, ',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            TextSpan(text: 'entering scores and displaying overall results.',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
                           ],
                         ),
                         style: Theme.of(context).textTheme.headlineSmall,
@@ -108,24 +120,92 @@ class _AboutState extends State<About> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text.rich(
-                        const TextSpan(
+                        TextSpan(
                           text: "Key Features include: ",
+                          style: Theme.of(context).textTheme.titleMedium,
                           children: <TextSpan> [
-                            TextSpan(text: "Add Players, Add Games, Assign Players to Squares "),
-                            TextSpan(text: "Enter quarterly scores and display player points "),
+                            TextSpan(text: "Add Players, Add Games, Assign Players to Squares ",
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                            TextSpan(text: "Enter quarterly scores and display player points ",
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
                           ]
                         ),
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ),
-                    const SizedBox(height: 40),
-                    Text("Product Manager: Meagan Sheehan",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text.rich(
+                        TextSpan(
+                            text: "Additional Documentation: ",
+                            style: Theme.of(context).textTheme.titleMedium,
+                            children: <TextSpan> [
+                              TextSpan(text: "Documentation on how to use BruceBoard ",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              TextSpan(text: "can be viewed by clicking the documentation ",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              TextSpan(text: "icon in the top right of the About Page.",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ]
+                        ),
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
                     ),
-                    Text("Technical Manager: Bryon Abbott, Bryon.Abbott@abbottavenue.com",
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.titleMedium,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text.rich(
+                        TextSpan(
+                            text: "Application Status: ",
+                            style: Theme.of(context).textTheme.titleMedium,
+                            children: <TextSpan> [
+                              TextSpan(text: "This application is currently in early development ",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              TextSpan(text: "and Accounts, Games and Communities may ",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              TextSpan(text: "deleted periodically. ",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              TextSpan(text: "Please provide any feedback to the Technical Manager. ",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                            ]
+                        ),
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                    ),
+                    const SizedBox(height: 30),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text.rich(
+                        TextSpan(text: "Product Manager: ",
+                          style: Theme.of(context).textTheme.titleMedium,
+                          children: [
+                            TextSpan(text:  "Meagan Sheehan",
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            )
+                          ]
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text.rich(
+                        TextSpan(text: "Technical Manager: ",
+                            style: Theme.of(context).textTheme.titleMedium,
+                            children: [
+                              TextSpan(text:  "Bryon Abbott, \n      Bryon.Abbott@abbottavenue.com",
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              )
+                            ]
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 8.0,),
                     Text("Version: ${_packageInfo.version} (${_packageInfo.buildNumber})",

@@ -184,7 +184,7 @@ class _SignUpState extends State<SignUp> {
                                 if (_formKey.currentState!.validate()) {
                                   setState(() => loading = true);
                                   String rc = await registerUser(
-                                    email: email, password: password,
+                                    email: email.trim(), password: password,
                                     displayName:  displayName.isEmpty ? displayNameController.text : displayName,
                                     fName: fName, lName: lName,
                                     initials: initials.isEmpty ? initialsController.text : initials,

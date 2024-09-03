@@ -9,7 +9,7 @@ class Board implements FirestoreDoc {
   @override
   final String totalField = 'noBoards';
 
-  final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
+  static final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
   String gid='none';
 
 //  int sid = -1;
@@ -36,6 +36,11 @@ class Board implements FirestoreDoc {
   @override
   String get key {
     String key = _keyFormat.format(docId);
+    return key;
+  }
+
+  static String Key(int gid) {
+    String key = _keyFormat.format(gid);
     return key;
   }
 
