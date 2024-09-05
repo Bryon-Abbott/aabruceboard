@@ -17,7 +17,6 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_summary_tile.dart';
 import 'package:bruceboard/services/databaseservice.dart';
-import 'package:bruceboard/utils/preferences.dart';
 
 part 'game_summary_ctlr.dart';
 

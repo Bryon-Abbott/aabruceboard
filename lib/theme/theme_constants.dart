@@ -70,11 +70,21 @@ ThemeData lightTheme = ThemeData(
 
   floatingActionButtonTheme:
     const FloatingActionButtonThemeData(backgroundColor: kColorAccent),
-  textButtonTheme: const TextButtonThemeData(
-    style: ButtonStyle(
 
-    )
+  textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all<Color>(Colors.green[500]!),
+          iconColor: WidgetStateProperty.all<Color>(Colors.black),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+    // side: const BorderSide(color: Colors.lightGreenAccent),
   ),
+),
+
+      ),
+
+  ),
+
   elevatedButtonTheme: ElevatedButtonThemeData(
      style: ButtonStyle(
        textStyle: WidgetStateProperty.all(
@@ -84,11 +94,6 @@ ThemeData lightTheme = ThemeData(
 // //              fontWeight: FontWeight.w100
            )
        ),
-      // side: MaterialStateProperty.all(
-      //   BorderSide(
-      //     color: Colors.black,
-      //   )
-      // ),
       alignment: Alignment.center,
       padding: WidgetStateProperty.all<EdgeInsets>(
           const EdgeInsets.all(2)),

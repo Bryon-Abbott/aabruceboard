@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/shared/loading.dart';
-import 'package:bruceboard/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

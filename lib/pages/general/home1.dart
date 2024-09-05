@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:bruceboard/pages/player/player_profile_page.dart';
-//import 'package:bruceboard/utils/adhelper.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -22,18 +21,18 @@ import 'package:bruceboard/pages/settings/settings_main.dart';
 // ----------
 // 2023/09/12 Bryon   Created
 // ==========
-class Home extends StatefulWidget {
-  const Home({super.key});
+class Home1 extends StatefulWidget {
+  const Home1({super.key});
 
   @override
-  State<Home> createState() => _HomeState();
+  State<Home1> createState() => _Home1State();
 }
 
-class _HomeState extends State<Home> {
+class _Home1State extends State<Home1> {
   //late Future<Player> _futurePlayer;
   late CommunityPlayerProvider communityPlayerProvider; // = Provider.of<CommunityPlayerProvider>(context);
   late ActivePlayerProvider activePlayerProvider; // = Provider.of<ActivePlayerProvider>(context);
-  late Player player;
+  late Player player = Player(data: {});
 
   @override
   void dispose() {

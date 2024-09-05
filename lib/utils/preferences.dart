@@ -12,6 +12,7 @@ class Preferences {
   static const keyGameAxisScore = 'key-gameaxisscore';  // Not used game key is a function of gameNo.
   static const keyGameBoardData = 'key-gameboarddata';  // Not used game key is a function of gameNo.
   static const keyPlayerNextNo = 'key-playernextno';
+  static const keyNewInterface = 'key-newinterface';
 //  static const keyExcludePlayerNo = 'key-excludeplayerno';
   static const keyGameNextNo = 'key-gamenextno'; // Hard coded this to 1000 in application.
 
@@ -53,6 +54,15 @@ class Preferences {
 
   static String? getPreferenceString(String key) {
     return preferences.getString(key);
+  }
+
+  static Future setPreferenceBool(String key, bool value) async {
+    //print("Saving Pref $key value $value");
+    await preferences.setBool(key, value);
+  }
+
+  static bool? getPreferenceBool(String key) {
+    return preferences.getBool(key);
   }
 
   static Future removePreferences(String key) async {

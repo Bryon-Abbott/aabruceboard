@@ -254,7 +254,7 @@ class DatabaseService {
 
   // Series list from snapshot
   List<FirestoreDoc> _fsDocListFromSnapshot(QuerySnapshot snapshot) {
-    // log('Collection Size is ${snapshot.size} UID: $uid');
+    log('Collection Size is ${snapshot.size} UID: $uid');
     return snapshot.docs.map((doc) {
      // log("mapping docs", name: '${runtimeType.toString()}:fsDocStream()');
       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
@@ -337,7 +337,7 @@ class DatabaseService {
         }
       },
         onError: (error) {
-          log("Error getting Player UID: $uid, Error: $error", name: '${runtimeType.toString()}:fsDoc()');
+          log("Error getting Doc UID: $uid, Error: $error", name: '${runtimeType.toString()}:fsDoc()');
           fsDoc = null;
         });
     } else {
@@ -357,8 +357,14 @@ class DatabaseService {
     //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
 //        .map(_fsDocListFromSnapshot);
   }
-  //  fsDocQueryListStream( {'field1': 'value1', 'field2': 'value2', 'field3': 5});
-  Stream<List<FirestoreDoc>> fsDocQueryListStream({ required Map<String, dynamic> queryValues }) {
+  //  fsDocQueryListStream(
+  //    queryValues: {'field1': 'value1', 'field2': 'value2', 'field3': 5}
+  //    orderFields: {'field1': true, 'field2': false}
+  //  );
+  Stream<List<FirestoreDoc>> fsDocQueryListStream({
+    required Map<String, dynamic> queryValues,
+    Map<String, dynamic>? orderFields
+  }) {
 
     Stream<QuerySnapshot<Object?>> s001;
     Query<Object?>? q001;
@@ -375,6 +381,14 @@ class DatabaseService {
       // ignore: empty_statements
       };
     });
+    // Add order Options if they exists
+    if (orderFields != null) {
+      orderFields.forEach((fld, descending) {
+        if (fld != '' && descending != '') {
+            q001 = docCollection.orderBy(fld.toString(), descending: descending);
+        };
+      });
+    }
     // If no query parameters ... return full collection
     if (q001 == null) {
       s001 = docCollection.snapshots();
@@ -417,6 +431,51 @@ class DatabaseService {
     // return docCollection.snapshots()
     //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
 //        .map(_fsDocListFromSnapshot);
+  }
+  // Use this as the default Group
+  Stream<List<FirestoreDoc>> fsDocGroupListStream2(String group, {
+    required Map<String, dynamic> queryFields,
+    Map<String, dynamic>? orderFields }) {
+
+    Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
+    late Query<Object?> query;
+
+    log('fsDocGroupListStream2: Group: $group, $queryFields',
+        name: '${runtimeType.toString()}:fsDocGroupListStream()');
+
+    switch (group) {
+      case "Game" :
+        log("Group: $group ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
+        query = db.collectionGroup("Game");
+        //  .where('permission', isEqualTo: 1);
+        // streamQuerySnapshot = db.collectionGroup("Game")
+        //     .where('permission', isEqualTo: 1)
+        //     .snapshots();
+        break;
+      default: {
+        log('Error: Undefined group $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
+        return const Stream<List<FirestoreDoc>>.empty();
+      }
+    }
+
+    queryFields.forEach((field, value) {
+      if (field != '' && value != '') {
+        log("Select - Field: $field, Value: $value ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
+        query = query.where(field.toString(), isEqualTo: value);
+        // ignore: empty_statements
+      };
+    });
+    // Add order Options if they exists
+    if (orderFields != null) {
+      orderFields.forEach((field, descending) {
+        if (field != '' && descending != '') {
+          log("Order - Field: $field, Value: $descending ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
+          query = query.orderBy(field.toString(), descending: descending);
+        };
+      });
+    }
+    streamQuerySnapshot = query.snapshots();
+    return streamQuerySnapshot.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
   }
 
   //get FirestoreDoc List stream given a group

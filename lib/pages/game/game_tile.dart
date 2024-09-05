@@ -9,6 +9,7 @@ import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_maintain.dart';
 import 'package:bruceboard/pages/game/game_board.dart';
 import 'package:bruceboard/services/databaseservice.dart';
+import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,7 @@ class GameTile extends StatelessWidget {
     Player activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
     // Exclude games for non-owners where game status is Prepare or Archived.
     if ((activePlayer.pid == game.pid) || (game.status == 1) || (game.status == 2) ) {
-      String iconSvg = "assets/harveyballs/hb000.svg";
+      String iconSvg = getHarveyBallSvg(0);
       Board? board;
       return StreamBuilder<FirestoreDoc>(
         stream: DatabaseService(FSDocType.board, gidKey: Game.Key(game.docId), sidKey: Series.Key(game.sid))
@@ -37,25 +38,7 @@ class GameTile extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             board = snapshot.data as Board;
-            switch (board?.squaresPicked ?? 0) {
-              case >= 100:
-                iconSvg = "assets/harveyballs/hb100.svg";
-                break;
-              case >= 75:
-                iconSvg = "assets/harveyballs/hb075.svg";
-                break;
-              case >= 50:
-                iconSvg = "assets/harveyballs/hb050.svg";
-                break;
-              case >= 25:
-                iconSvg = "assets/harveyballs/hb025.svg";
-                break;
-              case >= 00:
-                iconSvg = "assets/harveyballs/hb000.svg";
-                break;
-              default:
-                iconSvg = "assets/harveyballs/hb000.svg";
-            }
+            iconSvg = getHarveyBallSvg(board!.squaresPicked);
           }
           return Padding(
             padding: const EdgeInsets.only(top: 8.0),

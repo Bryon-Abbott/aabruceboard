@@ -1,6 +1,7 @@
 
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:intl/intl.dart';
+enum Permission { private, public, }
 
 class Game implements FirestoreDoc {
   // Base Variable
@@ -25,6 +26,7 @@ class Game implements FirestoreDoc {
   // DateTime gameDate = DateTime.now();
   String gameDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   int status = 0; // Prep=0, Active=1; Complete=2; Archive=3;
+  int permission = Permission.private.index;
 
   Game({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
@@ -35,7 +37,8 @@ class Game implements FirestoreDoc {
         teamTwo = data['teamTwo'] ?? 'TWO',
         gameDate = data['gameDate'] ?? DateFormat('yyyy-MM-dd').format(DateTime.now()),
         squareValue = data['squareValue'] ?? 0,
-        status = data['status'] ?? 0;
+        status = data['status'] ?? 0,
+        permission = data['permission'] ?? Permission.private.index; // 0=Private, 1=Public, Default to Private.
 
   @override
   String get key {
@@ -63,6 +66,7 @@ class Game implements FirestoreDoc {
     gameDate = data['gameDate'] ?? gameDate;
     squareValue = data['squareValue'] ?? squareValue;
     status = data['status'] ?? 0;
+    permission = data['permission'] ?? Permission.private.index;
   }
 
   // Returns a Map<String, dynamic> of all member veriables.
@@ -80,6 +84,7 @@ class Game implements FirestoreDoc {
       'gameDate': gameDate,
       'squareValue': squareValue,
       'status' : status,
+      'permission' : permission,
     };
   }
 }

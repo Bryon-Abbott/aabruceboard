@@ -128,7 +128,7 @@ class Player implements FirestoreDoc {
         noCommunities = data['noCommunities'] ?? 0,
         noSeries = data['noSeries'] ?? 0
   {
-    log('Creating player ID: $docId  U: $uid fName: $fName', name: '${runtimeType.toString()}:Player()');
+   // log('Creating player ID: $docId  U: $uid fName: $fName', name: '${runtimeType.toString()}:Player()');
   }
 
   // The key for the Player Document is the Firestore Users ID (uid)

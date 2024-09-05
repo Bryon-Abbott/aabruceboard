@@ -7,9 +7,9 @@
         cy="56"
         r="50"
         id="circle8"
-        style="fill:#c8e6c9;stroke:#0f410f;stroke-width:2" />
+        style="fill:honeydew;stroke:darkgreen;stroke-width:2" />
     <path
         id="path10"
         d="M 56,56 V 7 a 49,49 0 0 1 49,49 z"
-        style="fill:#196419" />
+        style="fill:green" />
 </svg>

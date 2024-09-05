@@ -24,12 +24,13 @@ class _SettingsMainState extends State<SettingsMain> {
 //  _SettingsMainState({required this.player})
   late Player player;
   bool settingDarkMode = false;
+  bool settingNewInterface = false;
 
   @override
   void initState() {
     super.initState();
     player = widget.player;
-    //    settingDarkMode = Preferences.getDarkMode() ?? false;
+    settingNewInterface = Preferences.getPreferenceBool(Preferences.keyNewInterface) ?? false;
   }
 
   @override
@@ -37,7 +38,18 @@ class _SettingsMainState extends State<SettingsMain> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Settings for ${widget.player.lName}'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          // if user presses back, cancels changes to list (order/deletes)
+          onPressed: () {
+            Navigator.of(context).pop();
+            if (settingNewInterface) {
+              Navigator.of(context).pushReplacementNamed('/home2');
+            } else {
+              Navigator.of(context).pushReplacementNamed('/home1');
+            }
+          },
+        ),        title: Text('Settings for ${widget.player.lName}'),
         actions: [
           IconButton(
             onPressed: () {
@@ -50,7 +62,6 @@ class _SettingsMainState extends State<SettingsMain> {
             tooltip: "Clear ALL Settings and return ...",
           ),
         ],
-
       ),
       body: SafeArea(
         child: SettingsList(
@@ -75,16 +86,17 @@ class _SettingsMainState extends State<SettingsMain> {
                     },
                     title: const Text("Dark Mode"),
                   ),
-                  // SettingsTile(
-                  //   enabled: true,
-                  //   leading: const Icon(Icons.not_interested_outlined),
-                  //   // initialValue: false,
-                  //   title: const Text("Exclude Player"),
-                  //   trailing: const IntegerFormField(
-                  //     sharedPreferenceKey: Preferences.keyExcludePlayerNo,
-                  //     initialValue: '00000',
-                  //   ),
-                  // ),
+                  SettingsTile.switchTile(
+                    leading: const Icon(Icons.new_releases_outlined),
+                    initialValue: settingNewInterface,
+                    onToggle: (enable) {
+                      settingNewInterface = enable;
+                      Preferences.setPreferenceBool(Preferences.keyNewInterface, settingNewInterface);
+                      setState(() {
+                      });
+                    },
+                    title: const Text("Test New Interface"),
+                  ),
                 ]
             ),
             SettingsSection(

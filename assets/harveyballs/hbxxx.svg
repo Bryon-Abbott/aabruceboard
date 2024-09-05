@@ -1,0 +1,17 @@
+<!--
+Note: Stroke-dasharray
+    x = Degree x Circumference / 100 (35 x 157.08 / 100 = 39.27)
+    y = Circumference (35 x 3.14 x 2 = 157.08)
+-->
+<svg height="20" width="20" viewBox="0 0 128 128">
+    <circle r="50" cx="56" cy="56" fill="honeydew"
+        stroke="green"
+        stroke-width="2"
+    />
+    <circle r="25" cx="56" cy="56" fill="transparent"
+        stroke="green"
+        stroke-width="50"
+        stroke-dasharray="78.54, 157.08"
+        transform="rotate(-90) translate(-112)"
+    />
+</svg>

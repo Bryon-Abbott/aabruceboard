@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bruceboard/models/membershipprovider.dart';
+import 'package:bruceboard/pages/general/home2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -29,7 +30,7 @@ import 'package:bruceboard/pages/membership/membership_maintain.dart';
 import 'package:bruceboard/pages/community/community_select.dart';
 import 'package:bruceboard/pages/community/community_select_owner.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
-import 'package:bruceboard/pages/general/home.dart';
+import 'package:bruceboard/pages/general/home1.dart';
 import 'package:bruceboard/pages/general/about.dart';
 //import 'package:bruceboard/pages/settings/settings_main.dart';
 import 'package:bruceboard/pages/settings/settings_scoring.dart';
@@ -94,6 +95,8 @@ class LoadApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    bool newInterface = Preferences.getPreferenceBool(Preferences.keyNewInterface) ?? false;
+    String initialRoot = (newInterface==true) ? '/home2' : '/home1';
     return StreamProvider<BruceUser?>.value(
       initialData: BruceUser(),
       value: AuthService().user,
@@ -109,17 +112,18 @@ class LoadApp extends StatelessWidget {
           debugShowFloatingThemeButton: false,
           initial: savedThemeMode ?? AdaptiveThemeMode.light,
           builder: (theme, lightTheme) {
-            log('Return MaterialApp', name: '${runtimeType.toString()}:build()');
+            log('Return MaterialApp - New Interface $newInterface Initial Root: $initialRoot', name: '${runtimeType.toString()}:build()');
             return MaterialApp(
-              title: 'Bruce Board',
+              title: 'BruceBoard',
               //          theme: lightTheme,
               theme: theme,
               darkTheme: darkTheme,
               debugShowCheckedModeBanner: false,
-              initialRoute: '/home',
+              initialRoute: initialRoot,
               routes: {
                 '/': (context) => const Loading(),
-                '/home': (context) => const Home(),
+                '/home1': (context) => const Home1(),
+                '/home2': (context) => const Home2(),
                 '/about': (context) => const About(),
                 '/authenticate': (context) => const Authenticate(),
                 '/player-select': (context) => const PlayerSelect(),

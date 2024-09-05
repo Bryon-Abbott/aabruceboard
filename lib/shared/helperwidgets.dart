@@ -61,3 +61,27 @@ Future<String?> openDialogMessageComment(BuildContext context, {String? defaultC
     )
   );
 }
+
+String getHarveyBallSvg(int percent) {
+  String iconSvg;
+  switch (percent) {
+    case >= 100:
+      iconSvg = "assets/harveyballs/hb100.svg";
+      break;
+    case >= 75:
+      iconSvg = "assets/harveyballs/hb075.svg";
+      break;
+    case >= 50:
+      iconSvg = "assets/harveyballs/hb050.svg";
+      break;
+    case >= 25:
+      iconSvg = "assets/harveyballs/hb025.svg";
+      break;
+    case >= 00:
+      iconSvg = "assets/harveyballs/hb000.svg";
+      break;
+    default:
+      iconSvg = "assets/harveyballs/hb000.svg";
+  }
+  return iconSvg;
+}

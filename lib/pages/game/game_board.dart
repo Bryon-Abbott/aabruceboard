@@ -12,7 +12,6 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:bruceboard/pages/game/game_summary_page.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:bruceboard/utils/preferences.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -590,7 +589,7 @@ class _GameBoardState extends State<GameBoard> {
           Member selectedMember = await DatabaseService(FSDocType.member, cidKey: Community.Key(selectedAccess.cid)).fsDoc(docId: selectedPlayer.docId ) as Member;
           dev.log("Load Game Data ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:onMenuSelected");
           int updated = 0;
-          int creditsSpent = 0;
+//          int creditsSpent = 0;
           for (int i = 0; i < 100; i++) {
             if (grid.squarePlayer[i] == -1) {
               if ((selectedMember.credits >= game.squareValue) || (selectedPlayer.docId == kExcludePlayerNo)) {
@@ -600,7 +599,7 @@ class _GameBoardState extends State<GameBoard> {
                 grid.squareStatus[i] = SquareStatus.taken.index; 
                 if (selectedPlayer.docId != kExcludePlayerNo) {
                   selectedMember.credits -= game.squareValue;
-                  creditsSpent += game.squareValue;
+//                  creditsSpent += game.squareValue;
                   Audit audit = Audit(data: {'code': AuditCode.squareFilledExclude.code,
                     'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
                     'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
