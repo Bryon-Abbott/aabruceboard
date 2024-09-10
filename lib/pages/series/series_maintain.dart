@@ -53,9 +53,9 @@ class SeriesMaintainState extends State<SeriesMaintain> {
       SeriesType sti = seriesData.keys.firstWhere((k) => seriesData[k]?.seriesText == currentSeriesType,
           orElse: () =>  SeriesType.itemOther);
      // currentSeriesPng = seriesTypeData[sti]![1];
-      controllerCid = TextEditingController(text: Community.Key(series?.defaultCid ?? -1));
       currentSeriesIcon = seriesData[sti]!.seriesIcon;
     }    super.initState();
+    controllerCid = TextEditingController(text: Community.Key(series?.defaultCid ?? 99999));
   }
 
   @override

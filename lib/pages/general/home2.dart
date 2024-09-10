@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/pages/game/game_list_public.dart';
+import 'package:bruceboard/pages/membership/membership_list_cascade.dart';
 import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:bruceboard/pages/player/player_profile_page.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
@@ -180,14 +181,20 @@ class _Home2State extends State<Home2> {
                     Column(
                       children: <Widget>[
                         Container(
-                          height: newScreenHeight-116,
+                          height: newScreenHeight-210,
                             child: (bruceUser.uid == 'Anonymous')
                                 ? SignInMessage()
                                 : _selectedPermission[1]  // 1=Public Tab
                                   ? GameListPublic()
-                                  : Text("Build My Community Tab"),
+                                  : MembershipListCascade(),
                         ),
                       // const SizedBox(height: 20),
+                        (kIsWeb)
+                            ? const SizedBox()
+                            : Padding(
+                                padding: const EdgeInsets.fromLTRB(0,2,0,0),
+                                child: const AaBannerAd(),
+                              ),
                         Row(
                           children: [
                             Expanded(
@@ -213,7 +220,7 @@ class _Home2State extends State<Home2> {
                               child: Tooltip(
                                 message: "Manage Memberships",
                                 child: TextButton.icon(
-                                  icon: Icon(Icons.games_rounded),
+                                  icon: Icon(Icons.wallet_membership_outlined),
                                   label: Text(""),
                                   onPressed: (bruceUser.uid == 'Anonymous')
                                       ? null
@@ -238,6 +245,21 @@ class _Home2State extends State<Home2> {
                                 ),
                               ),
                             ),
+                            Expanded(
+                              flex: 1,
+                              child: Tooltip(
+                                message: "Manage Games",
+                                child: TextButton.icon(
+                                  icon: Icon(Icons.games_outlined),
+                                  label: Text(""),
+                                  onPressed: (bruceUser.uid == 'Anonymous')
+                                      ? null
+                                      : () {
+                                    Navigator.pushNamed(context, '/series-list');
+                                  },
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       Text(
@@ -247,7 +269,6 @@ class _Home2State extends State<Home2> {
                       ),
                     ]
                     ),
-                    (kIsWeb) ? const SizedBox() : const AaBannerAd(),
                   ],
                 ),
               ),

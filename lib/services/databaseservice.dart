@@ -254,7 +254,8 @@ class DatabaseService {
 
   // Series list from snapshot
   List<FirestoreDoc> _fsDocListFromSnapshot(QuerySnapshot snapshot) {
-    log('Collection Size is ${snapshot.size} UID: $uid');
+    log('QuerySnapshot size is ${snapshot.size} UID: $uid Type: $fsDocType',
+        name: '${runtimeType.toString()}:_fsDocListFromSnapshot');
     return snapshot.docs.map((doc) {
      // log("mapping docs", name: '${runtimeType.toString()}:fsDocStream()');
       Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
@@ -447,10 +448,10 @@ class DatabaseService {
       case "Game" :
         log("Group: $group ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
         query = db.collectionGroup("Game");
-        //  .where('permission', isEqualTo: 1);
-        // streamQuerySnapshot = db.collectionGroup("Game")
-        //     .where('permission', isEqualTo: 1)
-        //     .snapshots();
+        break;
+      case "Access" :
+        log("Group: $group ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
+        query = db.collectionGroup("Access");
         break;
       default: {
         log('Error: Undefined group $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');

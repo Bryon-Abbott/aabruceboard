@@ -6,7 +6,6 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/game/game_maintain.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/material.dart';
@@ -43,47 +42,44 @@ class GameTilePublic extends StatelessWidget {
             if (snapshotSeries.hasData) {
               series = snapshotSeries.data as Series;
             }
-            return Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Card(
-                margin: const EdgeInsets.fromLTRB(20.0, 6.0, 20.0, 0.0),
-                child: ListTile(
-                  onTap: () async {
-                    log("Game Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
-                    // await Navigator.of(context).push(
-                    //   MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),
-                    // );
-                  },
-                  //            leading: const Icon(Icons.sports_football_outlined),
-                  leading: SvgPicture.asset(iconSvg,
-                    width: 36, height: 36,
-                    //   colorFilter: ,
-                  ),
-                  title: Text('Game: ${game.name}'),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Group: ${series?.type ?? "..."}-${series?.name ?? "..."} (${gameOwner.fName} ${gameOwner.lName})'),
-                      Text('Date: ${game.gameDate}')
-                    ],
-                  ),
-                  // subtitle: Row(
-                  //   children: [
-                  //     Text('${series?.key ?? -1}:${game.key}'),
-                  //     const Spacer(),
-                  //     Text(status.name),
-                  //   ],
-                  // ),
-                  // trailing: IconButton(
-                  //   onPressed: (series != null && game.pid == activePlayer.pid)
-                  //       ? () async {
-                  //     await Navigator.of(context).push(
-                  //         MaterialPageRoute(builder: (context) => GameMaintain(series: series!, game: game)));
-                  //   }
-                  //       : null,
-                  //   icon: const Icon(Icons.edit),
-                  // ),
+            return Card(
+              margin: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 2.0),
+              child: ListTile(
+                onTap: () async {
+                  log("Game Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
+                  // await Navigator.of(context).push(
+                  //   MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),
+                  // );
+                },
+                //            leading: const Icon(Icons.sports_football_outlined),
+                leading: SvgPicture.asset(iconSvg,
+                  width: 36, height: 36,
+                  //   colorFilter: ,
                 ),
+                title: Text('Game: ${game.name}'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Group: ${series?.type ?? "..."}-${series?.name ?? "..."} (${gameOwner.fName} ${gameOwner.lName})'),
+                    Text('Date: ${game.gameDate}')
+                  ],
+                ),
+                // subtitle: Row(
+                //   children: [
+                //     Text('${series?.key ?? -1}:${game.key}'),
+                //     const Spacer(),
+                //     Text(status.name),
+                //   ],
+                // ),
+                // trailing: IconButton(
+                //   onPressed: (series != null && game.pid == activePlayer.pid)
+                //       ? () async {
+                //     await Navigator.of(context).push(
+                //         MaterialPageRoute(builder: (context) => GameMaintain(series: series!, game: game)));
+                //   }
+                //       : null,
+                //   icon: const Icon(Icons.edit),
+                // ),
               ),
             );
           }
