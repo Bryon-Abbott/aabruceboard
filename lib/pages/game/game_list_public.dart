@@ -1,4 +1,3 @@
-import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/player.dart';
@@ -6,7 +5,6 @@ import 'package:bruceboard/pages/game/game_tile_public.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class GameListPublic extends StatefulWidget {
   const GameListPublic({super.key});
@@ -18,7 +16,7 @@ class GameListPublic extends StatefulWidget {
 class _GameListPublicState extends State<GameListPublic> {
   @override
   Widget build(BuildContext context) {
-    Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
+    // Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(
       stream: DatabaseService(FSDocType.game).fsDocGroupListStream2(
@@ -39,7 +37,7 @@ class _GameListPublicState extends State<GameListPublic> {
                     Player gameOwner = snapshot.data as Player;
                     return GameTilePublic(game: game[index], gameOwner: gameOwner);
                   } else {
-                    return Loading();
+                    return const Loading();
                   }
                 }
               );

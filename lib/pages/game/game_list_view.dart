@@ -54,7 +54,7 @@ class _GameListViewState extends State<GameListView> {
                       children: [
                         Text("Group: ${widget.series.type}:${widget.series.name}"),
                         // Text("(${widget.series.key})"),
-                        Spacer(),
+                        const Spacer(),
                         Text("(Active Games: ${games.length})  "),
                         // ToDo: Make this a Double Chevron Button
                         IconButton(
@@ -70,7 +70,7 @@ class _GameListViewState extends State<GameListView> {
                       ],
                     ),
                     ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: min(games.length, 2),
                       shrinkWrap: true,
                       itemBuilder: (context, index) {
@@ -102,7 +102,7 @@ class _GameListViewState extends State<GameListView> {
             ),
           );
         } else {
-          return Loading();
+          return const Loading();
         }
       }
     );

@@ -1,19 +1,12 @@
 import 'dart:developer';
-import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/pages/membership/membership_tile_cascade.dart';
-import 'package:bruceboard/services/messageservice.dart';
-import 'package:bruceboard/shared/helperwidgets.dart';
-import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/membership.dart';
-import 'package:bruceboard/pages/membership/membership_tile.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 class MembershipListCascade extends StatefulWidget {
@@ -30,8 +23,11 @@ class _MembershipListCascadeState extends State<MembershipListCascade> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.membership).fsDocListStream,
-      builder: (context, snapshotsMembership) {
+//      stream: DatabaseService(FSDocType.membership).fsDocListStream,
+        stream: DatabaseService(FSDocType.membership).fsDocQueryListStream(
+          queryValues: {'status': "Approved"}
+        ),
+        builder: (context, snapshotsMembership) {
         if(snapshotsMembership.hasData) {
           List<Membership> membershipList = snapshotsMembership.data!.map((s) => s as Membership).toList();
             return ListView.builder(

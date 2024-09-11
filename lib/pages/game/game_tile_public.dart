@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:bruceboard/models/access.dart';
-import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
@@ -12,9 +11,6 @@ import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
-
-import 'package:bruceboard/menus/popupmenubutton_status.dart';
 
 class GameTilePublic extends StatelessWidget {
   final Game game;
@@ -24,8 +20,8 @@ class GameTilePublic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    StatusValues status = StatusValues.values[game.status];
-    Player activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
+    //StatusValues status = StatusValues.values[game.status];
+    //Player activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
     String iconSvg = getHarveyBallSvg(0);
     Board? board;
     Series? series;
@@ -52,14 +48,18 @@ class GameTilePublic extends StatelessWidget {
                   Access? access = await hasAccess(spid: game.pid, sid: game.sid);
                   if (access == null) {
                     log("No Access Found ... Request Access   ", name: '${runtimeType.toString()}:build()');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Request Access from ${gameOwner.fName} ${gameOwner.lName} through the 'Communities' icon"))
-                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Request Access from ${gameOwner.fName} ${gameOwner.lName} through the 'Communities' icon"))
+                      );
+                    }
                   } else {
                     log("Access Found ... Go to Communities ${Access.KEY(access.pid, access.cid)} ", name: '${runtimeType.toString()}:build()');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Access game through 'My Community' or 'Memberships'"))
-                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Access game through 'My Community' tab or 'Memberships' icon"))
+                      );
+                    }
                   }
                   // await Navigator.of(context).push(
                   //   MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),

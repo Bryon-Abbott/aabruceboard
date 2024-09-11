@@ -1,22 +1,10 @@
-import 'dart:developer';
-
-import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/community.dart';
-import 'package:bruceboard/models/communityplayerprovider.dart';
-import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/pages/access/access_list_series.dart';
 import 'package:bruceboard/pages/access/access_list_view.dart';
-import 'package:bruceboard/pages/series/series_list_view.dart';
-import 'package:bruceboard/services/databaseservice.dart';
-import 'package:bruceboard/services/messageservice.dart';
-import 'package:bruceboard/shared/helperwidgets.dart';
-import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 class MembershipTileCascade extends StatelessWidget {
@@ -24,7 +12,8 @@ class MembershipTileCascade extends StatelessWidget {
   final Player communityOwner;
   final Community community;
   final Member member;
-  MembershipTileCascade({super.key,
+
+  const MembershipTileCascade({super.key,
     required this.membership,
     required this.communityOwner,
     required this.community,
@@ -51,7 +40,7 @@ class MembershipTileCascade extends StatelessWidget {
               Text("Community: ${community.name} (${communityOwner.fName} ${communityOwner.lName}) "),
               Text("Membership: ${membership.key}  Credits: ${member.credits}"),
               ConstrainedBox(
-                constraints: BoxConstraints(
+                constraints: const BoxConstraints(
                   minHeight: 100,
                   maxHeight: 324,
                   minWidth: double.infinity,
@@ -61,8 +50,8 @@ class MembershipTileCascade extends StatelessWidget {
                   community: community,
                 ),
               ),
-          ],
-                ),
+            ],
+          ),
         ),
       ),
     );

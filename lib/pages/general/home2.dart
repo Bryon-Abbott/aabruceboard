@@ -70,11 +70,11 @@ class _Home2State extends State<Home2> {
     // Player player = Player(data: {});;
 
     // Calculate screen size
-    double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
-    var padding = MediaQuery.of(context).padding;
-    double newScreenHeight = screenHeight - padding.top - padding.bottom;
-    double newScreenWidth = screenWidth - padding.left - padding.right;
+    // double screenWidth = MediaQuery.of(context).size.width;
+    // double screenHeight = MediaQuery.of(context).size.height;
+    // var padding = MediaQuery.of(context).padding;
+    // double newScreenHeight = screenHeight - padding.top - padding.bottom;
+    // double newScreenWidth = screenWidth - padding.left - padding.right;
     //dev.log("Screen Dimensions are Height: $screenHeight, Width: $screenWidth : Height: $newScreenHeight, Width: $newScreenWidth", name: " ${this.runtimeType.toString()}:build");
 
     return SafeArea(
@@ -195,10 +195,10 @@ class _Home2State extends State<Home2> {
                     Expanded(
 //                      height: newScreenHeight-210,
                         child: (bruceUser.uid == 'Anonymous')
-                            ? SignInMessage()
+                            ? const SignInMessage()
                             : _selectedPermission[1]  // 1=Public Tab
-                              ? GameListPublic()
-                              : MembershipListCascade(),
+                              ? const GameListPublic()
+                              : const MembershipListCascade(),
                     ),
                     Container(
                       alignment: Alignment.center,
@@ -221,8 +221,8 @@ class _Home2State extends State<Home2> {
                             child: Tooltip(
                               message: "Manage Messages",
                               child: TextButton.icon(
-                                icon: Icon(Icons.message_outlined),
-                                label: Text(""),
+                                icon: const Icon(Icons.message_outlined),
+                                label: const Text(""),
                                 onPressed: (bruceUser.uid == 'Anonymous')
                                     ? null
                                     : () {
@@ -239,8 +239,8 @@ class _Home2State extends State<Home2> {
                             child: Tooltip(
                               message: "Manage Memberships",
                               child: TextButton.icon(
-                                icon: Icon(Icons.wallet_membership_outlined),
-                                label: Text(""),
+                                icon: const Icon(Icons.wallet_membership_outlined),
+                                label: const Text(""),
                                 onPressed: (bruceUser.uid == 'Anonymous')
                                     ? null
                                     : () {
@@ -254,8 +254,8 @@ class _Home2State extends State<Home2> {
                             child: Tooltip(
                               message: "Manage Communities",
                               child: TextButton.icon(
-                                icon: Icon(Icons.people_rounded),
-                                label: Text(""),
+                                icon: const Icon(Icons.people_rounded),
+                                label: const Text(""),
                                 onPressed: (bruceUser.uid == 'Anonymous')
                                     ? null
                                     : () {
@@ -269,8 +269,8 @@ class _Home2State extends State<Home2> {
                             child: Tooltip(
                               message: "Manage Games",
                               child: TextButton.icon(
-                                icon: Icon(Icons.games_outlined),
-                                label: Text(""),
+                                icon: const Icon(Icons.games_outlined),
+                                label: const Text(""),
                                 onPressed: (bruceUser.uid == 'Anonymous')
                                     ? null
                                     : () {
@@ -282,14 +282,14 @@ class _Home2State extends State<Home2> {
                         ],
                       ),
                     ),
-                                          Container(
-                    height: 20,
-                    child: Text(
-                      "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
-                      textAlign: TextAlign.end,
-                      style: Theme.of(context).textTheme.titleSmall,
+                    Container(
+                      height: 20,
+                      child: Text(
+                        "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
+                        textAlign: TextAlign.end,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
                     ),
-                                          ),
                   ],
                 ),
               ),
@@ -326,7 +326,7 @@ class _Home2State extends State<Home2> {
         break;
       case 3:
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => About()),
+          MaterialPageRoute(builder: (context) => const About()),
         );
         break;
     }

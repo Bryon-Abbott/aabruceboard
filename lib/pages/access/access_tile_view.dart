@@ -1,14 +1,9 @@
-import 'dart:developer';
-import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/series/series_list_view.dart';
 import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/community.dart';
-import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/databaseservice.dart';
 
 class AccessTileView extends StatelessWidget {
   final Player communityOwner;

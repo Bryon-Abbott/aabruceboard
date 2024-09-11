@@ -5,9 +5,8 @@ class SignInMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text(
-        ''' 
+    return const Text(
+      ''' 
 Welcome Message 
 
 Sign In to see games
@@ -19,11 +18,16 @@ Sign In to see games
 "Public Games" Tab shows games the owner has made open to the public 
   Select a public game to request access to the Community
 
+Use the Activity Icons in the footer to play and manage Pools.
+  Messages: Respond to messages.
+  Memberships: Review your membership in communities. 
+  Communities: Create your own communities. 
+  Games: Create your own Game Groups and Pools.   
+
 Additional Documentation can be accessed from the About page by pressing the Document icon in the top right. 
 
 Enjoy         
         '''
-      ),
     );
   }
 }
