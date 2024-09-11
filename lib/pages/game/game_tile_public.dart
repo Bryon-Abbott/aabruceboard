@@ -1,9 +1,11 @@
 import 'dart:developer';
 
+import 'package:bruceboard/models/access.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
+import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/services/databaseservice.dart';
@@ -47,6 +49,18 @@ class GameTilePublic extends StatelessWidget {
               child: ListTile(
                 onTap: () async {
                   log("Game Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
+                  Access? access = await hasAccess(spid: game.pid, sid: game.sid);
+                  if (access == null) {
+                    log("No Access Found ... Request Access   ", name: '${runtimeType.toString()}:build()');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("Request Access from ${gameOwner.fName} ${gameOwner.lName} through the 'Communities' icon"))
+                    );
+                  } else {
+                    log("Access Found ... Go to Communities ${Access.KEY(access.pid, access.cid)} ", name: '${runtimeType.toString()}:build()');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Access game through 'My Community' or 'Memberships'"))
+                    );
+                  }
                   // await Navigator.of(context).push(
                   //   MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),
                   // );
@@ -86,5 +100,33 @@ class GameTilePublic extends StatelessWidget {
         );
       }
     );
+  }
+
+  Future<Access?> hasAccess({required int spid, required int sid}) async {
+    Access? access;
+
+    // Get Players Memberships
+    List<FirestoreDoc> fsDocs = await DatabaseService(FSDocType.membership).fsDocList;
+    List<Membership> memberships = fsDocs.map((m) => m as Membership).toList();
+
+    // Get Series Accesses
+    List<FirestoreDoc> fsDocs2 = await DatabaseService(FSDocType.access).fsDocGroupList(
+      "Access", queryFields: {'pid': spid, 'sid': sid});
+    List<Access> accesses = fsDocs2.map((a) => a as Access).toList();
+
+    // Compare Membership and Accesses to see if there is a match
+    for ( Membership m in memberships ) {
+      log("Looking for Access for Membership ${m.key}   ", name: '${runtimeType.toString()}:build()');
+      // Get All Community Accesses for given series
+      for ( Access a in accesses ) {
+        if ((a.cid == m.cid) && (a.pid == m.cpid)) {
+          access = a;
+          break;
+        }
+      }
+      // If an Access found break out and return access.
+      if ( access != null ) break;
+    }
+    return Future.value(access);
   }
 }

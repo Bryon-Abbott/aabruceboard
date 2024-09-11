@@ -144,139 +144,146 @@ class _Home2State extends State<Home2> {
                 ],
               ),
               body: Container(
-                height: newScreenHeight,
-                width: newScreenWidth,
+                // height: newScreenHeight,
+                // width: newScreenWidth,
                 color: Theme.of(context).colorScheme.surface,
                 child: Column(
                   children: [
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        return ToggleButtons(
-                          direction: Axis.horizontal,
-                          onPressed: (int index) {
-                            setState(() {
-                              // The button that is tapped is set to true, and the others to false.
-                              for (int i = 0; i < _selectedPermission.length; i++) {
-                                _selectedPermission[i] = i == index;
-                              }
-                            });
-                          },
-                          borderWidth: 2,
-                          borderRadius: const BorderRadius.all(Radius.circular(0)),
-                          selectedBorderColor: Colors.green,
-                          borderColor: Colors.green,
-                          selectedColor: Colors.white,
-                          fillColor: Colors.green[200],
-                          constraints: BoxConstraints.expand(width: (constraints.maxWidth-6) / _selectedPermission.length),
-                          // color: Colors.green[400],
-                          // constraints: const BoxConstraints(
-                          //   minHeight: 40.0,
-                          //   minWidth: 200.0,
-                          // ),
-                          isSelected: _selectedPermission,
-                          children: kPermission,
-                        );
-                      }
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Container(
-                          height: newScreenHeight-210,
-                            child: (bruceUser.uid == 'Anonymous')
-                                ? SignInMessage()
-                                : _selectedPermission[1]  // 1=Public Tab
-                                  ? GameListPublic()
-                                  : MembershipListCascade(),
-                        ),
-                      // const SizedBox(height: 20),
-                        (kIsWeb)
-                            ? const SizedBox()
-                            : Padding(
-                                padding: const EdgeInsets.fromLTRB(0,2,0,0),
-                                child: const AaBannerAd(),
-                              ),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Tooltip(
-                                message: "Manage Messages",
-                                child: TextButton.icon(
-                                  icon: Icon(Icons.message_outlined),
-                                  label: Text(""),
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            MessageListIncoming(activePlayer: player)));
-                                    //Navigator.pushNamed(context, '/message-list-incoming');
-                                  },
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Tooltip(
-                                message: "Manage Memberships",
-                                child: TextButton.icon(
-                                  icon: Icon(Icons.wallet_membership_outlined),
-                                  label: Text(""),
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                    Navigator.pushNamed(context, '/membership-list');
-                                  },
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Tooltip(
-                                message: "Manage Communities",
-                                child: TextButton.icon(
-                                  icon: Icon(Icons.people_rounded),
-                                  label: Text(""),
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                    Navigator.pushNamed(context, '/community-list');
-                                  },
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Tooltip(
-                                message: "Manage Games",
-                                child: TextButton.icon(
-                                  icon: Icon(Icons.games_outlined),
-                                  label: Text(""),
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                    Navigator.pushNamed(context, '/series-list');
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      Text(
-                        "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
-                        textAlign: TextAlign.end,
-                        style: Theme.of(context).textTheme.titleSmall,
+                    Container(
+                      height: 30,
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return ToggleButtons(
+                            direction: Axis.horizontal,
+                            onPressed: (int index) {
+                              setState(() {
+                                // The button that is tapped is set to true, and the others to false.
+                                for (int i = 0; i < _selectedPermission.length; i++) {
+                                  _selectedPermission[i] = i == index;
+                                }
+                              });
+                            },
+                            borderWidth: 2,
+                            borderRadius: const BorderRadius.all(Radius.circular(0)),
+                            selectedBorderColor: Colors.green,
+                            borderColor: Colors.green,
+                            selectedColor: Colors.white,
+                            fillColor: Colors.green[200],
+                            constraints: BoxConstraints.expand(width: (constraints.maxWidth-6) / _selectedPermission.length),
+                            // color: Colors.green[400],
+                            // constraints: const BoxConstraints(
+                            //   minHeight: 40.0,
+                            //   minWidth: 200.0,
+                            // ),
+                            isSelected: _selectedPermission,
+                            children: kPermission,
+                          );
+                        }
                       ),
-                    ]
                     ),
+                    Expanded(
+//                      height: newScreenHeight-210,
+                        child: (bruceUser.uid == 'Anonymous')
+                            ? SignInMessage()
+                            : _selectedPermission[1]  // 1=Public Tab
+                              ? GameListPublic()
+                              : MembershipListCascade(),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      height: 54,
+                      child: (kIsWeb)
+                        ? Text("BruceBoard",
+                            style: Theme.of(context).textTheme.titleLarge,
+                          )
+                        : const Padding(
+                            padding: EdgeInsets.fromLTRB(0,2,0,0),
+                            child: AaBannerAd(),
+                          ),
+                    ),
+                    Container(
+                      height: 30,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Tooltip(
+                              message: "Manage Messages",
+                              child: TextButton.icon(
+                                icon: Icon(Icons.message_outlined),
+                                label: Text(""),
+                                onPressed: (bruceUser.uid == 'Anonymous')
+                                    ? null
+                                    : () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) =>
+                                          MessageListIncoming(activePlayer: player)));
+                                  //Navigator.pushNamed(context, '/message-list-incoming');
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Tooltip(
+                              message: "Manage Memberships",
+                              child: TextButton.icon(
+                                icon: Icon(Icons.wallet_membership_outlined),
+                                label: Text(""),
+                                onPressed: (bruceUser.uid == 'Anonymous')
+                                    ? null
+                                    : () {
+                                  Navigator.pushNamed(context, '/membership-list');
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Tooltip(
+                              message: "Manage Communities",
+                              child: TextButton.icon(
+                                icon: Icon(Icons.people_rounded),
+                                label: Text(""),
+                                onPressed: (bruceUser.uid == 'Anonymous')
+                                    ? null
+                                    : () {
+                                  Navigator.pushNamed(context, '/community-list');
+                                },
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Tooltip(
+                              message: "Manage Games",
+                              child: TextButton.icon(
+                                icon: Icon(Icons.games_outlined),
+                                label: Text(""),
+                                onPressed: (bruceUser.uid == 'Anonymous')
+                                    ? null
+                                    : () {
+                                  Navigator.pushNamed(context, '/series-list');
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                                          Container(
+                    height: 20,
+                    child: Text(
+                      "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
+                      textAlign: TextAlign.end,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                                          ),
                   ],
                 ),
               ),
             ),
           );
-          // } else {
-          //   return const Loading();
-          // }
         },
       ),
     );

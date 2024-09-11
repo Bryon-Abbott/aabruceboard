@@ -1,21 +1,27 @@
 import 'dart:math';
 
 import 'package:bruceboard/models/board.dart';
+import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
+import 'package:bruceboard/models/membership.dart';
+import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
+import 'package:bruceboard/pages/game/game_list.dart';
 import 'package:bruceboard/pages/game/game_tile_view.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class GameListView extends StatefulWidget {
   final Player seriesOwner;
   final Series series;
+
   const GameListView({super.key,
     required this.seriesOwner,
-    required this.series
+    required this.series,
   });
 
   @override
@@ -54,9 +60,20 @@ class _GameListViewState extends State<GameListView> {
                   children: [
                     Row(
                       children: [
-                        Text("Series: ${widget.series.type}:${widget.series.name} (${widget.series.key})"),
+                        Text("Group: ${widget.series.type}:${widget.series.name} (${widget.series.key})"),
                         Spacer(),
-                        Text("Active Games: ${games.length}"),
+                        SizedBox(
+                          height: 20,
+                          child: ElevatedButton(
+                              onPressed: () async {
+                                Provider.of<CommunityPlayerProvider>(context, listen: false).communityPlayer = widget.seriesOwner;
+                                Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (context) => GameList(series: widget.series)));
+                              },
+                              child: Text("See All"),
+                          ),
+                        ),
+                        //Text("Active Games: ${games.length}"),
                       ],
                     ),
                     ListView.builder(

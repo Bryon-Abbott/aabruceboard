@@ -33,6 +33,7 @@ class MembershipTileCascade extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<MembershipProvider>(context).currentMembership = membership;
     return Padding(
       padding: const EdgeInsets.all(2),
       child: Container(
@@ -52,7 +53,7 @@ class MembershipTileCascade extends StatelessWidget {
               ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: 100,
-                  maxHeight: 300,
+                  maxHeight: 324,
                   minWidth: double.infinity,
                 ),
                 child: AccessListView(

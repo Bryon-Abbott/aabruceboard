@@ -400,39 +400,99 @@ class DatabaseService {
   }
   //get FirestoreDoc List stream
   // This has been replaced by fsDocQueryListStream
-  Stream<List<FirestoreDoc>> fsDocQueryListStreamOld(
-      { required String filterField1, required String filterValue1,
-        required String filterField2, required String filterValue2,}) {
-    log('fsDocListStream: ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
-    log(docCollection.path, name: '${runtimeType.toString()}:fsDocQueryListStream()');
+  // ToDo: Refactor to remove this using fsDocQueryListStream
+//   Stream<List<FirestoreDoc>> fsDocQueryListStreamOld(
+//       { required String filterField1, required String filterValue1,
+//         required String filterField2, required String filterValue2,}) {
+//     log('fsDocListStream: ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
+//     log(docCollection.path, name: '${runtimeType.toString()}:fsDocQueryListStream()');
+//
+//     Stream<QuerySnapshot<Object?>> s001;
+//
+//     if (filterField1.isNotEmpty && filterValue1.isNotEmpty) {
+//       if (filterField2.isNotEmpty && filterValue2.isNotEmpty) {
+//         s001 = docCollection
+//             .where(filterField1, isEqualTo: filterValue1)
+//             .where(filterField2, isEqualTo: filterValue2)
+//             .snapshots();
+//       } else {
+//         s001 = docCollection
+//             .where(filterField1, isEqualTo: filterValue1)
+//             .snapshots();
+//       }
+//     } else if (filterField2.isNotEmpty && filterValue2.isNotEmpty) {
+//       s001 = docCollection
+//           .where(filterField2, isEqualTo: filterValue2)
+//           .snapshots();
+//     } else {
+//       s001 = docCollection
+//           .snapshots();
+//     }
+//     //Stream<QuerySnapshot<Object?>> s001 = docCollection.where(filterField1, isEqualTo: filterValue1).snapshots();
+//     return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
+//     // return docCollection.snapshots()
+//     //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
+// //        .map(_fsDocListFromSnapshot);
+//   }
+// Return a Future List give query fields for a Group.
+  // Note: Not Tested ...
+  Future<List<FirestoreDoc>> fsDocGroupList(String group, {
+    required Map<String, dynamic> queryFields,
+    Map<String, dynamic>? orderFields }) async {
 
-    Stream<QuerySnapshot<Object?>> s001;
+//    Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
+    late Query<Object?> query;
+    List<FirestoreDoc> fsDocList = [];
 
-    if (filterField1.isNotEmpty && filterValue1.isNotEmpty) {
-      if (filterField2.isNotEmpty && filterValue2.isNotEmpty) {
-        s001 = docCollection
-            .where(filterField1, isEqualTo: filterValue1)
-            .where(filterField2, isEqualTo: filterValue2)
-            .snapshots();
-      } else {
-        s001 = docCollection
-            .where(filterField1, isEqualTo: filterValue1)
-            .snapshots();
+    log('fsDocGroupList: Group: $group, $queryFields',
+        name: '${runtimeType.toString()}:fsDocGroupList()');
+
+    switch (group) {
+      case "Game" :
+        log("Group: $group ...", name: '${runtimeType.toString()}:fsDocGroupList()');
+        query = db.collectionGroup("Game");
+        break;
+      case "Access" :
+        log("Group: $group ...", name: '${runtimeType.toString()}:fsDocGroupList()');
+        query = db.collectionGroup("Access");
+        break;
+      default: {
+        log('Error: Undefined group $group', name: '${runtimeType.toString()}:fsDocGroupList()');
+        return fsDocList;
       }
-    } else if (filterField2.isNotEmpty && filterValue2.isNotEmpty) {
-      s001 = docCollection
-          .where(filterField2, isEqualTo: filterValue2)
-          .snapshots();
-    } else {
-      s001 = docCollection
-          .snapshots();
     }
-    //Stream<QuerySnapshot<Object?>> s001 = docCollection.where(filterField1, isEqualTo: filterValue1).snapshots();
-    return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
-    // return docCollection.snapshots()
-    //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
-//        .map(_fsDocListFromSnapshot);
+
+    queryFields.forEach((field, value) {
+      if (field != '' && value != '') {
+        log("Select - Field: $field, Value: $value ...", name: '${runtimeType.toString()}:fsDocGroupList()');
+        query = query.where(field.toString(), isEqualTo: value);
+        // ignore: empty_statements
+      };
+    });
+    // Add order Options if they exists
+    if (orderFields != null) {
+      orderFields.forEach((field, descending) {
+        if (field != '' && descending != '') {
+          log("Order - Field: $field, Value: $descending ...", name: '${runtimeType.toString()}:fsDocGroupList()');
+          query = query.orderBy(field.toString(), descending: descending);
+        };
+      });
+    }
+    await query.get().then((snapshot) {
+      log('Snapshot Size ${snapshot.size}', name: '${runtimeType.toString()}:get fsDocList');
+      for (QueryDocumentSnapshot<Object?> doc in snapshot.docs) {
+        log('Snapshot Doc ID:  ${doc.id}', name: '${runtimeType.toString()}:get fsDocList');
+        Map<String, dynamic> data =  doc.data()! as Map<String, dynamic>;
+        FirestoreDoc fsDoc = FirestoreDoc( fsDocType, data: data );
+        fsDocList.add(fsDoc);
+      }
+      log('Return type ${fsDocList.runtimeType} Length: ${fsDocList.length}', name: '${runtimeType.toString()}:fsDocGroupList()');
+    },
+      onError: (e) => log("Error getting document: $e", name: '${runtimeType.toString()}:fsDocGroupList()'),
+    );
+    return fsDocList;
   }
+
   // Use this as the default Group
   Stream<List<FirestoreDoc>> fsDocGroupListStream2(String group, {
     required Map<String, dynamic> queryFields,
@@ -480,6 +540,7 @@ class DatabaseService {
   }
 
   //get FirestoreDoc List stream given a group
+  //
   Stream<List<FirestoreDoc>> fsDocGroupListStream({ required String group, int pid=0, int cid=0, int pidTo=0, int pidFrom=0} ) {
     Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
     log('Database: fsDocGroupListStream: Group: $group, pid: $pid cid: $cid pidTo: $pidTo',name: '${runtimeType.toString()}:fsDocGroupListStream()');
@@ -516,7 +577,6 @@ class DatabaseService {
           //      .where('timestamp',isGreaterThan: 0)
               .snapshots();
         }
-
         break;
       default: {
         log('Error: Undefined group $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');

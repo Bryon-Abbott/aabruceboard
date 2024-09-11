@@ -1,7 +1,11 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/board.dart';
+import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/player.dart';
@@ -10,10 +14,6 @@ import 'package:bruceboard/pages/game/game_maintain.dart';
 import 'package:bruceboard/pages/game/game_board.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:provider/provider.dart';
-
 import 'package:bruceboard/menus/popupmenubutton_status.dart';
 
 class GameTile extends StatelessWidget {
@@ -21,19 +21,20 @@ class GameTile extends StatelessWidget {
   final Game game;
   final Function callback;
 
-
   const GameTile({super.key,  required this.callback, required this.series, required this.game });
 
   @override
   Widget build(BuildContext context) {
     StatusValues status = StatusValues.values[game.status];
+    Player communityPlayer = Provider.of<CommunityPlayerProvider>(context).communityPlayer;
     Player activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
     // Exclude games for non-owners where game status is Prepare or Archived.
     if ((activePlayer.pid == game.pid) || (game.status == 1) || (game.status == 2) ) {
       String iconSvg = getHarveyBallSvg(0);
       Board? board;
       return StreamBuilder<FirestoreDoc>(
-        stream: DatabaseService(FSDocType.board, gidKey: Game.Key(game.docId), sidKey: Series.Key(game.sid))
+        stream: DatabaseService(FSDocType.board, uid: communityPlayer.uid,
+            gidKey: Game.Key(game.docId), sidKey: Series.Key(game.sid))
             .fsDocStream(key: Board.Key(game.docId)),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
