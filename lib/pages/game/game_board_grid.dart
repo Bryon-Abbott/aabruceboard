@@ -306,14 +306,14 @@ class _GameBoardGridState extends State<GameBoardGrid> {
             'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
             'square': squareIndex, 'debit':  game.squareValue, 'credit': 0});
           await DatabaseService(FSDocType.audit).fsDocAdd(audit);
-
-          await messageSend(20040, messageType[MessageTypeOption.notification]!,
-            playerFrom: activePlayer, playerTo: selectedPlayer,
-            comment: comment ?? "No Comment",
-            description: "Square $squareIndex for Game <${game.name}> in Series <${series.name}> has been assigned to you for ${game.squareValue} credit(s)."
-                " Your Remaining credits in community <${selectedAccess.key}> are ${member.credits}.",
-            data: { 'cid': selectedAccess.docId, 'sid': game.sid, 'gid': game.docId, 'squareRequested': squareIndex },
-          );
+          // Reduced Messages ... don't send on Assign
+          // await messageSend(20040, messageType[MessageTypeOption.notification]!,
+          //   playerFrom: activePlayer, playerTo: selectedPlayer,
+          //   comment: comment ?? "No Comment",
+          //   description: "Square $squareIndex for Game <${game.name}> in Series <${series.name}> has been assigned to you for ${game.squareValue} credit(s)."
+          //       " Your Remaining credits in community <${selectedAccess.key}> are ${member.credits}.",
+          //   data: { 'cid': selectedAccess.docId, 'sid': game.sid, 'gid': game.docId, 'squareRequested': squareIndex },
+          // );
         } else {  // Just write the audit record.
           Audit audit = Audit(data: {'code': AuditCode.squareAssignedExclude.code, 'ownerPid': activePlayer.pid, 'playerPid': selectedPlayer.pid,
             'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,

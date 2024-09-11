@@ -1,5 +1,4 @@
 import 'dart:developer';
-//import 'dart:ffi';
 import 'package:bruceboard/menus/popupmenubutton_status.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
@@ -17,7 +16,6 @@ import 'package:bruceboard/services/databaseservice.dart';
 
 // Create a Form widget.
 class SeriesMaintain extends StatefulWidget {
-
   final Series? series;
   const SeriesMaintain({super.key, this.series});
 
@@ -80,7 +78,6 @@ class SeriesMaintainState extends State<SeriesMaintain> {
     } else {
       log('No Series found ... New series, dont use until created?', name: '${runtimeType.toString()}:build()');
     }
-
 
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(

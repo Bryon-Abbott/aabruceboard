@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/pages/game/game_list_public.dart';
+import 'package:bruceboard/pages/general/about.dart';
 import 'package:bruceboard/pages/membership/membership_list_cascade.dart';
 import 'package:bruceboard/pages/message/message_list_incoming.dart';
 import 'package:bruceboard/pages/player/player_profile_page.dart';
@@ -140,6 +141,16 @@ class _Home2State extends State<Home2> {
                         ],
                       ),
                     ),
+                      const PopupMenuItem<int>(
+                        value: 3,
+                        child: Row(
+                          children: [
+                            Icon(Icons.info_outline_rounded),
+                            SizedBox(width: 8),
+                            Text("About"),
+                          ],
+                        ),
+                      ),
                   ])
                 ],
               ),
@@ -311,6 +322,11 @@ class _Home2State extends State<Home2> {
       case 2:
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => SettingsMain(player: player)),
+        );
+        break;
+      case 3:
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => About()),
         );
         break;
     }

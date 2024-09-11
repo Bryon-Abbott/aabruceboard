@@ -4,8 +4,6 @@ import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
-import 'package:bruceboard/models/membership.dart';
-import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_list.dart';
@@ -36,12 +34,6 @@ class _GameListViewState extends State<GameListView> {
       stream: DatabaseService(FSDocType.game, uid: widget.seriesOwner.uid, sidKey: widget.series.key ).fsDocQueryListStream(
         queryValues: { 'status': 1 }
       ),
-      // stream: DatabaseService(FSDocType.game, uid: widget.seriesOwner.uid, sidKey: widget.series.key ).fsDocListStream,
-      // stream: DatabaseService(FSDocType.game, uid: widget.seriesOwner.uid).fsDocGroupListStream2(
-      //   "Game",
-      //   queryFields: {'sid': widget.series.docId, 'pid': widget.seriesOwner.pid, 'status': 1},
-      //   orderFields: {'gameDate': false},
-      // ),
       builder: (context, snapshotsGame) {
         if (snapshotsGame.hasData) {
           List<Game> games = snapshotsGame.data!.map((g) => g as Game).toList();
@@ -60,18 +52,19 @@ class _GameListViewState extends State<GameListView> {
                   children: [
                     Row(
                       children: [
-                        Text("Group: ${widget.series.type}:${widget.series.name} (${widget.series.key})"),
+                        Text("Group: ${widget.series.type}:${widget.series.name}"),
+                        // Text("(${widget.series.key})"),
                         Spacer(),
-                        SizedBox(
-                          height: 20,
-                          child: ElevatedButton(
-                              onPressed: () async {
-                                Provider.of<CommunityPlayerProvider>(context, listen: false).communityPlayer = widget.seriesOwner;
-                                Navigator.of(context).push(
-                                    MaterialPageRoute(builder: (context) => GameList(series: widget.series)));
-                              },
-                              child: Text("See All"),
-                          ),
+                        Text("(Active Games: ${games.length})  "),
+                        // ToDo: Make this a Double Chevron Button
+                        IconButton(
+                          icon: const Icon(Icons.double_arrow_outlined),
+                          tooltip: 'Go to Group',
+                          onPressed: () {
+                            Provider.of<CommunityPlayerProvider>(context, listen: false).communityPlayer = widget.seriesOwner;
+                            Navigator.of(context).push(
+                                MaterialPageRoute(builder: (context) => GameList(series: widget.series)));
+                          },
                         ),
                         //Text("Active Games: ${games.length}"),
                       ],
