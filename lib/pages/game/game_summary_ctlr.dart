@@ -50,6 +50,25 @@ abstract class GameSummaryCtlr extends State<GameSummaryPage> {
   } // End _GameBoard:getPlayers
 
   // ==========================================================================
+  // Lists of Credits;
+  // 0-3 : Quarterly Totals
+  // 4 : Community / Remainder
+  // 5 : Total Credits
+  List<int> getCredits() {
+    List<int> credits = List<int>.filled(6, 0);
+    int total=0;
+
+    total = game.squareValue * board.squaresPicked;
+    credits[5] = total;
+    for (int i=0; i<4; i++) {
+      credits[i] = board.squaresPicked * board.percentSplits[i] * game.squareValue ~/ 100;
+      total -= credits[i];
+    }
+    credits[4] = total;
+    return credits;
+  }
+
+  // ==========================================================================
   Future<List<String>?> openDialogScores(int qtr, Board board) {
       //controller1.text(board.rowResults[qtr]);
       //controller2.text(board.rowResults[qtr]);

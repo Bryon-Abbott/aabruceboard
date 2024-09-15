@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/pages/access/access_tile_view.dart';
 import 'package:flutter/material.dart';
 
@@ -12,9 +13,12 @@ import 'package:bruceboard/shared/loading.dart';
 class AccessListView extends StatefulWidget {
   final Player communityOwner;
   final Community community;
+  final Membership membership;
+
   const AccessListView( {super.key,
     required this.communityOwner,
-    required this.community
+    required this.community,
+    required this.membership,
   });
 
   @override
@@ -45,6 +49,7 @@ class _AccessListViewState extends State<AccessListView> {
               return AccessTileView(
                   community: widget.community,
                   communityOwner: widget.communityOwner,
+                  membership: widget.membership,
                   access: accessList[index]);
             },
           );

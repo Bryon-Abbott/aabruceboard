@@ -61,7 +61,14 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #  Updated Credits on Membership page when returning from Games
 #  Updated the About Page with additional info
 #  Added Harvey Balls to Game Tile to show amount full
-version: 1.2.4+27
+#  Setup Public Games
+#  Created new UX (access via Settings)
+# 1.2.5(28)
+#  Minor display change
+#  Quick Local Disable square to avoid re-select on slow network
+#  Added Log to Square Rejected (206) (also fixed Cloud Function to not
+#    increment SquaresPicked for "Requested" vs "Taken")
+version: 1.2.5+28
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

@@ -46,8 +46,8 @@ class _MembershipListCascadeState extends State<MembershipListCascade> {
                         if (snapshotCommunity.hasData) {
                           community = snapshotCommunity.data as Community;
                         }
-                        return FutureBuilder<FirestoreDoc?>(
-                          future: DatabaseService(FSDocType.member, uid: communityOwner.uid, cidKey: Community.Key(membershipList[index].cid)).fsDoc(docId: membershipList[index].pid),
+                        return StreamBuilder<FirestoreDoc?>(
+                          stream: DatabaseService(FSDocType.member, uid: communityOwner.uid, cidKey: Community.Key(membershipList[index].cid)).fsDocStream(docId: membershipList[index].pid),
                           builder: (context, snapshotMember) {
                             if (snapshotMember.hasData) {
                               member = snapshotMember.data as Member;

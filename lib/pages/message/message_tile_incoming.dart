@@ -1,21 +1,20 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
+
 import 'package:bruceboard/models/audit.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/models/message.dart';
-import 'package:bruceboard/services/messageservice.dart';
-import 'package:bruceboard/shared/helperwidgets.dart';
-import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-
 import 'package:bruceboard/models/community.dart';
-// import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
+
+import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/services/databaseservice.dart';
+import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 class MessageTileIncoming extends StatelessWidget {
@@ -776,7 +775,7 @@ class MessageTileIncoming extends StatelessWidget {
       }
       break;
     // ------------------------------------------------------------------------
-    // *** Credit Request Reject Response Message
+    // *** Square Request Reject Response Message
       case 00040: {
         int squareRequested = message.data['squareRequested'];
         log('00040:', name: '${runtimeType.toString()}:messageReject()');
@@ -804,6 +803,11 @@ class MessageTileIncoming extends StatelessWidget {
             await DatabaseService(FSDocType.grid, sidKey: Series.Key(message.data['sid']), gidKey: game.key)
                 .fsDocUpdate(grid);
           }
+
+          Audit audit = Audit(data: {'code': AuditCode.squareRejectedPlayer.code,
+            'ownerPid': playerTo.pid, 'playerPid': playerFrom.pid, 'cid': message.data['cid'],
+            'square': squareRequested, 'debit': 0, 'credit': 0});
+          await DatabaseService(FSDocType.audit).fsDocAdd(audit);
 
           messageSend(10041, messageType[MessageTypeOption.rejection]!,
             playerFrom: playerTo,

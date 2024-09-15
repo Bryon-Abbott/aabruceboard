@@ -61,7 +61,7 @@ class _SignUpState extends State<SignUp> {
         child: Scaffold(
           appBar: AppBar(
             elevation: 0.0,
-            title: const Text('Sign up to Bruce Board'),
+            title: const Text('Sign up to BruceBoard'),
             actions: <Widget>[
               TextButton.icon(
                 icon: const Icon(Icons.person),
@@ -81,7 +81,7 @@ class _SignUpState extends State<SignUp> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 5.0),
                           const Text("Email Address"),
                           TextFormField(
                             decoration: const InputDecoration(hintText: 'email@domain.com'),
@@ -90,7 +90,7 @@ class _SignUpState extends State<SignUp> {
                               setState(() => email = val);
                             },
                           ),
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 5.0),
                           const Text("Password"),
                           TextFormField(
                             obscureText: _isHidden,
@@ -111,7 +111,7 @@ class _SignUpState extends State<SignUp> {
                               setState(() => password = val);
                             },
                           ),
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 5.0),
                           const Text("Password Verification"),
                           TextFormField(
                             obscureText: _isHidden,
@@ -132,7 +132,7 @@ class _SignUpState extends State<SignUp> {
                               setState(() => passwordVerification = val);
                             },
                           ),
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 5.0),
                           const Text("First Name"),
                           TextFormField(
                             decoration: const InputDecoration(hintText: 'Enter First Name'),
@@ -144,7 +144,7 @@ class _SignUpState extends State<SignUp> {
                               setState(() => fName = val.trim());
                             },
                           ),
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 5.0),
                           const Text("Last Name"),
                           TextFormField(
                             decoration: const InputDecoration(hintText: 'Enter Last Name'),
@@ -156,7 +156,7 @@ class _SignUpState extends State<SignUp> {
                               setState(() => lName = val.trim());
                             },
                           ),
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 5.0),
                           const Text("Initials"),
                           TextFormField(
                             controller: initialsController,
@@ -166,7 +166,7 @@ class _SignUpState extends State<SignUp> {
                               setState(() => initials = val.trim());
                             },
                           ),
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 5.0),
                           const Text("Display Name"),
                           TextFormField(
                             controller: displayNameController,
@@ -176,7 +176,7 @@ class _SignUpState extends State<SignUp> {
                               setState(() => displayName = val);
                             },
                           ),
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 5.0),
                           ElevatedButton(
                               style: const ButtonStyle(),
                               child: const Text( 'Sign Up' ),
@@ -200,7 +200,7 @@ class _SignUpState extends State<SignUp> {
                                 }
                               }
                             ),
-                          const SizedBox(height: 10.0),
+                          const SizedBox(height: 5.0),
                           Text(
                             error,
                             style: TextStyle(

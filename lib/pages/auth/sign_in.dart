@@ -37,7 +37,7 @@ class _SignInState extends State<SignIn> {
     return loading ? const Loading() : Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        title: const Text('Sign in to Bruce Board'),
+        title: const Text('Sign in to BruceBoard'),
         actions: <Widget>[
           TextButton.icon(
             icon: const Icon(Icons.person),

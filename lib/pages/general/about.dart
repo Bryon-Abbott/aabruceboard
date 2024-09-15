@@ -180,7 +180,7 @@ class _AboutState extends State<About> {
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    // const SizedBox(height: 30),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text.rich(

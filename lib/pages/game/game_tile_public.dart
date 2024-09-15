@@ -50,7 +50,7 @@ class GameTilePublic extends StatelessWidget {
                     log("No Access Found ... Request Access   ", name: '${runtimeType.toString()}:build()');
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Request Access from ${gameOwner.fName} ${gameOwner.lName} through the 'Communities' icon"))
+                          SnackBar(content: Text("Request Access from ${gameOwner.fName} ${gameOwner.lName} through the 'Membership' icon"))
                       );
                     }
                   } else {

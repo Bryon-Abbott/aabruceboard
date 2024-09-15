@@ -4,6 +4,8 @@ import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
+import 'package:bruceboard/models/membership.dart';
+import 'package:bruceboard/models/membershipprovider.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_list.dart';
@@ -16,10 +18,12 @@ import 'package:provider/provider.dart';
 class GameListView extends StatefulWidget {
   final Player seriesOwner;
   final Series series;
+  final Membership membership;
 
   const GameListView({super.key,
     required this.seriesOwner,
     required this.series,
+    required this.membership,
   });
 
   @override
@@ -58,12 +62,15 @@ class _GameListViewState extends State<GameListView> {
                         Text("(Active Games: ${games.length})  "),
                         // ToDo: Make this a Double Chevron Button
                         IconButton(
-                          icon: const Icon(Icons.double_arrow_outlined),
+                          icon: const Icon(Icons.double_arrow_outlined, size: 18,),
                           tooltip: 'Go to Group',
                           onPressed: () {
-                            Provider.of<CommunityPlayerProvider>(context, listen: false).communityPlayer = widget.seriesOwner;
-                            Navigator.of(context).push(
-                                MaterialPageRoute(builder: (context) => GameList(series: widget.series)));
+                            Provider.of<CommunityPlayerProvider>(context, listen: false)
+                              .communityPlayer = widget.seriesOwner;
+                            Provider.of<MembershipProvider>(context, listen: false)
+                              .currentMembership = widget.membership;
+                            Navigator.of(context)
+                              .push(MaterialPageRoute(builder: (context) => GameList(series: widget.series)));
                           },
                         ),
                         //Text("Active Games: ${games.length}"),

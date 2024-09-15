@@ -13,6 +13,7 @@ enum AuditCode implements Comparable<AuditCode> {
   squareAssignedCloud(code: 203, desc: "Square Assigned by Cloud"),
   squareFilledPlayer(code: 204, desc: "Square Player Filled by Owner"),
   squareFilledExclude(code: 205, desc: "Square Exclude Filled by Owner"),
+  squareRejectedPlayer(code: 206, desc: "Square Request Rejected by Owner"),
   memberCreditsUpdated(code: 300, desc: "Member Credits Update by Owner"),
   memberCreditsRequested(code: 301, desc: "Member Credits update by Player request"),
   memberCreditsDistributed(code: 302, desc: "Member Credits updated by Distribution"),

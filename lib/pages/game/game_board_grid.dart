@@ -47,6 +47,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
   late Game game;
   late Board board;
   late Series series;
+  late Grid grid;
 
   bool gameOwner = false;
   double screenWidth = gridSizeSmall; // Defaults value
@@ -55,6 +56,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
   late Player activePlayer;
   late Player communityPlayer;
   late Membership currentMembership;
+  late List<int> localStatus;
 
   double gridSize = gridSizeSmall;
 
@@ -64,6 +66,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
     game = widget.game;
     series = widget.series;
     board = widget.board;
+    localStatus = List<int>.filled(100, SquareStatus.free.index);
     dev.log("Initialize default GameData data.", name: "${runtimeType.toString()}:initState");
   }
 
@@ -76,6 +79,7 @@ class _GameBoardGridState extends State<GameBoardGrid> {
 
     dev.log('Game Owner: ${communityPlayer.docId}:${communityPlayer.fName} Active Player: ${activePlayer.docId}:${activePlayer.fName}',
         name: "${runtimeType.toString()}:build()" );
+    dev.log('Membership: ${currentMembership.key}', name: "${runtimeType.toString()}:build()" );
     // If these Community Player is Equal to the Active Player it is the owner of the game and can update game/grid information,
     gameOwner = communityPlayer.docId == activePlayer.docId;
 
@@ -102,22 +106,17 @@ class _GameBoardGridState extends State<GameBoardGrid> {
           .fsDocStream(key: game.key),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          Grid grid = snapshot.data! as Grid;
+          grid = snapshot.data! as Grid;
           dev.log('Building Grid Owner: ${communityPlayer.fName}, Grid ID: ${grid.docId} Initials[4]: ${grid.squareInitials[4]}',
               name: "${runtimeType.toString()}:build()");
           // widget.callback(grid.getBoughtSquares());
           return SizedBox(
-//            height: max(min(screenHeight - 308, gridSize - 1), 100),
-//            height: max(min(screenHeight - 275, gridSize - 1), 100),
             height: max(min(screenHeight - 220, gridSize - 1), 100),
             width: min(screenWidth - 45, gridSize - 1),
-            //width: newScreenWidth-20,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-//              physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
               child: SingleChildScrollView(
                 scrollDirection: Axis.vertical,
-//                physics: const ClampingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
                 child: SizedBox(
                   height: gridSize+1,
                   // These determine the Size of the buttons (~x/11)
@@ -222,15 +221,18 @@ class _GameBoardGridState extends State<GameBoardGrid> {
           textStyle: Theme.of(context).textTheme.bodyMedium,
           disabledBackgroundColor: getSquareColor(grid, squareIndex),
         ),
-        onPressed: (grid.squareStatus[squareIndex] == SquareStatus.free.index)
-            ? () {
+        onPressed: (( grid.squareStatus[squareIndex] == SquareStatus.free.index )
+                     && ( localStatus[squareIndex] == SquareStatus.free.index ))
+            ? () async {
               dev.log("Pressed game button ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
               if (gameOwner) {
                 dev.log("Owner Assign Square ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
                 assignSquare(context, game, grid, squareIndex);
               } else {
                 dev.log("Player Request Square ($squareIndex)", name: "${runtimeType.toString()}:GameButton");
-                requestSquare(context, game, grid, squareIndex);
+                dev.log("Square Status-Pre: ${grid.squareStatus[squareIndex]})", name: "${runtimeType.toString()}:GameButton");
+                await requestSquare(context, game, grid, squareIndex);
+                dev.log("Square Status-Post: ${grid.squareStatus[squareIndex]})", name: "${runtimeType.toString()}:GameButton");
               }
             }
             : null,
@@ -319,20 +321,19 @@ class _GameBoardGridState extends State<GameBoardGrid> {
             'cid': selectedAccess.cid, 'sid': series.docId, 'gid': game.docId,
             'square': squareIndex, 'debit':  0, 'credit': 0});
           await DatabaseService(FSDocType.audit).fsDocAdd(audit);
-
         }
         // No need to await here as updates will come via Firestore Streams.
         DatabaseService(FSDocType.grid, sidKey: series.key, gidKey: game.key).fsDocUpdate(grid);
         DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
             .fsDocUpdateField(key: game.key, field: 'squaresPicked', ivalue: grid.getPickedSquares());
-
       }
     }
   }
 
   // Request Square from Series Owner.
-  void requestSquare(BuildContext context, Game game, Grid grid, int squareIndex) async {
-    dev.log("Request Square ($squareIndex) for Community ID ${currentMembership.cid}", name: "${runtimeType.toString()}:requestSquare()");
+  Future<void> requestSquare(BuildContext context, Game game, Grid grid, int squareIndex) async {
+    bool requested = false;
+    dev.log("Request Square ($squareIndex) for Membership ${currentMembership.key}", name: "${runtimeType.toString()}:requestSquare()");
 
     // Get Active Players Member Record from Community to Check Credits.
     FirestoreDoc? fsDoc = await DatabaseService(FSDocType.member, uid: communityPlayer.uid, cidKey: Community.Key(currentMembership.cid))
@@ -347,12 +348,17 @@ class _GameBoardGridState extends State<GameBoardGrid> {
         );
         if (comment != null) {
           // Send message to user
-          await messageSend(00040, messageType[MessageTypeOption.request]!,
+          messageSend(00040, messageType[MessageTypeOption.request]!,
             playerFrom: activePlayer, playerTo: communityPlayer,
             comment: comment,
             description: "${activePlayer.fName} ${activePlayer.lName} requested Square $squareIndex for Game <${game.name}> in Series <${series.name}>",
             data: { 'cid': currentMembership.cid, 'sid': game.sid, 'gid': game.docId, 'squareRequested': squareIndex },
           );
+          // Update square locally
+          setState(() {
+            localStatus[squareIndex] = SquareStatus.requested.index;
+          });
+          requested = true;
         } else {
           dev.log("Request Square Cancelled for ($squareIndex)", name: "${runtimeType.toString()}:requestSquare()");
         }
@@ -373,6 +379,6 @@ class _GameBoardGridState extends State<GameBoardGrid> {
       );
       dev.log("No Member ... likey not accepted yet", name: "${runtimeType.toString()}:requestSquare()");
     }
-
+    return Future.value(requested);
   }
 }

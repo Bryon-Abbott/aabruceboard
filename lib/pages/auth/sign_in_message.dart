@@ -22,7 +22,7 @@ Use the Activity Icons in the footer to play and manage Pools.
   Messages: Respond to messages.
   Memberships: Review your membership in communities. 
   Communities: Create your own communities. 
-  Games: Create your own Game Groups and Pools.   
+  Games: Create your own Groups and Pools.   
 
 Additional Documentation can be accessed from the About page by pressing the Document icon in the top right. 
 

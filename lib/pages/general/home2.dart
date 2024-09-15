@@ -213,7 +213,7 @@ class _Home2State extends State<Home2> {
                           ),
                     ),
                     Container(
-                      height: 30,
+                      height: 40,
                       child: Row(
                         children: [
                           Expanded(
@@ -274,6 +274,7 @@ class _Home2State extends State<Home2> {
                                 onPressed: (bruceUser.uid == 'Anonymous')
                                     ? null
                                     : () {
+                                  communityPlayerProvider.communityPlayer = player;
                                   Navigator.pushNamed(context, '/series-list');
                                 },
                               ),
