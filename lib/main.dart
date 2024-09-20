@@ -95,7 +95,7 @@ class LoadApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    bool newInterface = Preferences.getPreferenceBool(Preferences.keyNewInterface) ?? false;
+    bool newInterface = Preferences.getPreferenceBool(Preferences.keyNewInterface) ?? true;
     String initialRoot = (newInterface==true) ? '/home2' : '/home1';
     return StreamProvider<BruceUser?>.value(
       initialData: BruceUser(),

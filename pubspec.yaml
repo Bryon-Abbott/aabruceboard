@@ -70,7 +70,10 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #    increment SquaresPicked for "Requested" vs "Taken")
 # 1.2.6(29)
 #  Added Audit Log Reports for Games (Summary/Detail)
-version: 1.2.6+29
+# 1.2.7(30) Fixes on Apple
+#  Report Width overflow fixed.
+#  Default to New Interface
+version: 1.2.7+30
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

@@ -99,9 +99,12 @@ class _AuditGameReportState extends State<AuditGameReport> {
                                                 //Text("${index.toString().padLeft(5, '0')}"),
                                                 Row(
                                                   children: [
-                                                    Text("${index.toString().padLeft(3, '0')}: "),
                                                     SizedBox(
-                                                      width: 200,
+                                                      width: 35,
+                                                      child: Text("${index.toString().padLeft(3, '0')}: ")
+                                                    ),
+                                                    SizedBox(
+                                                      width: 230,
                                                       child: Text(
                                                         "${auditLogs[index].code} ${AuditCode.auditDescription(auditLogs[index].code)} ",
                                                         maxLines: 1,
@@ -114,8 +117,11 @@ class _AuditGameReportState extends State<AuditGameReport> {
                                                           ? Text("Sq:")
                                                           : Text("Sq: ${auditLogs[index].square.toString().padLeft(2, '0')} "),
                                                     ),
-                                                    Text("Player No: ${auditLogs[index].playerPid} "),
-                                                    Text("Timestamp: ${auditLogs[index].timestamp.toDate().toString().substring(0, 23)} "),
+                                                    SizedBox(
+                                                      width: 90,
+                                                      child: Text("Player: ${auditLogs[index].playerPid} ")
+                                                    ),
+                                                    Text("Time: ${auditLogs[index].timestamp.toDate().toString().substring(0, 23)} "),
                                                   ],
                                                 ),
                                               ],
