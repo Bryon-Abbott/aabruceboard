@@ -43,7 +43,7 @@ class MembershipTileCascade extends StatelessWidget {
               Text("Membership: ${membership.key}  Credits: ${member.credits}"),
               ConstrainedBox(
                 constraints: const BoxConstraints(
-                  minHeight: 100,
+                  minHeight: 50,
                   maxHeight: 324,
                   minWidth: double.infinity,
                 ),

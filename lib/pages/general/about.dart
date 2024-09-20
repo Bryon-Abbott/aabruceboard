@@ -216,7 +216,8 @@ class _AboutState extends State<About> {
                 ),
               ),
             ),
-            (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+            const AdContainer(),
+//            (kIsWeb) ? const SizedBox() : const AaBannerAd(),
           ],
         )
       ),

@@ -230,7 +230,8 @@ class _MemberMaintainState extends State<MemberMaintain> {
                   ),
                 ),
               ),
-              (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+              const AdContainer(),
+//              (kIsWeb) ? const SizedBox() : const AaBannerAd(),
             ],
           )
       ),

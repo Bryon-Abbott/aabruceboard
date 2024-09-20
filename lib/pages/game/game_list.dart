@@ -5,6 +5,7 @@ import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
+import 'package:bruceboard/pages/audit/audit_game_report.dart';
 import 'package:bruceboard/pages/game/game_tile.dart';
 import 'package:bruceboard/pages/game/game_maintain.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
@@ -65,6 +66,22 @@ class _GameListState extends State<GameList> {
                     },
                   ),
                   actions: [
+                    // IconButton(
+                    //   icon: const Icon(Icons.view_headline_outlined),
+                    //   onPressed: () {
+                    //     // Navigator.of(context).push(
+                    //     //     MaterialPageRoute(builder: (context) => AuditReport(series: series)));
+                    //     log('Game Report-Detail: ${communityPlayer.docId}:${communityPlayer.fName}',
+                    //         name: "${runtimeType.toString()}:build()" );
+                    //   },
+                    // ),
+                    // IconButton(
+                    //   icon: const Icon(Icons.view_compact_alt_outlined),
+                    //   onPressed: () {
+                    //     log('Game Report-Summary: ${communityPlayer.docId}:${communityPlayer.fName}',
+                    //         name: "${runtimeType.toString()}:build()" );
+                    //   },
+                    // ),
                     IconButton(
                       icon: const Icon(Icons.add_circle_outline),
                       onPressed: (activePlayer.pid != communityPlayer.pid) ? null : () async {
@@ -85,7 +102,8 @@ class _GameListState extends State<GameList> {
                     ),
                   ),
 //                  const SizedBox(height: 8.0),
-                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                  const AdContainer(),
+//                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
                 ],
               ),
             );

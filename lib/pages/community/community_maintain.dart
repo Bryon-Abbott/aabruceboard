@@ -212,7 +212,8 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                   ),
                 ),
               ),
-              (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+              const AdContainer(),
+//              (kIsWeb) ? const SizedBox() : const AaBannerAd(),
             ],
           )
       ),

@@ -68,7 +68,9 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #  Quick Local Disable square to avoid re-select on slow network
 #  Added Log to Square Rejected (206) (also fixed Cloud Function to not
 #    increment SquaresPicked for "Requested" vs "Taken")
-version: 1.2.5+28
+# 1.2.6(29)
+#  Added Audit Log Reports for Games (Summary/Detail)
+version: 1.2.6+29
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

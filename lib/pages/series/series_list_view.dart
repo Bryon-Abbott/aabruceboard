@@ -41,25 +41,43 @@ class _SeriesListViewState extends State<SeriesListView> {
   Widget build(BuildContext context) {
 
   bruceUser = Provider.of<BruceUser>(context);
-    return StreamBuilder<FirestoreDoc>(
+
+    return StreamBuilder<List<FirestoreDoc>>(
+        // stream: DatabaseService(FSDocType.game, uid: widget.seriesOwner.uid, sidKey: widget.series.key )
+        //   .fsDocQueryListStream(
+        //     queryValues: { 'status': 1 }
+        //   ),
+        // stream: DatabaseService(FSDocType.series, uid: widget.communityOwner.uid)
+        //     .fsDocStream(docId: widget.access.sid),
       stream: DatabaseService(FSDocType.series, uid: widget.communityOwner.uid)
-          .fsDocStream(docId: widget.access.sid),
-      builder: (context, snapshotSeries) {
-        if (snapshotSeries.hasData) {
-          Series series = snapshotSeries.data as Series;
-          log("Series-Series (${widget.access.key}) Status: ${series.status}...", name: '${runtimeType.toString()}:build():Series-ListView.builder');
-          if (series.status == StatusValues.active.index) {
+        .fsDocQueryListStream(
+          queryValues: {
+            'docId': widget.access.sid,
+            'status': StatusValues.active.index }
+        ),
+      builder: (context, snapshotsSeries) {
+        if (snapshotsSeries.hasData) {
+          List<Series> series = snapshotsSeries.data!.map((s) => s as Series).toList();
+//          Series series = snapshotSeries.data as Series;
+          log("Series-Series (${widget.access.key}) Series Count: ${series.length}...",
+              name: '${runtimeType.toString()}:build():Series-ListView.builder');
+          if (series.length > 0) {
             return SeriesTileView(
                 membership: widget.membership,
                 seriesOwner: widget.communityOwner,
-                series: series
+                series: series[0]
             );
           } else {
+            // return Text("Series ... loading() ${widget.access.sid} ");
             return const SizedBox();
           }
         } else {
-          log("Series-Series Snapshot Error ${snapshotSeries.error} ... loading", name: '${runtimeType.toString()}:build()');
-          return const Loading();
+          // If series is not active (ie No Series Returned) ... return nothing.
+          log("Series-Series Snapshot Error ${snapshotsSeries.error} ... loading",
+              name: '${runtimeType.toString()}:build()');
+          return const SizedBox();
+          //return Text("Series ... loading() ${widget.access.sid} ");
+          // return const Loading();
         }
       }
     );

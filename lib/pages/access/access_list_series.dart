@@ -71,7 +71,8 @@ class _AccessListSeriesState extends State<AccessListSeries> {
                       },
                     ),
                   ),
-                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                  const AdContainer(),
+//                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
                 ],
               ),
             );

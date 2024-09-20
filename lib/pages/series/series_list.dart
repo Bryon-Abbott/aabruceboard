@@ -35,7 +35,7 @@ class _SeriesListState extends State<SeriesList> {
             List<Series> series = snapshots.data!.map((s) => s as Series).toList();
             return Scaffold(
               appBar: AppBar(
-                title: Text('Manage Groups - Count: ${series.length}'),
+                title: Text('Manage Groups'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -46,6 +46,20 @@ class _SeriesListState extends State<SeriesList> {
                   },
                 ),
                 actions: [
+                  // IconButton(
+                  //   icon: const Icon(Icons.view_headline_outlined),
+                  //   onPressed: () {
+                  //     log('Group Report-Detail: ',
+                  //         name: "${runtimeType.toString()}:build()" );
+                  //   },
+                  // ),
+                  // IconButton(
+                  //   icon: const Icon(Icons.view_compact_alt_outlined),
+                  //   onPressed: () {
+                  //     log('Group Report-Summary: ',
+                  //         name: "${runtimeType.toString()}:build()" );
+                  //   },
+                  // ),
                   IconButton(
                     icon: const Icon(Icons.add_circle_outline),
                     onPressed: () async {
@@ -69,7 +83,8 @@ class _SeriesListState extends State<SeriesList> {
                       },
                     ),
                   ),
-                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                  const AdContainer(),
+//                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
                 ],
               ),
             );

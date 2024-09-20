@@ -1,8 +1,6 @@
 import 'dart:developer';
-//import 'dart:ffi';
-import 'package:bruceboard/menus/popupmenubutton_status.dart';
-import 'package:bruceboard/menus/popupmenubutton_teamdata.dart';
-import 'package:bruceboard/utils/banner_ad.dart';
+import 'package:bruceboard/pages/audit/audit_game_report.dart';
+import 'package:bruceboard/pages/audit/audit_game_summary_report.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,8 +15,12 @@ import 'package:bruceboard/models/board.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
+
 import 'package:bruceboard/utils/league_list.dart';
 import 'package:bruceboard/services/databaseservice.dart';
+import 'package:bruceboard/menus/popupmenubutton_status.dart';
+import 'package:bruceboard/menus/popupmenubutton_teamdata.dart';
+import 'package:bruceboard/utils/banner_ad.dart';
 
 // Todo: Look at provider for Series ID (sid) vs passing as parameter.
 
@@ -37,7 +39,6 @@ class _GameMaintainState extends State<GameMaintain> {
   final _formGameKey = GlobalKey<FormState>();
   late Game? game;
   late Series series;
-//  late int _gid;
   late String _uid;
   late Board board;
   late Grid grid;
@@ -48,7 +49,6 @@ class _GameMaintainState extends State<GameMaintain> {
   String currentGameName = "";
   String currentTeamOne = "";
   String currentTeamTwo = "";
-  // DateTime currentGameDate = DateTime.now();
   String currentGameDate = "";
 
   int currentSquareValue = 0;
@@ -60,7 +60,6 @@ class _GameMaintainState extends State<GameMaintain> {
     super.initState();
     series = widget.series;
     game = widget.game;
-//    _gid = game?.docId ?? -1;
 
     currentGameName = game?.name ?? "";
     currentTeamOne = game?.teamOne ?? "Select-Away-Team";
@@ -98,8 +97,6 @@ class _GameMaintainState extends State<GameMaintain> {
 
     activePlayer =  Provider.of<ActivePlayerProvider>(context).activePlayer;
 
-//    int noGames = 0;
-
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
       child: Scaffold(
@@ -113,6 +110,32 @@ class _GameMaintainState extends State<GameMaintain> {
                 Navigator.pop(context);
               },
             ),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.view_headline_outlined),
+                onPressed: (game != null)
+                  ? () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context)
+                        => AuditGameReport(series: series, game: game!))
+                    );
+                    log('Game Report-Detail: ${game!.docId}:${game!.name}',
+                        name: "${runtimeType.toString()}:build()" );
+                  } : null,
+              ),
+              IconButton(
+                icon: const Icon(Icons.view_compact_alt_outlined),
+                onPressed: (game != null)
+                  ? () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context)
+                      => AuditGameSummaryReport(series: series, game: game!))
+                  );
+                  log('Game Report-Summary: ${game!.docId}:${game!.name}',
+                      name: "${runtimeType.toString()}:build()" );
+                } : null,
+              ),
+            ],
           ),
           body: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -282,7 +305,7 @@ class _GameMaintainState extends State<GameMaintain> {
                           Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.all(8),
                                 child: ElevatedButton(
                                   child: const Text('Save'),
                                   onPressed: () async {
@@ -406,7 +429,8 @@ class _GameMaintainState extends State<GameMaintain> {
                     ),
                   ),
                 ),
-                (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                const AdContainer(),
+//                (kIsWeb) ? const SizedBox() : const AaBannerAd(),
               ],
             ),
           )

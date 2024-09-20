@@ -67,7 +67,8 @@ class _CommunityListState extends State<CommunityList> {
                       },
                     ),
                   ),
-                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                  const AdContainer(),
+//                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
                 ],
               ),
             );

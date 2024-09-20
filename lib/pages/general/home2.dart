@@ -200,18 +200,19 @@ class _Home2State extends State<Home2> {
                               ? const GameListPublic()
                               : const MembershipListCascade(),
                     ),
-                    Container(
-                      alignment: Alignment.center,
-                      height: 54,
-                      child: (kIsWeb)
-                        ? Text("BruceBoard",
-                            style: Theme.of(context).textTheme.titleLarge,
-                          )
-                        : const Padding(
-                            padding: EdgeInsets.fromLTRB(0,2,0,0),
-                            child: AaBannerAd(),
-                          ),
-                    ),
+                    const AdContainer(),
+                    // Container(
+                    //   alignment: Alignment.center,
+                    //   height: 54,
+                    //   child: (kIsWeb)
+                    //     ? Text("BruceBoard",
+                    //         style: Theme.of(context).textTheme.titleLarge,
+                    //       )
+                    //     : const Padding(
+                    //         padding: EdgeInsets.fromLTRB(0,2,0,0),
+                    //         child: AaBannerAd(),
+                    //       ),
+                    // ),
                     Container(
                       height: 40,
                       child: Row(

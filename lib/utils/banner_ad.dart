@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:bruceboard/utils/adhelper.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
@@ -41,8 +42,18 @@ class _AaBannerAdState extends State<AaBannerAd> {
         height: widget.adSize.height.toDouble(),
         child: _bannerAd == null
         // Nothing to render yet.
-            ? const SizedBox(
-//              child: Text("Ad Banner Loading ..."),
+            ? SizedBox(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("BruceBoard ",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                  Text("\u208D\u209C\u2098\u208E",
+                    style: Theme.of(context).textTheme.titleMedium,
+                  )
+                ],
+              ),
             )
         // The actual ad.
             : AdWidget(ad: _bannerAd!),
@@ -92,5 +103,34 @@ class _AaBannerAdState extends State<AaBannerAd> {
 
     // Start loading.
     bannerAd.load();
+  }
+}
+
+class AdContainer extends StatelessWidget {
+  const AdContainer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return
+      Container(
+        alignment: Alignment.center,
+        height: 54,
+        child: (kIsWeb)
+            ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text("BruceBoard...",
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                // Text("\u207D\u1D40\u1D39\u207E",
+                //   style: Theme.of(context).textTheme.titleLarge,
+                // )
+              ],
+            )
+            : const Padding(
+          padding: EdgeInsets.fromLTRB(0,2,0,0),
+          child: AaBannerAd(),
+        ),
+      );
   }
 }

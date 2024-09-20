@@ -26,6 +26,14 @@ enum AuditCode implements Comparable<AuditCode> {
 
   @override
   int compareTo(AuditCode other) => code - other.code;
+
+  static String auditDescription(int code) {
+    for (AuditCode a in AuditCode.values) {
+      if (a.code == code)
+        return a.desc;
+    }
+    return "Undefined Code";
+  }
 }
 
 class Audit implements FirestoreDoc {

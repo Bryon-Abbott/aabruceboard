@@ -2,7 +2,6 @@ import 'package:bruceboard/services/authservices.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
@@ -142,7 +141,8 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
             ),
-            (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+            const AdContainer(),
+//            (kIsWeb) ? const SizedBox() : const AaBannerAd(),
           ],
         ),
       ),

@@ -71,7 +71,8 @@ class _MembershipListState extends State<MembershipList> {
                       },
                     ),
                   ),
-                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                  const AdContainer(),
+//                  (kIsWeb) ? const SizedBox() : const AaBannerAd(),
                 ],
               ),
             );

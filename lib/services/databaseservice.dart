@@ -370,7 +370,8 @@ class DatabaseService {
     Stream<QuerySnapshot<Object?>> s001;
     Query<Object?>? q001;
 
-    log('fsDocListStream: ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
+    log('Query Vars: ${queryValues} ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
+    log('Query Path: ${docCollection.path} ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
 
     queryValues.forEach((key, value) {
       if (key != '' && value != '') {

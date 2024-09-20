@@ -330,7 +330,8 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                   ),
                 ),
               ),
-              (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+              const AdContainer(),
+//              (kIsWeb) ? const SizedBox() : const AaBannerAd(),
             ],
           )
       ),

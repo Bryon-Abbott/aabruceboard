@@ -71,9 +71,9 @@ class _SignUpState extends State<SignUp> {
             ],
           ),
           body: Container(
-            padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+            padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 50.0),
             child: Column(
-              children: [
+              children: <Widget>[
                 Expanded(
                   child: SingleChildScrollView(
                     child: Form(
@@ -213,7 +213,8 @@ class _SignUpState extends State<SignUp> {
                     ),
                   ),
                 ),
-                (kIsWeb) ? const SizedBox() : const AaBannerAd(),
+                const AdContainer(),
+//                (kIsWeb) ? const SizedBox() : const AaBannerAd(),
               ],
             ),
           ),
