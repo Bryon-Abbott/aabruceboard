@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>UserManual-v2.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="user-manual---bruceboard">User Manual - BruceBoard</h1>
+<h2 id="10-introduction">1.0 Introduction</h2>
+<p>Version: 1.2.7 (30)</p>
+<p>BruceBoard is an application used to Create, Maintain and Play standard 10x10 Sports Pools.
+The key functionality includes the following:</p>
+<ul>
+<li>Player Authentication allows users to create Player IDs, Signon and Signoff of the Application.</li>
+<li>Create Communities to allow access to Pools.</li>
+<li>Create Groups to organise Pools.</li>
+<li>Create Pools to be played,
+<ul>
+<li>Allowing access to Communities.</li>
+<li>Allowing public access to Pools.</li>
+<li>Allow Players to select Squares.</li>
+<li>Update Row/Column Digit Scores.</li>
+<li>Update Quarterly Splits.</li>
+<li>Update Quarterly Scores.</li>
+<li>Distribute Credits to winners.</li>
+</ul>
+</li>
+<li>Respond to Messages from other Players.</li>
+</ul>
+<p><strong>Note:</strong> A Player can be given access to their own community to enable them to play along.</p>
+<h2 id="10-home">1.0 Home</h2>
+<p>The [Home] page is the launching point for the application. From here Players can:</p>
+<ul>
+<li>Sign In / Sign Up</li>
+<li>View Pools from Communities</li>
+<li>View Public Pools</li>
+<li>Manage Communities</li>
+<li>Manage Groups and Pools</li>
+<li>Manage Memberships</li>
+<li>Manage Communities</li>
+<li>Manage Messages</li>
+<li>Manage Settings (Right on the App Bar '...')</li>
+</ul>
+<img src="images-v2/AA0100-Home.jpg" alt="images-v2/AA0100-Home.jpg" width="400"/>
+<h3 id="11-sign-in">1.1 Sign In</h3>
+<p>By Pressing the +Player icon on the [Home] page, players can sign in to their account.</p>
+<p>To assist the player with entering the correct password, the [Eye] icon can be pressed to reveal the password.</p>
+<p>If the user has forgotten their password, they can request a Password Reset by pressing the [Reset Password] button. This will send an email to the provided email address where they will be able to set a new password.</p>
+<img src="images-v2/AA0101-SignIn.jpg" alt="images-v2/AA0101-SignIn.jpg" width="400"/>
+<h3 id="12-sign-up">1.2 Sign Up</h3>
+<p>If the player does not already have a Player Account, they need to sign up for one by pressing the [Sign Up] button at the right of the App Bar.</p>
+<p>When setting up a new Player Account a valid email address must be provided.</p>
+<p>The passwords must be at least 6 charachters long.</p>
+<p>The password must be entered the same twice to ensure the user has entered the password correctly.</p>
+<p>The initials are automatically provided when the players [First Name] and [Last Name] are entered. This can be changed but should be kept short as this is used to indicate Squares assigned to the player.</p>
+<p>Scroll down if needed to press the [Sign Up] button.</p>
+<p>When the Player inforamtion is entered successfully, an email will be sent to the provided email address allowing the player to verify their email account.</p>
+<img src="images-v2/AA0102-SignUp.jpg" alt="images-v2/AA0101-SignIn.jpg" width="400"/>
+<h3 id="13-update-profile">1.3 Update Profile</h3>
+<p>Once the player account is created, the Player can update their profile information (First Name, Last Name, etc) via the [Update Profile] menu option from the [Home] screen.
+From here the user can also see a summary of their Membership, Communities and Series.</p>
+<p>All fields are required with the Display Name and Initials defaulting from the First Name and Last Name. These can be over written if desired.</p>
+<h4 id="131-email-verification">1.3.1 Email Verification</h4>
+<p>Players should only use valid emails as their Player ID to enable the full functionality of the BruceBoard App.</p>
+<p>An verification email is set to the player when the account is first setup. If this is lost or unsuccessful, the player can initiate a new verificadtion email by pressing the [Verify Email] button.</p>
+<p>Players can use the application without verifying their email but are not allowed to Request to Join any communities without verifying their email.</p>
+<p>Owners can add non-verified Players to their communities but should be aware that the user may not have a valid email address.</p>
+<p>If the Player's email has been verified, the [Verify Email] button will be disabled.</p>
+<h4 id="132-delete-account">1.3.2 Delete Account</h4>
+<p>Players can delete their account if desired. This will remove the Account from Firebase and the player will no longer have access to the Communities and/or Pools they are running.</p>
+<p>The Player sign back up again but a new account will be provided and the Payer will need to re-request access to any communities they wish to join.  In addition, any communities or boards that they had will no longer be accessible.</p>
+<img src="images-v2/AA0103-UpdateProfile.jpg" alt="AA0103-UpdateProfile" width="400"/>
+<h3 id="14-my-communities">1.4 My Communities</h3>
+<p>At the top of the [Home] page there are two tabs that allow the Player to view Pools accessed through 1. [My Communities] and 2. [Public Pools].</p>
+<p>The Community Pools are organized by the Memberships that the Player has within different communities.</p>
+<p>Communities are owner by Players and are given access to one or more of the owner's Groups that in turn, contain 1 or more Pools. Multiple Communities can access a single Group thus allowing a Player to have multiple Memberships with access to a Group and associated Pools.</p>
+<p>The Player requests/receives credits for each membership which is displyed on the [Home] page beside the Membership ID.</p>
+<p>On the [Home] page, the Groups that are accessible to each Membership the Player has are displayed on the page. Within each Group, the first couple of active Pools are displayed along with the number of active pools. The displayed Pools provide an indication of how many squares have been selected for the pools through the pie chart on the Pool card.</p>
+<p>The Player can see all the active and complete pools within the Group by clicking on the [Double Chevron] icon for the Group.  This also allows users to access the Pool to select squares providing they have credits on their Membership</p>
+<p>If the Player has a number of Memberships, they can scroll down the page to view them.</p>
+<img src="images-v2/AA0104-MyCommunities.jpg" alt="AA0104-MyCommunities" width="400"/>
+<h4 id="141-list-pools">1.4.1 List Pools</h4>
+<p>When the Player pressess the [Double Cheveron] icon, they will be taken to Pool List for the Group that will list all the Pools within the Group.</p>
+<p>The Pool card shows the Pool name, data and Status of the Pool.</p>
+<p>In addition, the [Ball] icon on the left of the card indicate the number of Squares that have been taken on the Pool board.</p>
+<p>The [Ball] icon fill show the following square taken:</p>
+<ul>
+<li>0-25=Empty,</li>
+<li>26-50=1/4,</li>
+<li>51-75=1/2,</li>
+<li>76-99=3/4,</li>
+<li>100=Full</li>
+</ul>
+<img src="images-v2/AA0600-Games-List.jpg" alt="AA0600-Games-List" width="400"/>
+<h4 id="142-view-pool">1.4.2 View Pool</h4>
+<p>From the Pool List the Player can tap on the Pool Card to access the Pool.</p>
+<p>The Pool Board Page shows the Pool with the Away team across the top and the Home team down the side.</p>
+<p>When a square is available, it will have the Initials &quot;FS&quot; indicating it is a Free Square. The user can select any Free Square to request it.</p>
+<p>Once a Square is Taken, the Players Initials will be displayed in the Square and it will be disabled.</p>
+<p>While there are still squares left the number of remaining sqares will be visible in the top left corner of the board. In addition, the Scores for each Column and Row will be &quot;?&quot; indicating that they have not been assigned yet.</p>
+<img src="images-v2/AA0604-Game-Board.jpg" alt="AA0604-Game-Board" width="400"/>
+<h4 id="scores-set--winning-squares">&gt;&gt; Scores Set / Winning Squares</h4>
+<p>Once the Board is full, the Owner of the board will set the scores. This is a process that radomly assigns a Digit between 0-9 to each of the Score Squares for the Away team (Horizontal) and Home team (Vertical).</p>
+<p>When the Owner of the Pool enteres the quarterly scores, the winning square for each quarter is highlighted red, lighter to darker for each quarter.</p>
+<img src="images-v2/AA0605-Game-Board.jpg" alt="AA0605-Game-Board" width="400"/>
+<h4 id="143-pool-summary-page">1.4.3 Pool Summary Page</h4>
+<p>The Player can view a summary of the Pool by pressing the [Pool Summary] button at the bottom of the Pool.</p>
+<p>From the Summary Page, the Player can view the following:</p>
+<ul>
+<li>The Scores entered for each quarter</li>
+<li>The Winner of each quater</li>
+<li>The number of Credits won</li>
+<li>The credits that will be allocated to the Community
+<ul>
+<li>These can be due to rounding or included in the splits</li>
+</ul>
+</li>
+<li>The Total number of Credits to be distributed</li>
+<li>The Percentages for each quater as well as the Community</li>
+<li>The number of Squares each Players has Taken</li>
+<li>The number of Free Squares</li>
+</ul>
+<img src="images-v2/AA0606-Game-Board.jpg" alt="AA0606-Game-Board" width="400"/>
+<h3 id="15-public-pools">1.5 Public Pools</h3>
+<p>The [Public Pools] tab on the [Home] page displays all the Pools that have been given Public access by the Owners.</p>
+<p>If the Player wishes to access the Pool, they need to request access to the Community from the Pool Owner and request Credits to play. See the Membership Section for details on selecting access to Owners Communities.</p>
+<p>The Player may already have access to the Public pool, if so, the pool can be access through the [My Communities] tab.</p>
+<img src="images-v2/AA0105-PublicPools.jpg" alt="AA0105-PublicPools" width="400"/>
+<h3 id="16-about">1.6 About</h3>
+<p>The About Page can be accessed from the [Menu] on the [Home] page.</p>
+<p>In addition to information about the BruceBoard app, the User Documentation can be access by clicking on the [Documentation] icon on the right of the App Bar.</p>
+<img src="images-v2/AA0106-About.jpg" alt="AA0106-About" width="400"/>
+<h3 id="17-sign-out">1.7 Sign Out</h3>
+<p>When the Player is sign in to their account the [+Player] icon on the right of the App Bar changes to a [-Player] icon. The Player can sign out of their account by pressing the [-Player] icon.</p>
+<h2 id="20-pool-management-icons">2.0 Pool Management Icons</h2>
+<p>Along the bottom of the [Home] page there are 4 icons that provide access to key functionality.</p>
+<ol>
+<li>Manage Messages (Players / Owners)</li>
+<li>Manage Memberships (Pool Players)</li>
+<li>Manage Communities (Pool Owners)</li>
+<li>Manage Groups / Pools (Pool Owners)</li>
+</ol>
+<h3 id="21-manage-messages-pool-players">2.1 Manage Messages (Pool Players)</h3>
+<p>Messages are managed on the Message Page. They are presented from oldest to newest to allow them to be addressed in the order they came in.
+The following informtion is contained in the messages:</p>
+<ul>
+<li><strong>From:</strong> User the message was sent from.</li>
+<li><strong>Type:</strong> Type of Message. Each message has a message type to identify where it came from and what actions are possible (ie Accept and/or Reject)</li>
+<li><strong>System Message:</strong> System Generated message</li>
+<li><strong>Sender Comment:</strong> Comment added by the sender.</li>
+<li><strong>Message Number:</strong> The message number is on the last line of the message. This is a system generated number unique to the Sender.  Everytime the Player creates a message, their message number is increased. For each Player, message number start at 0 and increase by 1.</li>
+<li><strong>Timestamp:</strong> The time the message was sent can be found in the timestamp on the last line of the message.</li>
+</ul>
+<p>Historical Messages can be views by clicking the [Message Folder] icon on the App Bar.</p>
+<p>The [Wand] icon can be used to simplefy the management of message. Pressing it will Auto Process any messaeges that don't require a response. In order for this to work, the Player must set the Auto Processing status in on the [Settings] page.</p>
+<img src="images-v2/AA0109-Message-Maintain.jpg" alt="AA0109-Message-Maintain" width="400"/>
+<p><strong>Note</strong>: The System Message and Sender Comments are indentified by the line prompt '&gt;'.</p>
+<p><strong>Note</strong>: One of the most important messages to respond to is the &quot;Add Member Notification&quot; as this update the Players Membership record to &quot;Approved&quot; allowing them to access Pools.</p>
+<h3 id="22-manage-memberships-pool-players">2.2 Manage Memberships (Pool Players)</h3>
+<p>Players have memberships within other Player Communities that have access to the Community Owner's Groups of Pools.</p>
+<p>Players can review their Memberships by pressing the [Memberships] icon on the [Home] page.</p>
+<p>From here, they are able to complete the following:</p>
+<ul>
+<li>Request their Membership be deleted.</li>
+<li>Request Additional Credits for a Membership</li>
+<li>Request Removing of Credtis from a Membership</li>
+<li>Request Membership in another Player's community</li>
+</ul>
+<h4 id="request-to-be-removed-from-community">&gt;&gt; Request to be Removed from Community</h4>
+<p>The Player can also request to be remvoed from a Community by pressing the [Trash] icon on the desired Membership card.</p>
+<img src="images-v2/AA0201-Manage-Memberships.jpg" alt="AA0201-Manage-Memberships" width="400"/>
+<h4 id="request-to-addremove-credits">&gt;&gt; Request to Add/Remove Credits</h4>
+<p>Additional credits within the membership can be requested by pressing the [Bank] icon on the Membership card. Credit removal can be requested through the same process.</p>
+<img src="images-v2/AA0204-Membership-Credit.jpg" alt="AA0204-Membership-Credit" width="400"/>
+<p><strong>Note</strong>: It is possible to have Memberships within multiple Communities that have access to the same Pool. When Accessing Pools, ensure you are accessing them from the desired Membership Box on the [MyCommunities] tab on the [Home] page.</p>
+<h4 id="request-membership-in-another-players-community">&gt;&gt; Request Membership in another Player's Community</h4>
+<p>By pressing the [Plus] icon on the right of App Bar, the Player can request access to another Players communities.  The [Select Player] button is used to select the Owner of the Community the Player wants to join. This will display the Communities owned by the selected Player.</p>
+<p>Select the Community to request membership.</p>
+<p>Once approved, the requesting Player must review their messages to accept the Membership. After the Membership is accepted, the status will change from &quot;Requested&quot; to &quot;Approved&quot;.</p>
+<img src="images-v2/AA0202-Request-Access.jpg" alt="AA0202-Request-Access" width="400"/>
+<p><strong>Note</strong>: In the list of Memberships, a status of &quot;Requested&quot; indicates that your memberhsip request has not been accepted by the community owner yet or that the Player has not responded to the required Notification.</p>
+<h3 id="23-manage-commmunities-pool-onwers">2.3 Manage Commmunities (Pool Onwers)</h3>
+<p>Communities are collections of Players that are provided access to specific Groups thus allowing access to the Pools within the Group to the Members in the Community.</p>
+<p>The [Pencil] icon on the Community card can be used to edit the Community details such as Community Name.</p>
+<img src="images-v2/AA0301-Community-Manage.jpg" alt="AA0301-Community-Manage" width="400"/>
+<h4 id="231-maintain-community-members">2.3.1 Maintain Community Members</h4>
+<p>Tap on the Community card to display a list of Members within the Community.</p>
+<p>Players can be added to the Community by tapping the [Plus] icon on the App Bar.  From here, the list can be filtered and the desired player can be selected.</p>
+<p>When a Player is added to the Community, a Message will be sent to the Player and the added Player must Acknowledge the Membership in order to see Pools that the Community has access to.</p>
+<img src="images-v2/AA0302-Community-Members.png" alt="AA0302-Community-Members" width="400"/>
+<p><strong>Recommendation</strong>: Add &quot;Excluded Player&quot; (1000) to the Community to be used to Exclude squares from a Pool. This is used when a full board isn't filled and the Owner wishes to exclude the unselected squares. These squares will not be included in the Total Credits for the Pool and will impact the number of Credits distributed from the Pool.</p>
+<p><strong>Recommendation</strong>: Add the Pool Owner as a member of the Community as this is where any distributed credits for the Community will be assigned.</p>
+<h4 id="update--delete-members">&gt;&gt; Update / Delete Members</h4>
+<p>The Credits can be updated by editing the Member record. Member will be notified of the addition to the Community.</p>
+<h3 id="24-manage-groups--pools-pool-owner">2.4 Manage Groups / Pools (Pool Owner)</h3>
+<p>This icon allows Owners to manage Groups and the Pools within the groups.</p>
+<h4 id="241-manage-groups">2.4.1 Manage Groups</h4>
+<p>Groups are collections of Pools. This can be any grouping of Pools the Owner wants (i.e. Pools for a given week, Pools for a given team, Pools for a given playoff series, etc).</p>
+<p>The Groups that the Player can see can be access through the [Create Groups &amp; Manage Pools] button on the [Home] screen for Owners of the Groups or through the [Join Communities &amp; Play Pools] button on the [Home] screen for Players which have been provided access through their community memberships.</p>
+<p>Groups are owned and managed by the Player that created them (the Owner). The list of Groups owned by the active player is accessed by the [CreateGroups &amp; Manage Pools] button on the [Home] screen.</p>
+<p>From this list the Player can do the following:</p>
+<ul>
+<li>View the Name and Status for a Group</li>
+<li>Add new Groups by pressing [+] icon on the App Bar</li>
+<li>Edit existing Groups by pressing [Pencil] icon on the Group card</li>
+<li>Add Pool to the group by pressing anywhere on the Group card. This will take the Player to the [Pool List] screen for the Group</li>
+</ul>
+<img src="images-v2/AA0400-Group-List.jpg" alt="AA0400-Group-List" width="400"/>
+<h3 id="2411-maintain-group">2.4.1.1 Maintain Group</h3>
+<p>By pressing the [Pencil] Icon on a Group, the Player opens the [Edit Group] screen where they can update the Type, Name, Status, manage Access to the Group and Delete the Group.</p>
+<p>The Default community is the community that will be selected when Players requests access to a Pool from the [Public Pools] tab.</p>
+<p>The Status is used to determine what Groups are included to present to users. Only &quot;Active&quot; Groups are presented to Players throught their Memberships.</p>
+<img src="images-v2/AA0401-Group-Maintain.jpg" alt="AA0401-Group-Maintain" width="400"/>
+<p><strong>Note</strong>: The Owner must be a member of the Default Community if any credits will be distributed to the Community as a result of rounding or allocating a percent split to the Community as this is where the credits will be distributed to.</p>
+<h4 id="type-field-dropdown">&gt;&gt; Type Field Dropdown</h4>
+<p>The Type field is a drop down menu that allows the Owner to select the League for all the Pools defined for the Group.</p>
+<p>If the Pools are not associated with a known league (NFL, NBA, CFL) then the Player can select [Other] menu option to allow the entry of text values for the Home and Away teams for Pools within the Group.</p>
+<img src="images-v2/AA0402-Group-Maintain.jpg" alt="AA0402-Group-Maintain" width="400"/>
+<h3 id="2412-delete-group">2.4.1.2 Delete Group</h3>
+<p>The Group can be delete from the Access list by pressing the [Delete] button.</p>
+<p><strong>Note</strong> In order to delete the Group, all Pools and Accesses must be removed.</p>
+<h3 id="2413-manage-community-access-to-group">2.4.1.3 Manage Community Access to Group</h3>
+<p>The [Access] button is used to determine what Communities have access to the Group through the [Manage Access] screen.</p>
+<p>Players within the Communities that are include in the Access list will be able to see the Pools within the Group and be able to Request Squares to play.</p>
+<p>Owner can add Access to the Group by adding Communities to the list.  This is done by prssing the [+] sign in the App Bar at the top right part of the screen.</p>
+<p>Owners can also delete Access to the Group by deleting the Community from the list.  This is done by pressing the [Garbage Can] icon on the associated card for the Community.</p>
+<p><strong>Note:</strong> This will not change any squares Players wihtin the Community have already requested.</p>
+<img src="images-v2/AA0403-Group-Access.jpg" alt="AA0403-Series-Access" width="400"/>
+<p>How to add/removing individual Players to/from the Community is described the Community Section below.</p>
+<h2 id="242-manage-pools">2.4.2 Manage Pools</h2>
+<p>Pools are created within a specific Group through the [Manage Groups] screen.</p>
+<p>To access the [Manage Pool] screen from the [Manage Group] screen, tap on the Group card from the List.</p>
+<p>From the [Manage Pools] screen, the Owner can Add, Edit and Delete Pools from the Group.</p>
+<img src="images-v2/AA0600-Games-List.jpg" alt="AA0600-Games-List" width="400"/>
+<h3 id="2421-add-pools">2.4.2.1 Add Pools</h3>
+<p>To add a new Pools to the Group, press the [+] icon in the top right on the App Bar. This will open the [Add Pool] screen and allow the Owner to update the Square Value, Home/Away teams, Pool Date and Status.</p>
+<img src="images-v2/AA0601-Game-Edit.jpg" alt="AA0601-Game-List" width="400"/>
+<p>If the Group Type is a known League (NFL, NBA, CFL, etc) then the Owner is able to select the Home / Away from a Dropdown list of the teams within the League.</p>
+<img src="images/AA0603-Game-Edit.jpg" alt="AA0602-Game-Edit" width="400"/>
+<p>The Pool Status values can be one of the following:</p>
+<ul>
+<li><strong>Prep:</strong> Pool is in a prep stage and Players will not be able to see it.</li>
+<li><strong>Active:</strong> Pool is currently acive and ready for Players.</li>
+<li><strong>Complete:</strong> Pool is complete and credits have been distributed.</li>
+<li><strong>Archive:</strong> Pool is arcived and no longer visible to Players.</li>
+</ul>
+<p>Once the data is completed, the Owner presses [Save] button to save the team in the list.</p>
+<p>The Status is used to determine what Pools are included to present to users. Only &quot;Active&quot; Pools are presented in the [Public Pools] tab.
+Only &quot;Active&quot; Pools are presented to Players throught their Memberships.</p>
+<h3 id="2422-edit-pools">2.4.2.2 Edit Pools</h3>
+<p>The Owner can change the attributes of the Pool after it is created by pressing the [Pencil] icon on the Pool card.</p>
+<p>This will go to the [Edit Pool] screen which contains the same info as the [Add Pool] screen.</p>
+<p>If the [Cancel] button or [Back Arrow] are pressed, changes are not saved to the Database.</p>
+<h4 id="2423-delete-pool">2.4.2.3 Delete Pool</h4>
+<p>Pools can be deleted through the [Edit Pool] screen by pressing the [Delete] button.</p>
+<h3 id="243-pool-board">2.4.3 Pool Board</h3>
+<p>The Pool Board is where the Owner manages the active Pool. Here the owner can complete the following:</p>
+<ul>
+<li><strong>Assign Squares Individual:</strong> Click on desire square and select Player from the desired community. Only Communities that have access to the series are shown in the selection list. Only Players that have a balance above 0 or the Excluded Player are selectable.</li>
+<li><strong>Fill Squares Remaining:</strong> Select Menus option and select Player to assign to the remaining squares. Squares will be assigned to the Player selected until the player has run out of credits.  If you want to exclude squares from the Pool (ie credits are not included in the totals), include the &quot;Exclude Player&quot; (1000) in the Community select it to exclude the remaining squares.</li>
+<li><strong>Set the Row/Column numbers:</strong> Press the Green [Lock] icon available when the Board is full. Once this is pressed, the [Lock] icon will turn Red and not be accessible.
+<strong>Note</strong>: Once the Row/Column numbers have been set, the Splits can no longer be adjusted.</li>
+</ul>
+<p>Players are able to View and Request Squares from the Pool board as well. If the Owner has set the &quot;Square Request&quot; in their Auto Processing settings, requested squares are processed automatically if the Player has enough credits. If the &quot;Square Requested&quot; Auto Processing is not set, the Square will be set to &quot;Requested&quot; (Amber) and is not processed until the owner reviews and accepts the Message request. At this point, credits will be debited and the Square will be moved to &quot;Taken&quot;.
+If the owner &quot;Rejects&quot; a players Request, the Square is return to &quot;Free&quot; at which time, other players may Request the square.</p>
+<img src="images-v2/AA0604-Game-Board.jpg" alt="AA0601-Game-Board" width="400"/>
+<h3 id="2431-pool-board-summary">2.4.3.1 Pool Board Summary</h3>
+<p>The Pool summary can be access by pressing the [Pool Summary] button on the Pool page.</p>
+<p>From here the Owner can comlete the following:</p>
+<ul>
+<li><strong>Set Scores:</strong> Press the [Score] button beside the quarter to set the score.</li>
+<li><strong>Update Splits:</strong> Select Menu Option and enter desire splits. This option is disabled once the Scores are locked.</li>
+<li><strong>Distribute Credits:</strong> When the Pool is complete and all Scores have been entereed, the Owner can Distribute the
+<img src="images-v2/AA0606-Game-Board.jpg" alt="AA0601-Game-Board" width="400"/></li>
+</ul>
+<h4 id="pool-board-winners">&gt;&gt; Pool Board Winners</h4>
+<p>When the Owner of the Pool enteres the quarterly scores, the winning square for each quarter is highlighted red, lighter to darker for each quarter.</p>
+<img src="images-v2/AA0605-Game-Board.jpg" alt="AA0601-Game-Board" width="400"/>
+<h2 id="90-technical-information">9.0 Technical Information</h2>
+<p>The following are key data model elements used within the BruceBoard Application.</p>
+<ul>
+<li>Player : Holds all data for the Player (ie Series, Memberships, Communities)</li>
+<li>Memberships : Players Memberships in Communities.</li>
+<li>Groups: Collections of Pools.</li>
+<li>Pools : Pool Data including Squares, Scores and Splits.</li>
+<li>Community : Collections of Players assigned access to Groups of Pools.</li>
+<li>Messages : List of Messages from other Players.</li>
+</ul>
+<p>The BruceBoard app is built on the Firebase datastore.Firebase is a service provided by Google and provides Authentication and Data capabilities.</p>
+<h3 id="91-authentication">9.1 Authentication</h3>
+<p>BruceBoard uses Firebase to manage Application Authentication. Firebase Authentication contains key information such as:</p>
+<ul>
+<li>Login Email Name / Password</li>
+<li>Display Name</li>
+<li>Firestore UserID</li>
+</ul>
+<p>This data (except Password) is available to the Addministration Account to manage users (delete, disable, password reset)</p>
+<p>Firebase Authentication is provied by Google and is secure, allowing Players to authenticate via a number of methods (ie email/password, facebook, etc).  Currently, only email/password has been enabled.</p>
+<img src="images/AA0000-General-Users.png" alt="AA0000-General-Users" width="400"/>
+<h3 id="92-player">9.2 Player</h3>
+<p>Players are stored in the database and are accessible by all users of the application.</p>
+<p>Players (as an Owner) can manages Communities, Groups, Pools etc, as well as joining other Players (as a Player) Pools.</p>
+<p>Player Data consists of basic Personal Data such as:</p>
+<ul>
+<li>First Name, Last Name</li>
+<li>Initials</li>
+<li>Display Name</li>
+<li>Player Number</li>
+</ul>
+
+</body>
+</html>
