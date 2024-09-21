@@ -82,9 +82,14 @@ bryon@abbott01:~$ sftp abbott01
 sftp> put -r /home/bryon/Code/AbbottSource/StudioProjects/aabruceboard/docs
 ```
 
-Move to prodution 
+Move to production 
 ```
-bryon@abbott01:cp -r docs /var/www/html/bruceboard/
+bryon@abbott01:$ rm -Rf bruceboard-doc
+bryon@abbott01:$ mv docs bruceboard-doc
+bryon@abbott01:/var/www/html$ sudo mv bruceboard-doc bruceboard-doc-r2-xxx
+bryon@abbott01:/var/www/html$ sudo mkdir bruceboard-doc
+bryon@abbott01:/var/www/html$ cd
+bryon@abbott01:cp -r bruceboard-doc /var/www/html/
 ```
 The UserManual can be found on the server here: [BruceBoard User Manual](www.abbottavenue.com/bruceboard/docs/index.html)
 

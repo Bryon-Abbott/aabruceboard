@@ -33,7 +33,6 @@ The [Home] page is the launching point for the application. From here Players ca
 
 <img src="images-v2/AA0100-Home.jpg" alt="images-v2/AA0100-Home.jpg" width="400"/>
 
-
 ### 1.1 Sign In
 By Pressing the +Player icon on the [Home] page, players can sign in to their account.
 
@@ -254,7 +253,7 @@ Players can be added to the Community by tapping the [Plus] icon on the App Bar.
 
 When a Player is added to the Community, a Message will be sent to the Player and the added Player must Acknowledge the Membership in order to see Pools that the Community has access to.
 
-<img src="images-v2/AA0302-Community-Members.png" alt="AA0302-Community-Members" width="400"/>
+<img src="images-v2/AA0302-Community-Members.jpg" alt="AA0302-Community-Members" width="400"/>
 
 **Recommendation**: Add "Excluded Player" (1000) to the Community to be used to Exclude squares from a Pool. This is used when a full board isn't filled and the Owner wishes to exclude the unselected squares. These squares will not be included in the Total Credits for the Pool and will impact the number of Credits distributed from the Pool.
 
@@ -338,7 +337,7 @@ To add a new Pools to the Group, press the [+] icon in the top right on the App 
 
 If the Group Type is a known League (NFL, NBA, CFL, etc) then the Owner is able to select the Home / Away from a Dropdown list of the teams within the League.
 
-<img src="images/AA0603-Game-Edit.jpg" alt="AA0602-Game-Edit" width="400"/>
+<img src="images-v2/AA0603-Game-Edit.jpg" alt="AA0603-Game-Edit" width="400"/>
 
 The Pool Status values can be one of the following:
 + **Prep:** Pool is in a prep stage and Players will not be able to see it.
@@ -380,7 +379,8 @@ The Pool summary can be access by pressing the [Pool Summary] button on the Pool
 From here the Owner can comlete the following:
 + **Set Scores:** Press the [Score] button beside the quarter to set the score.
 + **Update Splits:** Select Menu Option and enter desire splits. This option is disabled once the Scores are locked.
-+ **Distribute Credits:** When the Pool is complete and all Scores have been entereed, the Owner can Distribute the
++ **Distribute Credits:** When the Pool is complete and all Scores have been entered, the Owner can Distribute the credits to the winning Players.
+
 <img src="images-v2/AA0606-Game-Board.jpg" alt="AA0601-Game-Board" width="400"/>
 
 #### >> Pool Board Winners
@@ -410,7 +410,7 @@ This data (except Password) is available to the Addministration Account to manag
 
 Firebase Authentication is provied by Google and is secure, allowing Players to authenticate via a number of methods (ie email/password, facebook, etc).  Currently, only email/password has been enabled.
 
-<img src="images/AA0000-General-Users.png" alt="AA0000-General-Users" width="400"/>
+<img src="images-v2/AA0000-General-Users.png" alt="AA0000-General-Users" width="800"/>
 
 ### 9.2 Player
 Players are stored in the database and are accessible by all users of the application.

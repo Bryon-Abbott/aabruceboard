@@ -1,15 +1,15 @@
 # Bruce Board Build Setup
-## Add Firestore 
+## Add Firestore
 The following page provides details on setting up firestore for the application.
 [Firestore Configure](https://firebase.google.com/docs/flutter/setup?platform=ioskhttps://firebase.google.com/docs/flutter/setup?platform=ios)
 
 
-## Firebase Structrue 
+## Firebase Structrue
 
 Messages Process
 Sender has "Create" access to /Player/{UID-Receiver}/Message/{UID-Sender}/Incoming/{Send-Msg-ID}
 
-Sender writes message to : 
+Sender writes message to :
 /Player/{UID-Receiver}/Message/{UID-Sender}/Incoming/{Send-Msg-ID}
 
 Receiver reads message and processes it, copy to Processed and deleting from Request
@@ -18,23 +18,23 @@ Receiver reads message and processes it, copy to Processed and deleting from Req
 Receiver send Response back to Sender
 /Player/{UID-Sender}/Message/{UID-Receiver}/Response/{Send-Msg-ID}
 
-Message Class: 
+Message Class:
 MSID = Message ID, Unique to Sender
 Type = {Community Join Request-M001, Square Select Request-M002}
 
 
-MessageClass 
+MessageClass
 Sender UID = Me
 Receiver UID = Recever
 
-## Web Deploy 
+## Web Deploy
 
-### Deploy Application 
+### Deploy Application
 1. Build Web
-1. Upload Web 
-1. Move file to production 
+1. Upload Web
+1. Move file to production
 1. Build UserManual.html
-1. Upload Manual 
+1. Upload Manual
 
 
 From Android Studion, select Menu->Build->Flutter->Build Web
@@ -55,13 +55,13 @@ bryon@abbott01:~$ mv web bruceboard
 Edit the bruceboard/index.html and update the **base href** to the fllowing:
 
 ```
-bryon@abbott01:~$ vi bruceboard/index.html 
+bryon@abbott01:~$ vi bruceboard/index.html
 ```
 
 ```<base href="/bruceboard/">```
 
 
-Move the application to production. 
+Move the application to production.
 ```
 bryon@abbott01:~$ cd /var/www/html
 bryon@abbott01:/var/www/html$ sudo mv bruceboard bruceboard-r2-001
@@ -74,7 +74,7 @@ bryon@abbott01:~$ cp -r bruceboard /var/www/html
 ### Deploy Documentation
 
 1. Upload Docs
-1. Move to Production 
+1. Move to Production
 
 Upload Docs
 ```
@@ -82,14 +82,16 @@ bryon@abbott01:~$ sftp abbott01
 sftp> put -r /home/bryon/Code/AbbottSource/StudioProjects/aabruceboard/docs
 ```
 
-Move to prodution 
+Move to prodution
 ```
-bryon@abbott01:cp -r docs /var/www/html/bruceboard/
+bryon@abbott01:cp -r docs/images-v2 /var/www/html/bruceboard-doc/
+bryon@abbott01:cp -r docs/UserManual-v2.html /var/www/html/bruceboard-doc/UserManual.html
+
 ```
 The UserManual can be found on the server here: [BruceBoard User Manual](www.abbottavenue.com/bruceboard/docs/index.html)
 
 ## Deploy to Android
-The latest setup steps for building applications can be found here:  
+The latest setup steps for building applications can be found here:
 [Build and release an Android app](https://docs.flutter.dev/deployment/android)
 ### Local.Properties
 Ensure [project]/android/local.properties
@@ -107,8 +109,8 @@ flutter.targetSdkVersion=30
 flutter.compileSdkVersion=30```
 ```
 
-### Key Properties 
-Ensure the [project]/android/key.properties is setup. Password for the store & key is the standard If you build password. 
+### Key Properties
+Ensure the [project]/android/key.properties is setup. Password for the store & key is the standard If you build password.
 ```
 storePassword=******
 keyPassword=******
@@ -116,27 +118,27 @@ keyAlias=upload
 storeFile=/home/bryon/keystore/upload-keystore.jks
 ```
 
-### Build 
-Use Android Studio Menu->Build->Flutter->Build App Bundle to build the application. 
+### Build
+Use Android Studio Menu->Build->Flutter->Build App Bundle to build the application.
 
 The ABB file can be found at [project]build/app/outputs/bundle/release/app-release.aab
 
-### Upload 
-Sign onto Google Play Console using Dev0.Abbott Account. 
+### Upload
+Sign onto Google Play Console using Dev0.Abbott Account.
 [Google Play Consol](https://play.google.com/console/u/0/developers/7966432226099174690/app-list?pli=1)
 
 Review Apps on the Play Console
 
 <img src="images/TT0000-PlayConsole.png" alt="TT0000-PlayConsole" width="400"/>
 
-Go to the Open Testing page to update releases. 
+Go to the Open Testing page to update releases.
 
 Select 'Create new release' to add a new releaase.
-Once added and sent for review, this can take a day or so to get moved to production. 
+Once added and sent for review, this can take a day or so to get moved to production.
 
 <img src="images/TT0001-ClosedTesting.png" alt="TT0001-ClosedTesting" width="400"/>
 
-### iOS 
+### iOS
 Reset the pod install (do for ios & macos)
 gem install cocoapods-deintegrate
 gem install cocoapods-clean
@@ -146,7 +148,7 @@ Run pod install
 
 
 ## Logos
-### CFL 
+### CFL
 The CFL Logos were obtained from sportslogo.net (https://www.sportslogos.net/teams/list_by_league/8/canadian_football_league/cfl/logos/)
 Need to link back to this site for references.
 
@@ -154,9 +156,9 @@ Need to link back to this site for references.
 ### Option 1: Indicate at the Game Level
 Pros: Can display games that are Public
 Cons: Need to request access to a community to join game
-Process: 
+Process:
 Display Public Games list
-    Order by Proximity? Date? 
+    Order by Proximity? Date?
 Button to request Access to Group(Series)
 
 ### Option 2: Indicate at the Community Level
@@ -200,8 +202,8 @@ Version: 1.0.10+11
 Release 10
 Added Icons/Dropdowns for Series Types and Teams.
 Update Game to display icons.
-### Release Notes 
-Version 1.0.08 
+### Release Notes
+Version 1.0.08
 + Added dropdown for Series connect to select NFL,CFL,NBA,Others
 + Update Game Maintain to use Drop Downs with Icons for NFL, NBA and CFL.
 + Updated board to display Team Logo Icons.
@@ -221,10 +223,10 @@ Update after Alpha Testing
 
 Version 1.0.05
 + Added Password Verification to Setup Screen.
-+ Updated Fill Remaining Squares to enable Excluded User 
++ Updated Fill Remaining Squares to enable Excluded User
 + Updated Fill Remaining Squares to update Member Credits.
 + Disable Fill Remaining when all squares are full.
-+ Disable Update splits when Scores are locked. 
++ Disable Update splits when Scores are locked.
 + Other minor fixes.
 
 ## 1.0.04+7
@@ -249,5 +251,5 @@ Release 5
 First Deployment of Release 1 to Google Play Store
 ### Release Notes
 Version 1.0.02
-+ First multi player release published to Android Play Store. 
++ First multi player release published to Android Play Store.
 + Contains basic multi player functionality to manage and play BruceBoard games.~~
