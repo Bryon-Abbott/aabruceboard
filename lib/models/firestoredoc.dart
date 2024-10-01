@@ -60,7 +60,6 @@ abstract class FirestoreDoc {
           log('FirestoreDoc: Invalid Document Type');
           throw 'Invalid document type';
       }
-    //docId = data['docId'] ?? -1;
   }
 
   static String KEY(int fsid) {

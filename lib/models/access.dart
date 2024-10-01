@@ -11,8 +11,6 @@ class Access implements FirestoreDoc {
   final String nextIdField = 'nextAid';
   @override
   final String totalField = 'noAccesses';
-  // @override
-//  final NumberFormat _keyFormat = NumberFormat("A0000", "en_US");
   // Data Class Variables
   int cid;  // Community ID
   int pid;  // Community Owner PID
@@ -30,7 +28,6 @@ class Access implements FirestoreDoc {
         pid = data['pid'] ?? -1,
         type = data['type'] ?? 'error';
 
-  // @override
   // No override as Access takes 2 parameters.
   static String KEY(int pid, int cid) {
     // Format Key for Document ID

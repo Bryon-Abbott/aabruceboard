@@ -15,16 +15,12 @@ class Message implements FirestoreDoc {
 
   final NumberFormat _keyFormat = NumberFormat("ME00000000", "en_US");
   // Document Specific Data items
-  // @override
-  // int docId;
-  int pidFrom;  // /Player/{UID-REC}/Message/{UID-SEND}/Incoming/{MSID-KEY}
+  int pidFrom;
   int pidTo;
   int messageCode;
   int messageType;
-//  int responseCode;
   Timestamp timestamp; // Time the class was created
   Map<String, dynamic> data = {};
-  // Map<String, dynamic> respnose = {};
   String comment;
   String description;
 
@@ -36,7 +32,6 @@ class Message implements FirestoreDoc {
         messageType = data['messageType'] ?? -1,
         timestamp = data['timestamp'] ?? Timestamp.now(),
         data = data['data'] ?? {},
-  //      responseCode = data['responseCode'] ?? -1,
         description = data['description'] ?? 'No Message Description',
         comment = data['comment'] ?? 'No Message Comment Provided';
 
@@ -49,18 +44,10 @@ class Message implements FirestoreDoc {
     messageType = data['messageType'] ?? messageType;
     timestamp = data['timestamp'] ?? timestamp;
     data = data['data'] ?? data;
-//    responseCode = data['responseCode'] ?? responseCode;
     description = data['description'] ?? description;
     comment = data['comment'] ?? comment;
   }
 
-  // static String KEY(int id) {
-  //   NumberFormat intFormat = NumberFormat("MS00000000", "en_US");
-  //   String key = intFormat.format(id);
-  //   return key;
-  // }
-
-  // The key should be UID for Message keys???
   @override
   String get key {
     // Format Key for Document ID
@@ -69,7 +56,6 @@ class Message implements FirestoreDoc {
     return key;
   }
 
-  // Returns a Map<String, dynamic> of all member veriables.
   @override
   Map<String, dynamic> get updateMap {
     return {
@@ -80,7 +66,6 @@ class Message implements FirestoreDoc {
       'messageType': messageType,
       'timestamp': timestamp,
       'data': data,
-//      'responseCode': responseCode,
       'description': description,
       'comment': comment,
     };

@@ -28,19 +28,19 @@ class AuditGameSummaryReport extends StatefulWidget {
 class _AuditGameSummaryReportState extends State<AuditGameSummaryReport> {
   List<Audit> auditLogs = [];
 
-  final codeSummary = <int, List<int>>{};
+  final codeSummary = <int, List<int>>{999: [0,0,0]};  // Initiate the Total Map entry.
   void summarizeCode(Audit a) {
     // Int Array : Count, Credit, Debit
     final currentArray = codeSummary.putIfAbsent(a.code, () => [0,0,0]);
-    // List<int> newValue = [currentArray[0]+1,currentArray[1]+a.credit, currentArray[2]+a.debit];
-    // codeSummary[code] = newValue;
     codeSummary[a.code] = [currentArray[0]+1,currentArray[1]+a.credit, currentArray[2]+a.debit];
+    codeSummary[999]![0] += 1;
+    codeSummary[999]![1] += a.credit;
+    codeSummary[999]![2] += a.debit;
   }
 
-  final playerSummary = <int, Map<String, int>> {};
+  final playerSummary = <int, Map<String, int>> {9999: {"credit": 0, "debit": 0, "count":0 } };
   final playerNames = <int, String> {};
   void summarizePlayer(Audit a) {
-    // final player = a.playerPid;
     // Int Array : Count, Credit, Debit
     final playerMap = playerSummary.putIfAbsent(a.playerPid, () => <String, int>{});
     playerSummary[a.playerPid] =
@@ -49,16 +49,20 @@ class _AuditGameSummaryReportState extends State<AuditGameSummaryReport> {
         "count": (playerMap["count"] ?? 0) + 1,
       };
     playerNames[a.playerPid] = " ...";
+    playerSummary[9999]!["count"] = playerSummary[9999]!["count"]! + 1;
+    playerSummary[9999]!["credit"] = playerSummary[9999]!["credit"]! + a.credit;
+    playerSummary[9999]!["debit"] = playerSummary[9999]!["debit"]! + a.debit;
   }
 
   // ==========================================================================
   Future<List<Player>> getPlayers(List<int> playerNos) async {
     List<Player> players = [];
     for (int pNo = 0; pNo < playerNos.length; pNo++) {
+      if (playerNos[pNo] == 9999) continue; // Don't look for player 9999
       Player player = await DatabaseService(FSDocType.player)
           .fsDoc(docId: playerNos[pNo]) as Player;
       players.add(player);
-      log("Found Player ${player.fName} ${player.lName} ",
+      log("Found Player ${playerNos[pNo]}:${player.fName} ${player.lName} ",
           name: "${runtimeType.toString()}:getNames");
     }
     return players;
@@ -83,18 +87,20 @@ class _AuditGameSummaryReportState extends State<AuditGameSummaryReport> {
       child: StreamBuilder<List<FirestoreDoc>>(
         stream: DatabaseService(FSDocType.audit)
           .fsDocQueryListStream(
-          queryValues: {
-            'sid': widget.series.docId,
-            'gid': widget.game.docId
-          }
-        ),
+            queryValues: {
+              'sid': widget.series.docId,
+              'gid': widget.game.docId
+            }
+          ),
         builder: (context, snapshots) {
           if(snapshots.hasData) {
             auditLogs = snapshots.data!.map((a) => a as Audit).toList();
             auditLogs.forEach(summarizeCode);
             List<int> codeKeys = codeSummary.keys.toList();
+            codeKeys.sort();
             auditLogs.forEach(summarizePlayer);
             List<int> playerKeys = playerSummary.keys.toList();
+            playerKeys.sort();
             return FutureBuilder<List<Player>>(
               future: getPlayers(playerKeys),
               builder: (context, snapshotNames) {
@@ -210,7 +216,7 @@ class _AuditGameSummaryReportState extends State<AuditGameSummaryReport> {
                                                               SizedBox(
                                                                 width: 268,
                                                                 child: Text(
-                                                                  "${codeKeys[index]}:${AuditCode.auditDescription(codeKeys[index])}  ",
+                                                                  "${codeKeys[index]}:${codeKeys[index]==999 ? "    Total" : AuditCode.auditDescription(codeKeys[index]) }",
                                                                   maxLines: 1,
                                                                   overflow: TextOverflow.ellipsis,
                                                                 ),
@@ -277,7 +283,8 @@ class _AuditGameSummaryReportState extends State<AuditGameSummaryReport> {
                                                             SizedBox(
                                                               width: 268,
                                                               child: Text(
-                                                                "${playerKeys[index]}:${playerNames[playerKeys[index]]}  ",
+                                                                "${playerKeys[index]}:${playerKeys[index]==9999 ? "    Total" : playerNames[playerKeys[index]]}  ",
+//                                                                "${playerKeys[index]}:${playerNames[playerKeys[index]]} ",
                                                                 maxLines: 1,
                                                                 overflow: TextOverflow.ellipsis,
                                                               ),

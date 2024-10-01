@@ -11,13 +11,9 @@ class MessageOwner implements FirestoreDoc {
   @override
   final String totalField = 'noMessagesOwners';
 
-  // final NumberFormat _keyFormat = NumberFormat("MO00000000", "en_US");
   // Document Specific Data items
-  // @override
-  // int docId;
   String uid;
 
-  //Member({ required this.cid, required this.uid, required this.credits, });
   MessageOwner({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
         uid = data['uid'] ?? 'error';

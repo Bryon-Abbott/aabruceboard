@@ -46,7 +46,6 @@ class BruceUser {
       log("${e.code}, ${e.message}", name: '${runtimeType.toString()}:deleteUserAccount()');
       if (e.code == "requires-recent-login") {
         return false;
-        //        await _reauthenticateAndDelete();
       } else {
         // Handle other Firebase exceptions
       }
@@ -57,24 +56,24 @@ class BruceUser {
     return true;
   }
 
-  Future<void> _reauthenticateAndDelete() async {
-    log("Reauthenticating ... ", name: '${runtimeType.toString()}:_reauthenticateAndDelete()');
-    try {
-      final providerData = _auth.currentUser?.providerData.first;
-      if (AppleAuthProvider().providerId == providerData!.providerId) {
-        await _auth.currentUser!
-            .reauthenticateWithProvider(AppleAuthProvider());
-      } else if (GoogleAuthProvider().providerId == providerData.providerId) {
-        await _auth.currentUser!
-            .reauthenticateWithProvider(GoogleAuthProvider());
-      }
-
-      await _auth.currentUser?.delete();
-    } catch (e) {
-      log("Unhandled Error ... ", name: '${runtimeType.toString()}:_reauthenticateAndDelete()');
-      // Handle exceptions
-    }
-  }
+  // Future<void> _reauthenticateAndDelete() async {
+  //   log("Reauthenticating ... ", name: '${runtimeType.toString()}:_reauthenticateAndDelete()');
+  //   try {
+  //     final providerData = _auth.currentUser?.providerData.first;
+  //     if (AppleAuthProvider().providerId == providerData!.providerId) {
+  //       await _auth.currentUser!
+  //           .reauthenticateWithProvider(AppleAuthProvider());
+  //     } else if (GoogleAuthProvider().providerId == providerData.providerId) {
+  //       await _auth.currentUser!
+  //           .reauthenticateWithProvider(GoogleAuthProvider());
+  //     }
+  //
+  //     await _auth.currentUser?.delete();
+  //   } catch (e) {
+  //     log("Unhandled Error ... ", name: '${runtimeType.toString()}:_reauthenticateAndDelete()');
+  //     // Handle exceptions
+  //   }
+  // }
 }
 
 class Player implements FirestoreDoc {
@@ -108,10 +107,6 @@ class Player implements FirestoreDoc {
   bool autoProcessAck = false;
   bool autoProcessAcc = false;
 
-
-  // Player({required this.uid, required this.pid,
-  //   required this.fName, required this.lName, required this.initials,
-  // });
   Player({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
         uid = data['uid'] ?? 'Anonymous',
@@ -126,10 +121,7 @@ class Player implements FirestoreDoc {
         autoProcessAcc = data['autoProcessAcc'] ?? false,
         noMemberships = data['noMemberships'] ?? 0,
         noCommunities = data['noCommunities'] ?? 0,
-        noSeries = data['noSeries'] ?? 0
-  {
-   // log('Creating player ID: $docId  U: $uid fName: $fName', name: '${runtimeType.toString()}:Player()');
-  }
+        noSeries = data['noSeries'] ?? 0 ;
 
   // The key for the Player Document is the Firestore Users ID (uid)
   @override
@@ -159,20 +151,6 @@ class Player implements FirestoreDoc {
     noCommunities = data['noCommunities'] ?? noCommunities;
     noSeries = data['noSeries'] ?? noSeries;
   }
-  // void update({ required Map<String, dynamic> data, }) {
-  //   docId = data['docId'] ?? -1;
-  //   uid = data['uid'] ?? 'Anonymous';
-  //   pid = data['pid'] ?? -1;
-  //   fName = data['fName'] ?? 'Fname';
-  //   lName = data['lName'] ?? 'Lname';
-  //   initials = data['initials'] ?? 'FL';
-  //   autoProcessReq = data['autoProcessReq'] ?? false;
-  //   autoProcessNot = data['autoProcessNot'] ?? false;
-  //   autoProcessAck = data['autoProcessAck'] ?? false;
-  //   noMemberships = data['noMemberships'] ?? 0;
-  //   noCommunities = data['noCommunities'] ?? 0;
-  //   noSeries = data['noSeries'] ?? 0;
-  // }
 
   // Returns a Map<String, dynamic> of all member variables.
   @override

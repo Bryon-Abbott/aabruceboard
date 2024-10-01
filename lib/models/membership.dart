@@ -12,18 +12,14 @@ class Membership implements FirestoreDoc {
   @override
   final String totalField = 'noMemberships';
 
-  // final NumberFormat _keyFormat = NumberFormat("C0000", "en_US");
-  // Data Class Variables
-  int cid;  // Community ID
-  int cpid;  // Community PID
-  int pid;  // Community PID
-//  String uid;
+  int cid;
+  int cpid;
+  int pid;
   String status;
 
   static final NumberFormat _cFormat = NumberFormat("C0000", "en_US");
   static final NumberFormat _pFormat = NumberFormat("P00000000", "en_US");
 
-  //Membership({ required this.cid, required this.pid, required this.status, });
   Membership({ required Map<String, dynamic> data, }) :
         docId = data['docId'] ?? -1,
         cid = data['cid'] ?? -1,
@@ -59,7 +55,6 @@ class Membership implements FirestoreDoc {
     status = data['status'] ?? status;
   }
 
-  // Returns a Map<String, dynamic> of all member veriables.
   @override
   Map<String, dynamic> get updateMap {
     return {

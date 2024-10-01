@@ -2,7 +2,6 @@ import 'dart:developer' as dev;
 import 'dart:math';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/player.dart';
-//import 'package:bruceboard/utils/preferences.dart';
 import 'package:intl/intl.dart';
 
 enum SquareStatus {free, requested, taken}
@@ -19,15 +18,12 @@ class Grid implements FirestoreDoc {
   String gid='none';
 
   int sid = -1;
-//  String uid = 'error' ;
   List<int> squarePlayer;     // Player PID
   List<int> squareCommunity;  // Community where Player Member record resides
   List<int> squareStatus;     // Free,Requested,Taken
   List<String> squareInitials;// Player Initials
   List<int> rowScores;
   List<int> colScores;
-//  bool scoresLocked = false;
-//  Board({ required this.gid, }) :
   Grid({ required Map<String, dynamic> data, }) :
     docId = data['docId']                                   ?? -1,
     squarePlayer = data['squarePlayer']?.cast<int>()        ?? List<int>.filled(100, -1),       // 100
@@ -36,7 +32,6 @@ class Grid implements FirestoreDoc {
     squareInitials = data['squareInitials']?.cast<String>() ?? List<String>.filled(100, 'FS'),  // 100
     rowScores = data['rowScores']?.cast<int>()              ?? List<int>.filled(10, -1),        // 10
     colScores = data['colScores']?.cast<int>()              ?? List<int>.filled(10, -1)        // 10
-//    scoresLocked = data['scoresLocked']                     ?? false
   ;
 
   // Return the number of squares FREE (not PICKED or EXCLUDED)
@@ -55,10 +50,6 @@ class Grid implements FirestoreDoc {
 
   // Return the number of squares PICKED (EXcluding excluded squares)
   int getPickedSquares() {
-    // String? excludePlayerNoString = Preferences.getPreferenceString(Preferences.keyExcludePlayerNo) ??
-    //     "-1";  // If no perferences saved for ExcludePlayerNo, default to -1
-    // int excludePlayerNo = int.parse(excludePlayerNoString);
-
     int picked = squarePlayer.where((e) => (e != -1) && (e != kExcludePlayerNo)).length;
     //dev.log("Number of bought squares is $picked", name: "${runtimeType.toString()}:getBoughtSquares");
     return picked;
@@ -78,7 +69,6 @@ class Grid implements FirestoreDoc {
       int pick = Random().nextInt(scores.length);
       colScores[i] = scores.removeAt(pick);
     }
-  //  scoresLocked = true;
   }
 
   bool get scoresLocked {
@@ -94,14 +84,12 @@ class Grid implements FirestoreDoc {
   @override
   void update({required Map<String, dynamic> data}) {
     docId = data['docId'] ?? docId;
-    squarePlayer = data['squarePlayer'];      // 100
-    squareCommunity = data['squareCommunity'];      // 100
-    squareInitials = data['squareInitials'];  // 100
+    squarePlayer = data['squarePlayer'];
+    squareCommunity = data['squareCommunity'];
+    squareInitials = data['squareInitials'];
     squareStatus = data['squareStatus'];
-    rowScores = data['rowScores'];            // 10
-    colScores = data['colScores'];            // 10
-//    scoresLocked = data['scoresLocked'];
-
+    rowScores = data['rowScores'];
+    colScores = data['colScores'];
   }
 
   @override

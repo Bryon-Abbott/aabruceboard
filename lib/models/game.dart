@@ -14,16 +14,13 @@ class Game implements FirestoreDoc {
 
   static final NumberFormat _keyFormat = NumberFormat("G00000000", "en_US");
   // Data Class Variables
-//  int gid; // Game ID
   int sid; // Series ID
   int pid; // Player ID
-//  String uid; // Owners UID
 
   String name; // = "";
   int squareValue = 0;
   String teamOne = "";
   String teamTwo = "";
-  // DateTime gameDate = DateTime.now();
   String gameDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   int status = 0; // Prep=0, Active=1; Complete=2; Archive=3;
   int permission = Permission.private.index;
@@ -43,7 +40,6 @@ class Game implements FirestoreDoc {
   @override
   String get key {
     String key = _keyFormat.format(docId);
-    // log("Gettign Game key $key");
     return key;
   }
 
@@ -54,8 +50,6 @@ class Game implements FirestoreDoc {
 
   @override
   void update({ required Map<String, dynamic> data, }) {
-    // DateTime defaultDate = DateTime.now();
-    // DateFormat('yyyy-MM-dd').format(defaultDate);
     docId = data['docId'] ?? docId;
     sid = data['sid'] ?? sid;
     pid = data['uid'] ?? pid;
@@ -69,11 +63,8 @@ class Game implements FirestoreDoc {
     permission = data['permission'] ?? Permission.private.index;
   }
 
-  // Returns a Map<String, dynamic> of all member veriables.
   @override
   Map<String, dynamic> get updateMap {
-    // String gameDateString;
-    // gameDateString = DateFormat('yyyy-MM-dd').format(gameDate);
     return {
       'docId': docId,
       'sid': sid,
