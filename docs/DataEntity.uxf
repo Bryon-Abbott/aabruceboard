@@ -1,0 +1,142 @@
+<diagram program="umletino" version="15.1"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>45</x><y>0</y><w>520</w><h>140</h></coordinates><panel_attributes>&lt;&lt;Account&gt;&gt;
+--
+Firestore Attributes
+-id: Firestore Player ID {pid}
+Password, eMail,
+--
+Operational Attributes
+--
+Description
+A player has one Firebase account to use to authenticate to the application.
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>125</x><y>190</y><w>520</w><h>170</h></coordinates><panel_attributes>&lt;&lt;Player&gt;&gt;
+--
+Firestore Doc:
+/Player/{pid}
+--
+Firestore Attributes
+-id: Firestore Player ID
+FName, LName, Initials
+--
+Operational Attributes
+--
+Description
+A Player has one Player document that holds key Player Attributes and Settings.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>35</x><y>130</y><w>110</w><h>80</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=1
+links to one &gt;</panel_attributes><additional_attributes>90;60;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>225</x><y>410</y><w>520</w><h>160</h></coordinates><panel_attributes>&lt;&lt;Membership&gt;&gt;
+--
+Firestore Doc:
+/Player/{pid}/Membership{cpid/cid}
+--
+Firestore Attributes
+Status
+--
+Operational Attributes
+--
+Description
+A Player has a Membership document for every Community they are a member of.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>225</x><y>590</y><w>520</w><h>170</h></coordinates><panel_attributes>&lt;&lt;Community&gt;&gt;
+--
+Firestore Doc:
+/Player/{pid}/Community/{cid}
+--
+Firestore Attributes
+-id: cid
+Type, Name
+--
+Operational Attributes
+--
+Description
+A Player creates Communities to provide access to the Groups of Pools they setup.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>115</x><y>350</y><w>140</w><h>260</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..1
+manages many &gt;</panel_attributes><additional_attributes>10;10;20;220;110;240</additional_attributes></element><element><id>Relation</id><coordinates><x>95</x><y>350</y><w>100</w><h>700</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..1
+has many &gt;</panel_attributes><additional_attributes>30;10;10;170;10;620;40;680</additional_attributes></element><element><id>UMLClass</id><coordinates><x>285</x><y>820</y><w>620</w><h>190</h></coordinates><panel_attributes>&lt;&lt;Member&gt;&gt;
+--
+Firestore Doc:
+/Player/{pid}/Community{cid}/Member/{pid}
+--
+Firestore Attributes
+-id: {pid} - Member Player ID
+Credits
+--
+Operational Attributes
+--
+Description
+A Member document is added for each Player that has a membership within the Community.
+The number of Credits a member has are stored here and only accessible by the Owner of the Community.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>25</x><y>350</y><w>150</w><h>1380</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..n
+has many &gt;</panel_attributes><additional_attributes>100;10;10;150;10;1060;120;1360</additional_attributes></element><element><id>UMLClass</id><coordinates><x>135</x><y>1030</y><w>520</w><h>190</h></coordinates><panel_attributes>&lt;&lt;Group&gt;&gt;
+--
+Firestore Doc:
+/Player/{pid}/Series/{sid}
+--
+Firestore Attributes
+-id: Series ID {sid}
+Type, Name, Status, etc
+--
+Operational Attributes
+--
+Description
+A Player creates one or more Groups to hold the Pools they wnat to set up.
+Access to a Group is given to the Communities by the Owner.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>225</x><y>1270</y><w>630</w><h>200</h></coordinates><panel_attributes>&lt;&lt;Pools&gt;&gt;
+--
+Firestore Docs:
+/Player/{pid}/Series{sid}/Game/{gid}
+/Player/{pid}/Series{sid}/Game/{gid}/Grid/{gid}
+/Player/{pid}/Series{sid}/Game/{gid}/Board/{gid}
+--
+Firestore Attributes
+-id: Game ID {gid}
+Home/Away Teams, Status, Scores, Grid, etc
+--
+Operational Attributes
+--
+Description
+Boards are created in a Group and have all the attributes necessary the to manage the Pool.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>125</x><y>1210</y><w>120</w><h>80</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..1
+has many &gt;</panel_attributes><additional_attributes>10;10;100;60</additional_attributes></element><element><id>Relation</id><coordinates><x>115</x><y>350</y><w>130</w><h>90</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..1
+can have many &gt;</panel_attributes><additional_attributes>10;10;100;60;110;60</additional_attributes></element><element><id>UMLClass</id><coordinates><x>145</x><y>1710</y><w>520</w><h>170</h></coordinates><panel_attributes>&lt;&lt;Audit&gt;&gt;
+--
+Firestore Docs:
+/Player/{pid}/Audit/{aid}
+--
+Firestore Attributes
+-id: Firestore Player ID
+Community, Game, Series, Square, Credit, Debit, etc
+--
+Operational Attributes
+--
+Description
+Every action that results in a change in Member Credits is logged to the Autid log.</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>205</x><y>750</y><w>100</w><h>90</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..1
+has many &gt;</panel_attributes><additional_attributes>20;10;30;40;80;70</additional_attributes></element><element><id>UMLClass</id><coordinates><x>225</x><y>1510</y><w>630</w><h>170</h></coordinates><panel_attributes>&lt;&lt;Access&gt;&gt;
+--
+Firestore Docs:
+/Player/{pid}/Series{sid}/Access/{cpid/cid}
+--
+Firestore Attributes
+-id: Community Player ID and Community-{cpid/cid}
+--
+Operational Attributes
+--
+Description
+A Group is given Access to a Community
+All Members of the Community have Access to All Pools in the Group.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>125</x><y>1210</y><w>120</w><h>320</h></coordinates><panel_attributes>lt=-
+m1=1
+m2=0..1
+teaches to &gt;</panel_attributes><additional_attributes>10;10;10;250;100;300</additional_attributes></element></diagram>

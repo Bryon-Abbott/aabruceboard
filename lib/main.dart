@@ -1,4 +1,3 @@
-//import 'dart:async';
 import 'dart:async';
 import 'dart:developer';
 
@@ -32,14 +31,10 @@ import 'package:bruceboard/pages/community/community_select_owner.dart';
 import 'package:bruceboard/pages/player/player_select.dart';
 import 'package:bruceboard/pages/general/home1.dart';
 import 'package:bruceboard/pages/general/about.dart';
-//import 'package:bruceboard/pages/settings/settings_main.dart';
 import 'package:bruceboard/pages/settings/settings_scoring.dart';
 
 main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-//  final AdaptiveThemeMode savedThemeModex = await AdaptiveTheme.getThemeMode() ??
-//      AdaptiveThemeMode.light;
 
   if (!kIsWeb) {
     log('Setting up MobileAds $kIsWeb', name: 'main()');
@@ -76,7 +71,6 @@ class _RootAppState extends State<RootApp> {
       child: LoadApp(
         savedThemeMode: widget.savedThemeMode,
         onChanged: () => setState(() {}),
-//        onChanged: () => setState(() => isMaterial = false),
       ),
     );
   }
