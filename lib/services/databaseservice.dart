@@ -3,13 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 
-// Todo: Convert this to a Database Factory
+// Todo: Convert this to a Database Factory??
 class DatabaseService {
-  // Todo: Relook at why uid is required to simplefy.
   String? uid; // Current Active User ID - This parameter never needs to be used ... as it is looked up.
   String? toUid; // Second User ID for Messages
   String? fromUid; // Second User ID for Messages
-
   String? sidKey; // Series ID
   String? gidKey; // Game ID (User as Game ID and Board ID)
   String? cidKey; // Player ID (Used as Member)
@@ -31,15 +29,14 @@ class DatabaseService {
   FirebaseFirestore get dbInst {
     return db;
   }
-
-  DatabaseService(this.fsDocType,
-      { this.toUid, this.fromUid, this.uid,
-        this.cidKey, this.sidKey, this.gidKey,
-        this.messageLocation = 'Incoming',
-      }) {
-    // If UID not passed in, try to calculate it from Firebase Auth.
-    // In fact you should never need to pass in UID as long as you check
-    // to ensure the user is signed in.
+  // --------------------------------------------------------------------------
+  // Setup Database Services, indicated DocType and potential document Keys
+  // ---
+  // If UID not passed in, try to calculate it from Firebase Auth.
+  // In fact you should never need to pass in UID as long as you check
+  // to ensure the user is signed in or you are retreiving documents from
+  // someone else's space (/Player/{other pid}
+  DatabaseService(this.fsDocType, {this.toUid, this.fromUid, this.uid, this.cidKey, this.sidKey, this.gidKey, this.messageLocation = 'Incoming'}) {
     log('Player Collection ${playerCollection.path}', name: '${runtimeType.toString()}:Database()');
 
     if (uid == null) {
@@ -64,7 +61,6 @@ class DatabaseService {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid);  // Write stats to sending player?
         docCollection = playerCollection.doc(toUid).collection('MessageOwner');
-        //.doc(uid).collection('Incoming');
         log('Found "MessageOwner" class', name: '${runtimeType.toString()}:Database()');
         log(docCollection.path, name: '${runtimeType.toString()}:Database()');
       }
@@ -73,7 +69,6 @@ class DatabaseService {
         nextIdDocument = playerCollection.doc(uid);
         statsDocument = playerCollection.doc(uid);  // Write stats to sending player?
         docCollection = playerCollection.doc(toUid).collection('Audit');
-        //.doc(uid).collection('Incoming');
         log('Found "Audit" class', name: '${runtimeType.toString()}:Database()');
         log(docCollection.path, name: '${runtimeType.toString()}:Database()');
       }
@@ -166,10 +161,60 @@ class DatabaseService {
     }
     log('Setting up DatabaseService $uid', name: '${runtimeType.toString()}:Database()');
   }
-
 // =============================================================================
 //                ***   FirestoreDoc DATABASE MEMBERS   ***
 // =============================================================================
+  // --------------------------------------------------------------------------
+  // Private method to convert a list of snapshots to a List of fsDocs
+  List<FirestoreDoc> _fsDocListFromSnapshot(QuerySnapshot snapshot) {
+    log('QuerySnapshot size is ${snapshot.size} UID: $uid Type: $fsDocType',
+        name: '${runtimeType.toString()}:_fsDocListFromSnapshot');
+    return snapshot.docs.map((doc) {
+      // log("mapping docs", name: '${runtimeType.toString()}:fsDocStream()');
+      Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
+      FirestoreDoc fsDoc = FirestoreDoc( fsDocType, data: data );
+      return fsDoc;
+    }).toList();
+  }
+  // --------------------------------------------------------------------------
+  // Private function to return a fsDoc from a single snapshot
+  FirestoreDoc _fsDocFromSnapshot(DocumentSnapshot snapshot) {
+    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
+    log('Data: $data ... $fsDocType', name: '${runtimeType.toString()}:_fsDocFromSnapshot()');
+    return FirestoreDoc( fsDocType, data: data );
+  }
+  // --------------------------------------------------------------------------
+  // Private function to Create a Query given criteria and sort order info
+  Query<Object?>? _buildQuery({required Map<String, dynamic> queryValues, Map<String, dynamic>? orderFields}) {
+    Query<Object?>? query;
+    log('Query Vars: ${queryValues} ', name: '${runtimeType.toString()}:_buildQuery()');
+    log('Query Path: ${docCollection.path} ', name: '${runtimeType.toString()}:_buildQuery()');
+    // Build Where Query
+    queryValues.forEach((key, value) {
+      if (key != '' && value != '') {
+        if (query == null) {
+          query = docCollection.where(key.toString(), isEqualTo: value);
+        } else {
+          query = query!.where(key.toString(), isEqualTo: value);
+        }
+        // ignore: empty_statements
+      };
+    });
+    // Add Order Options if they exists
+    if (orderFields != null) {
+      orderFields.forEach((fld, descending) {
+        if (fld != '' && descending != '') {
+          query = docCollection.orderBy(fld.toString(), descending: descending);
+        };
+      });
+    }
+    // If no query parameters ... return full collection
+    query ??= docCollection;
+    return query;
+  }
+  // ---------------------------------------------------------------------------
+  // Add and fsDoc to the Firestore for given Type
+  // Get the nextNumber for the type and increment it.
   Future<void> fsDocAdd(FirestoreDoc fsDoc) async {
     int noDocs = -1;
     // If there is already a docId, use it vs getting the Next Number
@@ -215,28 +260,24 @@ class DatabaseService {
       log('Updated number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
     }
   }
-  // Update the FirestoreDoc with data in provided fsDoc class.
+  // --------------------------------------------------------------------------
+  // Update the FirestoreDoc with data in provided fsDoc.
   Future<void> fsDocUpdate(FirestoreDoc fsDoc) async {
     log('Updating doc id ${fsDoc.docId}', name: '${runtimeType.toString()}:fsDocAdd()');
     return await docCollection.doc(fsDoc.key).set(fsDoc.updateMap, SetOptions(merge: true));
   }
-
+  // --------------------------------------------------------------------------
   // Update single field in an FirestoreDoc
-  Future<void> fsDocUpdateField({
-    required String key,
-    required String field,
-    String? svalue,
-    int? ivalue,
-    bool? bvalue,
-  }) async {
+  Future<void> fsDocUpdateField({required String key, required String field, String? svalue, int? ivalue, bool? bvalue}) async {
     log('Database *key*: "$key" Update *field*: "$field" *value*: ${ivalue ?? svalue ?? bvalue} uid: $uid',
         name: '${runtimeType.toString()}:fsDocUpdateField()');
     return await docCollection.doc(key).update({
       field: svalue ?? ivalue ?? bvalue,
     });
   }
-  // Delete given Series
-  // Note: Application is responsible to delete Games prior to this call!!
+  // --------------------------------------------------------------------------
+  // Note: Application is responsible to delete underlying documents before deleting this document
+  // Id does not do a cascade delete.
   Future<void> fsDocDelete(FirestoreDoc fsDoc) async {
     int noDocs = -1;
     log('Path: ${docCollection.path} key: ${fsDoc.key} ', name: '${runtimeType.toString()}:fsDocDelete');
@@ -251,42 +292,18 @@ class DatabaseService {
       await statsDocument.update({ fsDoc.totalField: noDocs} );
     }
   }
-
-  // Series list from snapshot
-  List<FirestoreDoc> _fsDocListFromSnapshot(QuerySnapshot snapshot) {
-    log('QuerySnapshot size is ${snapshot.size} UID: $uid Type: $fsDocType',
-        name: '${runtimeType.toString()}:_fsDocListFromSnapshot');
-    return snapshot.docs.map((doc) {
-     // log("mapping docs", name: '${runtimeType.toString()}:fsDocStream()');
-      Map<String, dynamic> data = doc.data()! as Map<String, dynamic>;
-      FirestoreDoc fsDoc = FirestoreDoc( fsDocType, data: data );
-      return fsDoc;
-    }).toList();
-  }
-
-  // Get data from snapshots
-  FirestoreDoc _fsDocFromSnapshot(DocumentSnapshot snapshot) {
-    Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    // Comment/Uncomment to see data without truncation.
-    // JsonEncoder encoder = new JsonEncoder.withIndent('  ');
-    // String prettyprint = encoder.convert(data);
-    // print(prettyprint);
-
-    log('Data: $data ... $fsDocType', name: '${runtimeType.toString()}:_fsDocFromSnapshot()');
-    return FirestoreDoc( fsDocType, data: data );
-  }
-
-  // get FirestoreDoc stream
+  // --------------------------------------------------------------------------
+  // Return a Stream fsDoc given a Key or DocId
+  // If neither a Key or DocId is provided, an Empty Stream is returned.
   Stream<FirestoreDoc> fsDocStream({String? key, int? docId}) {
-    log('Getting player for U: $key Path: ${playerCollection.path}', name: '${runtimeType.toString()}:fsDocStream()');
-    log('Parent: ${docCollection.toString()} ', name: '${runtimeType.toString()}:fsDocStream()');
+    // log('Getting player for U: $key Path: ${playerCollection.path}', name: '${runtimeType.toString()}:fsDocStream()');
+    // log('Parent: ${docCollection.toString()} ', name: '${runtimeType.toString()}:fsDocStream()');
     Stream<FirestoreDoc> fsDocStream;
     if (key != null) {
       fsDocStream = docCollection.doc(key).snapshots()
           .map((DocumentSnapshot doc) => _fsDocFromSnapshot(doc));
-//    .map(_playerFromSnapshot);
     } else if (docId != null) {
-      // Note ... only 1 document matches the docId so select the firts ..
+      // Note ... only 1 document matches the docId so select the first ...
       fsDocStream = docCollection.where('docId', isEqualTo:docId ).snapshots()
           .map((QuerySnapshot doc) => _fsDocFromSnapshot(doc.docs.first));
     } else {
@@ -294,19 +311,20 @@ class DatabaseService {
     }
     return fsDocStream;
   }
-
-//  Future<FirestoreDoc?> fsDoc({required String key}) async {
+  // --------------------------------------------------------------------------
+  // Return a Future fsDoc given a Key or DocId
+  // If neither a Key or DocId is provided, a default fsDoc is return with a -1 docId.
   Future<FirestoreDoc?> fsDoc({String? key, int? docId}) async {
     log('Getting key ($key), docId is ($docId)', name: '${runtimeType.toString()}:fsDoc()');
     log(docCollection.path, name: '${runtimeType.toString()}:fsDoc()');
     // Set fsDoc to an invalid document
     FirestoreDoc? fsDoc = FirestoreDoc(fsDocType, data: {'docID': -1} );
-
+    // ToDo: See where this is used, think about returning Null?
     if (uid == 'Anonymous') {
       log('Return null as user $uid', name: '${runtimeType.toString()}:fsDoc()');
       return fsDoc;
     }
-
+    // Check for Key
     if (key != null ) {
       log('Getting doc by key: $key', name: '${runtimeType.toString()}:fsDoc()');
       await docCollection.doc(key).get()
@@ -323,6 +341,7 @@ class DatabaseService {
           log("Error getting Player UID: $uid, Error: $error", name: '${runtimeType.toString()}:fsDoc()');
           fsDoc = null;
         });
+    // Else check for docId
     } else if (docId != null ) {
       log('Getting doc by docId: $docId', name: '${runtimeType.toString()}:fsDoc()');
       await docCollection.where('docId', isEqualTo:docId ).get()
@@ -337,111 +356,67 @@ class DatabaseService {
           log('No Document by ID : $docId', name: '${runtimeType.toString()}:fsDoc()');
         }
       },
-        onError: (error) {
-          log("Error getting Doc UID: $uid, Error: $error", name: '${runtimeType.toString()}:fsDoc()');
-          fsDoc = null;
-        });
+      onError: (error) {
+        log("Error getting Doc UID: $uid, Error: $error", name: '${runtimeType.toString()}:fsDoc()');
+        fsDoc = null;
+      });
     } else {
       log('Error: Missing key?', name: '${runtimeType.toString()}:fsDoc()');
       fsDoc = null;
     }
     return fsDoc;
   }
-
-  //get FirestoreDoc List stream
+  // --------------------------------------------------------------------------
+  // Return a Stream of List of fsDocs for given Collection
   Stream<List<FirestoreDoc>> get fsDocListStream {
     log('Database: fsDocListStream: ', name: '${runtimeType.toString()}:get fsDocListStream');
     log(docCollection.path, name: '${runtimeType.toString()}:get fsDocListStream');
     Stream<QuerySnapshot<Object?>> s001 = docCollection.snapshots();
     return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
-    // return docCollection.snapshots()
-    //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
-//        .map(_fsDocListFromSnapshot);
   }
-  //  fsDocQueryListStream(
-  //    queryValues: {'field1': 'value1', 'field2': 'value2', 'field3': 5}
-  //    orderFields: {'field1': true, 'field2': false}
-  //  );
-  Stream<List<FirestoreDoc>> fsDocQueryListStream({
-    required Map<String, dynamic> queryValues,
-    Map<String, dynamic>? orderFields
-  }) {
+  // --------------------------------------------------------------------------
+  // Return a Stream List of docs given the query info.
+  Stream<List<FirestoreDoc>> fsDocQueryListStream({required Map<String, dynamic> queryValues, Map<String, dynamic>? orderFields}) {
 
     Stream<QuerySnapshot<Object?>> s001;
-    Query<Object?>? q001;
+    Query<Object?>? query;
 
-    log('Query Vars: ${queryValues} ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
-    log('Query Path: ${docCollection.path} ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
+    query = _buildQuery(queryValues: queryValues, orderFields: orderFields);
 
-    queryValues.forEach((key, value) {
-      if (key != '' && value != '') {
-        if (q001 == null) {
-          q001 = docCollection.where(key.toString(), isEqualTo: value);
-        } else {
-          q001 = q001!.where(key.toString(), isEqualTo: value);
-        }
-      // ignore: empty_statements
-      };
-    });
-    // Add order Options if they exists
-    if (orderFields != null) {
-      orderFields.forEach((fld, descending) {
-        if (fld != '' && descending != '') {
-            q001 = docCollection.orderBy(fld.toString(), descending: descending);
-        };
-      });
-    }
     // If no query parameters ... return full collection
-    if (q001 == null) {
+    if (query == null) {
       s001 = docCollection.snapshots();
     } else {
-      s001 = q001!.snapshots();
+      s001 = query!.snapshots();
     }
     return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
   }
-  //get FirestoreDoc List stream
-  // This has been replaced by fsDocQueryListStream
-  // ToDo: Refactor to remove this using fsDocQueryListStream
-//   Stream<List<FirestoreDoc>> fsDocQueryListStreamOld(
-//       { required String filterField1, required String filterValue1,
-//         required String filterField2, required String filterValue2,}) {
-//     log('fsDocListStream: ', name: '${runtimeType.toString()}:fsDocQueryListStream()');
-//     log(docCollection.path, name: '${runtimeType.toString()}:fsDocQueryListStream()');
-//
-//     Stream<QuerySnapshot<Object?>> s001;
-//
-//     if (filterField1.isNotEmpty && filterValue1.isNotEmpty) {
-//       if (filterField2.isNotEmpty && filterValue2.isNotEmpty) {
-//         s001 = docCollection
-//             .where(filterField1, isEqualTo: filterValue1)
-//             .where(filterField2, isEqualTo: filterValue2)
-//             .snapshots();
-//       } else {
-//         s001 = docCollection
-//             .where(filterField1, isEqualTo: filterValue1)
-//             .snapshots();
-//       }
-//     } else if (filterField2.isNotEmpty && filterValue2.isNotEmpty) {
-//       s001 = docCollection
-//           .where(filterField2, isEqualTo: filterValue2)
-//           .snapshots();
-//     } else {
-//       s001 = docCollection
-//           .snapshots();
-//     }
-//     //Stream<QuerySnapshot<Object?>> s001 = docCollection.where(filterField1, isEqualTo: filterValue1).snapshots();
-//     return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
-//     // return docCollection.snapshots()
-//     //   .map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
-// //        .map(_fsDocListFromSnapshot);
-//   }
-// Return a Future List give query fields for a Group.
-  // Note: Not Tested ...
-  Future<List<FirestoreDoc>> fsDocGroupList(String group, {
-    required Map<String, dynamic> queryFields,
-    Map<String, dynamic>? orderFields }) async {
+  // --------------------------------------------------------------------------
+  // Return a Future List of docs given the query info.
+  Future<List<FirestoreDoc>> fsDocQueryList({required Map<String, dynamic> queryValues, Map<String, dynamic>? orderFields}) async {
+    List<FirestoreDoc> fsDocList = [];
+    Query<Object?>? query;
 
-//    Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
+    query = _buildQuery(queryValues: queryValues, orderFields: orderFields);
+
+    await query!.get().then((snapshot) {
+      log('Snapshot Size ${snapshot.size}', name: '${runtimeType.toString()}:get fsDocList');
+      for (QueryDocumentSnapshot<Object?> doc in snapshot.docs) {
+        log('Snapshot Doc ID:  ${doc.id}', name: '${runtimeType.toString()}:get fsDocList');
+        Map<String, dynamic> data =  doc.data()! as Map<String, dynamic>;
+        FirestoreDoc fsDoc = FirestoreDoc( fsDocType, data: data );
+        fsDocList.add(fsDoc);
+      }
+      log('Return type ${fsDocList.runtimeType} Length: ${fsDocList.length}', name: '${runtimeType.toString()}:fsDocGroupList()');
+    },
+      onError: (e) => log("Error getting document: $e", name: '${runtimeType.toString()}:fsDocGroupList()'),
+    );
+    return fsDocList;
+  }
+  // --------------------------------------------------------------------------
+  // Return a Future List of fsDocs for the givne Group Access
+  // Note: Not Tested ...
+  Future<List<FirestoreDoc>> fsDocGroupList(String group, {required Map<String, dynamic> queryFields, Map<String, dynamic>? orderFields }) async {
     late Query<Object?> query;
     List<FirestoreDoc> fsDocList = [];
 
@@ -493,12 +468,9 @@ class DatabaseService {
     );
     return fsDocList;
   }
-
-  // Use this as the default Group
-  Stream<List<FirestoreDoc>> fsDocGroupListStream2(String group, {
-    required Map<String, dynamic> queryFields,
-    Map<String, dynamic>? orderFields }) {
-
+  // --------------------------------------------------------------------------
+  // Return a Stream List of fsDocs given the query data
+  Stream<List<FirestoreDoc>> fsDocGroupListStream(String group, {required Map<String, dynamic> queryFields, Map<String, dynamic>? orderFields }) {
     Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
     late Query<Object?> query;
 
@@ -514,12 +486,19 @@ class DatabaseService {
         log("Group: $group ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
         query = db.collectionGroup("Access");
         break;
+      case "Incoming" :
+        log("Incoming: $group ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
+        query = db.collectionGroup("Incoming");
+        break;
+      case "Processed" :
+        log("Group: $group ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
+        query = db.collectionGroup("Processed");
+        break;
       default: {
         log('Error: Undefined group $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
         return const Stream<List<FirestoreDoc>>.empty();
       }
     }
-
     queryFields.forEach((field, value) {
       if (field != '' && value != '') {
         log("Select - Field: $field, Value: $value ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
@@ -539,61 +518,8 @@ class DatabaseService {
     streamQuerySnapshot = query.snapshots();
     return streamQuerySnapshot.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
   }
-
-  //get FirestoreDoc List stream given a group
-  //
-  Stream<List<FirestoreDoc>> fsDocGroupListStream({ required String group, int pid=0, int cid=0, int pidTo=0, int pidFrom=0} ) {
-    Stream<QuerySnapshot<Object?>>? streamQuerySnapshot;
-    log('Database: fsDocGroupListStream: Group: $group, pid: $pid cid: $cid pidTo: $pidTo',name: '${runtimeType.toString()}:fsDocGroupListStream()');
-
-    switch (group) {
-      case "Access" :
-        log("Group: $group ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
-        streamQuerySnapshot = db.collectionGroup("Access")
-            .where('pid', isEqualTo: pid)
-            .where('cid', isEqualTo: cid)
-            .snapshots();
-        break;
-      case "Incoming" :
-        log("Group: $group ... pidTo: $pidTo", name: '${runtimeType.toString()}:fsDocGroupListStream()');
-        streamQuerySnapshot = db.collectionGroup("Incoming")
-            .where('pidTo', isEqualTo: pidTo)
-            .orderBy('timestamp')
-      //      .where('timestamp',isGreaterThan: 0)
-            .snapshots();
-        break;
-      case "Processed" :
-        log("Group: $group ... pidTo: $pidTo", name: '${runtimeType.toString()}:fsDocGroupListStream()');
-        if (pidFrom == 0 ) {
-          streamQuerySnapshot = db.collectionGroup("Processed")
-              .where('pidTo', isEqualTo: pidTo)
-              .orderBy('timestamp', descending: true)
-          //      .where('timestamp',isGreaterThan: 0)
-              .snapshots();
-        } else {
-          streamQuerySnapshot = db.collectionGroup("Processed")
-              .where('pidTo', isEqualTo: pidTo)
-              .where('pidFrom', isEqualTo: pidFrom)
-              .orderBy('timestamp', descending: true)
-          //      .where('timestamp',isGreaterThan: 0)
-              .snapshots();
-        }
-        break;
-      default: {
-        log('Error: Undefined group $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
-      }
-      break;
-    }
-
-    if (streamQuerySnapshot != null) {
-      log('Returning stream ... $group', name: '${runtimeType.toString()}:fsDocGroupListStream()');
-      return streamQuerySnapshot.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
-    } else {
-      return const Stream<List<FirestoreDoc>>.empty();
-    }
-  }
-  //get FirestoreDoc List
-  //Future<List<FirestoreDoc>> get fsDocList async {
+  // --------------------------------------------------------------------------
+  // Return Future List of fsDocs for the defined type
   Future<List<FirestoreDoc>> get fsDocList async {
     log('Database: fsDocList: ', name: '${runtimeType.toString()}:get fsDocList');
     log(docCollection.path, name: '${runtimeType.toString()}:get fsDocList');
@@ -614,9 +540,8 @@ class DatabaseService {
     );
     return fsDocList;
   }
-
-  //get FirestoreDoc List stream
-  // ToDo: Fix this.
+  // --------------------------------------------------------------------------
+  // Return a Future of the number of documents
   Future<int> get fsDocCount async {
     int docCount=0;
     log('Database: fsDocCount: ', name: '${runtimeType.toString()}:get fsDocCount');

@@ -34,8 +34,14 @@ class _AccessListSeriesState extends State<AccessListSeries> {
 
     return SafeArea(
       child: StreamBuilder<List<FirestoreDoc>>(
-        stream: DatabaseService(FSDocType.access)
-            .fsDocGroupListStream(group: "Access", pid: widget.membership.cpid, cid: widget.membership.cid),   // as Stream<List<Series>>,
+          stream: DatabaseService(FSDocType.game)
+            .fsDocGroupListStream(
+              "Access",
+              queryFields: {'pid': widget.membership.cpid, 'cid': widget.membership.cid},
+//              orderFields: {'gameDate': false},
+            ),
+        // stream: DatabaseService(FSDocType.access)
+        //     .fsDocGroupListStream(group: "Access", pid: widget.membership.cpid, cid: widget.membership.cid),   // as Stream<List<Series>>,
         builder: (context, snapshots) {
           if(snapshots.hasData) {
             List<Access> access = snapshots.data!.map((a) => a as Access).toList();

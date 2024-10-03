@@ -1,20 +1,22 @@
 import 'dart:developer' as dev;
 import 'dart:math';
 import 'dart:ui';
+import 'package:bruceboard/models/membership.dart';
+import 'package:bruceboard/models/membershipprovider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:bruceboard/models/access.dart';
-import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/audit.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
+import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/pages/access/access_list_members.dart';
 import 'package:bruceboard/pages/game/game_summary_page.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
@@ -71,10 +73,6 @@ class _GameBoardState extends State<GameBoard> {
   }
 
   late TextStyle textStyle;
-  // Todo: Refactor to bring all controllers into a list (or else improve).
-  // late TextEditingController controller1, controller2;
-  // List<TextEditingController> controllers = [];
-
   double gridSize = gridSizeSmall;
   double screenWidth = gridSizeSmall; // Defaults value
   double screenHeight = gridSizeSmall; // Defaults value
@@ -134,11 +132,13 @@ class _GameBoardState extends State<GameBoard> {
     }
     final Player communityPlayer = Provider.of<CommunityPlayerProvider>(context).communityPlayer;
     final Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
-    dev.log('Game Owner: ${communityPlayer.docId}:${communityPlayer.fName} Active Player: ${activePlayer.docId}:${activePlayer.fName}',
+    final Membership currentMembership = Provider.of<MembershipProvider>(context).currentMembership;
+
+    dev.log('Pool Owner: ${communityPlayer.docId}:${communityPlayer.fName} Active Player: ${activePlayer.docId}:${activePlayer.fName}',
         name: "${runtimeType.toString()}:build()" );
     // If these Community Player is Equal to the Active Player it is the owner of the game and can update game/grid information,
     isGameOwner = communityPlayer.docId == activePlayer.docId;
-    dev.log("Reload Game ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:build()");
+    dev.log("Reload Pool ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:build()");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
     textStyle = Theme.of(context).textTheme.bodySmall!
@@ -170,28 +170,6 @@ class _GameBoardState extends State<GameBoard> {
                             ]
                           )
                         ),
-                        // PopupMenuItem<int>(
-                        //   value: 2,
-                        //   enabled: isGameOwner && !board.scoresLocked,
-                        //   child: const Row(
-                        //     children: [
-                        //       Icon(Icons.percent_outlined,  color: Colors.white),
-                        //       SizedBox(width: 8),
-                        //       Text("Update Splits"),
-                        //     ]
-                        //   )
-                        // ),
-                        // const PopupMenuItem<int>(
-                        //   value: 3,
-                        //   // enabled: isGameOwner,
-                        //   child: Row(
-                        //     children: [
-                        //       Icon(Icons.summarize_outlined, color: Colors.white),
-                        //       SizedBox(width: 8),
-                        //       Text("Game Summary"),
-                        //     ]
-                        //   )
-                        // ),
                       ]
                     )
                   ],
@@ -204,10 +182,8 @@ class _GameBoardState extends State<GameBoard> {
                       child: SingleChildScrollView(
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          //crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Row(
-                              //mainAxisSize: MainAxisSize.max,
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(2),
@@ -218,7 +194,6 @@ class _GameBoardState extends State<GameBoard> {
                                       onPressed: () {},
                                       child: const Icon(
                                         Icons.sports_football_outlined,
-                                        // color: Colors.yellow,
                                         size: 24,
                                       ),
                                     ),
@@ -260,10 +235,7 @@ class _GameBoardState extends State<GameBoard> {
                                 Padding(
                                   padding: const EdgeInsets.all(2),
                                   child: SizedBox(
-                                    // not less than 100
-                                    // height: max(min(screenHeight - 308, gridSize - 4), 100),
-                                    // height: max(min(screenHeight - 257, gridSize - 4), 100),
-                                    height: max(min(screenHeight - 203, gridSize - 4), 100),
+                                    height: max(min(screenHeight - 222, gridSize - 4), 100),
                                     width: 40,
                                     child: RotatedBox(
                                       quarterTurns: 3,
@@ -317,26 +289,38 @@ class _GameBoardState extends State<GameBoard> {
                               ],
                             ),
                             const SizedBox(height: 20.0),
-                            ElevatedButton(
-                                onPressed: () async {
-                                  dev.log("Summary Button Pushed ...", name: "${runtimeType.toString()}:build()");
-                                  Grid grid = await DatabaseService(FSDocType.grid, uid: communityPlayer.uid,  sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
-                                  if (!context.mounted) return;
-                                  await Navigator.of(context)
-                                      .push(MaterialPageRoute(builder: (context) => GameSummaryPage(series: series, game: game, grid: grid, board: board)));
-                                },
-                                child: const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text("Game Summary"),
-                                ))
-                            // buildCredits(board),
-                            // buildScore(board, winnersPlayer),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.start,
-                            //   children: [
-                            //     Text('Owner:${Player.Key(game.pid)} Series:${Series.Key(series.docId)} Game: ${Game.Key(game.docId)}'),
-                            //   ],
-                            // ),
+                            Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: ElevatedButton(
+                                      onPressed: () async {
+                                        dev.log("Summary Button Pushed ...", name: "${runtimeType.toString()}:build()");
+                                        Grid grid = await DatabaseService(FSDocType.grid, uid: communityPlayer.uid,  sidKey: series.key, gidKey: game.key).fsDoc(key: game.key) as Grid;
+                                        if (!context.mounted) return;
+                                        await Navigator.of(context)
+                                            .push(MaterialPageRoute(builder: (context) => GameSummaryPage(series: series, game: game, grid: grid, board: board)));
+                                      },
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: Text("Pool Summary"),
+                                      )),
+                                ),
+                                Spacer(),
+                                Padding(
+                                  padding: const EdgeInsets.all(2.0),
+                                  child: Container(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("Group/Pool: ${series.key}/${game.key}", style: Theme.of(context).textTheme.bodySmall,),
+                                          Text("Membership: ${currentMembership.key}", style: Theme.of(context).textTheme.bodySmall),
+                                        ],
+                                      )
+                                  ),
+                                ),
+                              ],
+                            ),
                           ],
                         ),
                       ),

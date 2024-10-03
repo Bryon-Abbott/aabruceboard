@@ -12,7 +12,6 @@ class MembershipTileCascade extends StatelessWidget {
   final Player communityOwner;
   final Community community;
   final Member member;
-  late MembershipProvider membershipProvider;
 
   MembershipTileCascade({super.key,
     required this.membership,
@@ -23,7 +22,7 @@ class MembershipTileCascade extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    membershipProvider = Provider.of<MembershipProvider>(context);
+    MembershipProvider membershipProvider = Provider.of<MembershipProvider>(context);
     membershipProvider.currentMembership = membership;
     return Padding(
       padding: const EdgeInsets.all(2),

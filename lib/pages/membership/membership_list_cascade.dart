@@ -23,7 +23,6 @@ class _MembershipListCascadeState extends State<MembershipListCascade> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<List<FirestoreDoc>>(
-//      stream: DatabaseService(FSDocType.membership).fsDocListStream,
         stream: DatabaseService(FSDocType.membership).fsDocQueryListStream(
           queryValues: {'status': "Approved"}
         ),

@@ -33,11 +33,12 @@ class _MessageListProcessedState extends State<MessageListProcessed> {
   @override
   Widget build(BuildContext context) {
 
-//    activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
-
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.message, )
-          .fsDocGroupListStream(group: "Processed", pidTo: activePlayer.pid, pidFrom: filterPlayer?.pid ?? 0),   // as Stream<List<Series>>,
+        stream: DatabaseService(FSDocType.message).fsDocGroupListStream(
+          "Processed",
+          queryFields: {'pidTo': activePlayer.pid, 'pidFrom': filterPlayer?.pid ?? ''},
+          orderFields: {'timestamp': true},
+        ),
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Message> message = snapshots.data!.map((a) => a as Message).toList();

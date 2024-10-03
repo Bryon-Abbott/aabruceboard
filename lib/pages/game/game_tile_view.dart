@@ -29,7 +29,7 @@ class GameTileView extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(2.0, 2.0, 30.0, 2.0),
       child: ListTile(
         onTap: () async {
-          log("Game Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
+          log("Pool Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
           // await Navigator.of(context).push(
           //   MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),
           // );
@@ -39,7 +39,7 @@ class GameTileView extends StatelessWidget {
           width: 36, height: 36,
           //   colorFilter: ,
         ),
-        title: Text('Game: ${game.name}'),
+        title: Text('Pool: ${game.name}'),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

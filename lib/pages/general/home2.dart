@@ -25,7 +25,7 @@ import 'package:bruceboard/pages/settings/settings_main.dart';
 // ==========
 const List<Widget> kPermission = <Widget>[
   Text('My Communities'),
-  Text('Public Games'),
+  Text('Public Pools'),
 ];
 
 class Home2 extends StatefulWidget {
@@ -67,15 +67,6 @@ class _Home2State extends State<Home2> {
 
     communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
     activePlayerProvider = Provider.of<ActivePlayerProvider>(context);
-    // Player player = Player(data: {});;
-
-    // Calculate screen size
-    // double screenWidth = MediaQuery.of(context).size.width;
-    // double screenHeight = MediaQuery.of(context).size.height;
-    // var padding = MediaQuery.of(context).padding;
-    // double newScreenHeight = screenHeight - padding.top - padding.bottom;
-    // double newScreenWidth = screenWidth - padding.left - padding.right;
-    //dev.log("Screen Dimensions are Height: $screenHeight, Width: $screenWidth : Height: $newScreenHeight, Width: $newScreenWidth", name: " ${this.runtimeType.toString()}:build");
 
     return SafeArea(
       child: FutureBuilder<FirestoreDoc?>(
@@ -201,18 +192,6 @@ class _Home2State extends State<Home2> {
                               : const MembershipListCascade(),
                     ),
                     const AdContainer(),
-                    // Container(
-                    //   alignment: Alignment.center,
-                    //   height: 54,
-                    //   child: (kIsWeb)
-                    //     ? Text("BruceBoard",
-                    //         style: Theme.of(context).textTheme.titleLarge,
-                    //       )
-                    //     : const Padding(
-                    //         padding: EdgeInsets.fromLTRB(0,2,0,0),
-                    //         child: AaBannerAd(),
-                    //       ),
-                    // ),
                     Container(
                       height: 40,
                       child: Row(
@@ -268,7 +247,7 @@ class _Home2State extends State<Home2> {
                           Expanded(
                             flex: 1,
                             child: Tooltip(
-                              message: "Manage Games",
+                              message: "Manage pool",
                               child: TextButton.icon(
                                 icon: const Icon(Icons.games_outlined),
                                 label: const Text(""),

@@ -5,11 +5,9 @@ import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/audit/audit_game_report.dart';
 import 'package:bruceboard/pages/game/game_tile.dart';
 import 'package:bruceboard/pages/game/game_maintain.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -45,7 +43,7 @@ class _GameListState extends State<GameList> {
     CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context) ;
     Player communityPlayer = communityPlayerProvider.communityPlayer;
     Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
-    log('Game Owner: ${communityPlayer.docId}:${communityPlayer.fName}', name: "${runtimeType.toString()}:build()" );
+    log('Pool Owner: ${communityPlayer.docId}:${communityPlayer.fName}', name: "${runtimeType.toString()}:build()" );
 
     return SafeArea(
       child: StreamBuilder<List<FirestoreDoc>>(
@@ -55,7 +53,7 @@ class _GameListState extends State<GameList> {
             List<Game> game = snapshots.data!.map((g) => g as Game).toList();
             return Scaffold(
               appBar: AppBar(
-                  title: Text('Manage Games: ${series.type}-${series.name}'),
+                  title: Text('Manage Pools: ${series.type}-${series.name}'),
                   centerTitle: true,
                   elevation: 0,
                   leading: IconButton(

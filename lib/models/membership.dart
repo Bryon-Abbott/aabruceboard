@@ -1,8 +1,6 @@
-import 'dart:developer';
-
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:intl/intl.dart';
-
+// ToDo: Change Status to integer like others.
 class Membership implements FirestoreDoc {
   // Base Variables
   @override
@@ -31,7 +29,7 @@ class Membership implements FirestoreDoc {
     // Format Key for Document ID
     String cKey = _cFormat.format(cid);
     String pKey = _pFormat.format(cpid);
-    log("Retrieving community $pKey$cKey", name: 'Membership:KEY:...');
+    // log("Retrieving community $pKey$cKey", name: 'Membership:KEY');
     return "$pKey$cKey";
   }
 
@@ -42,7 +40,7 @@ class Membership implements FirestoreDoc {
     String cKey = cFormat.format(cid);
     NumberFormat pFormat = NumberFormat("P00000000", "en_US");
     String pKey = pFormat.format(cpid);
-    log("Membership: key: Retrieving community $pKey$cKey", name: '${runtimeType.toString()}:...');
+    // log("Membership: key: Retrieving community $pKey$cKey", name: '${runtimeType.toString()}:key');
     return "$pKey$cKey";
   }
 

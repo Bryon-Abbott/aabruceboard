@@ -38,6 +38,8 @@ class CommunityMaintainState extends State<CommunityMaintain> {
     //Community? community = widget.community;
     String currentCommunityName = "";
     String currentCommunityType = "";
+    String currentCharity = "";
+    String currentCharityNo = "";
 //    int currentCommunityNoMembers = 0;
 //    int noGames = 0;
 
@@ -50,11 +52,10 @@ class CommunityMaintainState extends State<CommunityMaintain> {
     }
 
     if ( community != null ) {
-      //uid = community!.uid;
-//      cid = community!.docId;
       currentCommunityName = community?.name ?? 'xxx';
       currentCommunityType = community?.type ?? 'xxx';
-//      currentCommunityNoMembers = community?.noMembers ?? 0;
+      currentCharity = community?.charity ?? '';
+      currentCharityNo = community?.charityNo ?? '';
     }
     // Build a Form widget using the _formGameKey created above.
     return SafeArea(
@@ -123,6 +124,36 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                             currentCommunityType = value ?? 'auto-approve';
                           },
                         ),
+                        const Text("Charity: "),
+                        TextFormField(
+                          initialValue: currentCharity,
+                          // The validator receives the text that the user has entered.
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter type';
+                          //   }
+                          //   return null;
+                          // },
+                          onSaved: (String? value) {
+                            //debugPrint('Email is: $value');
+                            currentCharity = value ?? '';
+                          },
+                        ),
+                        const Text("Charity Number: "),
+                        TextFormField(
+                          initialValue: currentCharityNo,
+                          // The validator receives the text that the user has entered.
+                          // validator: (value) {
+                          //   if (value == null || value.isEmpty) {
+                          //     return 'Please enter type';
+                          //   }
+                          //   return null;
+                          // },
+                          onSaved: (String? value) {
+                            //debugPrint('Email is: $value');
+                            currentCharityNo = value ?? '';
+                          },
+                        ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text("Number of Members: ${community?.noMembers ?? 'N/A'}"),
@@ -146,6 +177,8 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                         'pid': player.pid,
                                         'name': currentCommunityName,
                                         'type': currentCommunityType,
+                                        'charity': currentCharity,
+                                        'charityNo': currentCharityNo,
                                         'noMembers': 0,
                                       };
                                       community = Community( data: data );
@@ -155,6 +188,8 @@ class CommunityMaintainState extends State<CommunityMaintain> {
                                       data = {
                                         'name': currentCommunityName,
                                         'type': currentCommunityType,
+                                        'charity': currentCharity,
+                                        'charityNo': currentCharityNo,
                                       };
                                       community!.update(data: data);
                                       await DatabaseService(FSDocType.community).fsDocUpdate(community!);

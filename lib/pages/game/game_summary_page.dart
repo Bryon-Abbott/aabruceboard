@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:bruceboard/models/audit.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:bruceboard/models/activeplayerprovider.dart';
@@ -65,7 +64,7 @@ class _GameSummaryPage extends GameSummaryCtlr {
       return SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            title: Text('Game: ${game.name} '),
+            title: Text('Pool: ${game.name} '),
             actions: [
               PopupMenuButton<int>(
                 onSelected: (item) => onMenuSelected(context, item, board, series, activePlayer, communityPlayer),
@@ -209,23 +208,16 @@ class _GameSummaryPage extends GameSummaryCtlr {
                                 child: ElevatedButton(
                                   onPressed: isGameOwner && !board.creditsDistributed
                                     ? () async {
-                                        log("Getting Scores ... ", name: "${runtimeType.toString()}:buildScore");
                                         final List<String>? score = await openDialogScores(index, board);
                                         if (score == null || score.isEmpty) {
                                           return;
                                         } else {
-                                          log("Loading Game Data ... GameNo: ${game.docId} ",
-                                              name: "${runtimeType.toString()}:buildScore()");
-                                          //gameData.loadData(game.gameNo!);
                                           if (score[0].isNotEmpty) {
                                             board.colResults[index] = int.parse(score[0]);
                                           }
                                           if (score[1].isNotEmpty) {
                                             board.rowResults[index] = int.parse(score[1]);
                                           }
-
-                                          log("Saving Game Data ... GameNo: ${game.docId} ",
-                                              name: "${runtimeType.toString()}:buildScore()");
                                           await DatabaseService(FSDocType.board, sidKey: series.key, gidKey: game.key)
                                               .fsDocUpdate(board);
                                           setState(() {
@@ -376,6 +368,4 @@ class _GameSummaryPage extends GameSummaryCtlr {
       );
     });
   }
-
-
 }

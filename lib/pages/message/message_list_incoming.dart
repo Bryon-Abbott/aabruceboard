@@ -1,6 +1,6 @@
 import 'dart:developer';
+import 'package:flutter/material.dart';
 
-//import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
@@ -9,16 +9,12 @@ import 'package:bruceboard/models/member.dart';
 import 'package:bruceboard/models/message.dart';
 import 'package:bruceboard/models/messageowner.dart';
 import 'package:bruceboard/models/series.dart';
+import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/pages/message/message_list_processed.dart';
 import 'package:bruceboard/pages/message/message_tile_incoming.dart';
+import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-//import 'package:provider/provider.dart';
-
-import 'package:bruceboard/models/player.dart';
-import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 class MessageListIncoming extends StatefulWidget {
@@ -39,15 +35,17 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
   void initState() {
     activePlayer = widget.activePlayer;
     super.initState();
-    // autoProcessAll();
   }
 
   @override
   Widget build(BuildContext context) {
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.message, )
-          .fsDocGroupListStream(group: "Incoming", pidTo: activePlayer.pid),   // as Stream<List<Series>>,
+        stream: DatabaseService(FSDocType.message).fsDocGroupListStream(
+          "Incoming",
+          queryFields: {'pidTo': activePlayer.pid},
+          orderFields: {'timestamp': false},
+        ),
       builder: (context, snapshots) {
         if(snapshots.hasData) {
           List<Message> message = snapshots.data!.map((a) => a as Message).toList();
@@ -99,8 +97,7 @@ class _MessageListIncomingState extends State<MessageListIncoming> {
           );
         } else {
           log("Incoming Message Snapshot has no data ... loading() ${snapshots.error}", name: '${runtimeType.toString()}:...');
-          log("${snapshots.error}", name: '${runtimeType.toString()}:...');
-          log("${snapshots.error}");
+          log("${snapshots.error}", name: '${runtimeType.toString()}:build()');
           return const Loading();
         }
       }

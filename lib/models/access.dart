@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:intl/intl.dart';
 
@@ -33,7 +31,7 @@ class Access implements FirestoreDoc {
     // Format Key for Document ID
     String cKey = _cFormat.format(cid);
     String pKey = _pFormat.format(pid);
-    log("Membership: KEY: Retrieving community $pKey$cKey");
+    // log("Membership: KEY: Retrieving community $pKey$cKey",  name: 'Access:KEY()');
     return "$pKey$cKey";
   }
 
@@ -44,7 +42,7 @@ class Access implements FirestoreDoc {
     String cKey = cFormat.format(cid);
     NumberFormat pFormat = NumberFormat("P00000000", "en_US");
     String pKey = pFormat.format(pid);
-    log("Retrieving community $pKey$cKey", name: "${runtimeType.toString()}:key()");
+    // log("Retrieving community $pKey$cKey", name: "${runtimeType.toString()}:key");
     return "$pKey$cKey";
   }
 

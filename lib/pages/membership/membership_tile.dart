@@ -41,20 +41,15 @@ class MembershipTile extends StatelessWidget {
       builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot) {
         if (snapshot.hasData) {
           communityPlayer = snapshot.data as Player;
-//          communityPlayerProvider.communityPlayer = communityPlayer; // Set the communityPlayerProvider for nested pages.
           return FutureBuilder<FirestoreDoc?>(
             future: DatabaseService(FSDocType.community, uid: communityPlayer.uid)
                 .fsDoc(docId: membership.cid),
             builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot2) {
               if (snapshot2.hasData) {
                 community = snapshot2.data as Community;
-                // return FutureBuilder<FirestoreDoc?>(
                 return StreamBuilder<FirestoreDoc?>(
-                  // future: DatabaseService(FSDocType.member, uid: communityPlayer.uid, cidKey: Community.Key(membership.cid))
-                  //     .fsDoc(docId: membership.pid),
                   stream: DatabaseService(FSDocType.member, uid: communityPlayer.uid, cidKey: Community.Key(membership.cid))
                       .fsDocStream(docId: membership.pid),
-                  // builder: (context, AsyncSnapshot<FirestoreDoc?> snapshot3) {
                   builder: (context, snapshot3) {
                     if (snapshot3.hasData) {
                       member = snapshot3.data as Member;
@@ -80,11 +75,16 @@ class MembershipTile extends StatelessWidget {
                                 builder: (context) => AccessListSeries(membership: membership)),
                             );
                           },
-                          title: Text('Community: ${community?.name ?? '...'}'), // (${membership.key})
+                          title: Row(
+                            children: [
+                            Text('Community: ${community?.name ?? '...'}'),
+                            (community != null && community!.charity.isNotEmpty) ? Text(' (${community?.charity})') : SizedBox(),
+                            ],
+                          ), // (${membership.key})
                           subtitle: Text(
                               'Owner: ${communityPlayer.fName} ${communityPlayer.lName}\n'
                                   'Status: ${membership.status}\n'
-                                  'Your Group Credits: ${member?.credits ?? 0}'
+                                  'Your Community Credits: ${member?.credits ?? 0}'
                           ),
                           trailing: SizedBox(
                             width: 100,

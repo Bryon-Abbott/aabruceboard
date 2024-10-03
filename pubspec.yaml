@@ -75,6 +75,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #  Default to New Interface
 # 1.2.8(31)
 #  Added totals to Game Audit Reports
+#  Added Charity and CharityNo to Communities
 version: 1.2.8+31
 
 environment:
@@ -121,7 +122,7 @@ dev_dependencies:
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

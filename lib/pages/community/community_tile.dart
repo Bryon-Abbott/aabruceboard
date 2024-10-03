@@ -26,9 +26,15 @@ class CommunityTile extends StatelessWidget {
           leading: const Icon(Icons.people_outline),
           title: Text('Community: ${community.name}'),
           subtitle:
-            Text('CID: ${community.key}'
-                ' Members: ${community.noMembers}'
-          ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                (community.charity.isNotEmpty) ? Text('Charity: ${community.charity} (${community.charityNo})') : SizedBox(),
+                Text('CID: ${community.key}'
+                    ' Members: ${community.noMembers}'
+                          ),
+              ],
+            ),
           trailing: IconButton(
               onPressed: (){
                 Navigator.of(context).push(

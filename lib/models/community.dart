@@ -15,6 +15,8 @@ class Community implements FirestoreDoc {
   int pid;
   String name;
   String type;
+  String charity;
+  String charityNo;
   int noMembers=0;
 
   Community({ required Map<String, dynamic> data, }) :
@@ -22,6 +24,8 @@ class Community implements FirestoreDoc {
         pid = data['pid'] ?? -1,
         name = data['name'] ?? 'NAME',
         type = data['type'] ?? 'TYPE',
+        charity = data['charity'] ?? '',
+        charityNo = data['charityNo'] ?? '',
         noMembers = data['noMembers'] ?? 0;
 
   @override
@@ -30,6 +34,8 @@ class Community implements FirestoreDoc {
     pid = data['pid'] ?? pid;
     name = data['name'] ?? name;
     type = data['type'] ?? type;
+    charity = data['charity'] ?? charity;
+    charityNo = data['charityNo'] ?? charityNo;
     noMembers = data['noMembers'] ?? noMembers;
   }
 
@@ -53,6 +59,8 @@ class Community implements FirestoreDoc {
       'pid': pid,
       'name': name,
       'type': type,
+      'charity': charity,
+      'charityNo': charityNo,
       'noMembers': noMembers,
     };
   }
