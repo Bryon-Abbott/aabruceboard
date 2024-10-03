@@ -19,7 +19,7 @@ class _GameListPublicState extends State<GameListPublic> {
     // Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     return StreamBuilder<List<FirestoreDoc>>(
-      stream: DatabaseService(FSDocType.game).fsDocGroupListStream2(
+      stream: DatabaseService(FSDocType.game).fsDocGroupListStream(
         "Game",
         queryFields: {'permission': 1, 'status': 1},
         orderFields: {'gameDate': false},

@@ -36,7 +36,7 @@ class _AccessListViewState extends State<AccessListView> {
   Widget build(BuildContext context) {
     return StreamBuilder<List<FirestoreDoc>>(
 //    stream: DatabaseService(FSDocType.access, sidKey: series.key).fsDocListStream,
-      stream: DatabaseService(FSDocType.access).fsDocGroupListStream2("Access",
+      stream: DatabaseService(FSDocType.access).fsDocGroupListStream("Access",
         queryFields: {'pid': widget.community.pid, 'cid': widget.community.docId,},
       ),
       builder: (context, snapshots) {
