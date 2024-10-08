@@ -11,8 +11,8 @@ class AuditGameFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
         children: [
-          Text("Game: ", style: TextStyle(fontWeight: FontWeight.bold)),
-          Text("${game.name}"),
+          Text("Game: ", style: Theme.of(context).textTheme.titleSmall,),
+          Text(game.name),
         ]
     );
 //    return Text("Footer:  ${game.name}");

@@ -34,13 +34,18 @@ ThemeData lightTheme = ThemeData(
       fontWeight: FontWeight.bold,
       color: kBodyColor,
     ),
-    displayLarge: TextStyle(
-      fontSize: 32,
+    titleMedium: TextStyle(
+      fontSize: 20,
       fontWeight: FontWeight.bold,
       color: kBodyColor,
     ),
-    titleMedium: TextStyle(
-      fontSize: 20,
+    titleSmall: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      color: kBodyColor,
+    ),
+    displayLarge: TextStyle(
+      fontSize: 32,
       fontWeight: FontWeight.bold,
       color: kBodyColor,
     ),
@@ -137,13 +142,18 @@ ThemeData darkTheme = ThemeData(
       fontWeight: FontWeight.bold,
       color: kBodyColorDark,
     ),
-    displayLarge: TextStyle(
-      fontSize: 32,
+    titleMedium: TextStyle(
+      fontSize: 20,
       fontWeight: FontWeight.bold,
       color: kBodyColorDark,
     ),
-    titleMedium: TextStyle(
-      fontSize: 20,
+    titleSmall: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.bold,
+      color: kBodyColorDark,
+    ),
+    displayLarge: TextStyle(
+      fontSize: 32,
       fontWeight: FontWeight.bold,
       color: kBodyColorDark,
     ),

@@ -1,22 +1,19 @@
 import 'dart:developer';
+import 'package:bruceboard/pages/audit/audit_community_footer.dart';
+import 'package:bruceboard/pages/audit/audit_community_header.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bruceboard/models/audit.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
-import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/audit/audit_game_footer.dart';
-import 'package:bruceboard/pages/audit/audit_game_header.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 
 class AuditGameReport extends StatefulWidget {
-  final Series series;
-  final Game game; 
+  final Community community;
   const AuditGameReport({super.key,
-    required this.series,
-    required this.game, 
+    required this.community,
   });
 
   @override
@@ -30,15 +27,14 @@ class _AuditGameReportState extends State<AuditGameReport> {
   Widget build(BuildContext context) {
     Community? community;
     Series? series;
-    log('Getting Records: SID: ${widget.series.docId} GID: ${widget.game.docId}',
+    log('Getting Records: CID: ${widget.community.docId}',
         name: "${runtimeType.toString()}:build()");
     return SafeArea(
       child: StreamBuilder<List<FirestoreDoc>>(
         stream: DatabaseService(FSDocType.audit)
           .fsDocQueryListStream(
           queryValues: {
-            'sid': widget.series.docId,
-            'gid': widget.game.docId
+            'cid': widget.community.docId,
           }
         ),
         builder: (context, snapshots) {
@@ -80,10 +76,8 @@ class _AuditGameReportState extends State<AuditGameReport> {
                                 children: [
                                   SizedBox(
                                     height: 60,
-                                    child: AuditGameHeader(
-                                      game: widget.game,
+                                    child: AuditCommunityHeader(
                                       community: community,
-                                      series: series,
                                     ),
                                   ),
                                   Expanded(
@@ -132,7 +126,7 @@ class _AuditGameReportState extends State<AuditGameReport> {
                                   ),
                                   SizedBox(
                                       height: 20,
-                                      child: AuditGameFooter(game: widget.game)),
+                                      child: AuditCommunityFooter(community: widget.community)),
                                 ],
                               ),
                             ),

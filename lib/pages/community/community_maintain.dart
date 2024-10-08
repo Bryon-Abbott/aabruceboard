@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
+import 'package:bruceboard/pages/audit/audit_community_summary_report.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 // Create a Form widget.
 class CommunityMaintain extends StatefulWidget {
-
   final Community? community;
   const CommunityMaintain({super.key, this.community});
 
@@ -72,6 +72,19 @@ class CommunityMaintainState extends State<CommunityMaintain> {
               },
             ),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.view_compact_alt_outlined),
+                onPressed: (community != null)
+                    ? () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context)
+                      => AuditGameSummaryReport(community: community!))
+                  );
+                  log('Community Report-Summary: ${community!.docId}:${community!.name}',
+                      name: "${runtimeType.toString()}:build()" );
+                } : null,
+              ),
+
               IconButton(
                 onPressed: () {
                   log("Pressed reset");

@@ -1,5 +1,5 @@
 import 'dart:developer';
-import 'package:bruceboard/pages/audit/audit_game_report.dart';
+import 'package:bruceboard/pages/audit/audit_game_detail_report.dart';
 import 'package:bruceboard/pages/audit/audit_game_summary_report.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -117,7 +117,7 @@ class _GameMaintainState extends State<GameMaintain> {
                   ? () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (context)
-                        => AuditGameReport(series: series, game: game!))
+                        => AuditGameDetailReport(series: series, game: game!))
                     );
                     log('Game Report-Detail: ${game!.docId}:${game!.name}',
                         name: "${runtimeType.toString()}:build()" );
