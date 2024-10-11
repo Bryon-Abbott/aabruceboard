@@ -180,7 +180,7 @@ class DatabaseService {
   // Private function to return a fsDoc from a single snapshot
   FirestoreDoc _fsDocFromSnapshot(DocumentSnapshot snapshot) {
     Map<String, dynamic> data = snapshot.data()! as Map<String, dynamic>;
-    log('Data: $data ... $fsDocType', name: '${runtimeType.toString()}:_fsDocFromSnapshot()');
+    // log('Data: $data ... $fsDocType', name: '${runtimeType.toString()}:_fsDocFromSnapshot()');
     return FirestoreDoc( fsDocType, data: data );
   }
   // --------------------------------------------------------------------------

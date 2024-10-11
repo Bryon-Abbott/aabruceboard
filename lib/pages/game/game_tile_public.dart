@@ -53,7 +53,7 @@ class GameTilePublic extends StatelessWidget {
               margin: const EdgeInsets.fromLTRB(2.0, 2.0, 2.0, 2.0),
               child: ListTile(
                 onTap: () async {
-                  log("Pool Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
+                  log("Board Tapped ... ${game.name} ", name: '${runtimeType.toString()}:build()');
                   List<Membership> memberships = await hasAccess(spid: game.pid, sid: game.sid);
                   if (memberships.isEmpty) {
                     log("No Access Found ... Request Access   ", name: '${runtimeType.toString()}:build()');
@@ -73,7 +73,7 @@ class GameTilePublic extends StatelessWidget {
                         .fsDoc(docId: game.sid) as Series;
                     if (memberships.length == 1) {
                       membershipProvider.currentMembership = memberships[0];
-                      // Go to Pool ...
+                      // Go to Board ...
                       await Navigator.of(context).push(
                         MaterialPageRoute(builder: (context) => GameBoard(series: series, game: game)),
                       );
@@ -97,7 +97,7 @@ class GameTilePublic extends StatelessWidget {
                 leading: SvgPicture.asset(iconSvg,
                   width: 36, height: 36,
                 ),
-                title: Text('Pool: ${game.name}'),
+                title: Text('Board: ${game.name}'),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [

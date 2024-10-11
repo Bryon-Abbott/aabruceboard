@@ -7,6 +7,39 @@ import 'package:intl/intl.dart';
 
 const int kExcludePlayerNo = 1000;
 
+enum PlayerLevel implements Comparable<PlayerLevel> {
+  levelUndefined(level: 0, desc: "Undefined Subscription"),
+  levelBasic(level: 100, desc: "Basic Subscription"),
+  levelPro(level: 200 , desc: "Pro Subscription"),
+  levelElite(level: 300 , desc: "Elite Subscription"),
+  ;
+
+  const PlayerLevel({required this.level, required this.desc});
+  final int level;
+  final String desc;
+
+  @override
+  int compareTo(PlayerLevel other) => level - other.level;
+
+  static String levelDescription(int level) {
+    for (PlayerLevel p in PlayerLevel.values) {
+      if (p.level == level) {
+        return p.desc;
+      }
+    }
+    return "Undefined Code";
+  }
+  static PlayerLevel getPlayerLevel(int level ) {
+    for (PlayerLevel p in PlayerLevel.values) {
+      if (p.level == level) {
+        return p;
+      }
+    }
+    return PlayerLevel.levelUndefined;
+  }
+
+}
+
 class BruceUser {
 
   final AuthService _auth = AuthService();
@@ -92,6 +125,7 @@ class Player implements FirestoreDoc {
   String lName;
   String initials;
   int pid;
+  int level;
   int status;  // 0 = Deleted, 1 = Active,
 
   // Totals
@@ -114,6 +148,7 @@ class Player implements FirestoreDoc {
         fName = data['fName'] ?? 'Fname',
         lName = data['lName'] ?? 'Lname',
         initials = data['initials'] ?? 'FL',
+        level = data['level'] ?? 100,
         status = data['status'] ?? 1,  // If not found, assume active?
         autoProcessReq = data['autoProcessReq'] ?? false,
         autoProcessNot = data['autoProcessNot'] ?? false,
@@ -142,6 +177,7 @@ class Player implements FirestoreDoc {
     fName = data['fName'] ?? fName;
     lName = data['lName'] ?? lName;
     initials = data['initials'] ?? initials;
+    level = data['level'] ?? level;
     status = data['status'] ?? status;
     autoProcessReq = data['autoProcessReq'] ?? autoProcessReq;
     autoProcessNot = data['autoProcessNot'] ?? autoProcessNot;
@@ -162,6 +198,7 @@ class Player implements FirestoreDoc {
       'fName': fName,
       'lName': lName,
       'initials': initials,
+      'level': level,
       'status': status,
       'autoProcessReq': autoProcessReq,  // Server Side - Not Required here?
       'autoProcessNot': autoProcessNot,

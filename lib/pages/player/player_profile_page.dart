@@ -106,6 +106,7 @@ class _PlayerProfilePage extends PlayerProfileCtrl {
                             // const Spacer(),
                             // const SizedBox(height: 10,),
                             Text("Player Number: ${player.pid} (M:${player.noMemberships}, C:${player.noCommunities}, G:${player.noSeries})"),
+                            Text("       Level: ${player.level}:${PlayerLevel.getPlayerLevel(player.level).desc}"),
                             // Text("Number of Memberships: ${player.noMemberships}"),
                             // Text("Number of Communities: ${player.noCommunities}"),
                             // Text("Number of Series: ${player.noSeries}"),

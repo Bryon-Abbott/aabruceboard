@@ -74,9 +74,14 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 #  Report Width overflow fixed.
 #  Default to New Interface
 # 1.2.8(31)
-#  Added totals to Game Audit Reports
-#  Added Charity and CharityNo to Communities
-version: 1.2.8+31
+#  Added Totals to Game Audit Reports
+# 1.2.9 (32)
+#  Added Charity Name and CharityNo to Communities
+#  Added Community Summary Report
+#  Added Membership Level
+#  Renamed Games/Pools to Boards
+#  Added ability to message members in a community
+version: 1.2.9+32
 
 environment:
   sdk: '>=3.1.2 <4.0.0'

@@ -134,11 +134,11 @@ class _GameBoardState extends State<GameBoard> {
     final Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
     final Membership currentMembership = Provider.of<MembershipProvider>(context).currentMembership;
 
-    dev.log('Pool Owner: ${communityPlayer.docId}:${communityPlayer.fName} Active Player: ${activePlayer.docId}:${activePlayer.fName}',
+    dev.log('Board Owner: ${communityPlayer.docId}:${communityPlayer.fName} Active Player: ${activePlayer.docId}:${activePlayer.fName}',
         name: "${runtimeType.toString()}:build()" );
     // If these Community Player is Equal to the Active Player it is the owner of the game and can update game/grid information,
     isGameOwner = communityPlayer.docId == activePlayer.docId;
-    dev.log("Reload Pool ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:build()");
+    dev.log("Reload Board ... GameNo: ${game.docId} ", name: "${runtimeType.toString()}:build()");
     //gameData.loadData(games.getGame(games.currentGame).gameNo!);
 
     textStyle = Theme.of(context).textTheme.bodySmall!
@@ -303,7 +303,7 @@ class _GameBoardState extends State<GameBoard> {
                                       },
                                       child: const Padding(
                                         padding: EdgeInsets.all(8.0),
-                                        child: Text("Pool Summary"),
+                                        child: Text("Board Summary"),
                                       )),
                                 ),
                                 Spacer(),
@@ -313,7 +313,7 @@ class _GameBoardState extends State<GameBoard> {
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text("Group/Pool: ${series.key}/${game.key}", style: Theme.of(context).textTheme.bodySmall,),
+                                          Text("Group/Board: ${series.key}/${game.key}", style: Theme.of(context).textTheme.bodySmall,),
                                           Text("Membership: ${currentMembership.key}", style: Theme.of(context).textTheme.bodySmall),
                                         ],
                                       )

@@ -41,6 +41,7 @@ const messageDesc = {
   20040: "Assigned Square Notification",
   20060: "Accepted Square Request Notification",
   20070: "Credit Distribution Notification",
+  20100: "Community Message",
 // Acknowledgement
   30010: "Add Member Accept Acknowledgement",                    // Data: {cid: }
   30011: "Add Member Reject Acknowledgement",                    // Data: {cid: }

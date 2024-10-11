@@ -45,7 +45,7 @@ class AccessTileSeries extends StatelessWidget {
                     );
                   },
                   title: Text('Group: ${series?.name ?? '...'}, Type: ${series?.type ?? "Unknown"}'),
-                  subtitle: Text('Number of Games: ${series?.noGames ?? '..'}'),
+                  subtitle: Text('Number of Boards: ${series?.noGames ?? '..'}'),
                   trailing: IconButton(
                     icon: const Icon(Icons.question_mark_outlined),
                     onPressed: () {

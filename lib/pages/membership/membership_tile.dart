@@ -75,16 +75,17 @@ class MembershipTile extends StatelessWidget {
                                 builder: (context) => AccessListSeries(membership: membership)),
                             );
                           },
-                          title: Row(
+                          title: Text('Community: ${community?.name ?? '...'}'), // (${membership.key})
+                          subtitle: Column(
+                            // mainAxisSize: MainAxisSize.min,
+                            // mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                            Text('Community: ${community?.name ?? '...'}'),
-                            (community != null && community!.charity.isNotEmpty) ? Text(' (${community?.charity})') : SizedBox(),
+                              Text('Owner: ${communityPlayer.fName} ${communityPlayer.lName}'),
+                              (community != null && community!.charity.isNotEmpty) ? Text('Charity: ${community?.charity} (${community?.charityNo})') : SizedBox(),
+                              Text('Status: ${membership.status}'),
+                              Text('Your Community Credits: ${member?.credits ?? 0}' ),
                             ],
-                          ), // (${membership.key})
-                          subtitle: Text(
-                              'Owner: ${communityPlayer.fName} ${communityPlayer.lName}\n'
-                                  'Status: ${membership.status}\n'
-                                  'Your Community Credits: ${member?.credits ?? 0}'
                           ),
                           trailing: SizedBox(
                             width: 100,

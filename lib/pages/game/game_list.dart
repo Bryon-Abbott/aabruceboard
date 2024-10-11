@@ -43,7 +43,7 @@ class _GameListState extends State<GameList> {
     CommunityPlayerProvider communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context) ;
     Player communityPlayer = communityPlayerProvider.communityPlayer;
     Player activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
-    log('Pool Owner: ${communityPlayer.docId}:${communityPlayer.fName}', name: "${runtimeType.toString()}:build()" );
+    log('Board Owner: ${communityPlayer.docId}:${communityPlayer.fName}', name: "${runtimeType.toString()}:build()" );
 
     return SafeArea(
       child: StreamBuilder<List<FirestoreDoc>>(
@@ -53,7 +53,7 @@ class _GameListState extends State<GameList> {
             List<Game> game = snapshots.data!.map((g) => g as Game).toList();
             return Scaffold(
               appBar: AppBar(
-                  title: Text('Manage Pools: ${series.type}-${series.name}'),
+                  title: Text('Manage Boards: ${series.type}-${series.name}'),
                   centerTitle: true,
                   elevation: 0,
                   leading: IconButton(

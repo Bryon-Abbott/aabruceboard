@@ -51,7 +51,7 @@ class _MemberDetailViewState extends State<MemberDetailView> {
                   children: [
                     SizedBox(
                       height: 20,
-                      width: 285,
+                      width: 290,
                       child: Text("Player Number / Name: ",
                         style: Theme.of(context).textTheme.titleSmall,),
                     ),
@@ -78,10 +78,8 @@ class _MemberDetailViewState extends State<MemberDetailView> {
                               Row(
                                 children: [
                                   SizedBox(
-                                    width: 35,
-                                    child: Text(
-                                      "${members[index].docId} ", // =PID
-                                    ),
+                                    width: 40,
+                                    child: Text("${members[index].docId}:", textAlign: TextAlign.right),
                                   ),
                                   SizedBox(
                                     width: 250,
@@ -116,7 +114,7 @@ class _MemberDetailViewState extends State<MemberDetailView> {
                   children: [
                     SizedBox(
                       height: 20,
-                      width: 285,
+                      width: 290,
                       child: Text("Total Credits: ", textAlign: TextAlign.right,
                         style: Theme.of(context).textTheme.titleSmall,),
                       ),

@@ -35,7 +35,7 @@ class _SeriesListState extends State<SeriesList> {
             List<Series> series = snapshots.data!.map((s) => s as Series).toList();
             return Scaffold(
               appBar: AppBar(
-                title: Text('Manage Pools'),
+                title: Text('Manage Boards'),
                 centerTitle: true,
                 elevation: 0,
                 leading: IconButton(
@@ -65,7 +65,7 @@ class _SeriesListState extends State<SeriesList> {
                     onPressed: () async {
                       dynamic changes = await Navigator.pushNamed(context, '/series-maintain');
                       if (changes != null) {
-                        log('Pools $changes Changes Type : ${changes.runtimeType}', name: '${runtimeType.toString()}:build()');
+                        log('Boards $changes Changes Type : ${changes.runtimeType}', name: '${runtimeType.toString()}:build()');
                       } else {
                         log('**null** Changes Type : ${changes.runtimeType}', name: '${runtimeType.toString()}:build()');
                       }

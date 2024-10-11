@@ -71,11 +71,15 @@ class AuditGameSummaryView extends StatelessWidget {
                   return Container(
                     child: Row(
                       children: [
+                        SizedBox(
+                            width: 40,
+                            child: Text("${codeKeys[index]}:", textAlign: TextAlign.right,)
+                        ),
                         Expanded(
                         // SizedBox(
                         //   width: 283,
                           child: Text(
-                            "${codeKeys[index]}:${codeKeys[index]==999 ? "    Total" : AuditCode.auditDescription(codeKeys[index]) }",
+                            ( codeKeys[index] == 999 ) ? "    Total" : AuditCode.auditDescription(codeKeys[index]),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -133,11 +137,15 @@ class AuditGameSummaryView extends StatelessWidget {
                 //var date = DateTime.from (auditLogs[index].timestamp * 1000);
                 return Row(
                   children: [
+                    SizedBox(
+                      width: 40,
+                      child: Text("${playerKeys[index]}:", textAlign: TextAlign.right,),
+                    ),
                     Expanded(
                     // SizedBox(
                     //   width: 283,
                       child: Text(
-                        "${playerKeys[index]}:${playerKeys[index]==9999 ? "    Total" : playerNames[playerKeys[index]]}  ",
+                        "${( playerKeys[index] == 9999 ) ? "    Total" : playerNames[playerKeys[index]]}  ",
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),

@@ -34,11 +34,13 @@ class _AccessListSeriesState extends State<AccessListSeries> {
 
     return SafeArea(
       child: StreamBuilder<List<FirestoreDoc>>(
-          stream: DatabaseService(FSDocType.game)
+          stream: DatabaseService(FSDocType.access)
             .fsDocGroupListStream(
               "Access",
               queryFields: {'pid': widget.membership.cpid, 'cid': widget.membership.cid},
-//              orderFields: {'gameDate': false},
+              // ToDo: Look to implement and in(1, 2) or 1 or 2 to include group status in query.
+              //  whereInFields: {'status': [1,2]}
+              // orderFields: {'gameDate': false},
             ),
         // stream: DatabaseService(FSDocType.access)
         //     .fsDocGroupListStream(group: "Access", pid: widget.membership.cpid, cid: widget.membership.cid),   // as Stream<List<Series>>,
@@ -48,7 +50,7 @@ class _AccessListSeriesState extends State<AccessListSeries> {
             return Scaffold(
               appBar: AppBar(
         //            backgroundColor: Colors.blue[900],
-                  title: Text('Show Game Groups (${access.length})'),
+                  title: Text('Show Board Groups'),
                   centerTitle: true,
                   elevation: 0,
                   leading: IconButton(

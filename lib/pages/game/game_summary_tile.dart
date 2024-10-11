@@ -28,7 +28,7 @@ class GameSummaryTile extends StatelessWidget {
             },
             leading: const Icon(Icons.person_outline),
             title: Text('Free Squares: $count'),
-            //subtitle: Text('Game ... '),
+            //subtitle: Text('Board ... '),
           ),
         ),
       );
@@ -50,7 +50,7 @@ class GameSummaryTile extends StatelessWidget {
                   title: Text('${player.fName} ${player.lName}: $count',
                       style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                  //subtitle: Text('Game ... '),
+                  //subtitle: Text('Board ... '),
                 ),
               ),
             );

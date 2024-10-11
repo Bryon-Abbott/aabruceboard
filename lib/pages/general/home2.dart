@@ -25,7 +25,7 @@ import 'package:bruceboard/pages/settings/settings_main.dart';
 // ==========
 const List<Widget> kPermission = <Widget>[
   Text('My Communities'),
-  Text('Public Pools'),
+  Text('Public Boards'),
 ];
 
 class Home2 extends StatefulWidget {
@@ -247,7 +247,7 @@ class _Home2State extends State<Home2> {
                           Expanded(
                             flex: 1,
                             child: Tooltip(
-                              message: "Manage pool",
+                              message: "Manage Board",
                               child: TextButton.icon(
                                 icon: const Icon(Icons.games_outlined),
                                 label: const Text(""),

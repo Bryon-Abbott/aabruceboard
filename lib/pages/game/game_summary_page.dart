@@ -64,7 +64,7 @@ class _GameSummaryPage extends GameSummaryCtlr {
       return SafeArea(
         child: Scaffold(
           appBar: AppBar(
-            title: Text('Pool: ${game.name} '),
+            title: Text('Board: ${game.name} '),
             actions: [
               PopupMenuButton<int>(
                 onSelected: (item) => onMenuSelected(context, item, board, series, activePlayer, communityPlayer),

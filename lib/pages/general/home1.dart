@@ -177,7 +177,7 @@ class _Home1State extends State<Home1> {
                             style: Theme.of(context).textTheme.displayLarge,
                           ),
                           Text(
-                            'a Football Pool App',
+                            'a Sports Pool App',
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.titleLarge,
                           ),

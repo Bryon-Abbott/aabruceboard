@@ -49,7 +49,7 @@ class _PlayerListState extends State<PlayerList> {
                       dynamic changes = await Navigator.pushNamed(
                           context, '/player-maintain');
                       if (changes != null) {
-                        log('player_list: Games $changes Changes Type : ${changes.runtimeType}');
+                        log('player_list: Boards $changes Changes Type : ${changes.runtimeType}');
                       } else {
                         log('player_list: **null** Changes Type : ${changes.runtimeType}');
                       }

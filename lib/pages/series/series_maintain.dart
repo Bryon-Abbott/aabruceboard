@@ -204,7 +204,7 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("Number of Games: ${series?.noGames ?? 'N/A'}, Number of Community Accesses ${series?.noAccesses ?? 0}"),
+                          child: Text("Number of Boards: ${series?.noGames ?? 'N/A'}, Number of Community Accesses ${series?.noAccesses ?? 0}"),
                         ),
                         Row(
                           children: [

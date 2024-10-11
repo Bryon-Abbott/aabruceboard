@@ -1,9 +1,9 @@
 import 'dart:developer';
+import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/services/messageservice.dart';
 import 'package:bruceboard/shared/helperwidgets.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -26,6 +26,7 @@ class MemberList extends StatefulWidget {
 class _MemberListState extends State<MemberList> {
   Player? player;
   Player? playerSelected;
+  late Player activePlayer;
   late Community community;
 
   @override
@@ -33,10 +34,6 @@ class _MemberListState extends State<MemberList> {
     super.initState();
     community = widget.community;
   }
-  // ToDo: What is happening here with 2 callback functions.
-  // void callback() {
-  //   setState(() { });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +43,7 @@ class _MemberListState extends State<MemberList> {
     }
 
     BruceUser bruceUser = Provider.of<BruceUser>(context);
+    activePlayer = Provider.of<ActivePlayerProvider>(context).activePlayer;
 
     return SafeArea(
       child: StreamBuilder<List<FirestoreDoc>>(
@@ -68,8 +66,15 @@ class _MemberListState extends State<MemberList> {
                   ),
                   actions: [
                     IconButton(
+                      icon: const Icon(Icons.mail_outline),
+                      onPressed: () {
+                        sendCommunityMessage(context, members: member);
+                      },
+                    ),
+                    IconButton(
                       icon: const Icon(Icons.add_circle_outline),
                       onPressed: () async {
+                        // ToDo: looks old, should use ActivePlayer Preference, added for CommunityMessage
                         player = await DatabaseService(FSDocType.player).fsDoc(key: bruceUser.uid) as Player;
                         if (!context.mounted) return;
                         dynamic results = await Navigator.pushNamed(
@@ -134,5 +139,25 @@ class _MemberListState extends State<MemberList> {
         }
       ),
     );
+  }
+
+  void sendCommunityMessage(context, {required List<Member> members}) async {
+    Player toPlayer;
+    if (!context.mounted) return;
+    String? message = await openDialogMessageComment(
+        context,
+        defaultComment: "Enter message to Community"
+    );
+    if (message != null) {
+      for (Member m in members) {
+        log("Message to ${m.docId}: $message");
+        toPlayer = await DatabaseService(FSDocType.player).fsDoc(docId: m.docId) as Player;
+        messageSend( 20100, messageType[MessageTypeOption.notification]!,
+            playerFrom: activePlayer, playerTo: toPlayer,
+//            data: {'cid': community.docId},
+            comment: message, description: "Message from Community <${community.name}>");
+        log('member_list: Player Selected ${player?.fName ?? 'No Player?'}');
+      }
     }
   }
+}
