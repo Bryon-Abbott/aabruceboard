@@ -64,7 +64,7 @@ class _Home2State extends State<Home2> {
     final BruceUser bruceUser = Provider.of<BruceUser?>(context) ?? BruceUser();
     log('Start of Build: ${bruceUser.uid} ${bruceUser.displayName} Is Web: $kIsWeb',
         name: "${runtimeType.toString()}:build()");
-    int _activeMessages = 9;
+    int _activeMessages = 99;
     communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
     activePlayerProvider = Provider.of<ActivePlayerProvider>(context);
 
@@ -205,21 +205,21 @@ class _Home2State extends State<Home2> {
                                 //   const Icon(Icons.message_outlined) :
                                 icon:  Stack(
                                     children: [
-                                      IconButton(
-                                          icon: Icon(Icons.message_outlined),
-                                          onPressed: () { }
+                                      SizedBox(
+                                        width: 45,
+                                        height: 40,
+                                        child: Icon(Icons.message_outlined)
                                       ),
                                       _activeMessages > 0 ?
                                         Positioned(
                                           right: 0,
-                                          top: 0,
+                                          top: 9,
                                           child: Container(
                                             padding: EdgeInsets.all(5),
-                                            height: 25,
+                                            // height: 35,
                                             decoration: BoxDecoration(
                                               color: Colors.red,
                                               shape: BoxShape.circle,
-    //                                          borderRadius: BorderRadius.circular(6),
                                             ),
                                             constraints: BoxConstraints(
                                               minWidth: 10,
@@ -238,8 +238,9 @@ class _Home2State extends State<Home2> {
                                   ),
                                   label: const Text(""),
                                   onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
+                                      ? () {log("Pressed - Anonymous");}
                                       : () {
+                                    log("Pressed - ${player.fName}");
                                     Navigator.of(context).push(MaterialPageRoute(
                                         builder: (context) =>
                                             MessageListIncoming(activePlayer: player)));
