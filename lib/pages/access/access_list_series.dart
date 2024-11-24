@@ -5,7 +5,6 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/membership.dart';
 import 'package:bruceboard/pages/access/access_tile_series.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -11,7 +11,6 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/services/databaseservice.dart';
-import 'package:bruceboard/shared/loading.dart';
 
 class SeriesListView extends StatefulWidget {
   final Player communityOwner;
@@ -61,7 +60,7 @@ class _SeriesListViewState extends State<SeriesListView> {
 //          Series series = snapshotSeries.data as Series;
           log("Series-Series (${widget.access.key}) Series Count: ${series.length}...",
               name: '${runtimeType.toString()}:build():Series-ListView.builder');
-          if (series.length > 0) {
+          if (series.isNotEmpty) {
             return SeriesTileView(
                 membership: widget.membership,
                 seriesOwner: widget.communityOwner,

@@ -1,5 +1,4 @@
 import 'package:bruceboard/models/community.dart';
-import 'package:bruceboard/models/series.dart';
 import 'package:flutter/material.dart';
 
 class AuditCommunityHeader extends StatelessWidget {

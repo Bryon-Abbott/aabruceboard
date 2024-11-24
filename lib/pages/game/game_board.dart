@@ -309,14 +309,12 @@ class _GameBoardState extends State<GameBoard> {
                                 Spacer(),
                                 Padding(
                                   padding: const EdgeInsets.all(2.0),
-                                  child: Container(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text("Group/Board: ${series.key}/${game.key}", style: Theme.of(context).textTheme.bodySmall,),
-                                          Text("Membership: ${currentMembership.key}", style: Theme.of(context).textTheme.bodySmall),
-                                        ],
-                                      )
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Group/Board: ${series.key}/${game.key}", style: Theme.of(context).textTheme.bodySmall,),
+                                      Text("Membership: ${currentMembership.key}", style: Theme.of(context).textTheme.bodySmall),
+                                    ],
                                   ),
                                 ),
                               ],

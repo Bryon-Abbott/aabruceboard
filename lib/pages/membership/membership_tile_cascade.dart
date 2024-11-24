@@ -13,7 +13,7 @@ class MembershipTileCascade extends StatelessWidget {
   final Community community;
   final Member member;
 
-  MembershipTileCascade({super.key,
+  const MembershipTileCascade({super.key,
     required this.membership,
     required this.communityOwner,
     required this.community,

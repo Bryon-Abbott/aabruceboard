@@ -2,8 +2,6 @@ import 'package:bruceboard/models/audit.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/audit/audit_game_footer.dart';
-import 'package:bruceboard/pages/audit/audit_game_header.dart';
 import 'package:flutter/material.dart';
 
 class AuditGameSummaryView extends StatelessWidget {
@@ -68,39 +66,37 @@ class AuditGameSummaryView extends StatelessWidget {
                 itemCount: codeKeys.length,
                 itemBuilder: (context, index) {
                   //var date = DateTime.from (auditLogs[index].timestamp * 1000);
-                  return Container(
-                    child: Row(
-                      children: [
-                        SizedBox(
-                            width: 40,
-                            child: Text("${codeKeys[index]}:", textAlign: TextAlign.right,)
+                  return Row(
+                    children: [
+                      SizedBox(
+                          width: 40,
+                          child: Text("${codeKeys[index]}:", textAlign: TextAlign.right,)
+                      ),
+                      Expanded(
+                      // SizedBox(
+                      //   width: 283,
+                        child: Text(
+                          ( codeKeys[index] == 999 ) ? "    Total" : AuditCode.auditDescription(codeKeys[index]),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        Expanded(
-                        // SizedBox(
-                        //   width: 283,
-                          child: Text(
-                            ( codeKeys[index] == 999 ) ? "    Total" : AuditCode.auditDescription(codeKeys[index]),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        SizedBox(
-                            width: 35,
-                            child: Text("${codeSummary[codeKeys[index]]![0]}",
-                              textAlign: TextAlign.right,)
-                        ),
-                        SizedBox(
-                            width: 35,
-                            child: Text("${codeSummary[codeKeys[index]]![1]}",
-                              textAlign: TextAlign.right,)
-                        ),
-                        SizedBox(
-                            width: 35,
-                            child: Text("${codeSummary[codeKeys[index]]![2]}",
-                              textAlign: TextAlign.right,)
-                        ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                          width: 35,
+                          child: Text("${codeSummary[codeKeys[index]]![0]}",
+                            textAlign: TextAlign.right,)
+                      ),
+                      SizedBox(
+                          width: 35,
+                          child: Text("${codeSummary[codeKeys[index]]![1]}",
+                            textAlign: TextAlign.right,)
+                      ),
+                      SizedBox(
+                          width: 35,
+                          child: Text("${codeSummary[codeKeys[index]]![2]}",
+                            textAlign: TextAlign.right,)
+                      ),
+                    ],
                   );
                 }),
             const SizedBox(height: 10,),

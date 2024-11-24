@@ -5,7 +5,6 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CommunitySelect extends StatefulWidget {

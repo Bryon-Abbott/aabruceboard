@@ -23,7 +23,7 @@ class GameTilePublic extends StatelessWidget {
   final Game game;
   final Player gameOwner;
 
-  GameTilePublic({super.key, required this.game, required this.gameOwner });
+  const GameTilePublic({super.key, required this.game, required this.gameOwner });
 
   @override
   Widget build(BuildContext context) {

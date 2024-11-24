@@ -151,7 +151,7 @@ class _Home2State extends State<Home2> {
                 color: Theme.of(context).colorScheme.surface,
                 child: Column(
                   children: [
-                    Container(
+                    SizedBox(
                       height: 30,
                       child: LayoutBuilder(
                         builder: (context, constraints) {
@@ -192,7 +192,7 @@ class _Home2State extends State<Home2> {
                               : const MembershipListCascade(),
                     ),
                     const AdContainer(),
-                    Container(
+                    SizedBox(
                       height: 40,
                       child: Row(
                         children: [
@@ -263,7 +263,7 @@ class _Home2State extends State<Home2> {
                         ],
                       ),
                     ),
-                    Container(
+                    SizedBox(
                       height: 20,
                       child: Text(
                         "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",

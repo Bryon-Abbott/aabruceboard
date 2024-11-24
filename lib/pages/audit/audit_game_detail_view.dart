@@ -44,40 +44,38 @@ class AuditGameDetailView extends StatelessWidget {
                   itemCount: auditLogs.length,
                   itemBuilder: (context, index) {
                     //var date = DateTime.from (auditLogs[index].timestamp * 1000);
-                    return Container(
-                      child: Row(
-                        children: [
-                          //Text("Line ... "),
-                          //Text("${index.toString().padLeft(5, '0')}"),
-                          Row(
-                            children: [
-                              SizedBox(
-                                  width: 35,
-                                  child: Text("${index.toString().padLeft(3, '0')}: ")
+                    return Row(
+                      children: [
+                        //Text("Line ... "),
+                        //Text("${index.toString().padLeft(5, '0')}"),
+                        Row(
+                          children: [
+                            SizedBox(
+                                width: 35,
+                                child: Text("${index.toString().padLeft(3, '0')}: ")
+                            ),
+                            SizedBox(
+                              width: 230,
+                              child: Text(
+                                "${auditLogs[index].code} ${AuditCode.auditDescription(auditLogs[index].code)} ",
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              SizedBox(
-                                width: 230,
-                                child: Text(
-                                  "${auditLogs[index].code} ${AuditCode.auditDescription(auditLogs[index].code)} ",
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 50,
-                                child: (auditLogs[index].square ==-1)
-                                    ? Text("Sq:")
-                                    : Text("Sq: ${auditLogs[index].square.toString().padLeft(2, '0')} "),
-                              ),
-                              SizedBox(
-                                  width: 90,
-                                  child: Text("Player: ${auditLogs[index].playerPid} ")
-                              ),
-                              Text("Time: ${auditLogs[index].timestamp.toDate().toString().substring(0, 23)} "),
-                            ],
-                          ),
-                        ],
-                      ),
+                            ),
+                            SizedBox(
+                              width: 50,
+                              child: (auditLogs[index].square ==-1)
+                                  ? Text("Sq:")
+                                  : Text("Sq: ${auditLogs[index].square.toString().padLeft(2, '0')} "),
+                            ),
+                            SizedBox(
+                                width: 90,
+                                child: Text("Player: ${auditLogs[index].playerPid} ")
+                            ),
+                            Text("Time: ${auditLogs[index].timestamp.toDate().toString().substring(0, 23)} "),
+                          ],
+                        ),
+                      ],
                     );
                   }
               ),

@@ -2,7 +2,6 @@ import 'dart:developer';
 // import 'package:bruceboard/models/activeplayerprovider.dart';
 import 'package:bruceboard/models/communityplayerprovider.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';

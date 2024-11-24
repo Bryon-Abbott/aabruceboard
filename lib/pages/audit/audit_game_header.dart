@@ -22,19 +22,19 @@ class AuditGameHeader extends StatelessWidget {
         Row(
           children: [
             Text("Community: ", style: Theme.of(context).textTheme.titleSmall,),
-            Text("${community?.name ?? "..."}"),
+            Text(community?.name ?? "..."),
           ],
         ),
         Row(
           children: [
             Text("Group: ", style: Theme.of(context).textTheme.titleSmall,),
-            Text("${series?.name ?? "..."}"),
+            Text(series?.name ?? "..."),
           ],
         ),
         Row(
           children: [
             Text("Game: ", style: Theme.of(context).textTheme.titleSmall,),
-            Text("${game.name}"),
+            Text(game.name),
           ],
         ),
       ],

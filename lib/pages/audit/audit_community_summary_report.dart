@@ -10,8 +10,6 @@ import 'package:bruceboard/models/firestoredoc.dart';
 import 'package:bruceboard/models/game.dart';
 import 'package:bruceboard/models/player.dart';
 import 'package:bruceboard/models/series.dart';
-import 'package:bruceboard/pages/audit/audit_game_footer.dart';
-import 'package:bruceboard/pages/audit/audit_game_header.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
 

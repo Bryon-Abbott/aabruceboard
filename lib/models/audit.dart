@@ -29,8 +29,9 @@ enum AuditCode implements Comparable<AuditCode> {
 
   static String auditDescription(int code) {
     for (AuditCode a in AuditCode.values) {
-      if (a.code == code)
+      if (a.code == code) {
         return a.desc;
+      }
     }
     return "Undefined Code";
   }

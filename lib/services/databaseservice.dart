@@ -187,7 +187,7 @@ class DatabaseService {
   // Private function to Create a Query given criteria and sort order info
   Query<Object?>? _buildQuery({required Map<String, dynamic> queryValues, Map<String, dynamic>? orderFields}) {
     Query<Object?>? query;
-    log('Query Vars: ${queryValues} ', name: '${runtimeType.toString()}:_buildQuery()');
+    log('Query Vars: $queryValues ', name: '${runtimeType.toString()}:_buildQuery()');
     log('Query Path: ${docCollection.path} ', name: '${runtimeType.toString()}:_buildQuery()');
     // Build Where Query
     queryValues.forEach((key, value) {
@@ -205,7 +205,7 @@ class DatabaseService {
       orderFields.forEach((fld, descending) {
         if (fld != '' && descending != '') {
           query = docCollection.orderBy(fld.toString(), descending: descending);
-        };
+        }
       });
     }
     // If no query parameters ... return full collection
@@ -387,7 +387,7 @@ class DatabaseService {
     if (query == null) {
       s001 = docCollection.snapshots();
     } else {
-      s001 = query!.snapshots();
+      s001 = query.snapshots();
     }
     return s001.map((QuerySnapshot snapshot) => _fsDocListFromSnapshot(snapshot));
   }
@@ -451,7 +451,7 @@ class DatabaseService {
         if (field != '' && descending != '') {
           log("Order - Field: $field, Value: $descending ...", name: '${runtimeType.toString()}:fsDocGroupList()');
           query = query.orderBy(field.toString(), descending: descending);
-        };
+        }
       });
     }
     await query.get().then((snapshot) {
@@ -512,7 +512,7 @@ class DatabaseService {
         if (field != '' && descending != '') {
           log("Order - Field: $field, Value: $descending ...", name: '${runtimeType.toString()}:fsDocGroupListStream()');
           query = query.orderBy(field.toString(), descending: descending);
-        };
+        }
       });
     }
     streamQuerySnapshot = query.snapshots();
