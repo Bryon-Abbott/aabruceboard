@@ -64,7 +64,7 @@ class _Home2State extends State<Home2> {
     final BruceUser bruceUser = Provider.of<BruceUser?>(context) ?? BruceUser();
     log('Start of Build: ${bruceUser.uid} ${bruceUser.displayName} Is Web: $kIsWeb',
         name: "${runtimeType.toString()}:build()");
-
+    int _activeMessages = 9;
     communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
     activePlayerProvider = Provider.of<ActivePlayerProvider>(context);
 
@@ -193,7 +193,7 @@ class _Home2State extends State<Home2> {
                     ),
                     const AdContainer(),
                     SizedBox(
-                      height: 40,
+                      height: 35,
                       child: Row(
                         children: [
                           Expanded(
@@ -201,16 +201,50 @@ class _Home2State extends State<Home2> {
                             child: Tooltip(
                               message: "Manage Messages",
                               child: TextButton.icon(
-                                icon: const Icon(Icons.message_outlined),
-                                label: const Text(""),
-                                onPressed: (bruceUser.uid == 'Anonymous')
-                                    ? null
-                                    : () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) =>
-                                          MessageListIncoming(activePlayer: player)));
-                                  //Navigator.pushNamed(context, '/message-list-incoming');
-                                },
+                                // icon: _activeMessages == 0 ?
+                                //   const Icon(Icons.message_outlined) :
+                                icon:  Stack(
+                                    children: [
+                                      IconButton(
+                                          icon: Icon(Icons.message_outlined),
+                                          onPressed: () { }
+                                      ),
+                                      _activeMessages > 0 ?
+                                        Positioned(
+                                          right: 0,
+                                          top: 0,
+                                          child: Container(
+                                            padding: EdgeInsets.all(5),
+                                            height: 25,
+                                            decoration: BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle,
+    //                                          borderRadius: BorderRadius.circular(6),
+                                            ),
+                                            constraints: BoxConstraints(
+                                              minWidth: 10,
+                                              minHeight: 10,
+                                            ),
+                                            child: Text('$_activeMessages',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 10,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                        ) : SizedBox(),
+                                    ],
+                                  ),
+                                  label: const Text(""),
+                                  onPressed: (bruceUser.uid == 'Anonymous')
+                                      ? null
+                                      : () {
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) =>
+                                            MessageListIncoming(activePlayer: player)));
+                                    //Navigator.pushNamed(context, '/message-list-incoming');
+                                  },
                               ),
                             ),
                           ),
@@ -218,14 +252,17 @@ class _Home2State extends State<Home2> {
                             flex: 1,
                             child: Tooltip(
                               message: "Manage Memberships",
-                              child: TextButton.icon(
-                                icon: const Icon(Icons.wallet_membership_outlined),
-                                label: const Text(""),
-                                onPressed: (bruceUser.uid == 'Anonymous')
-                                    ? null
-                                    : () {
-                                  Navigator.pushNamed(context, '/membership-list');
-                                },
+                              child: SizedBox(
+                                height: 40,
+                                child: TextButton.icon(
+                                  icon: const Icon(Icons.wallet_membership_outlined),
+                                  label: const Text(""),
+                                  onPressed: (bruceUser.uid == 'Anonymous')
+                                      ? null
+                                      : () {
+                                    Navigator.pushNamed(context, '/membership-list');
+                                  },
+                                ),
                               ),
                             ),
                           ),
@@ -233,14 +270,17 @@ class _Home2State extends State<Home2> {
                             flex: 1,
                             child: Tooltip(
                               message: "Manage Communities",
-                              child: TextButton.icon(
-                                icon: const Icon(Icons.people_rounded),
-                                label: const Text(""),
-                                onPressed: (bruceUser.uid == 'Anonymous')
-                                    ? null
-                                    : () {
-                                  Navigator.pushNamed(context, '/community-list');
-                                },
+                              child: SizedBox(
+                                height: 40,
+                                child: TextButton.icon(
+                                  icon: const Icon(Icons.people_rounded),
+                                  label: const Text(""),
+                                  onPressed: (bruceUser.uid == 'Anonymous')
+                                      ? null
+                                      : () {
+                                    Navigator.pushNamed(context, '/community-list');
+                                  },
+                                ),
                               ),
                             ),
                           ),
@@ -248,15 +288,18 @@ class _Home2State extends State<Home2> {
                             flex: 1,
                             child: Tooltip(
                               message: "Manage Board",
-                              child: TextButton.icon(
-                                icon: const Icon(Icons.games_outlined),
-                                label: const Text(""),
-                                onPressed: (bruceUser.uid == 'Anonymous')
-                                    ? null
-                                    : () {
-                                  communityPlayerProvider.communityPlayer = player;
-                                  Navigator.pushNamed(context, '/series-list');
-                                },
+                              child: SizedBox(
+                                height: 40,
+                                child: TextButton.icon(
+                                  icon: const Icon(Icons.games_outlined),
+                                  label: const Text(""),
+                                  onPressed: (bruceUser.uid == 'Anonymous')
+                                      ? null
+                                      : () {
+                                    communityPlayerProvider.communityPlayer = player;
+                                    Navigator.pushNamed(context, '/series-list');
+                                  },
+                                ),
                               ),
                             ),
                           ),
