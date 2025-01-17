@@ -1,7 +1,10 @@
-import 'package:bruceboard/utils/mylogo.dart';
+//import 'package:bruceboard/flutter_any_logo/AnyLogo.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_any_logo/flutter_logo.dart';
-import 'package:flutter_any_logo/gen/assets.gen.dart';
+// import 'package:flutter_any_logo/flutter_logo.dart';
+// import 'package:flutter_any_logo/gen/assets.gen.dart';
+//import 'package:bruceboard/flutter_logo.dart';
+import 'package:bruceboard/flutter_any_logo/class.dart';
+import 'package:bruceboard/flutter_any_logo/assets.gen.dart';
 
 enum SeriesType { itemNFL, itemCFL, itemNBA, itemOther }
 
@@ -100,13 +103,13 @@ Map<String, TeamData> nbaTeamData = {
 };
 
 Map<String, TeamData> cflTeamData = {
-  MyLogo.cfl.cflBCLions.keyName:             TeamData(MyLogo.cfl.cflBCLions.keyName,           "BC",       "Lions",        MyLogo.cfl.cflBCLions),
-  MyLogo.cfl.cflCalgaryStampeders.keyName:   TeamData(MyLogo.cfl.cflCalgaryStampeders.keyName, "Calgary",  "Stampeders",   MyLogo.cfl.cflCalgaryStampeders),
-  MyLogo.cfl.cflEdmontonEsks.keyName:        TeamData(MyLogo.cfl.cflEdmontonEsks.keyName,      "Edmonton", "Elks",         MyLogo.cfl.cflEdmontonEsks),
-  MyLogo.cfl.cflhamiltontigercats.keyName:   TeamData(MyLogo.cfl.cflhamiltontigercats.keyName, "Hamilton", "Tiger Cats",   MyLogo.cfl.cflhamiltontigercats),
-  MyLogo.cfl.cflmontrealalouettes.keyName:   TeamData(MyLogo.cfl.cflmontrealalouettes.keyName, "Montreal", "Alouettes",    MyLogo.cfl.cflmontrealalouettes),
-  MyLogo.cfl.cflottawaredblacks.keyName:     TeamData(MyLogo.cfl.cflottawaredblacks.keyName,   "Ottawa",   "Redblacks",    MyLogo.cfl.cflottawaredblacks),
-  MyLogo.cfl.cflsaskatchewanroughriders.keyName: TeamData(MyLogo.cfl.cflsaskatchewanroughriders.keyName, "Saskatchewan", "Roughriders", MyLogo.cfl.cflsaskatchewanroughriders),
-  MyLogo.cfl.cfltorontoargonauts.keyName:    TeamData(MyLogo.cfl.cfltorontoargonauts.keyName,   "Toronto", "Argonauts",    MyLogo.cfl.cfltorontoargonauts),
-  MyLogo.cfl.cflwinnepegbluebombers.keyName: TeamData(MyLogo.cfl.cflwinnepegbluebombers.keyName,"Winnepeg","Blue Bombers", MyLogo.cfl.cflwinnepegbluebombers),
+  AnyLogo.cfl.cflBCLions.keyName:             TeamData(AnyLogo.cfl.cflBCLions.keyName,           "BC",       "Lions",        AnyLogo.cfl.cflBCLions),
+  AnyLogo.cfl.cflCalgaryStampeders.keyName:   TeamData(AnyLogo.cfl.cflCalgaryStampeders.keyName, "Calgary",  "Stampeders",   AnyLogo.cfl.cflCalgaryStampeders),
+  AnyLogo.cfl.cflEdmontonEsks.keyName:        TeamData(AnyLogo.cfl.cflEdmontonEsks.keyName,      "Edmonton", "Elks",         AnyLogo.cfl.cflEdmontonEsks),
+  AnyLogo.cfl.cflhamiltontigercats.keyName:   TeamData(AnyLogo.cfl.cflhamiltontigercats.keyName, "Hamilton", "Tiger Cats",   AnyLogo.cfl.cflhamiltontigercats),
+  AnyLogo.cfl.cflmontrealalouettes.keyName:   TeamData(AnyLogo.cfl.cflmontrealalouettes.keyName, "Montreal", "Alouettes",    AnyLogo.cfl.cflmontrealalouettes),
+  AnyLogo.cfl.cflottawaredblacks.keyName:     TeamData(AnyLogo.cfl.cflottawaredblacks.keyName,   "Ottawa",   "Redblacks",    AnyLogo.cfl.cflottawaredblacks),
+  AnyLogo.cfl.cflsaskatchewanroughriders.keyName: TeamData(AnyLogo.cfl.cflsaskatchewanroughriders.keyName, "Saskatchewan", "Roughriders", AnyLogo.cfl.cflsaskatchewanroughriders),
+  AnyLogo.cfl.cfltorontoargonauts.keyName:    TeamData(AnyLogo.cfl.cfltorontoargonauts.keyName,   "Toronto", "Argonauts",    AnyLogo.cfl.cfltorontoargonauts),
+  AnyLogo.cfl.cflwinnepegbluebombers.keyName: TeamData(AnyLogo.cfl.cflwinnepegbluebombers.keyName,"Winnepeg","Blue Bombers", AnyLogo.cfl.cflwinnepegbluebombers),
 };

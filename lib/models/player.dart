@@ -133,6 +133,7 @@ class Player implements FirestoreDoc {
   int noCommunities = 0;
   int noCommunityMembers = 0;
   int noSeries = 0;
+  int noMessages = 0;
   int noTotalGames = 0;
 
   // Auto Approval Settings
@@ -156,7 +157,8 @@ class Player implements FirestoreDoc {
         autoProcessAcc = data['autoProcessAcc'] ?? false,
         noMemberships = data['noMemberships'] ?? 0,
         noCommunities = data['noCommunities'] ?? 0,
-        noSeries = data['noSeries'] ?? 0 ;
+        noSeries = data['noSeries'] ?? 0,
+        noMessages = data['noMessages'] ?? 0;
 
   // The key for the Player Document is the Firestore Users ID (uid)
   @override
@@ -186,6 +188,7 @@ class Player implements FirestoreDoc {
     noMemberships = data['noMemberships'] ?? noMemberships;
     noCommunities = data['noCommunities'] ?? noCommunities;
     noSeries = data['noSeries'] ?? noSeries;
+    noMessages = data['noMessages'] ?? noMessages;
   }
 
   // Returns a Map<String, dynamic> of all member variables.

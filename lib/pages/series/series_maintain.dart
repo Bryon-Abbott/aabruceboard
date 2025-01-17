@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:bruceboard/menus/popupmenubutton_status.dart';
 import 'package:bruceboard/models/community.dart';
 import 'package:bruceboard/utils/banner_ad.dart';
-import 'package:bruceboard/utils/league_list.dart';
+import 'package:bruceboard/flutter_any_logo/league_list.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -102,7 +102,8 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                     //autovalidateMode: AutovalidateMode.always,
                     onChanged: () {
                       //debugPrint("Something Changed ... Game '$game' Email '$email' ");
-                      Form.of(primaryFocus!.context!).save();
+                      //Form.of(primaryFocus!.context!).save();
+                      _formSeriesKey.currentState!.save();
                     },
                     key: _formSeriesKey,
                     child: Column(
@@ -170,7 +171,8 @@ class SeriesMaintainState extends State<SeriesMaintain> {
                                   return null;
                                 },
                                 onSaved: (String? value) {
-                                  currentDefaultCid =  (value != null) ? int.parse(value) : -1;
+                                  log('Got Community ${value}', name: '${runtimeType.toString()}:build()');
+                                  currentDefaultCid =  (value != null) ? int.parse(value.substring(1)) : -1;
                                 },
                               ),
                             ),

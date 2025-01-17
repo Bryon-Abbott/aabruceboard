@@ -25,7 +25,7 @@ import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/pages/game/game_board_grid.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/shared/loading.dart';
-import 'package:bruceboard/utils/league_list.dart';
+import 'package:bruceboard/flutter_any_logo/league_list.dart';
 
 const double gridSizeLarge = 1000;
 const double gridSizeSmall = 500;

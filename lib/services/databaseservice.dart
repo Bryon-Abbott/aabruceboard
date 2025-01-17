@@ -216,7 +216,7 @@ class DatabaseService {
   // Add and fsDoc to the Firestore for given Type
   // Get the nextNumber for the type and increment it.
   Future<void> fsDocAdd(FirestoreDoc fsDoc) async {
-    int noDocs = -1;
+    //int noDocs = -1;
     // If there is already a docId, use it vs getting the Next Number
     log("Adding documnet : ${fsDoc.docId}", name: '${runtimeType.toString()}:fsDocAdd');
     if (fsDoc.docId == -1) {
@@ -250,14 +250,14 @@ class DatabaseService {
     log('Adding document ${fsDoc.runtimeType} Key: ${fsDoc.key}', name: '${runtimeType.toString()}:fsDocAdd');
     log(docCollection.path, name: '${runtimeType.toString()}:fsDocAdd');
     await docCollection.doc(fsDoc.key).set(fsDoc.updateMap);
-    await docCollection.count().get()
-        .then((res) => noDocs = res.count ?? -1,
-    );
+    // await docCollection.count().get()
+    //     .then((res) => noDocs = res.count ?? -1,
+    // );
     if (fsDoc.totalField != 'NO-TOTALS') {
-      log('Updating number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
+      log('Updating number of docs', name: '${runtimeType.toString()}:fsDocAdd()');
       log(statsDocument.path, name: '${runtimeType.toString()}:fsDocAdd');
-      await statsDocument.update({ fsDoc.totalField: noDocs} );
-      log('Updated number of docs $noDocs', name: '${runtimeType.toString()}:fsDocAdd()');
+      // await statsDocument.update({ fsDoc.totalField: noDocs} );
+      await statsDocument.update({ fsDoc.totalField: FieldValue.increment(1)} );
     }
   }
   // --------------------------------------------------------------------------
@@ -275,21 +275,25 @@ class DatabaseService {
       field: svalue ?? ivalue ?? bvalue,
     });
   }
+// Todo: Add fsDocIncrementField(field, value)
+
   // --------------------------------------------------------------------------
   // Note: Application is responsible to delete underlying documents before deleting this document
   // Id does not do a cascade delete.
   Future<void> fsDocDelete(FirestoreDoc fsDoc) async {
-    int noDocs = -1;
+    // int noDocs = -1;
     log('Path: ${docCollection.path} key: ${fsDoc.key} ', name: '${runtimeType.toString()}:fsDocDelete');
     log(docCollection.path, name: '${runtimeType.toString()}:fsDocDelete');
     await docCollection.doc(fsDoc.key).delete();
     // fsDoc = FirestoreDoc(data: {});  // Clear out the class?
 
     if (fsDoc.totalField != 'NO-TOTALS') {
-      await docCollection.count().get()
-          .then((res) => noDocs = res.count ?? -1,
-      );
-      await statsDocument.update({ fsDoc.totalField: noDocs} );
+      // await docCollection.count().get()
+      //     .then((res) => noDocs = res.count ?? -1,
+      // );
+      // await statsDocument.update({ fsDoc.totalField: noDocs} );
+      log('Updating number of docs', name: '${runtimeType.toString()}:fsDocDelete()');
+      await statsDocument.update({ fsDoc.totalField: FieldValue.increment(-1)} );
     }
   }
   // --------------------------------------------------------------------------
@@ -407,15 +411,16 @@ class DatabaseService {
         FirestoreDoc fsDoc = FirestoreDoc( fsDocType, data: data );
         fsDocList.add(fsDoc);
       }
-      log('Return type ${fsDocList.runtimeType} Length: ${fsDocList.length}', name: '${runtimeType.toString()}:fsDocGroupList()');
+      log('Return type ${fsDocList.runtimeType} Length: ${fsDocList.length}', name: '${runtimeType.toString()}:fsDocQueryList()');
     },
-      onError: (e) => log("Error getting document: $e", name: '${runtimeType.toString()}:fsDocGroupList()'),
+      onError: (e) => log("Error getting document: $e", name: '${runtimeType.toString()}:fsDocQueryList()'),
     );
     return fsDocList;
   }
   // --------------------------------------------------------------------------
   // Return a Future List of fsDocs for the givne Group Access
   // Note: Not Tested ...
+  // ToDo: Update for Incoming and Processed Groups ... see Stream.
   Future<List<FirestoreDoc>> fsDocGroupList(String group, {required Map<String, dynamic> queryFields, Map<String, dynamic>? orderFields }) async {
     late Query<Object?> query;
     List<FirestoreDoc> fsDocList = [];
@@ -551,5 +556,20 @@ class DatabaseService {
       docCount = snapshot.count ?? -1;
     });
     return Future<int>.value(docCount);
+  }
+  // --------------------------------------------------------------------------
+  // Update the noMessages field for the given player in the Player docu.
+  Future<void> noMessageSync({required pid}) async {
+    if (FSDocType.message ==fsDocType ) {
+      Query<Object?>query = db.collectionGroup("Incoming").where("pidTo", isEqualTo: pid);
+      QuerySnapshot<Object?> snapshots = await query.get();
+      log('Snapshot Size ${snapshots.size}',
+          name: '${runtimeType.toString()}:noMessageSync');
+      await playerCollection.doc(toUid)
+          .update({ "noMessages": snapshots.size});
+    } else {
+      log('Function must be called with FSDocType.message',
+          name: '${runtimeType.toString()}:noMessageSync');
+    }
   }
 }

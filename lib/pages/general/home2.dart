@@ -64,7 +64,7 @@ class _Home2State extends State<Home2> {
     final BruceUser bruceUser = Provider.of<BruceUser?>(context) ?? BruceUser();
     log('Start of Build: ${bruceUser.uid} ${bruceUser.displayName} Is Web: $kIsWeb',
         name: "${runtimeType.toString()}:build()");
-    int _activeMessages = 99;
+    int _activeMessages = 0;
     communityPlayerProvider = Provider.of<CommunityPlayerProvider>(context);
     activePlayerProvider = Provider.of<ActivePlayerProvider>(context);
 
@@ -80,244 +80,262 @@ class _Home2State extends State<Home2> {
               if (communityPlayerProvider.communityPlayer.uid == 'Anonymous') {
                 communityPlayerProvider.communityPlayer = player;
               }
+              // Move this to a settings option.
+              log('Going into Sync: ${player.uid} ${player.fName}',
+                  name: "${runtimeType.toString()}:build()");
+              DatabaseService(FSDocType.message, uid: player.uid).noMessageSync(pid: player.pid);
             } else {
               activePlayerProvider.activePlayer = Player(data: {});
               communityPlayerProvider.communityPlayer = Player(data: {});
             }
+            _activeMessages = 0;
             log('Player Data Found: ${player.uid} ${player.fName} ${player.lName} Is Web: $kIsWeb',
                 name: "${runtimeType.toString()}:build()");
           }
           return PopScope(
             canPop: false,
-            child: Scaffold(
-              backgroundColor: Colors.grey,
-              appBar: AppBar(
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back, color: Colors.white.withOpacity(0)),
-                  onPressed: null,
-                ),
-                title: const Text('Home'),
-                centerTitle: true,
-                elevation: 0,
-                actions: [
-                  (bruceUser.uid == 'Anonymous')
-                  ? IconButton(
-                      onPressed: signIn,
-                      icon: const Icon(Icons.person_add_rounded)
-                  )
-                  : IconButton(
-                      onPressed: signOut,
-                      icon: const Icon(Icons.person_remove_rounded)
-                  ),
-                  PopupMenuButton<int>(
-                    onSelected: (item) => onMenuSelected(context, item),
-                    itemBuilder: (context) => [
-                    const PopupMenuItem<int>(
-                      value: 1,
-                      child: Row(
-                        children: [
-                          Icon(Icons.person_outline),
-                          SizedBox(width: 8),
-                          Text("Profile"),
-                        ],
-                      ),
+            child: StreamBuilder<FirestoreDoc?>(
+              stream: DatabaseService(FSDocType.player).fsDocStream(key: bruceUser.uid),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  Player player = snapshot.data as Player;
+                  _activeMessages = player.noMessages;
+                }
+                return Scaffold(
+                  backgroundColor: Colors.grey,
+                  appBar: AppBar(
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back, color: Colors.white.withOpacity(0)),
+                      onPressed: null,
                     ),
-                    const PopupMenuItem<int>(
-                      value: 2,
-                      child: Row(
-                        children: [
-                          Icon(Icons.settings_outlined),
-                          SizedBox(width: 8),
-                          Text("Settings"),
-                        ],
+                    title: const Text('Home'),
+                    centerTitle: true,
+                    elevation: 0,
+                    actions: [
+                      (bruceUser.uid == 'Anonymous')
+                      ? IconButton(
+                          onPressed: signIn,
+                          icon: const Icon(Icons.person_add_rounded)
+                      )
+                      : IconButton(
+                          onPressed: signOut,
+                          icon: const Icon(Icons.person_remove_rounded)
                       ),
-                    ),
-                      const PopupMenuItem<int>(
-                        value: 3,
-                        child: Row(
-                          children: [
-                            Icon(Icons.info_outline_rounded),
-                            SizedBox(width: 8),
-                            Text("About"),
-                          ],
+                      PopupMenuButton<int>(
+                        onSelected: (item) => onMenuSelected(context, item),
+                        itemBuilder: (context) => [
+                        const PopupMenuItem<int>(
+                          value: 1,
+                          child: Row(
+                            children: [
+                              Icon(Icons.person_outline),
+                              SizedBox(width: 8),
+                              Text("Profile"),
+                            ],
+                          ),
                         ),
-                      ),
-                  ])
-                ],
-              ),
-              body: Container(
-                // height: newScreenHeight,
-                // width: newScreenWidth,
-                color: Theme.of(context).colorScheme.surface,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 30,
-                      child: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return ToggleButtons(
-                            direction: Axis.horizontal,
-                            onPressed: (int index) {
-                              setState(() {
-                                // The button that is tapped is set to true, and the others to false.
-                                for (int i = 0; i < _selectedPermission.length; i++) {
-                                  _selectedPermission[i] = i == index;
-                                }
-                              });
-                            },
-                            borderWidth: 2,
-                            borderRadius: const BorderRadius.all(Radius.circular(0)),
-                            selectedBorderColor: Colors.green,
-                            borderColor: Colors.green,
-                            selectedColor: Colors.white,
-                            fillColor: Colors.green[200],
-                            constraints: BoxConstraints.expand(width: (constraints.maxWidth-6) / _selectedPermission.length),
-                            // color: Colors.green[400],
-                            // constraints: const BoxConstraints(
-                            //   minHeight: 40.0,
-                            //   minWidth: 200.0,
-                            // ),
-                            isSelected: _selectedPermission,
-                            children: kPermission,
-                          );
-                        }
-                      ),
-                    ),
-                    Expanded(
-//                      height: newScreenHeight-210,
-                        child: (bruceUser.uid == 'Anonymous')
-                            ? const SignInMessage()
-                            : _selectedPermission[1]  // 1=Public Tab
-                              ? const GameListPublic()
-                              : const MembershipListCascade(),
-                    ),
-                    const AdContainer(),
-                    SizedBox(
-                      height: 35,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Tooltip(
-                              message: "Manage Messages",
-                              child: TextButton.icon(
-                                // icon: _activeMessages == 0 ?
-                                //   const Icon(Icons.message_outlined) :
-                                icon:  Stack(
-                                    children: [
-                                      SizedBox(
-                                        width: 45,
-                                        height: 40,
-                                        child: Icon(Icons.message_outlined)
-                                      ),
-                                      _activeMessages > 0 ?
-                                        Positioned(
-                                          right: 0,
-                                          top: 9,
-                                          child: Container(
-                                            padding: EdgeInsets.all(5),
-                                            // height: 35,
-                                            decoration: BoxDecoration(
-                                              color: Colors.red,
-                                              shape: BoxShape.circle,
-                                            ),
-                                            constraints: BoxConstraints(
-                                              minWidth: 10,
-                                              minHeight: 10,
-                                            ),
-                                            child: Text('$_activeMessages',
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 10,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
+                        const PopupMenuItem<int>(
+                          value: 2,
+                          child: Row(
+                            children: [
+                              Icon(Icons.settings_outlined),
+                              SizedBox(width: 8),
+                              Text("Settings"),
+                            ],
+                          ),
+                        ),
+                          const PopupMenuItem<int>(
+                            value: 3,
+                            child: Row(
+                              children: [
+                                Icon(Icons.info_outline_rounded),
+                                SizedBox(width: 8),
+                                Text("About"),
+                              ],
+                            ),
+                          ),
+                      ])
+                    ],
+                  ),
+                  body: Container(
+                    // height: newScreenHeight,
+                    // width: newScreenWidth,
+                    color: Theme.of(context).colorScheme.surface,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 30,
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return ToggleButtons(
+                                direction: Axis.horizontal,
+                                onPressed: (int index) {
+                                  setState(() {
+                                    // The button that is tapped is set to true, and the others to false.
+                                    for (int i = 0; i < _selectedPermission.length; i++) {
+                                      _selectedPermission[i] = i == index;
+                                    }
+                                  });
+                                },
+                                borderWidth: 2,
+                                borderRadius: const BorderRadius.all(Radius.circular(0)),
+                                selectedBorderColor: Colors.green,
+                                borderColor: Colors.green,
+                                selectedColor: Colors.white,
+                                fillColor: Colors.green[200],
+                                constraints: BoxConstraints.expand(width: (constraints.maxWidth-6) / _selectedPermission.length),
+                                // color: Colors.green[400],
+                                // constraints: const BoxConstraints(
+                                //   minHeight: 40.0,
+                                //   minWidth: 200.0,
+                                // ),
+                                isSelected: _selectedPermission,
+                                children: kPermission,
+                              );
+                            }
+                          ),
+                        ),
+                        Expanded(
+                //                      height: newScreenHeight-210,
+                            child: (bruceUser.uid == 'Anonymous')
+                                ? const SignInMessage()
+                                : _selectedPermission[1]  // 1=Public Tab
+                                  ? const GameListPublic()
+                                  : const MembershipListCascade(),
+                        ),
+                        const AdContainer(),
+                        SizedBox(
+                          height: 35,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Tooltip(
+                                  message: "Manage Messages",
+                                  child: TextButton.icon(
+                                    // icon: _activeMessages == 0 ?
+                                    //   const Icon(Icons.message_outlined) :
+                                    icon:  Stack(
+                                        children: [
+                                          SizedBox(
+                                            width: 45,
+                                            height: 40,
+                                            child: Icon(Icons.message_outlined)
                                           ),
-                                        ) : SizedBox(),
-                                    ],
+                                          _activeMessages > 0 ?
+                                            Positioned(
+                                              right: 0,
+                                              top: 9,
+                                              child: Container(
+                                                padding: EdgeInsets.all(5),
+                                                // height: 35,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                constraints: BoxConstraints(
+                                                  minWidth: 10,
+                                                  minHeight: 10,
+                                                ),
+                                                child: Text('$_activeMessages',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 10,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ) : SizedBox(),
+                                        ],
+                                      ),
+                                      label: const Text(""),
+                                      onPressed: (bruceUser.uid == 'Anonymous')
+                                          ? () {log("Pressed - Anonymous");}
+                                          : () {
+                                        log("Pressed - ${player.fName}");
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                MessageListIncoming(activePlayer: player)
+                                          )
+                                        );
+                                        setState(() {  });
+                                        //Navigator.pushNamed(context, '/message-list-incoming');
+                                      },
                                   ),
-                                  label: const Text(""),
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? () {log("Pressed - Anonymous");}
-                                      : () {
-                                    log("Pressed - ${player.fName}");
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            MessageListIncoming(activePlayer: player)));
-                                    //Navigator.pushNamed(context, '/message-list-incoming');
-                                  },
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Tooltip(
-                              message: "Manage Memberships",
-                              child: SizedBox(
-                                height: 40,
-                                child: TextButton.icon(
-                                  icon: const Icon(Icons.wallet_membership_outlined),
-                                  label: const Text(""),
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                    Navigator.pushNamed(context, '/membership-list');
-                                  },
                                 ),
                               ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Tooltip(
-                              message: "Manage Communities",
-                              child: SizedBox(
-                                height: 40,
-                                child: TextButton.icon(
-                                  icon: const Icon(Icons.people_rounded),
-                                  label: const Text(""),
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                    Navigator.pushNamed(context, '/community-list');
-                                  },
+                              Expanded(
+                                flex: 1,
+                                child: Tooltip(
+                                  message: "Manage Memberships",
+                                  child: SizedBox(
+                                    height: 40,
+                                    child: TextButton.icon(
+                                      icon: const Icon(Icons.wallet_membership_outlined),
+                                      label: const Text(""),
+                                      onPressed: (bruceUser.uid == 'Anonymous')
+                                          ? null
+                                          : () {
+                                        Navigator.pushNamed(context, '/membership-list');
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Tooltip(
-                              message: "Manage Board",
-                              child: SizedBox(
-                                height: 40,
-                                child: TextButton.icon(
-                                  icon: const Icon(Icons.games_outlined),
-                                  label: const Text(""),
-                                  onPressed: (bruceUser.uid == 'Anonymous')
-                                      ? null
-                                      : () {
-                                    communityPlayerProvider.communityPlayer = player;
-                                    Navigator.pushNamed(context, '/series-list');
-                                  },
+                              Expanded(
+                                flex: 1,
+                                child: Tooltip(
+                                  message: "Manage Communities",
+                                  child: SizedBox(
+                                    height: 40,
+                                    child: TextButton.icon(
+                                      icon: const Icon(Icons.people_rounded),
+                                      label: const Text(""),
+                                      onPressed: (bruceUser.uid == 'Anonymous')
+                                          ? null
+                                          : () {
+                                        Navigator.pushNamed(context, '/community-list');
+                                      },
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                              Expanded(
+                                flex: 1,
+                                child: Tooltip(
+                                  message: "Manage Board",
+                                  child: SizedBox(
+                                    height: 40,
+                                    child: TextButton.icon(
+                                      icon: const Icon(Icons.games_outlined),
+                                      label: const Text(""),
+                                      onPressed: (bruceUser.uid == 'Anonymous')
+                                          ? null
+                                          : () {
+                                        communityPlayerProvider.communityPlayer = player;
+                                        Navigator.pushNamed(context, '/series-list');
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                          child: Text(
+                            "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
+                            textAlign: TextAlign.end,
+                            style: Theme.of(context).textTheme.titleSmall,
+                          ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      height: 20,
-                      child: Text(
-                        "Welcome '${bruceUser.displayName}' Verified = ${bruceUser.emailVerified ? 'Yes' : 'No'}",
-                        textAlign: TextAlign.end,
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              }
             ),
           );
         },

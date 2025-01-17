@@ -4,7 +4,8 @@ import 'package:bruceboard/pages/audit/audit_game_summary_report.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_any_logo/gen/assets.gen.dart';
+//import 'package:flutter_any_logo/gen/assets.gen.dart';
+import 'package:bruceboard/flutter_any_logo/assets.gen.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +17,7 @@ import 'package:bruceboard/models/grid.dart';
 import 'package:bruceboard/models/series.dart';
 import 'package:bruceboard/models/player.dart';
 
-import 'package:bruceboard/utils/league_list.dart';
+import 'package:bruceboard/flutter_any_logo/league_list.dart';
 import 'package:bruceboard/services/databaseservice.dart';
 import 'package:bruceboard/menus/popupmenubutton_status.dart';
 import 'package:bruceboard/menus/popupmenubutton_teamdata.dart';
@@ -70,6 +71,7 @@ class _GameMaintainState extends State<GameMaintain> {
     currentPermission = game?.permission ?? Permission.private.index;
 
     // Set League Data
+    log('Series Type: ${series.type}',  name: "${runtimeType.toString()}:initState()" );
     if (series.type == "NFL") {
       leagueTeamData = nflTeamData;
     } else if (series.type == "NBA") {

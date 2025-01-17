@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:bruceboard/utils/league_list.dart';
+import 'package:bruceboard/flutter_any_logo/league_list.dart';
 
 class PopupMenuButtonTeamData extends StatelessWidget {
   final void Function(TeamData selectedValue) onSelected;
